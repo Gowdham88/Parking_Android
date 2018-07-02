@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">pyrky_android</string>
+    <string name="already_have_an_account_sign_in_here">Already have an account? Sign In here</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="username">User name</string>
+    <string name="car_category">Car Category</string>
+    <string name="forget_password">Forgot Password?</string>
+    <string name="dont_have_account">Don\'t Have Account?</string>
+
+
+
+
+
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <!--
+        This is the name that users will see when interacting with this channel.
+        It should describe the category of notifications that will be sent through this channel
+     -->
+<string name="default_notification_channel_name" translatable="true">News</string>
+</resources>
