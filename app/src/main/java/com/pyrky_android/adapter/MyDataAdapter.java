@@ -1,4 +1,4 @@
-package com.pyrky_android.activity;
+package com.pyrky_android.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

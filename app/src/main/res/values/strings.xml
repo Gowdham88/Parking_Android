@@ -10,14 +10,18 @@
     <string name="dont_have_account">Don\'t Have Account?</string>
 
 
-
-
-
-
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <!--
         This is the name that users will see when interacting with this channel.
         It should describe the category of notifications that will be sent through this channel
      -->
-<string name="default_notification_channel_name" translatable="true">News</string>
+    <string name="default_notification_channel_name" translatable="true">News</string>
+    <string name="auth_token" />
+    <string name="nearest_parking_places_next_to_my_current_location">Nearest Parking Places next to my current Location</string>
+    <string name="title_activity_main">SampleDrawerActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>

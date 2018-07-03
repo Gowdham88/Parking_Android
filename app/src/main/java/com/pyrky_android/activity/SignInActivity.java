@@ -3,6 +3,7 @@ package com.pyrky_android.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,16 +14,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.pyrky_android.R;
+import com.pyrky_android.Users;
+import com.pyrky_android.preferences.PreferencesHelper;
 
 public class SignInActivity extends AppCompatActivity {
     Context context = this;
     TextInputEditText mEmail,mPassword;
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +69,9 @@ public class SignInActivity extends AppCompatActivity {
 
                         if (task.isSuccessful()){
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(context, "Successfully Signed in"+user.getDisplayName(), Toast.LENGTH_LONG).show();
+
+                            AddDatabase(user);
+                            Toast.makeText(context, "Successfully Signed in"+user.getEmail(), Toast.LENGTH_LONG).show();
                         }else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(context, "Authentication failed.",
@@ -72,4 +83,71 @@ public class SignInActivity extends AppCompatActivity {
                 });
 
     }
+
+    private void AddDatabase(final FirebaseUser user){
+
+
+
+        final Users users = new Users("",String.valueOf(user.getPhotoUrl()),user.getDisplayName());
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        hideProgressDialog();
+
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+
+                if (documentSnapshot.exists()){
+
+                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
+
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getDisplayName());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+
+                    final Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+
+                } else {
+                    db.collection("users").document(user.getUid())
+                            .set(users)
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w("Error", "Error adding document", e);
+//                                    hideProgressDialog();
+                                    Toast.makeText(context,"Login failed",Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                            });
+
+                    final Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getDisplayName());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Log.w("Error", "Error adding document", e);
+                Toast.makeText(getApplicationContext(),"Login failed",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
+
+
+
 }
