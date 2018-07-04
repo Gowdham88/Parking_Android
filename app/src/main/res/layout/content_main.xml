@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.pyrky_android.activity.MainActivity"
+    tools:context="com.pyrky_android.activity.HomeActivity"
     tools:showIn="@layout/app_bar_main">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -50,10 +51,25 @@
             android:id="@+id/home_search_view"
             android:layout_below="@id/destination_title"
             app:iconifiedByDefault="true"
+            android:layout_toLeftOf="@id/filter_button"
             android:imeOptions="actionSearch"
             android:text="Search"
+            android:layout_toStartOf="@id/filter_button" />
+        <Button
+            android:id="@+id/filter_button"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/destination_title"
             />
-
+        <ExpandableListView
+            android:id="@+id/expandableListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/home_search_view"
+            android:indicatorRight="?android:attr/expandableListPreferredItemIndicatorRight"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="0.5dp" />
         <Button
             android:layout_width="100dp"
             android:layout_height="wrap_content"

@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -17,18 +19,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.azoft.carousellayoutmanager.CarouselLayoutManager;
+import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
+import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
-import com.gtomato.android.ui.transformer.CoverFlowViewTransformer;
-import com.gtomato.android.ui.transformer.FlatMerryGoRoundTransformer;
-import com.gtomato.android.ui.transformer.LinearViewTransformer;
-import com.gtomato.android.ui.widget.CarouselView;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.pyrky_android.R;
+import com.pyrky_android.Users;
 import com.pyrky_android.adapter.MyDataAdapter;
+import com.pyrky_android.preferences.PreferencesHelper;
+
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "signup";
@@ -37,41 +46,15 @@ public class SignUpActivity extends AppCompatActivity {
 
     Context context = this;
     Spinner spinner;
-    String[] Languages = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
-    CarouselView carouselView;
+    String[] languages = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
     int icons[] = {R.mipmap.ic_launcher,R.mipmap.ic_launcher_round,R.mipmap.ic_launcher,R.mipmap.ic_launcher_round, R.mipmap.ic_launcher};
     TextInputEditText mEmail,mPassword,mUserName;
+
     @Override
     protected void onStart() {
         super.onStart();
 
     }
-
-   /* @Override
-    protected void onResume() {
-        super.onResume();
-        mAuth.addIdTokenListener(new FirebaseAuth.IdTokenListener() {
-            @Override
-            public void onIdTokenChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() != null)
-                    updateToken(firebaseAuth.getCurrentUser());
-            }
-        });
-    }
-    private void updateToken(FirebaseUser user) {
-        user.getIdToken(false)
-                .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                    public void onComplete(@NonNull Task<GetTokenResult> task) {
-                        if (task.isSuccessful()) {
-                            String idToken = task.getResult().getToken();
-                            Log.d("Token:", idToken);
-//                            SyncStateContract.Constants.FIREBASE_TOKEN = idToken;
-//                            PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_TOKEN, idToken);
-                        }
-                    }
-                });
-    }
-*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,13 +63,10 @@ public class SignUpActivity extends AppCompatActivity {
 
 
         TextView toSignIn = findViewById(R.id.already_have_account);
-        Button categoryBack = findViewById(R.id.type_back);
-        Button categoryFront = findViewById(R.id.type_front);
         Button signUp = findViewById(R.id.sign_up_button);
         mEmail = findViewById(R.id.et_email);
         mPassword = findViewById(R.id.et_password);
         mUserName = findViewById(R.id.et_user_name);
-        carouselView = findViewById(R.id.carousel);
 
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,32 +77,24 @@ public class SignUpActivity extends AppCompatActivity {
         });
 //        Spinner spinner = findViewById(R.id.car_category);
 //        spinner.setAdapter(new MySpinnerAdapter(SignUpActivity.this, R.layout.item_spinner,
-//                Languages));
-        carouselView.setTransformer(new CoverFlowViewTransformer());
-        carouselView.setAdapter(new MyDataAdapter(context,icons,Languages));
-        categoryBack.setVisibility(View.GONE);
-        categoryFront.setVisibility(View.GONE);
-        categoryBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//                languages));
 
-                carouselView.smoothScrollToPosition(carouselView.getCurrentPosition()-1);
-            }
-        });
+        //Carousel
+        final CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
+        layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
+        layoutManager.setMaxVisibleItems(3);
+        final RecyclerView recyclerView = findViewById(R.id.carousel_recycler);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(new MyDataAdapter(this,icons,languages));
+        recyclerView.addOnScrollListener(new CenterScrollListener());
 
-        categoryFront.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                carouselView.smoothScrollToPosition(carouselView.getCurrentPosition()+1);
-            }
-        });
         toSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(SignUpActivity.this,SignInActivity.class));
             }
         });
-
 
 
         //Firebase
@@ -155,13 +127,15 @@ public class SignUpActivity extends AppCompatActivity {
 //                                                Intent in=new Intent(SignupActivity.this,LoginScreen.class);
 //                                                startActivity(in);
                                                 final FirebaseUser user = mAuth.getCurrentUser();
+
+                                                AddDatabase(user);
                                                 Log.e("user", String.valueOf(user));
                                                 // Sign in success, update UI with the signed-in user's information
                                             }
                                         }
                                     });
 
-                            Toast.makeText(context, "Successfully Signed in"+user.getDisplayName(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Successfully Signed in "+user.getEmail(), Toast.LENGTH_LONG).show();
 //                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -175,8 +149,82 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
+    private void AddDatabase(final FirebaseUser user){
 
 
+
+        final Users users = new Users(mUserName.getText().toString().trim(),mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),"Small [3 to 4.5m]");
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        hideProgressDialog();
+
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+
+                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
+
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getDisplayName());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+
+                    final Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+                    SignUpActivity.this.finish();
+
+                } else {
+                    db.collection("users").document(user.getUid())
+                            .set(users)
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w("Error", "Error adding document", e);
+//                                    hideProgressDialog();
+                                    Toast.makeText(context,"Login failed",Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                            });
+
+                    final Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    SignUpActivity.this.finish();
+                    overridePendingTransition(0, 0);
+
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getDisplayName());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Log.w("Error", "Error adding document", e);
+                Toast.makeText(getApplicationContext(),"Login failed",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
+
+    private class viewPagerAdapter extends PagerAdapter{
+
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+        @Override
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+            return false;
+        }
+    }
 
 
     public void showProgressDialog() {

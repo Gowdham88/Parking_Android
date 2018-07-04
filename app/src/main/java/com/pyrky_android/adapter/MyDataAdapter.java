@@ -17,18 +17,16 @@ import com.pyrky_android.R;
  */
 
 public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder> {
-
-    Context context;
-    int[] icons;
-    LayoutInflater inflater;
-    String[] languages;
+    private Context context;
+    private int[] icons;
+    private LayoutInflater inflater;
+    private String[] languages;
     public MyDataAdapter(Context context, int[] icons, String[] languages) {
         this.context = context;
         this.icons = icons;
         this.languages = languages;
         inflater = LayoutInflater.from(context);
     }
-
 
     @NonNull
     @Override
@@ -43,6 +41,7 @@ public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder
 
         holder.carIcon.setImageResource(R.mipmap.ic_launcher_round);
         holder.carType.setText(languages[position]);
+
     }
 
     @Override

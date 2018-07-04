@@ -5,40 +5,17 @@ package com.pyrky_android;
  */
 
 public class Users {
-    private String Uid;
-
-    private String providerId;
 
     private String displayName;
-
-    private String photoUrl;
-
     private String email;
+    private String password;
+    private String carCategory;
 
-    private String phoneNumber;
-
-    private boolean isEmailVerified;
-
-    public Users(String id, String imageUrl, String userName) {
-        this.Uid = id;
-        this.photoUrl=imageUrl;
-        this.displayName = userName;
-    }
-
-    public String getUid() {
-        return Uid;
-    }
-
-    public void setUid(String uid) {
-        Uid = uid;
-    }
-
-    public String getProviderId() {
-        return providerId;
-    }
-
-    public void setProviderId(String providerId) {
-        this.providerId = providerId;
+    public Users(String displayName, String email, String password, String carCategory) {
+        this.displayName = displayName;
+        this.email = email;
+        this.password = password;
+        this.carCategory = carCategory;
     }
 
     public String getDisplayName() {
@@ -49,14 +26,6 @@ public class Users {
         this.displayName = displayName;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -65,19 +34,19 @@ public class Users {
         this.email = email;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public boolean isEmailVerified() {
-        return isEmailVerified;
+    public String getCarCategory() {
+        return carCategory;
     }
 
-    public void setEmailVerified(boolean emailVerified) {
-        isEmailVerified = emailVerified;
+    public void setCarCategory(String carCategory) {
+        this.carCategory = carCategory;
     }
 }

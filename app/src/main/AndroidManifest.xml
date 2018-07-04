@@ -41,7 +41,7 @@
         </service>
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.HomeActivity"
             android:label="Pyrky"
             android:theme="@style/AppTheme.NoActionBar">
 
