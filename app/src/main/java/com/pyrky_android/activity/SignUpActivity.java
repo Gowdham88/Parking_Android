@@ -3,6 +3,7 @@ package com.pyrky_android.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.PagerAdapter;
@@ -44,10 +45,11 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private AlertDialog dialog;
 
-    Context context = this;
-    Spinner spinner;
-    String[] languages = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
-    int icons[] = {R.mipmap.ic_launcher,R.mipmap.ic_launcher_round,R.mipmap.ic_launcher,R.mipmap.ic_launcher_round, R.mipmap.ic_launcher};
+    Context mContext = this;
+    Spinner mSpinner;
+    int mCarouselCount = 0;
+    String[] mLanguages = { "Compact[3 - 4.5m]", "Small", "Mid size", "Full", "Van/Pick-up" };
+    int mIcons[] = {R.mipmap.ic_launcher,R.mipmap.ic_launcher_round,R.mipmap.ic_launcher,R.mipmap.ic_launcher_round, R.mipmap.ic_launcher};
     TextInputEditText mEmail,mPassword,mUserName;
 
     @Override
@@ -75,19 +77,31 @@ public class SignUpActivity extends AppCompatActivity {
               login(mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),mUserName.getText().toString().trim());
             }
         });
-//        Spinner spinner = findViewById(R.id.car_category);
-//        spinner.setAdapter(new MySpinnerAdapter(SignUpActivity.this, R.layout.item_spinner,
-//                languages));
+//        Spinner mSpinner = findViewById(R.id.car_category);
+//        mSpinner.setAdapter(new MySpinnerAdapter(SignUpActivity.this, R.layout.item_spinner,
+//                mLanguages));
 
         //Carousel
         final CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
         layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-        layoutManager.setMaxVisibleItems(3);
+        layoutManager.setMaxVisibleItems(1);
+
+
         final RecyclerView recyclerView = findViewById(R.id.carousel_recycler);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(new MyDataAdapter(this,icons,languages));
+        recyclerView.setAdapter(new MyDataAdapter(this, mIcons, mLanguages));
         recyclerView.addOnScrollListener(new CenterScrollListener());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    mCarouselCount = layoutManager.getCenterItemPosition();
+                    String s = String.valueOf(layoutManager.getCenterItemPosition());
+                    Toast.makeText(mContext, s, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         toSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,7 +149,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         }
                                     });
 
-                            Toast.makeText(context, "Successfully Signed in "+user.getEmail(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(mContext, "Successfully Signed in "+user.getEmail(), Toast.LENGTH_LONG).show();
 //                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -151,9 +165,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void AddDatabase(final FirebaseUser user){
 
-
-
-        final Users users = new Users(mUserName.getText().toString().trim(),mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),"Small [3 to 4.5m]");
+        final Users users = new Users(mUserName.getText().toString().trim(),mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),mLanguages[mCarouselCount]);
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 //        hideProgressDialog();
 
@@ -182,7 +194,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 public void onFailure(@NonNull Exception e) {
                                     Log.w("Error", "Error adding document", e);
 //                                    hideProgressDialog();
-                                    Toast.makeText(context,"Login failed",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(mContext,"Login failed",Toast.LENGTH_SHORT).show();
                                     return;
                                 }
 
@@ -212,24 +224,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-
-    private class viewPagerAdapter extends PagerAdapter{
-
-        @Override
-        public int getCount() {
-            return 0;
-        }
-
-        @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-            return false;
-        }
-    }
-
-
     public void showProgressDialog() {
-
-
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignUpActivity.this);
         //View view = getLayoutInflater().inflate(R.layout.progress);
 //        alertDialog.setView(R.layout.progress);

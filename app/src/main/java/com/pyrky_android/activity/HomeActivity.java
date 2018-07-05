@@ -19,6 +19,9 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.azoft.carousellayoutmanager.CarouselLayoutManager;
+import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
+import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.pyrky_android.ExpandableListData;
 import com.pyrky_android.R;
 import com.pyrky_android.adapter.ExpandableListAdapter;
@@ -31,18 +34,20 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     Context context = this;
+    //Search View
+    SearchView mSearchView;
+    //Nearest Place recycler
     RecyclerView mNearestPlaceRecycler;
     int mNearestPlacesImages[] = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
     String[] mNearestPlacesAve = {"1st Avenue", "2nd Avenue", "3rd Avenue", "4th Avenue", "5th Avenue", "6th Avenue", "7th Avenue", "8th Avenue", "9th Avenue", "10th Avenue",};
     String[] mNearestPlacesCity = {"City 1", "City 2", "City 3", "City 4", "City 5", "City 6", "City 7", "City 8", "City 9", "City 10"};
     NearestRecyclerAdapter mNearestrecyclerAdapter;
-    SearchView mSearchView;
-
     //Expandable List View
     ExpandableListView expandableListView;
     ExpandableListAdapter expandableListAdapter;
     List<String> expandableListTitle;
     HashMap<String, List<String>> expandableListDetail;
+    Boolean isExpandableListEnabled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +75,20 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Carousel
+        final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
+        carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
+        carouselLayoutManager.setMaxVisibleItems(3);
+
         mNearestPlaceRecycler = findViewById(R.id.nearest_places_recycler);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-//        mNearestPlaceRecycler.setHasFixedSize(true);
-        mNearestPlaceRecycler.setLayoutManager(layoutManager);
+        mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
+        mNearestPlaceRecycler.setHasFixedSize(true);
 
         mNearestrecyclerAdapter = new NearestRecyclerAdapter(context, mNearestPlacesImages, mNearestPlacesAve, mNearestPlacesCity);
         mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
+        mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
+
 
 
         //Expandable List view
@@ -93,10 +105,17 @@ public class HomeActivity extends AppCompatActivity
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                expandableListDetail = ExpandableListData.getData();
-                expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
-                expandableListAdapter = new ExpandableListAdapter(context, expandableListTitle, expandableListDetail);
-                expandableListView.setAdapter(expandableListAdapter);
+                if (!isExpandableListEnabled){
+                    isExpandableListEnabled = true;
+                    expandableListView.setVisibility(View.VISIBLE);
+                    expandableListDetail = ExpandableListData.getData();
+                    expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
+                    expandableListAdapter = new ExpandableListAdapter(context, expandableListTitle, expandableListDetail);
+                    expandableListView.setAdapter(expandableListAdapter);
+                }else{
+                    expandableListView.setVisibility(View.GONE);
+                    isExpandableListEnabled = false;
+                }
 
             }
         });
@@ -118,7 +137,6 @@ public class HomeActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(),
                         expandableListTitle.get(groupPosition) + " List Collapsed.",
                         Toast.LENGTH_SHORT).show();
-
             }
         });
 
@@ -137,6 +155,8 @@ public class HomeActivity extends AppCompatActivity
                 return false;
             }
         });
+
+
     }
 
     @Override
@@ -193,7 +213,18 @@ public class HomeActivity extends AppCompatActivity
         }
 */
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawer.closeDrawer(GravityCompat./*
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+*/START);
         return true;
     }
 }

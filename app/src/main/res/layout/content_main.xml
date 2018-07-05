@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,8 +14,79 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/nearest_places_title"
+            android:id="@+id/destination_title"
+            android:text="Destination"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginRight="10dp"
             android:layout_alignParentTop="true"
+            />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/destination_title"
+            android:id="@+id/search_layout"
+            android:background="@android:color/darker_gray"
+            android:padding="5dp">
+        <android.support.v7.widget.SearchView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/home_search_view"
+            app:iconifiedByDefault="true"
+            android:layout_toLeftOf="@id/filter_button"
+            android:imeOptions="actionSearch"
+            android:background="@android:color/white"
+            android:text="Search"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toStartOf="@id/filter_button" />
+        <Button
+            android:id="@+id/filter_button"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@color/white"
+                android:layout_below="@id/home_search_view"
+                android:layout_marginTop="5dp"
+                android:id="@+id/current_location_view"
+                android:src="@drawable/map_sample"
+                />
+            <ExpandableListView
+                android:id="@+id/expandableListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:indicatorRight="?android:attr/expandableListPreferredItemIndicatorRight"
+                android:divider="@android:color/darker_gray"
+                android:dividerHeight="0.5dp"
+                android:elevation="5dp"
+                android:layout_below="@id/home_search_view"
+                tools:targetApi="lollipop" />
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/current_location_layout"
+            android:layout_below="@id/search_layout">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/nearest_places_title"
             android:textSize="14sp"
             android:textStyle="bold"
             android:text="@string/nearest_parking_places_next_to_my_current_location"
@@ -26,58 +97,30 @@
             />
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="180dp"
             android:id="@+id/nearest_places_recycler"
-            android:orientation="horizontal"
-            app:reverseLayout="true"
             android:layout_below="@id/nearest_places_title"
             />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/destination_title"
-            android:text="Destination"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_below="@id/nearest_places_recycler"
-            />
-        <android.support.v7.widget.SearchView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/home_search_view"
-            android:layout_below="@id/destination_title"
-            app:iconifiedByDefault="true"
-            android:layout_toLeftOf="@id/filter_button"
-            android:imeOptions="actionSearch"
-            android:text="Search"
-            android:layout_toStartOf="@id/filter_button" />
+        </LinearLayout>
         <Button
-            android:id="@+id/filter_button"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/destination_title"
-            />
-        <ExpandableListView
-            android:id="@+id/expandableListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/home_search_view"
-            android:indicatorRight="?android:attr/expandableListPreferredItemIndicatorRight"
-            android:divider="@android:color/darker_gray"
-            android:dividerHeight="0.5dp" />
-        <Button
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"
-            android:layout_below="@id/home_search_view"
+            android:layout_marginBottom="50dp"
+            android:layout_below="@id/current_location_layout"
             android:text="Search"
             />
     </RelativeLayout>
-
-</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_alignParentBottom="true"
+        android:background="?android:attr/windowBackground"
+        app:itemBackground="@android:color/darker_gray"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:menu="@menu/bottom_navigation"/>
+</RelativeLayout>
