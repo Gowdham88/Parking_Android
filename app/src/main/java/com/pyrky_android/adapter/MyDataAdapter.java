@@ -31,7 +31,7 @@ public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder
     @NonNull
     @Override
     public MyDataAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.item_spinner, parent, false);
+        View view = inflater.inflate(R.layout.item_carousel, parent, false);
 
         return new ViewHolder(view);
     }

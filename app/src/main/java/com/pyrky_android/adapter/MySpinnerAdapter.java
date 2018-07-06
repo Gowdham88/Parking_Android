@@ -50,7 +50,7 @@ public class MySpinnerAdapter extends ArrayAdapter {
 // Removing the image view
 //            img.setVisibility(View.GONE);
 // Setting the size of the text
-            tvLanguage.setTextSize(20f);
+//            tvLanguage.setTextSize(20f);
 // Setting the text Color
 //            tvLanguage.setTextColor(Color.BLACK);
         }

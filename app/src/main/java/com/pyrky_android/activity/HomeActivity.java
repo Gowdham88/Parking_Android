@@ -1,9 +1,16 @@
 package com.pyrky_android.activity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -22,7 +29,11 @@ import android.widget.Toast;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.pyrky_android.ExpandableListData;
+import com.pyrky_android.fragment.HomeFragment;
+import com.pyrky_android.fragment.NotificationFragment;
+import com.pyrky_android.fragment.ProfileFragment;
 import com.pyrky_android.R;
 import com.pyrky_android.adapter.ExpandableListAdapter;
 import com.pyrky_android.adapter.NearestRecyclerAdapter;
@@ -32,7 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+                    BottomNavigationView.OnNavigationItemSelectedListener {
     Context context = this;
     //Search View
     SearchView mSearchView;
@@ -48,7 +60,8 @@ public class HomeActivity extends AppCompatActivity
     List<String> expandableListTitle;
     HashMap<String, List<String>> expandableListDetail;
     Boolean isExpandableListEnabled = false;
-
+    Boolean isRunning = true;
+    BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +69,7 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        bottomNavigationView = findViewById(R.id.navigationView);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +87,7 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+/*
 
         //Carousel
         final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
@@ -89,8 +103,6 @@ public class HomeActivity extends AppCompatActivity
         mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
         mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
 
-
-
         //Expandable List view
         expandableListView = findViewById(R.id.expandableListView);
         mSearchView = findViewById(R.id.home_search_view);
@@ -105,7 +117,7 @@ public class HomeActivity extends AppCompatActivity
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isExpandableListEnabled){
+                if (!isExpandableListEnabled&&isRunning){
                     isExpandableListEnabled = true;
                     expandableListView.setVisibility(View.VISIBLE);
                     expandableListDetail = ExpandableListData.getData();
@@ -155,8 +167,46 @@ public class HomeActivity extends AppCompatActivity
                 return false;
             }
         });
+*/
 
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment = null;
 
+                switch (item.getItemId()){
+                    case R.id.b_nav_home:
+                        fragment = new HomeFragment();
+                        break;
+
+                    case R.id.b_nav_notification:
+                        fragment = new NotificationFragment();
+                        break;
+
+                    case R.id.b_nav_profile:
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.main_frame_layout, ProfileFragment.newInstance());
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        break;
+                }
+                return loadFragment(fragment);
+            }
+        });
+        loadFragment(new HomeFragment());
+
+    }
+
+    private boolean loadFragment(Fragment fragment) {
+        //switching fragment
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_frame_layout, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -198,13 +248,21 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+            loadFragment(new HomeFragment());
             // Handle the camera action
         } else if (id == R.id.nav_booking) {
 
         } else if (id == R.id.nav_profile) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_frame_layout, ProfileFragment.newInstance());
+            transaction.addToBackStack(null);
+            transaction.commit();
 
         } else if (id == R.id.nav_logout) {
 
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(HomeActivity.this,SignInActivity.class));
+            HomeActivity.this.finish();
         }
         /*else if (id == R.id.nav_share) {
 
@@ -226,5 +284,17 @@ public class HomeActivity extends AppCompatActivity
     }
 */START);
         return true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isRunning = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isRunning = true;
     }
 }

@@ -48,7 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
     Context mContext = this;
     Spinner mSpinner;
     int mCarouselCount = 0;
-    String[] mLanguages = { "Compact[3 - 4.5m]", "Small", "Mid size", "Full", "Van/Pick-up" };
+    String[] mLanguages = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
     int mIcons[] = {R.mipmap.ic_launcher,R.mipmap.ic_launcher_round,R.mipmap.ic_launcher,R.mipmap.ic_launcher_round, R.mipmap.ic_launcher};
     TextInputEditText mEmail,mPassword,mUserName;
 
@@ -78,7 +78,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 //        Spinner mSpinner = findViewById(R.id.car_category);
-//        mSpinner.setAdapter(new MySpinnerAdapter(SignUpActivity.this, R.layout.item_spinner,
+//        mSpinner.setAdapter(new MySpinnerAdapter(SignUpActivity.this, R.layout.item_carousel,
 //                mLanguages));
 
         //Carousel
@@ -97,8 +97,8 @@ public class SignUpActivity extends AppCompatActivity {
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                     mCarouselCount = layoutManager.getCenterItemPosition();
-                    String s = String.valueOf(layoutManager.getCenterItemPosition());
-                    Toast.makeText(mContext, s, Toast.LENGTH_SHORT).show();
+                    /*String s = String.valueOf(layoutManager.getCenterItemPosition());
+                    Toast.makeText(mContext, s, Toast.LENGTH_SHORT).show();*/
                 }
             });
         }
@@ -177,7 +177,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
 
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getDisplayName());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
 
@@ -205,7 +205,7 @@ public class SignUpActivity extends AppCompatActivity {
                     SignUpActivity.this.finish();
                     overridePendingTransition(0, 0);
 
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getDisplayName());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
 
