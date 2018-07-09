@@ -1,9 +1,6 @@
 package com.pyrky_android.fragment;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -12,9 +9,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -28,6 +23,15 @@ import android.widget.Toast;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.pyrky_android.ExpandableListData;
 import com.pyrky_android.R;
 import com.pyrky_android.adapter.ExpandableListAdapter;
@@ -43,7 +47,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * Created by thulirsoft on 7/6/18.
  */
 
-public class HomeFragment extends Fragment implements LocationListener {
+public class HomeFragment extends Fragment implements LocationListener,OnMapReadyCallback {
 
     //Search View
     SearchView mSearchView;
@@ -62,12 +66,19 @@ public class HomeFragment extends Fragment implements LocationListener {
     String provider;
     //Location
     private LocationManager locationManager;
-
+    LatLng latLng;
+    SupportMapFragment mMapView;
+    GoogleMap mGoogleMap;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, null);
 
+        //Google Map
+        MapsInitializer.initialize(getActivity());
+
+        mMapView = (SupportMapFragment ) getFragmentManager().findFragmentById(R.id.current_location_view);
+        mMapView.getMapAsync(this);
         //Carousel
         final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
         carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
@@ -210,6 +221,8 @@ public class HomeFragment extends Fragment implements LocationListener {
         int lng = (int) (location.getLongitude());
         Toast.makeText(getActivity(), String.valueOf(lat), Toast.LENGTH_SHORT).show();
         Toast.makeText(getActivity(), String.valueOf(lng), Toast.LENGTH_SHORT).show();
+        latLng = new LatLng(lat,lng);
+//        googleMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
     }
 
     @Override
@@ -227,5 +240,14 @@ public class HomeFragment extends Fragment implements LocationListener {
     public void onProviderDisabled(String provider) {
         Toast.makeText(getActivity(), "Disabled provider " + provider,
                 Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
+        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        mGoogleMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 }

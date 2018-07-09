@@ -31,6 +31,7 @@ import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.pyrky_android.ExpandableListData;
+import com.pyrky_android.fragment.BookingsFragment;
 import com.pyrky_android.fragment.HomeFragment;
 import com.pyrky_android.fragment.NotificationFragment;
 import com.pyrky_android.fragment.ProfileFragment;
@@ -248,9 +249,12 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+
             loadFragment(new HomeFragment());
-            // Handle the camera action
+
         } else if (id == R.id.nav_booking) {
+
+            loadFragment(new BookingsFragment());
 
         } else if (id == R.id.nav_profile) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

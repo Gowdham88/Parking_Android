@@ -42,19 +42,22 @@
                 android:id="@+id/filter_button"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:background="@drawable/ic_menu"
                 android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
                 />
-            <ImageView
+            <fragment
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:background="@color/white"
                 android:layout_below="@id/home_search_view"
                 android:layout_marginTop="5dp"
                 android:id="@+id/current_location_view"
-                android:src="@drawable/map_sample"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 />
             <ExpandableListView
                 android:id="@+id/expandableListView"

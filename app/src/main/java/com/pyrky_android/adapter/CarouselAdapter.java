@@ -46,9 +46,9 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
         return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
         }
     }

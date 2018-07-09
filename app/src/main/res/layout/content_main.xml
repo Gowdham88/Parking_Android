@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/destination_title"
             android:id="@+id/search_layout"
-            android:background="@android:color/darker_gray"
+            android:background="@drawable/card_search_layout"
             android:padding="5dp">
         <android.support.v7.widget.SearchView
             android:layout_width="match_parent"
@@ -61,14 +61,14 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/ic_menu"
             />
-            <ImageView
+            <fragment
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:background="@color/white"
                 android:layout_below="@id/home_search_view"
                 android:layout_marginTop="5dp"
                 android:id="@+id/current_location_view"
-                android:src="@drawable/map_sample"
+                class="com.google.android.gms.maps.SupportMapFragment"
                 />
             <ExpandableListView
                 android:id="@+id/expandableListView"
@@ -79,6 +79,7 @@
                 android:divider="@android:color/darker_gray"
                 android:dividerHeight="0.5dp"
                 android:elevation="5dp"
+                android:visibility="gone"
                 android:layout_below="@id/home_search_view"
                 tools:targetApi="lollipop" />
         </RelativeLayout>
