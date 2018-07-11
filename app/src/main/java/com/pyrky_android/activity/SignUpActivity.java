@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -38,6 +39,7 @@ import com.pyrky_android.R;
 import com.pyrky_android.Users;
 import com.pyrky_android.adapter.MyDataAdapter;
 import com.pyrky_android.preferences.PreferencesHelper;
+import com.pyrky_android.utils.Utils;
 
 
 public class SignUpActivity extends AppCompatActivity {
@@ -77,6 +79,27 @@ public class SignUpActivity extends AppCompatActivity {
               login(mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),mUserName.getText().toString().trim());
             }
         });
+        mEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEmail.setEnabled(true);
+            }
+        });
+        mPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPassword.setEnabled(true);
+            }
+        });
+        mUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mUserName.setEnabled(true);
+            }
+        });
+        if (!mEmail.isFocused()||!mPassword.isFocused()||!mUserName.isFocused()){
+            Utils.hideKeyboard(SignUpActivity.this);
+        }
 //        Spinner mSpinner = findViewById(R.id.car_category);
 //        mSpinner.setAdapter(new MySpinnerAdapter(SignUpActivity.this, R.layout.item_carousel,
 //                mLanguages));
@@ -125,42 +148,44 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void login(String email, String password, String userName){
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            user.getIdToken(true)
-                                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<GetTokenResult> task) {
-                                            if (task.isSuccessful()) {
+        if (validateForm()) {
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(TAG, "createUserWithEmail:success");
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                user.getIdToken(true)
+                                        .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<GetTokenResult> task) {
+                                                if (task.isSuccessful()) {
 //                                                Intent in=new Intent(SignupActivity.this,LoginScreen.class);
 //                                                startActivity(in);
-                                                final FirebaseUser user = mAuth.getCurrentUser();
+                                                    final FirebaseUser user = mAuth.getCurrentUser();
 
-                                                AddDatabase(user);
-                                                Log.e("user", String.valueOf(user));
-                                                // Sign in success, update UI with the signed-in user's information
+                                                    AddDatabase(user);
+                                                    Log.e("user", String.valueOf(user));
+                                                    // Sign in success, update UI with the signed-in user's information
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
 
-                            Toast.makeText(mContext, "Successfully Signed in "+user.getEmail(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(mContext, "Successfully Signed in " + user.getEmail(), Toast.LENGTH_LONG).show();
 //                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SignUpActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                Toast.makeText(SignUpActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
 //                            updateUI(null);
-                        }
+                            }
 
-                        // ...
-                    }
-                });
+                            // ...
+                        }
+                    });
+        }
     }
 
     private void AddDatabase(final FirebaseUser user){
@@ -244,11 +269,10 @@ public class SignUpActivity extends AppCompatActivity {
     private boolean validateForm() {
         boolean valid = true;
 
-        String email = mEmail.getText().toString();
-        String username = mUserName.getText().toString();
-        String password = mPassword.getText().toString();
-        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
-//                && isPhotoValid) {
+        String email = mEmail.getText().toString().trim();
+        String username = mUserName.getText().toString().trim();
+        String password = mPassword.getText().toString().trim();
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(username)) {
 
             valid = true;
 
@@ -268,17 +292,16 @@ public class SignUpActivity extends AppCompatActivity {
                 valid = false;
             }
             else if (TextUtils.isEmpty(password) || password.length()<4) {
-                Toast.makeText(this, "Enter password.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Enter valid password.", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
-     /*       else if (!isPhotoValid) {
+            else if (TextUtils.isEmpty(username)) {
                 Toast.makeText(this, "" +
-                        "please fill the image", Toast.LENGTH_SHORT).show();
+                        "Enter Username", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
-*/
             else {
-                Toast.makeText(this, "Enter email address.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Something wrong with the credentials", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
 

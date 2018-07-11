@@ -48,7 +48,7 @@ public class SignInActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                login(mEmail.getText().toString(),mPassword.getText().toString());
+                login(mEmail.getText().toString().trim(),mPassword.getText().toString().trim());
             }
         });
 
@@ -71,6 +71,10 @@ public class SignInActivity extends AppCompatActivity {
 
                             AddDatabase(user);
                             Toast.makeText(context, "Successfully Signed in"+user.getEmail(), Toast.LENGTH_LONG).show();
+                            PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
+//                            PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
+                            PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+
                         }else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(context, "Authentication failed.",

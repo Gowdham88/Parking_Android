@@ -47,20 +47,7 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                     BottomNavigationView.OnNavigationItemSelectedListener {
     Context context = this;
-    //Search View
-    SearchView mSearchView;
-    //Nearest Place recycler
-    RecyclerView mNearestPlaceRecycler;
-    int mNearestPlacesImages[] = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
-    String[] mNearestPlacesAve = {"1st Avenue", "2nd Avenue", "3rd Avenue", "4th Avenue", "5th Avenue", "6th Avenue", "7th Avenue", "8th Avenue", "9th Avenue", "10th Avenue",};
-    String[] mNearestPlacesCity = {"City 1", "City 2", "City 3", "City 4", "City 5", "City 6", "City 7", "City 8", "City 9", "City 10"};
-    NearestRecyclerAdapter mNearestrecyclerAdapter;
-    //Expandable List View
-    ExpandableListView expandableListView;
-    ExpandableListAdapter expandableListAdapter;
-    List<String> expandableListTitle;
-    HashMap<String, List<String>> expandableListDetail;
-    Boolean isExpandableListEnabled = false;
+
     Boolean isRunning = true;
     BottomNavigationView bottomNavigationView;
     @Override
@@ -88,87 +75,6 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-/*
-
-        //Carousel
-        final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
-        carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-        carouselLayoutManager.setMaxVisibleItems(3);
-
-        mNearestPlaceRecycler = findViewById(R.id.nearest_places_recycler);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
-        mNearestPlaceRecycler.setHasFixedSize(true);
-
-        mNearestrecyclerAdapter = new NearestRecyclerAdapter(context, mNearestPlacesImages, mNearestPlacesAve, mNearestPlacesCity);
-        mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
-        mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
-
-        //Expandable List view
-        expandableListView = findViewById(R.id.expandableListView);
-        mSearchView = findViewById(R.id.home_search_view);
-        Button filterButton = findViewById(R.id.filter_button);
-        mSearchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        filterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!isExpandableListEnabled&&isRunning){
-                    isExpandableListEnabled = true;
-                    expandableListView.setVisibility(View.VISIBLE);
-                    expandableListDetail = ExpandableListData.getData();
-                    expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
-                    expandableListAdapter = new ExpandableListAdapter(context, expandableListTitle, expandableListDetail);
-                    expandableListView.setAdapter(expandableListAdapter);
-                }else{
-                    expandableListView.setVisibility(View.GONE);
-                    isExpandableListEnabled = false;
-                }
-
-            }
-        });
-
-        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        expandableListTitle.get(groupPosition) + " List Expanded.",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        expandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        expandableListTitle.get(groupPosition) + " List Collapsed.",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                Toast.makeText(
-                        getApplicationContext(),
-                        expandableListTitle.get(groupPosition)
-                                + " -> "
-                                + expandableListDetail.get(
-                                expandableListTitle.get(groupPosition)).get(
-                                childPosition), Toast.LENGTH_SHORT
-                ).show();
-                return false;
-            }
-        });
-*/
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -195,7 +101,7 @@ public class HomeActivity extends AppCompatActivity
             }
         });
         loadFragment(new HomeFragment());
-
+//        loadFragment(new BookingsFragment());
     }
 
     private boolean loadFragment(Fragment fragment) {
@@ -268,25 +174,10 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(HomeActivity.this,SignInActivity.class));
             HomeActivity.this.finish();
         }
-        /*else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
-
-        }
-*/
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat./*
+        drawer.closeDrawer(GravityCompat.START);
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-    }
-*/START);
         return true;
     }
 

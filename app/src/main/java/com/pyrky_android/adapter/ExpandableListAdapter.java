@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.pyrky_android.R;
@@ -90,6 +91,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.list_item, null);
         }
+        CheckBox checkBox = convertView.findViewById(R.id.checkbox);
+        checkBox.setText(expandedListText);
         TextView expandedListTextView = convertView
                 .findViewById(R.id.expandedListItem);
         expandedListTextView.setText(expandedListText);

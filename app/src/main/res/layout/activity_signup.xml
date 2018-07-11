@@ -4,16 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:background="@color/white">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="80dp"
@@ -28,7 +29,6 @@
         android:id="@+id/tx_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginLeft="25dp"
         android:layout_marginStart="25dp"
         android:text="@string/email" />
@@ -43,13 +43,13 @@
                 android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
+                android:ems="10"
+                android:focusable="auto"/>
         </android.support.design.widget.TextInputLayout>
         <TextView
             android:id="@+id/tx_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:layout_marginLeft="25dp"
             android:layout_marginStart="25dp"
             android:text="@string/password" />
@@ -64,13 +64,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
+                android:focusable="auto"
+                android:ems="10"
                 android:inputType="textPassword"/>
         </android.support.design.widget.TextInputLayout>
         <TextView
             android:id="@+id/tx_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:layout_marginLeft="25dp"
             android:layout_marginStart="25dp"
             android:text="@string/username" />
@@ -85,6 +86,8 @@
                 android:id="@+id/et_user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="auto"
+                android:ems="10"
                 android:textSize="14sp" />
         </android.support.design.widget.TextInputLayout>
         <TextView
@@ -115,16 +118,6 @@
                 android:layout_height="110dp"
                 android:id="@+id/carousel_recycler"
                 />
-            <!--<me.crosswall.lib.coverflow.core.PagerContainer-->
-                <!--android:id="@+id/pager_container"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="110dp"-->
-                <!--android:background="?attr/colorPrimary">-->
-                <!--<android.support.v4.view.ViewPager-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:id="@+id/carousel_viewpager" />-->
-            <!--</me.crosswall.lib.coverflow.core.PagerContainer>-->
             <Button
                 android:layout_width="80dp"
                 android:layout_height="100dp"
@@ -178,7 +171,7 @@
         android:layout_marginBottom="15dp"
         />
     </LinearLayout>
-    </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>
 
 

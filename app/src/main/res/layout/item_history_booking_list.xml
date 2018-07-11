@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sao Paulo"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/place"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Car"
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:id="@+id/view_car_text"
+        android:layout_alignParentEnd="true" />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ratings"
+        android:numStars="5"
+        android:layout_alignParentRight="true"
+        android:id="@+id/history_ratings"
+        android:layout_marginBottom="10dp"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_alignParentEnd="true" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/date_time"
+        android:text="09 July, 10.30pm"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/history_ratings"
+        android:layout_marginTop="10dp"
+        android:gravity="right"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_alignBottom="@id/date_time"
+        android:background="@android:color/darker_gray"
+        />
+</RelativeLayout>

@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.pyrky_android.R;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 
+import java.math.BigInteger;
+
 /**
  * Created by thulirsoft on 7/3/18.
  */
@@ -22,6 +24,10 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
     private Context context;
     private int images[];
     private String[] mAve,mCity;
+    double lat[] = {70.01383623,56.50329796,1.23736985,-24.33605988,11.38350584,
+            -58.68375965,44.87310434,147.64797704,-3.02408824,-21.33447419};
+    double lng[] = {-24.21957723,56.50329796,-163.58662616,16.88948658,62.62863347,
+            -43.46925429,-91.28527609,85.94545339,-82.49033554,-175.53067807};
     public NearestRecyclerAdapter(Context context, int[] images, String[] mAve, String[] mCity) {
         this.context = context;
         this.images = images;
@@ -43,11 +49,15 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
         holder.nearestPlaceImage.setImageResource(images[position]);
         holder.nearestPlaceAve.setText(mAve[position]);
         holder.nearestPlaceCity.setText(mCity[position]);
-
+        final double latitude = lat[position];
+        final double  longitude = lng[position];
         holder.nearestPlaceImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(new Intent(context, NearestLocMapsActivity.class));
+                Intent intent = new Intent(context,NearestLocMapsActivity.class);
+                intent.putExtra("lat",latitude);
+                intent.putExtra("lng",longitude);
+                context.startActivity(intent);
             }
         });
     }

@@ -11,6 +11,7 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".MyApplication"
@@ -31,6 +32,7 @@
         <activity
             android:name=".activity.SignUpActivity"
             android:label="Sign Up"
+            android:theme="@style/AppThemeSignup"
             android:screenOrientation="portrait">
 
         </activity>
@@ -38,6 +40,7 @@
         <activity
             android:name=".activity.SignInActivity"
             android:label="Sign In"
+            android:theme="@style/AppThemeSignup"
             android:screenOrientation="portrait">
 
         </activity>
