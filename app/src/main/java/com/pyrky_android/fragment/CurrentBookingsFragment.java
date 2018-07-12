@@ -24,6 +24,7 @@ public class CurrentBookingsFragment extends Fragment {
     String mPlace[] = {"Rio de Janeiro","Brasília","Salvador","Fortaleza","Belo Horizonte"};
     String mTimeDate[] = {"05 Jan, 12.30am","15 Feb, 03.10pm","25 Mar, 05.50pm","17 Jun, 10.30am","01 Jan, 12.00am"};
     RecyclerView mRecyclerView;
+    View view;
     public CurrentBookingsFragment() {
         // Required empty public constructor
     }
@@ -31,7 +32,7 @@ public class CurrentBookingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_current_booking, null);
+        view = inflater.inflate(R.layout.fragment_current_booking, null);
 
         mRecyclerView = view.findViewById(R.id.current_booking_recycler);
 
@@ -46,7 +47,7 @@ public class CurrentBookingsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        mRecyclerView = view.findViewById(R.id.current_booking_recycler);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         CurrentBookingRecyclerAdapter recyclerAdapter = new CurrentBookingRecyclerAdapter(getActivity(),mPlace,mTimeDate);

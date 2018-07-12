@@ -2,6 +2,8 @@ package com.pyrky_android.fragment;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -39,6 +41,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.pyrky_android.ExpandableListData;
+import com.pyrky_android.Manifest;
 import com.pyrky_android.R;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 import com.pyrky_android.adapter.ExpandableListAdapter;
@@ -76,6 +79,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
     Boolean isExpandableListEnabled = false;
 
     //Location
+    double lat[] = {70.01383623,56.50329796,1.23736985,-24.33605988,11.38350584,-58.68375965,44.87310434,147.64797704,-3.02408824,-21.33447419};
+    double lng[] = {-24.21957723,56.50329796,-163.58662616,16.88948658,62.62863347,-43.46925429,-91.28527609,85.94545339,-82.49033554,-175.53067807};
+    private ArrayList<LatLng> latlngs = new ArrayList<>();
+
     private static final int LOCATION_REQUEST_CODE = 101;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     GoogleApiClient mGoogleApiClient;
@@ -197,23 +204,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
             }
         });
 
-      /*  autocompleteFragment = getChildFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+       /* autocompleteFragment = getSupportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment);
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 12.0f));
+                mGoogleMap.clear();
+                mGoogleMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 12.0f));
             }
 
             @Override
             public void onError(Status status) {
 
             }
-        });
-*/
+        });*/
+
+       //Looping for multiple lat/lng input
+        for (int i= 0; i<lat.length;i++){
+            latlngs.add(new LatLng(lat[i],lng[i]));
+        }
 
         return view;
     }
@@ -235,79 +246,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
 
-        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
 
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-            Toast.makeText(getActivity(), "Please get the permission", Toast.LENGTH_SHORT).show();
-            return;
-        }
         checkLocationandAddToMap();
     }
 
     //Callback invoked once the GoogleApiClient is connected successfully
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        //Fetching the last known location using the FusedLocationProviderApi
-       /* if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
 
-                // MY_PERMISSIONS_REQUEST_READ_LOCATION is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-            return;
-        }
         mMapView = ( SupportMapFragment ) getChildFragmentManager().findFragmentById(R.id.current_location_view);
         mMapView.getMapAsync(this);
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        String lat = String.valueOf(location.getLatitude());
-        String lng = String.valueOf(location.getLongitude());
-        Toast.makeText(getActivity(), "Your Location is at "+lat+","+lng, Toast.LENGTH_LONG).show();
+
         }
-        */
-       checkLocationandAddToMap();
-    }
+
+
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -327,19 +279,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
                 } else
                     Toast.makeText(getActivity(), "Location Permission Denied", Toast.LENGTH_SHORT).show();
                 break;
-
         }
 
     }
 
     private void checkLocationandAddToMap() {
-        //Checking if the user has granted the permission
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //Requesting the Location permission
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-            return;
-        }
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
 
+        } else {
         //Fetching the last known location using the Fus
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
@@ -352,6 +300,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
         mGoogleMap.setMyLocationEnabled(true);
         mMapView.setUserVisibleHint(false);
+
+            for (LatLng point : latlngs) {
+                markerOptions.position(point);
+                markerOptions.title("someTitle");
+                markerOptions.snippet("someDesc");
+                mGoogleMap.addMarker(markerOptions);
+            }
+
+    }
     }
         protected synchronized void buildGoogleApiClient() {
             mGoogleApiClient = new GoogleApiClient.Builder(getActivity())

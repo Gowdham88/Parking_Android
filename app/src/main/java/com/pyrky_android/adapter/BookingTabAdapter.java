@@ -3,7 +3,7 @@ package com.pyrky_android.adapter;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.pyrky_android.fragment.CurrentBookingsFragment;
 import com.pyrky_android.fragment.HistoryFragment;
@@ -12,11 +12,11 @@ import com.pyrky_android.fragment.HistoryFragment;
  * Created by thulirsoft on 7/9/18.
  */
 
-public class BookingTabAdapter extends FragmentPagerAdapter {
+public class BookingTabAdapter extends FragmentStatePagerAdapter {
 
     String tabTitles[] = new String[]{"Current Bookings", "History"};
     Context context;
-
+    FragmentManager fragmentManager;
     int mNumofTab;
 
     public BookingTabAdapter(FragmentManager fm, Context context) {

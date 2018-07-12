@@ -25,10 +25,15 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     Context context;
     String places[];
     String dateTime[];
-    public HistoryRecyclerAdapter(Context context, String[] places, String[] mTimeDate) {
+    int[] currentRating;
+    int mPosition;
+    AlertDialog.Builder popDialog;
+    Boolean isPopUpShowing = false;
+    public HistoryRecyclerAdapter(Context context, String[] places, String[] mTimeDate, int[] mCurrentRating) {
         this.context = context;
         this.places = places;
         this.dateTime = mTimeDate;
+        this.currentRating = mCurrentRating;
     }
 
     @NonNull
@@ -46,19 +51,43 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        mPosition = position;
         holder.city.setText(places[position]);
         holder.dateTime.setText(dateTime[position]);
+        holder.ratingBar.setNumStars(currentRating[position]);
         holder.ratingBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                showDialog();
+
+               /* if (event.getAction() == MotionEvent.ACTION_UP) {
+                    float touchPositionX = event.getX();
+                    float width = holder.ratingBar.getWidth();
+                    float starsf = (touchPositionX / width) * 5.0f;
+                    int stars = (int)starsf + 1;
+                    holder.ratingBar.setRating(stars);
+
+//                    Toast.makeText(MainActivity.this, String.valueOf("test"), Toast.LENGTH_SHORT).show();
+                    v.setPressed(false);
+                }
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    v.setPressed(true);
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    v.setPressed(false);
+                }*/
+                if (!isPopUpShowing){
+                    showDialog();
+                }
+
                 return true;
             }
         });
 
     }
     public void showDialog(){
-        final AlertDialog.Builder popDialog = new AlertDialog.Builder(context);
+        isPopUpShowing = false;
+        popDialog = new AlertDialog.Builder(context);
 
         LinearLayout linearLayout = new LinearLayout(context);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -68,7 +97,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         final RatingBar rating = new RatingBar(context);
         rating.setLayoutParams(lp);
         rating.setMax(5);
-        rating.setNumStars(5);
+        rating.setNumStars(currentRating[mPosition]);
         linearLayout.setGravity(Gravity.CENTER);
         linearLayout.addView(rating);
 
@@ -85,14 +114,17 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                isPopUpShowing = false;
             }
         });
         popDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                isPopUpShowing = false;
             }
         });
+        popDialog.setCancelable(false);
         popDialog.create();
         popDialog.show();
 

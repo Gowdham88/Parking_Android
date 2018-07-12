@@ -10,10 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.pyrky_android.R;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 /**
  * Created by thulirsoft on 7/3/18.
@@ -28,6 +30,7 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
             -58.68375965,44.87310434,147.64797704,-3.02408824,-21.33447419};
     double lng[] = {-24.21957723,56.50329796,-163.58662616,16.88948658,62.62863347,
             -43.46925429,-91.28527609,85.94545339,-82.49033554,-175.53067807};
+    private ArrayList<LatLng> latlngs = new ArrayList<>();
     public NearestRecyclerAdapter(Context context, int[] images, String[] mAve, String[] mCity) {
         this.context = context;
         this.images = images;
