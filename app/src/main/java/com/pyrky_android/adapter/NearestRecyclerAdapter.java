@@ -30,12 +30,16 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
             -58.68375965,44.87310434,147.64797704,-3.02408824,-21.33447419};
     double lng[] = {-24.21957723,56.50329796,-163.58662616,16.88948658,62.62863347,
             -43.46925429,-91.28527609,85.94545339,-82.49033554,-175.53067807};
+    String mDistance[] = {"10 - 30m","50 - 100m","70 - 400m","500 - 550m","60 - 600m",
+            "150 - 300m","80 - 90m","150 - 155m","30 - 35m","800 - 850m"};
+    int mLocationImage[];
     private ArrayList<LatLng> latlngs = new ArrayList<>();
-    public NearestRecyclerAdapter(Context context, int[] images, String[] mAve, String[] mCity) {
+    public NearestRecyclerAdapter(Context context, int[] images, String[] mAve, String[] mCity, int[] mLocationImage) {
         this.context = context;
         this.images = images;
         this.mAve = mAve;
         this.mCity = mCity;
+        this.mLocationImage = mLocationImage;
     }
 
     @NonNull
@@ -49,11 +53,13 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
 
     @Override
     public void onBindViewHolder(@NonNull final NearestRecyclerAdapter.ViewHolder holder, int position) {
-        holder.nearestPlaceImage.setImageResource(images[position]);
+        holder.nearestPlaceImage.setImageResource(mLocationImage[position]);
         holder.nearestPlaceAve.setText(mAve[position]);
         holder.nearestPlaceCity.setText(mCity[position]);
+        holder.nearestPlaceDistance.setText(mDistance[position]);
         final double latitude = lat[position];
         final double  longitude = lng[position];
+
         holder.nearestPlaceImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,12 +78,13 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView nearestPlaceImage;
-        TextView nearestPlaceAve,nearestPlaceCity;
+        TextView nearestPlaceAve,nearestPlaceCity,nearestPlaceDistance;
         ViewHolder(View itemView) {
             super(itemView);
             nearestPlaceImage = itemView.findViewById(R.id.nearest_place_image);
             nearestPlaceAve = itemView.findViewById(R.id.nearest_place_ave);
             nearestPlaceCity = itemView.findViewById(R.id.nearest_place_city);
+            nearestPlaceDistance = itemView.findViewById(R.id.nearest_place_distance);
         }
     }
 }

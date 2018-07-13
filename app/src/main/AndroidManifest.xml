@@ -31,7 +31,6 @@
             android:value="@integer/google_play_services_version" />
         <activity
             android:name=".activity.SignUpActivity"
-            android:label="Sign Up"
             android:theme="@style/AppThemeSignup"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -43,7 +42,6 @@
 
         <activity
             android:name=".activity.SignInActivity"
-            android:label="Sign In"
             android:theme="@style/AppThemeSignup"
             android:screenOrientation="portrait">
 

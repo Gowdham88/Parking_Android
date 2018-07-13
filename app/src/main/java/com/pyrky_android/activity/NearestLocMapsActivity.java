@@ -1,5 +1,6 @@
 package com.pyrky_android.activity;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -7,11 +8,16 @@ import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.azoft.carousellayoutmanager.CarouselLayoutManager;
+import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
+import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -20,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.pyrky_android.Manifest;
 import com.pyrky_android.R;
+import com.pyrky_android.adapter.NearestRecyclerAdapter;
 import com.pyrky_android.location.GetNearbyPlacesData;
 
 import java.io.IOException;
@@ -49,6 +56,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         Longitude: 82°29′25″W   -82.49033554
         Latitude: 21°20′04″S   -21.33447419
         Longitude: 175°31′50″W   -175.53067807*/
+       Context context = this;
        double lat[] = {70.01383623,56.50329796,1.23736985,-24.33605988,11.38350584,-58.68375965,44.87310434,147.64797704,-3.02408824,-21.33447419};
         double lng[] = {-24.21957723,56.50329796,-163.58662616,16.88948658,62.62863347,-43.46925429,-91.28527609,85.94545339,-82.49033554,-175.53067807};
         private ArrayList<LatLng> latlngs = new ArrayList<>();
@@ -56,7 +64,14 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         double mLatitude;
         double mLongitude;
         private int PROXIMITY_RADIUS = 10000;
-
+        //Carousel
+        NearestRecyclerAdapter mNearestrecyclerAdapter;
+        RecyclerView mNearestPlaceRecycler;
+        int mNearestPlacesImages[] = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
+        String[] mNearestPlacesAve = {"1st Avenue", "2nd Avenue", "3rd Avenue", "4th Avenue", "5th Avenue", "6th Avenue", "7th Avenue", "8th Avenue", "9th Avenue", "10th Avenue",};
+        String[] mNearestPlacesCity = {"City 1", "City 2", "City 3", "City 4", "City 5", "City 6", "City 7", "City 8", "City 9", "City 10"};
+        int mLocationImage[] = {R.drawable.loc0,R.drawable.loc1,R.drawable.loc2,R.drawable.loc3,
+                R.drawable.loc4,R.drawable.loc5,R.drawable.loc6,R.drawable.loc7,R.drawable.loc8,R.drawable.loc9};
         @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +87,21 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             mLatitude = getIntent().getDoubleExtra("lat",1.0);
             mLongitude = getIntent().getDoubleExtra("lng",1.0);
         }
+
+        //Carousel View
+            final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
+            carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
+            carouselLayoutManager.setMaxVisibleItems(3);
+
+            mNearestPlaceRecycler = findViewById(R.id.nearest_places_recycler);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+            mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
+            mNearestPlaceRecycler.setHasFixedSize(true);
+
+            mNearestrecyclerAdapter = new NearestRecyclerAdapter(context, mNearestPlacesImages, mNearestPlacesAve, mNearestPlacesCity, mLocationImage);
+            mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
+            mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
+
 
         mLatitude = 13.0002586;
         mLongitude = 80.2046057;
@@ -100,7 +130,22 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             }
         });
     }
+    private void nearestLocationAdapter(){
+        final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
+        carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
+        carouselLayoutManager.setMaxVisibleItems(3);
 
+        mNearestPlaceRecycler = findViewById(R.id.nearest_places_recycler);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
+        mNearestPlaceRecycler.setHasFixedSize(true);
+
+        mNearestrecyclerAdapter = new NearestRecyclerAdapter(context, mNearestPlacesImages, mNearestPlacesAve, mNearestPlacesCity, mLocationImage);
+        mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
+        mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
+
+
+    }
     private String getUrl(double latitude,double longitude,String nearbyPlace){
 
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
@@ -162,13 +207,14 @@ public void onMapSearch(View view) {
             markerOptions.snippet("someDesc");
             mMap.addMarker(markerOptions);
         }
-
+        nearestLocationAdapter();
 
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mMap.setMyLocationEnabled(true);
+
 
     }
     }

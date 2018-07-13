@@ -14,21 +14,24 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pyrky_android.R;
+
+import java.util.ArrayList;
 
 /**
  * Created by thulirsoft on 7/9/18.
  */
 
 public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecyclerAdapter.ViewHolder>{
-    Context context;
-    String places[];
-    String dateTime[];
-    int[] currentRating;
-    int mPosition;
-    AlertDialog.Builder popDialog;
-    Boolean isPopUpShowing = false;
+    private Context context;
+    private String places[];
+    private String dateTime[];
+    private int[] currentRating;
+    private int mPosition;
+    private AlertDialog.Builder popDialog;
+    private Boolean isPopUpShowing = false;
     public HistoryRecyclerAdapter(Context context, String[] places, String[] mTimeDate, int[] mCurrentRating) {
         this.context = context;
         this.places = places;
@@ -50,7 +53,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         mPosition = position;
         holder.city.setText(places[position]);
         holder.dateTime.setText(dateTime[position]);
@@ -58,26 +61,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         holder.ratingBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
-               /* if (event.getAction() == MotionEvent.ACTION_UP) {
-                    float touchPositionX = event.getX();
-                    float width = holder.ratingBar.getWidth();
-                    float starsf = (touchPositionX / width) * 5.0f;
-                    int stars = (int)starsf + 1;
-                    holder.ratingBar.setRating(stars);
-
-//                    Toast.makeText(MainActivity.this, String.valueOf("test"), Toast.LENGTH_SHORT).show();
-                    v.setPressed(false);
-                }
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    v.setPressed(true);
-                }
-
-                if (event.getAction() == MotionEvent.ACTION_CANCEL) {
-                    v.setPressed(false);
-                }*/
                 if (!isPopUpShowing){
-                    showDialog();
+                    showDialog(currentRating[position],v);
+
                 }
 
                 return true;
@@ -85,8 +71,8 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         });
 
     }
-    public void showDialog(){
-        isPopUpShowing = false;
+    public void showDialog(int currentRating, View v){
+        isPopUpShowing = true;
         popDialog = new AlertDialog.Builder(context);
 
         LinearLayout linearLayout = new LinearLayout(context);
@@ -97,13 +83,15 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         final RatingBar rating = new RatingBar(context);
         rating.setLayoutParams(lp);
         rating.setMax(5);
-        rating.setNumStars(currentRating[mPosition]);
+        rating.setNumStars(5);
+        rating.setRating(currentRating);
         linearLayout.setGravity(Gravity.CENTER);
         linearLayout.addView(rating);
 
         rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+//                currentRating[mPosition] = ( int ) v;
                 System.out.println("Rated val:"+v);
             }
         });
@@ -113,6 +101,13 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         popDialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                int pos = getItemCount();
+                if (pos != RecyclerView.NO_POSITION){
+
+                }
+                String stars = String.valueOf(rating.getRating());
+                Toast.makeText(context, stars, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
                 isPopUpShowing = false;
             }
@@ -120,6 +115,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         popDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 dialog.cancel();
                 isPopUpShowing = false;
             }

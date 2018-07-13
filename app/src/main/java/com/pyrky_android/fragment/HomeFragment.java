@@ -2,8 +2,6 @@ package com.pyrky_android.fragment;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -26,12 +24,9 @@ import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -41,7 +36,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.pyrky_android.ExpandableListData;
-import com.pyrky_android.Manifest;
 import com.pyrky_android.R;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 import com.pyrky_android.adapter.ExpandableListAdapter;
@@ -81,6 +75,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
     //Location
     double lat[] = {70.01383623,56.50329796,1.23736985,-24.33605988,11.38350584,-58.68375965,44.87310434,147.64797704,-3.02408824,-21.33447419};
     double lng[] = {-24.21957723,56.50329796,-163.58662616,16.88948658,62.62863347,-43.46925429,-91.28527609,85.94545339,-82.49033554,-175.53067807};
+    int mLocationImage[] = {R.drawable.loc0,R.drawable.loc1,R.drawable.loc2,R.drawable.loc3,
+            R.drawable.loc4,R.drawable.loc5,R.drawable.loc6,R.drawable.loc7,R.drawable.loc8,R.drawable.loc9};
     private ArrayList<LatLng> latlngs = new ArrayList<>();
 
     private static final int LOCATION_REQUEST_CODE = 101;
@@ -124,7 +120,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
         mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
         mNearestPlaceRecycler.setHasFixedSize(true);
 
-        mNearestrecyclerAdapter = new NearestRecyclerAdapter(getActivity(), mNearestPlacesImages, mNearestPlacesAve, mNearestPlacesCity);
+        mNearestrecyclerAdapter = new NearestRecyclerAdapter(getActivity(), mNearestPlacesImages, mNearestPlacesAve, mNearestPlacesCity, mLocationImage);
         mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
         mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
 

@@ -1,28 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content" android:layout_height="wrap_content">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="4dp"
+        android:elevation="3dp"
+        android:id="@+id/nearest_place_img_card">
     <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:id="@+id/nearest_place_image"
         android:src="@mipmap/ic_launcher"
         />
+    </android.support.v7.widget.CardView>
     <TextView
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:id="@+id/nearest_place_ave"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
         android:gravity="center"
         android:text="1st Avenue"
-        android:layout_below="@id/nearest_place_image"
+        android:layout_below="@id/nearest_place_img_card"
         />
     <TextView
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:id="@+id/nearest_place_city"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
         android:gravity="center"
         android:text="City 1"
         android:layout_below="@id/nearest_place_ave"
+        />
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/nearest_place_distance"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:text="50 - 100m"
+        android:layout_below="@id/nearest_place_city"
         />
 </RelativeLayout>

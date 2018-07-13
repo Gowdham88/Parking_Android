@@ -6,24 +6,25 @@ package com.pyrky_android;
 
 public class Users {
 
-    private String displayName;
+    private String userName;
     private String email;
     private String password;
     private String carCategory;
-
-    public Users(String displayName, String email, String password, String carCategory) {
-        this.displayName = displayName;
+    private String profileImageUrl;
+    private String platform;
+    public Users(String userName, String email, String password, String carCategory) {
+        this.userName = userName;
         this.email = email;
         this.password = password;
         this.carCategory = carCategory;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getEmail() {

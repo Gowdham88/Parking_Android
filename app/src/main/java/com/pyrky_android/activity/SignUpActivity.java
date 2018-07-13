@@ -15,7 +15,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,13 +67,20 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-
+        RelativeLayout parentLayout = findViewById(R.id.signup_parent_layout);
         TextView toSignIn = findViewById(R.id.already_have_account);
         Button signUp = findViewById(R.id.sign_up_button);
         mEmail = findViewById(R.id.et_email);
         mPassword = findViewById(R.id.et_password);
         mUserName = findViewById(R.id.et_user_name);
 
+        parentLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                hideKeyboard(v);
+                return false;
+            }
+        });
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,6 +154,12 @@ public class SignUpActivity extends AppCompatActivity {
             mAuth.signOut();
 
         }
+    }
+
+    protected void hideKeyboard(View view)
+    {
+        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     private void login(String email, String password, String userName){
