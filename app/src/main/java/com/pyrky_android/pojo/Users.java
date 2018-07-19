@@ -1,4 +1,4 @@
-package com.pyrky_android;
+package com.pyrky_android.pojo;
 
 /**
  * Created by thulirsoft on 7/3/18.
@@ -12,10 +12,10 @@ public class Users {
     private String carCategory;
     private String profileImageUrl;
     private String platform;
-    public Users(String userName, String email, String password, String carCategory) {
+    public Users(String userName, String email,String profileImageUrl, String carCategory) {
         this.userName = userName;
         this.email = email;
-        this.password = password;
+        this.profileImageUrl = profileImageUrl;
         this.carCategory = carCategory;
     }
 
@@ -35,19 +35,19 @@ public class Users {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getCarCategory() {
         return carCategory;
     }
 
     public void setCarCategory(String carCategory) {
         this.carCategory = carCategory;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

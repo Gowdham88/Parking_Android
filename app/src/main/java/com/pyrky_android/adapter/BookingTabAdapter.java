@@ -16,8 +16,6 @@ public class BookingTabAdapter extends FragmentStatePagerAdapter {
 
     String tabTitles[] = new String[]{"Current Bookings", "History"};
     Context context;
-    FragmentManager fragmentManager;
-    int mNumofTab;
 
     public BookingTabAdapter(FragmentManager fm, Context context) {
         super(fm);
@@ -49,10 +47,4 @@ public class BookingTabAdapter extends FragmentStatePagerAdapter {
         return tabTitles[position];
     }
 
-//    public View getTabView(int position) {
-//        View tab = LayoutInflater.from(context).inflate(R.layout.fragment_upcoming_events, null);
-//        TextView tv = ( TextView ) tab.findViewById(R.id.event_title);
-//        tv.setText(tabTitles[position]);
-//        return tab;
-//    }
 }

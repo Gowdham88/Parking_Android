@@ -26,14 +26,14 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
     private Context context;
     private int images[];
     private String[] mAve,mCity;
-    double lat[] = {70.01383623,56.50329796,1.23736985,-24.33605988,11.38350584,
+    private double lat[] = {70.01383623,56.50329796,1.23736985,-24.33605988,11.38350584,
             -58.68375965,44.87310434,147.64797704,-3.02408824,-21.33447419};
-    double lng[] = {-24.21957723,56.50329796,-163.58662616,16.88948658,62.62863347,
+    private double lng[] = {-24.21957723,56.50329796,-163.58662616,16.88948658,62.62863347,
             -43.46925429,-91.28527609,85.94545339,-82.49033554,-175.53067807};
-    String mDistance[] = {"10 - 30m","50 - 100m","70 - 400m","500 - 550m","60 - 600m",
+    private String mDistance[] = {"10 - 30m","50 - 100m","70 - 400m","500 - 550m","60 - 600m",
             "150 - 300m","80 - 90m","150 - 155m","30 - 35m","800 - 850m"};
-    int mLocationImage[];
-    private ArrayList<LatLng> latlngs = new ArrayList<>();
+    private int mLocationImage[];
+
     public NearestRecyclerAdapter(Context context, int[] images, String[] mAve, String[] mCity, int[] mLocationImage) {
         this.context = context;
         this.images = images;

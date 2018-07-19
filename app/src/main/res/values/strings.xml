@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">pyrky_android</string>
+    <string name="app_name">Pyrky</string>
     <string name="already_have_an_account_sign_in_here">Already have an account? Sign In here</string>
     <string name="sign_up">Sign Up</string>
     <string name="email">Email</string>
@@ -26,4 +26,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_nearest_loc_maps">Map</string>
     <string name="save">Save</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="enter_your_user_name">Enter your user name</string>
 </resources>

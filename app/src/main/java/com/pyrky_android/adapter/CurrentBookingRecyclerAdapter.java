@@ -18,9 +18,9 @@ import com.pyrky_android.activity.NearestLocMapsActivity;
  */
 
 public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentBookingRecyclerAdapter.ViewHolder> {
-    Context context;
-    String places[];
-    String dateTime[];
+    private Context context;
+    private String places[];
+    private String dateTime[];
     public CurrentBookingRecyclerAdapter(Context context, String[] places,String[] dateTime) {
         this.context = context;
         this.places = places;
@@ -32,8 +32,6 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_current_booking_list, parent, false);
-
-        //view.setOnClickListener(HomeActivity.myOnClickListener);
 
         ViewHolder myViewHolder = new ViewHolder(view);
         return myViewHolder;
@@ -57,9 +55,9 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
         return places.length;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         TextView city,dateTime,viewCar;
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             city = itemView.findViewById(R.id.place);
             dateTime = itemView.findViewById(R.id.date_time);

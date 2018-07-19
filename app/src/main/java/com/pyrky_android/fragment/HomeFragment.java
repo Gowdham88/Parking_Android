@@ -1,5 +1,7 @@
 package com.pyrky_android.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -9,12 +11,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
@@ -36,6 +40,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.pyrky_android.ExpandableListData;
+import com.pyrky_android.MyApplication;
 import com.pyrky_android.R;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 import com.pyrky_android.adapter.ExpandableListAdapter;
@@ -45,6 +50,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import retrofit2.Retrofit;
 
 import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
 
@@ -92,20 +101,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
     GoogleMap mGoogleMap;
     Button mSearchButton;
     PlaceAutocompleteFragment autocompleteFragment;
+    @Inject
+    Retrofit retrofit;
+
+            @Override
+            public void onAttach(Context context) {
+                ((MyApplication)context.getApplicationContext()).getNetComponent().inject(this);
+                super.onAttach(context);
+            }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Instantiating the GoogleApiClient
         buildGoogleApiClient();
-
-//        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-//                .addApi(LocationServices.API)
-//                .addConnectionCallbacks(this)
-//                .addOnConnectionFailedListener(this)
-//                .build();
     }
-
-    @Nullable
+            @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, null);
@@ -132,10 +143,36 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
         mSearchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mSearchView.setIconified(false);
+            }
+        });
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                hideKeyboard(mSearchView);
+                mExpandableListView.setVisibility(View.GONE);
+                isExpandableListEnabled = false;
+                return false;
+            }
+        });
+        mSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus){
+                    hideKeyboard(v);
+                }
+                mExpandableListView.setVisibility(View.GONE);
+                isExpandableListEnabled = false;
             }
         });
 
+        mSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mExpandableListView.setVisibility(View.GONE);
+                isExpandableListEnabled = false;
+            }
+        });
         mSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,7 +197,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
                     mExpandableListView.setVisibility(View.GONE);
                     isExpandableListEnabled = false;
                 }
-
+             /*   FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.filter_fragment,FiltersFragment.newInstance());
+                transaction.addToBackStack(null);
+                transaction.commit();*/
             }
         });
 
@@ -200,6 +240,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
             }
         });
 
+
+
        /* autocompleteFragment = getSupportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment);
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -237,26 +279,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
         mGoogleApiClient.disconnect();
 
     }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-
-
         checkLocationandAddToMap();
     }
-
     //Callback invoked once the GoogleApiClient is connected successfully
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
         mMapView = ( SupportMapFragment ) getChildFragmentManager().findFragmentById(R.id.current_location_view);
         mMapView.getMapAsync(this);
-
         }
-
-
-
     @Override
     public void onConnectionSuspended(int i) {
         Toast.makeText(getActivity(), String.valueOf(i), Toast.LENGTH_SHORT).show();
@@ -271,6 +304,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
         switch (requestCode) {
             case LOCATION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
+                    buildGoogleApiClient();
                     checkLocationandAddToMap();
                 } else
                     Toast.makeText(getActivity(), "Location Permission Denied", Toast.LENGTH_SHORT).show();
@@ -314,5 +348,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
                     .build();
             mGoogleApiClient.connect();
         }
-    }
+
+            public void hideKeyboard(View view){
+                InputMethodManager inputMethodManager =(InputMethodManager )getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
+        }
 //Current Location = 13.0002586,80.2046057

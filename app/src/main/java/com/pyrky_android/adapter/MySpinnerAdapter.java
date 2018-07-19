@@ -19,8 +19,8 @@ import com.pyrky_android.R;
 
 public class MySpinnerAdapter extends ArrayAdapter {
 
-    String[] languages;
-    Context context;
+    private String[] languages;
+    private Context context;
     public MySpinnerAdapter(@NonNull Context context, int resource, String[] objects) {
         super(context, resource, objects);
         this.context = context;

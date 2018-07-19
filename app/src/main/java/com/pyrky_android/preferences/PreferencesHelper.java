@@ -15,7 +15,7 @@ public class PreferencesHelper {
     public static final String PREFERENCE_EMAIL = USER_PREFERENCES + ".email";
     public static final String PREFERENCE_ID = USER_PREFERENCES + ".id";
     public static final String PREFERENCE_PROFILE_PIC = ".profilePic";
-    public static final String PREFERENCE_STATUS = ".status";
+    public static final String PREFERENCE_ISLOGGEDIN = ".isloggedin";
     public static final String PREF_FIREBASE_TOKEN = ".fbtoken";
     public static final String PREFERENCE_FIREBASE_UUID = ".fbuid";
     //End Region
@@ -34,8 +34,8 @@ public class PreferencesHelper {
         editor.remove(PREFERENCE_EMAIL);
         editor.remove(PREFERENCE_ID);
         editor.remove(PREFERENCE_PROFILE_PIC);
-        editor.remove(PREFERENCE_STATUS);
         editor.remove(PREF_FIREBASE_TOKEN);
+        editor.remove(PREFERENCE_ISLOGGEDIN);
         editor.apply();
     }
 

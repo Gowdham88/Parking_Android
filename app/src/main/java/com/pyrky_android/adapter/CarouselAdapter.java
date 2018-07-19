@@ -6,50 +6,57 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.pyrky_android.R;
 
+
 /**
- * Created by thulirsoft on 7/4/18.
+ * Created by thulirsoft on 7/2/18.
  */
 
 public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHolder> {
-    private Context mContext;
+    private Context context;
+    private int[] icons;
+    private LayoutInflater inflater;
     private String[] languages;
-
-    public CarouselAdapter(Context context, String[] languages) {
-        this.mContext = context;
+    public CarouselAdapter(Context context, int[] icons, String[] languages) {
+        this.context = context;
+        this.icons = icons;
         this.languages = languages;
+        inflater = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_carousel, parent, false);
+    public CarouselAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = inflater.inflate(R.layout.item_carousel, parent, false);
 
-        //view.setOnClickListener(HomeActivity.myOnClickListener);
-
-        ViewHolder myViewHolder = new ViewHolder(view);
-        return myViewHolder;
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CarouselAdapter.ViewHolder holder, int position) {
 
-
+        holder.carIcon.setImageResource(R.mipmap.ic_launcher_round);
+        holder.carType.setText(languages[position]);
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return icons.length;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-
+        ImageView carIcon;
+        TextView carType;
         ViewHolder(View itemView) {
             super(itemView);
+            carIcon = itemView.findViewById(R.id.car_icon);
+            carType = itemView.findViewById(R.id.car_size);
+
         }
     }
 }

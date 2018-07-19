@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="200dp"
-    android:layout_height="100dp" android:background="@android:color/darker_gray">
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="211dp"
+    android:layout_height="75dp" android:background="@drawable/carousel_background">
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_width="27.86dp"
+        android:layout_height="53.16dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:id="@+id/car_icon"
-        android:src="@mipmap/ic_launcher"
+        android:layout_marginEnd="13.1dp"
+        android:src="@drawable/car2_icon"
         />
     <TextView
         android:layout_width="match_parent"
@@ -23,7 +23,8 @@
         android:gravity="start"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
-        android:textSize="18sp"
+        android:textSize="12sp"
+        android:layout_marginBottom="7dp"
         android:layout_marginStart="10dp" />
     <TextView
         android:layout_width="match_parent"
@@ -35,6 +36,6 @@
         android:layout_below="@id/car_size"
         android:text="[3 to 4.5m]"
         android:layout_marginLeft="10dp"
-        android:textSize="16sp"
+        android:textSize="12sp"
         android:layout_marginStart="10dp" />
     </RelativeLayout>

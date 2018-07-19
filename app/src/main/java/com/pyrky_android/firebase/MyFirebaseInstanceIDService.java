@@ -53,36 +53,40 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
      *
      * @param token The new token.
      */
-//    private void sendRegistrationToServer(String token) {
-//        // TODO: Implement this method to send token to your app server.
-//        ApiServices apiServices = ServiceGenerator.createServiceHeader(ApiServices.class);
-//        UserRegister signIn = new UserRegister();
-//        signIn.setFcmToken(token);
-//        Call<CommonResponse> call = apiServices.updateFcmId("token",signIn);
-//        Log.d(TAG, "call " + String.valueOf(call));
-//        call.enqueue(new Callback<CommonResponse>() {
-//            @Override
-//            public void onResponse(Call<CommonResponse> call, Response<CommonResponse> response) {
-//                int response_code = response.code();
-//                Log.d(TAG, "`response code " + response_code);
-//                CommonResponse result = response.body();
-//                if (response_code == 200) {
-//                    if (result.getStatus()) {
-//
-//                        Toast.makeText(getApplicationContext(), "Token Updated", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(getApplicationContext(), "failed to update token!!", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<CommonResponse> call, Throwable t) {
-//
-//            }
-//        });
-//
-//    }
+
+/*
+    private void sendRegistrationToServer(String token) {
+        // TODO: Implement this method to send token to your app server.
+        ApiServices apiServices = ServiceGenerator.createServiceHeader(ApiServices.class);
+        UserRegister signIn = new UserRegister();
+        signIn.setFcmToken(token);
+        Call<CommonResponse> call = apiServices.updateFcmId("token",signIn);
+        Log.d(TAG, "call " + String.valueOf(call));
+        call.enqueue(new Callback<CommonResponse>() {
+            @Override
+            public void onResponse(Call<CommonResponse> call, Response<CommonResponse> response) {
+                int response_code = response.code();
+                Log.d(TAG, "`response code " + response_code);
+                CommonResponse result = response.body();
+                if (response_code == 200) {
+                    if (result.getStatus()) {
+
+                        Toast.makeText(getApplicationContext(), "Token Updated", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "failed to update token!!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommonResponse> call, Throwable t) {
+
+            }
+        });
+
+    }
+*/
+
 
 
 

@@ -30,7 +30,6 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     private String dateTime[];
     private int[] currentRating;
     private int mPosition;
-    private AlertDialog.Builder popDialog;
     private Boolean isPopUpShowing = false;
     public HistoryRecyclerAdapter(Context context, String[] places, String[] mTimeDate, int[] mCurrentRating) {
         this.context = context;
@@ -73,7 +72,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     }
     public void showDialog(int currentRating, View v){
         isPopUpShowing = true;
-        popDialog = new AlertDialog.Builder(context);
+        AlertDialog.Builder popDialog = new AlertDialog.Builder(context);
 
         LinearLayout linearLayout = new LinearLayout(context);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -131,10 +130,10 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         return places.length;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         TextView city,dateTime,viewCar;
         RatingBar ratingBar;
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             city = itemView.findViewById(R.id.place);
             dateTime = itemView.findViewById(R.id.date_time);

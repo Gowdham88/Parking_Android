@@ -1,19 +1,18 @@
 package com.pyrky_android.activity;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
-import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -36,12 +35,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pyrky_android.R;
-import com.pyrky_android.Users;
-import com.pyrky_android.adapter.MyDataAdapter;
+import com.pyrky_android.pojo.Users;
+import com.pyrky_android.adapter.CarouselAdapter;
 import com.pyrky_android.preferences.PreferencesHelper;
 import com.pyrky_android.utils.Utils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SignUpActivity extends AppCompatActivity {
@@ -50,22 +53,35 @@ public class SignUpActivity extends AppCompatActivity {
     private AlertDialog dialog;
 
     Context mContext = this;
+    ProgressDialog progressDialog;
     Spinner mSpinner;
     int mCarouselCount = 0;
-    String[] mLanguages = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
+    String[] mCarCategory = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
+    String[] mCarCategoryId = { "1", "2", "3", "4", "5" };
+    String[] mCarCategoryImages = {"compactCar", "smallCar", "mediumCar", "fullCar", "vanPickup"};
+    String[] carCategoryMeter = {"3.5 - 4.5m", "2.5 - 3.5m", "4 - 5m", "5 - 5.5m", "5.5 - 6.5m"};
+
     int mIcons[] = {R.mipmap.ic_launcher,R.mipmap.ic_launcher_round,R.mipmap.ic_launcher,R.mipmap.ic_launcher_round, R.mipmap.ic_launcher};
     TextInputEditText mEmail,mPassword,mUserName;
 
     @Override
     protected void onStart() {
         super.onStart();
-
+        //If the user already logged in, the screen should navigate to HomeActivity
+        if (PreferencesHelper.getPreferenceBoolean(mContext,PreferencesHelper.PREFERENCE_ISLOGGEDIN)){
+            final Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+            SignUpActivity.this.finish();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+
 
         RelativeLayout parentLayout = findViewById(R.id.signup_parent_layout);
         TextView toSignIn = findViewById(R.id.already_have_account);
@@ -74,18 +90,38 @@ public class SignUpActivity extends AppCompatActivity {
         mPassword = findViewById(R.id.et_password);
         mUserName = findViewById(R.id.et_user_name);
 
-        parentLayout.setOnTouchListener(new View.OnTouchListener() {
+       mEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+           @Override
+           public void onFocusChange(View v, boolean hasFocus) {
+               if (!hasFocus){
+//                   Utils.hideKeyboard(SignUpActivity.this);
+                   hideKeyboard(v);
+               }
+           }
+       });
+        mPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                hideKeyboard(v);
-                return false;
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus){
+//                    Utils.hideKeyboard(SignUpActivity.this);
+                    hideKeyboard(v);
+                }
+            }
+        });
+        mUserName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus){
+//                    Utils.hideKeyboard(SignUpActivity.this);
+                    hideKeyboard(v);
+                }
             }
         });
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-              login(mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),mUserName.getText().toString().trim());
+              signUp(mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),mUserName.getText().toString().trim());
             }
         });
         mEmail.setOnClickListener(new View.OnClickListener() {
@@ -111,26 +147,24 @@ public class SignUpActivity extends AppCompatActivity {
         }
 //        Spinner mSpinner = findViewById(R.id.car_category);
 //        mSpinner.setAdapter(new MySpinnerAdapter(SignUpActivity.this, R.layout.item_carousel,
-//                mLanguages));
+//                mCarCategory));
 
         //Carousel
         final CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
         layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
         layoutManager.setMaxVisibleItems(1);
 
-
         final RecyclerView recyclerView = findViewById(R.id.carousel_recycler);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(new MyDataAdapter(this, mIcons, mLanguages));
+        recyclerView.setAdapter(new CarouselAdapter(this, mIcons, mCarCategory));
         recyclerView.addOnScrollListener(new CenterScrollListener());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                     mCarouselCount = layoutManager.getCenterItemPosition();
-                    /*String s = String.valueOf(layoutManager.getCenterItemPosition());
-                    Toast.makeText(mContext, s, Toast.LENGTH_SHORT).show();*/
+
                 }
             });
         }
@@ -139,9 +173,9 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(SignUpActivity.this,SignInActivity.class));
+                SignUpActivity.this.finish();
             }
         });
-
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -158,11 +192,12 @@ public class SignUpActivity extends AppCompatActivity {
 
     protected void hideKeyboard(View view)
     {
-        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        InputMethodManager inputMethodManager =(InputMethodManager )getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void login(String email, String password, String userName){
+    private void signUp(String email, String password, String userName){
+        showProgressDialog();
         if (validateForm()) {
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -177,8 +212,6 @@ public class SignUpActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<GetTokenResult> task) {
                                                 if (task.isSuccessful()) {
-//                                                Intent in=new Intent(SignupActivity.this,LoginScreen.class);
-//                                                startActivity(in);
                                                     final FirebaseUser user = mAuth.getCurrentUser();
 
                                                     AddDatabase(user);
@@ -187,28 +220,31 @@ public class SignUpActivity extends AppCompatActivity {
                                                 }
                                             }
                                         });
-
+                                hideProgressDialog();
                                 Toast.makeText(mContext, "Successfully Signed in " + user.getEmail(), Toast.LENGTH_LONG).show();
 //                            updateUI(user);
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
                                 Toast.makeText(SignUpActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                hideProgressDialog();
 //                            updateUI(null);
                             }
 
                             // ...
                         }
                     });
+        }else{
+            hideProgressDialog();
         }
     }
 
     private void AddDatabase(final FirebaseUser user){
 
-        final Users users = new Users(mUserName.getText().toString().trim(),mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),mLanguages[mCarouselCount]);
+        final Users users = new Users(mUserName.getText().toString().trim(),mEmail.getText().toString().trim(),"default", mCarCategoryId[mCarouselCount]);
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 //        hideProgressDialog();
-
+        deleteField(db,user.getUid());
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -220,6 +256,7 @@ public class SignUpActivity extends AppCompatActivity {
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+                    PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
 
                     final Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
                     startActivity(intent);
@@ -239,7 +276,8 @@ public class SignUpActivity extends AppCompatActivity {
                                 }
 
                             });
-
+                    hideProgressDialog();
+//                    progressDialog.dismiss();
                     final Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
                     startActivity(intent);
                     SignUpActivity.this.finish();
@@ -248,7 +286,7 @@ public class SignUpActivity extends AppCompatActivity {
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
-
+                    PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
                 }
 
             }
@@ -260,24 +298,35 @@ public class SignUpActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Login failed",Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
+    private void deleteField(FirebaseFirestore db, String uid){
 
+        DocumentReference docRef = db.collection("users").document(uid);
+
+        // Remove the 'capital' field from the document
+        Map<String,Object> updates = new HashMap<>();
+        updates.put("password", FieldValue.delete());
+
+        docRef.update(updates).addOnCompleteListener(new OnCompleteListener<Void>() {
+            // [START_EXCLUDE]
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {}
+            // [START_EXCLUDE]
+        });
     }
 
     public void showProgressDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignUpActivity.this);
-        //View view = getLayoutInflater().inflate(R.layout.progress);
-//        alertDialog.setView(R.layout.progress);
-        alertDialog.setTitle("In Progress");
-        dialog = alertDialog.create();
-        dialog.show();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
     }
 
     public void hideProgressDialog(){
-        if(dialog!=null)
-            dialog.dismiss();
+        if(progressDialog!=null)
+            progressDialog.dismiss();
     }
 
 
