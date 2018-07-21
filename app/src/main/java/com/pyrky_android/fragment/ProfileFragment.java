@@ -23,21 +23,24 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.esafirm.imagepicker.features.ImagePicker;
-import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.myhexaville.smartimagepicker.ImagePicker;
+import com.pyrky_android.activity.SignUpActivity;
 import com.pyrky_android.pojo.ProfileImage;
 import com.pyrky_android.R;
 import com.pyrky_android.adapter.MySpinnerAdapter;
 import com.pyrky_android.preferences.PreferencesHelper;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -55,9 +58,12 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     ImageView mProfileImage;
     private final int PICK_IMAGE_REQUEST = 71;
     private Uri filePath;
+    ActionBar actionBar;
+    ImagePicker mImagePicker;
     //Firebase
     FirebaseStorage storage;
     StorageReference storageReference;
+    UploadTask uploadTask;
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
     }
@@ -65,8 +71,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-
+        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setIcon(R.drawable.ic_settings);
 
     }
 
@@ -85,26 +91,33 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-        final ImagePicker imagePicker = ImagePicker.create(this);
+        mImagePicker = new com.myhexaville.smartimagepicker.ImagePicker(getActivity(),this, imageUri -> {mProfileImage.setImageURI(imageUri);})
+                .setWithImageCrop(1,1);
 
         email = view.findViewById(R.id.et_email);
         mProfileImage = view.findViewById(R.id.profile_img);
         final Spinner spinner = view.findViewById(R.id.car_category_spinner);
         Button save = view.findViewById(R.id.save_button);
+
+
         String profilePic = PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC);
+        if (!profilePic.equals("")) {
+            Picasso.with(getActivity()).load(profilePic)
+                    .into(mProfileImage);
+        }
        downloadImage();
 
 
         mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* imagePicker.single();
-                imagePicker.showCamera(true);
-                imagePicker.start();*/
-               chooseImage();
+
             }
         });
+
         email.setText(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_EMAIL));
+//        int carCategory = Integer.parseInt(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_CAR));
+//        mLanguages[0] = mLanguages[carCategory];
         spinner.setAdapter(new MySpinnerAdapter(getActivity(), R.layout.item_carousel, mLanguages));
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +125,11 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                 UpdateData(email.getText().toString().trim(), spinner.getSelectedItem().toString());
             }
         });
+
+        save.setVisibility(View.GONE);
+        email.setEnabled(false);
+        spinner.setEnabled(false);
+
         return view;
     }
 
@@ -138,32 +156,11 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
-            // Get a list of picked images
-            List<Image> images = ImagePicker.getImages(data);
-            // or get a single image only
-            Image image = ImagePicker.getFirstImageOrNull(data);
-
-            PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC,image.getPath());
-//            Glide.with(getActivity()).load(image.getPath()).into(mProfileImage);
-
-
-            Toast.makeText(getActivity(), image.getPath(), Toast.LENGTH_SHORT).show();
-        }
-
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null )
-        {
-            filePath = data.getData();
-            try {
-                uploadImage();
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
-                mProfileImage.setImageBitmap(bitmap);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+        mImagePicker.handleActivityResult(resultCode,requestCode,data);
+        File file = mImagePicker.getImageFile();
+        if (file!=null){
+            filePath = Uri.fromFile(file);
+            uploadImage();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -171,13 +168,6 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     public void writeToDatabase(String profileImage,String email){
 
         ProfileImage profileImages = new ProfileImage(profileImage,email);
-    }
-
-    private void chooseImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 
     private void uploadImage() {
@@ -188,48 +178,56 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
             String profileImageUrl = UUID.randomUUID().toString();
+            Uri file = Uri.fromFile(new File(String.valueOf(filePath)));
             PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC,profileImageUrl);
-            StorageReference ref = storageReference.child("profile_image/"+ profileImageUrl);
-//            StorageReference ref = storageReference.child("profile_image/"+ UUID.randomUUID().toString());
-            ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(getActivity(), "Uploaded", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(getActivity(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
-                        }
-                    });
+
+            // Create file metadata including the content type
+            StorageMetadata metadata = new StorageMetadata.Builder()
+                    .setContentType("image/jpg")
+                    .build();
+
+            StorageReference ref = storageReference.child("profile_image/"+ filePath.getLastPathSegment());
+            uploadTask = ref.putFile(filePath);
+
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getActivity(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getActivity(), taskSnapshot.getUploadSessionUri().toString(), Toast.LENGTH_SHORT).show();
+//                    downloadUrl();
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                            .getTotalByteCount());
+                    progressDialog.setMessage("Uploading "+(int)progress+"%");
+                }
+            });
+
         }
     }
 
     private void downloadImage(){
-        StorageReference storageRef =
-                FirebaseStorage.getInstance().getReference();
-        storageRef.child("profile_image/"+PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC))
-                .getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Glide.with(getActivity())
-                                .load(storageReference)
-                                .into(mProfileImage);
-                    }
-                });
+
+//        StorageReference storageRef =
+//                FirebaseStorage.getInstance().getReference();
+//                storageRef.child("profile_image/"+PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC))
+//                .getDownloadUrl()
+//                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                    @Override
+//                    public void onSuccess(Uri uri) {
+//                        Glide.with(getActivity())
+//                                .load(storageReference)
+//                                .into(mProfileImage);
+//                    }
+//                });
     }
 
 }

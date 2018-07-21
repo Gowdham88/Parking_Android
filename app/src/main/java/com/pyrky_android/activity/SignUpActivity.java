@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,18 +40,27 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.myhexaville.smartimagepicker.ImagePicker;
 import com.pyrky_android.R;
 import com.pyrky_android.pojo.Users;
 import com.pyrky_android.adapter.CarouselAdapter;
 import com.pyrky_android.preferences.PreferencesHelper;
 import com.pyrky_android.utils.Utils;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "signup";
+    private final int PICK_IMAGE_REQUEST = 71;
     private FirebaseAuth mAuth;
     private AlertDialog dialog;
 
@@ -63,7 +75,14 @@ public class SignUpActivity extends AppCompatActivity {
 
     int mIcons[] = {R.mipmap.ic_launcher,R.mipmap.ic_launcher_round,R.mipmap.ic_launcher,R.mipmap.ic_launcher_round, R.mipmap.ic_launcher};
     TextInputEditText mEmail,mPassword,mUserName;
-
+    ImageView mProfileImage;
+    ImagePicker mImagePicker;
+    Uri mTempImageUrl;
+    String mProfileImageUrl = "";
+    //Firebase
+    FirebaseStorage storage;
+    StorageReference storageReference;
+    UploadTask uploadTask;
     @Override
     protected void onStart() {
         super.onStart();
@@ -81,7 +100,9 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-
+        //Image picker
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
 
         RelativeLayout parentLayout = findViewById(R.id.signup_parent_layout);
         TextView toSignIn = findViewById(R.id.already_have_account);
@@ -89,8 +110,13 @@ public class SignUpActivity extends AppCompatActivity {
         mEmail = findViewById(R.id.et_email);
         mPassword = findViewById(R.id.et_password);
         mUserName = findViewById(R.id.et_user_name);
+        mProfileImage = findViewById(R.id.profile_img);
 
-       mEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+        mImagePicker = new ImagePicker(SignUpActivity.this,null,imageUri -> {mProfileImage.setImageURI(imageUri);})
+                .setWithImageCrop(1,1);
+
+        mEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
            @Override
            public void onFocusChange(View v, boolean hasFocus) {
                if (!hasFocus){
@@ -117,11 +143,18 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mImagePicker.choosePicture(true);
+            }
+        });
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-              signUp(mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),mUserName.getText().toString().trim());
+              signUp(mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),mUserName.getText().toString().trim(), mProfileImageUrl);
             }
         });
         mEmail.setOnClickListener(new View.OnClickListener() {
@@ -196,7 +229,7 @@ public class SignUpActivity extends AppCompatActivity {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void signUp(String email, String password, String userName){
+    private void signUp(String email, String password, String userName, String mProfileImageUrl){
         showProgressDialog();
         if (validateForm()) {
             mAuth.createUserWithEmailAndPassword(email, password)
@@ -214,7 +247,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                 if (task.isSuccessful()) {
                                                     final FirebaseUser user = mAuth.getCurrentUser();
 
-                                                    AddDatabase(user);
+                                                    AddDatabase(user,email,password,userName, mProfileImageUrl);
                                                     Log.e("user", String.valueOf(user));
                                                     // Sign in success, update UI with the signed-in user's information
                                                 }
@@ -239,12 +272,10 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-    private void AddDatabase(final FirebaseUser user){
-
-        final Users users = new Users(mUserName.getText().toString().trim(),mEmail.getText().toString().trim(),"default", mCarCategoryId[mCarouselCount]);
+    private void AddDatabase(final FirebaseUser user, String email, String password, String userName, String mProfileImageUrl){
+        final Users users = new Users(userName,email,mProfileImageUrl, mCarCategoryId[mCarouselCount]);
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 //        hideProgressDialog();
-        deleteField(db,user.getUid());
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -254,8 +285,9 @@ public class SignUpActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
 
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC,mProfileImageUrl);
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+                    PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(mCarouselCount));
                     PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
 
                     final Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
@@ -284,7 +316,6 @@ public class SignUpActivity extends AppCompatActivity {
                     overridePendingTransition(0, 0);
 
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
                     PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
                 }
@@ -300,6 +331,50 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
+
+    private void uploadImage() {
+
+        if(mTempImageUrl != null)
+        {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+            String profileImageUrl = UUID.randomUUID().toString();
+            Uri file = Uri.fromFile(new File(String.valueOf(mTempImageUrl)));
+            PreferencesHelper.setPreference(this,PreferencesHelper.PREFERENCE_PROFILE_PIC,profileImageUrl);
+
+            // Create file metadata including the content type
+            StorageMetadata metadata = new StorageMetadata.Builder()
+                    .setContentType("image/jpg")
+                    .build();
+
+            StorageReference ref = storageReference.child("profile_image/"+ mTempImageUrl.getLastPathSegment());
+            uploadTask = ref.putFile(mTempImageUrl);
+
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(mContext, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    progressDialog.dismiss();
+                    Toast.makeText(mContext, taskSnapshot.getUploadSessionUri().toString(), Toast.LENGTH_SHORT).show();
+                    downloadUrl();
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                            .getTotalByteCount());
+                    progressDialog.setMessage("Uploading "+(int)progress+"%");
+                }
+            });
+
+        }
+    }
     private void deleteField(FirebaseFirestore db, String uid){
 
         DocumentReference docRef = db.collection("users").document(uid);
@@ -328,7 +403,35 @@ public class SignUpActivity extends AppCompatActivity {
         if(progressDialog!=null)
             progressDialog.dismiss();
     }
+    private void downloadUrl(){
+        final StorageReference ref = storageReference.child("profile_image/"+ mTempImageUrl.getLastPathSegment());
+        uploadTask = ref.putFile(mTempImageUrl);
+    Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+        @Override
+        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+            if (!task.isSuccessful()) {
+                throw task.getException();
+            }
 
+
+            // Continue with the task to get the download URL
+            return ref.getDownloadUrl();
+        }
+    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+        @Override
+        public void onComplete(@NonNull Task<Uri> task) {
+            if (task.isSuccessful()) {
+                Uri downloadUri = task.getResult();
+                mProfileImageUrl = String.valueOf(downloadUri);
+                PreferencesHelper.setPreference(mContext,PreferencesHelper.PREFERENCE_PROFILE_PIC,mProfileImageUrl);
+                Toast.makeText(mContext, downloadUri.toString(), Toast.LENGTH_SHORT).show();
+            } else {
+                // Handle failures
+                // ...
+            }
+        }
+    });
+    }
 
     private boolean validateForm() {
         boolean valid = true;
@@ -373,5 +476,24 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         return valid;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        mImagePicker.handleActivityResult(resultCode,requestCode,data);
+        File file = mImagePicker.getImageFile();
+        if (file!=null){
+            mTempImageUrl = Uri.fromFile(file);
+            uploadImage();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mImagePicker.handlePermission(requestCode, grantResults);
     }
 }
