@@ -25,10 +25,10 @@ android {
 
 dependencies {
 
-    ext{
+    ext {
         support_library_version = '27.1.1'
         google_play_services_version = '11.6.2'
-        dagger_version='2.14.1'
+        dagger_version = '2.14.1'
         crashlytics_version = '2.9.4'
     }
     implementation 'com.android.support:multidex:1.0.3'

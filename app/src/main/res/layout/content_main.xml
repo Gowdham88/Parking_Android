@@ -60,7 +60,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/ic_menu"
+            android:background="@drawable/ic_ham_menu"
             />
             <fragment
                 android:layout_width="match_parent"
@@ -127,8 +127,9 @@
         android:layout_marginStart="0dp"
         android:layout_alignParentBottom="true"
         android:background="?android:attr/windowBackground"
-        app:itemBackground="@android:color/darker_gray"
+        app:menu="@menu/bottom_navigation"
         app:itemIconTint="@drawable/bottom_nav_selector"
         app:itemTextColor="@drawable/bottom_nav_selector"
-        app:menu="@menu/bottom_navigation"/>
+    />
+
 </RelativeLayout>

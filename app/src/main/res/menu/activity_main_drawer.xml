@@ -7,19 +7,23 @@
         <item
             android:id="@+id/nav_home"
             android:title="Home"
-            android:icon="@drawable/ic_home"/>
+            android:icon="@drawable/ic_tab_home"
+            android:iconTint="@color/colorAccent"/>
         <item
             android:id="@+id/nav_booking"
             android:title="Booking"
-            android:icon="@drawable/ic_menu_gallery"/>
+            android:icon="@drawable/ic_bookings_menu"
+            android:iconTint="@color/colorAccent"/>
         <item
             android:id="@+id/nav_profile"
             android:title="Profile"
-            android:icon="@drawable/ic_profile"/>
+            android:icon="@drawable/ic_tab_user"
+            android:iconTint="@color/colorAccent"/>
         <item
             android:id="@+id/nav_logout"
             android:title="Logout"
-            android:icon="@drawable/ic_notifications"
+            android:icon="@drawable/ic_logout"
+            android:iconTint="@color/colorAccent"
             />
         <!--android:icon="@drawable/ic_menu_manage"-->
     </group>

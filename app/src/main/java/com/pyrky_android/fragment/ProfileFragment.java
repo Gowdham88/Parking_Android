@@ -71,8 +71,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        actionBar.setIcon(R.drawable.ic_settings);
+//        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+//        actionBar.setIcon(R.drawable.ic_settings);
 
     }
 

@@ -10,8 +10,9 @@
         android:elevation="3dp"
         android:id="@+id/nearest_place_img_card">
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="140dp"
+        android:layout_height="81dp"
+        android:background="@android:color/darker_gray"
         android:id="@+id/nearest_place_image"
         android:src="@mipmap/ic_launcher"
         />
@@ -20,9 +21,11 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:id="@+id/nearest_place_ave"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="15dp"
         android:gravity="center"
+        android:textSize="12sp"
         android:text="1st Avenue"
+        android:textColor="#404B69"
         android:layout_below="@id/nearest_place_img_card"
         />
     <TextView
@@ -31,7 +34,9 @@
         android:id="@+id/nearest_place_city"
         android:layout_marginTop="2dp"
         android:gravity="center"
+        android:textSize="12sp"
         android:text="City 1"
+        android:textColor="#404B69"
         android:layout_below="@id/nearest_place_ave"
         />
     <TextView
@@ -40,6 +45,8 @@
         android:id="@+id/nearest_place_distance"
         android:layout_marginTop="2dp"
         android:gravity="center"
+        android:textColor="#404B69"
+        android:textSize="12sp"
         android:text="50 - 100m"
         android:layout_below="@id/nearest_place_city"
         />
