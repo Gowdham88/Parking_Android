@@ -1,4 +1,4 @@
-package com.pyrky_android.activity;
+package com.pyrky_android.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -16,33 +16,32 @@ import com.pyrky_android.R;
  * Created by thulirsoft on 7/2/18.
  */
 
-public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder> {
-
-    Context context;
-    int[] icons;
-    LayoutInflater inflater;
-    String[] languages;
-    public MyDataAdapter(Context context, int[] icons, String[] languages) {
+public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHolder> {
+    private Context context;
+    private int[] icons;
+    private LayoutInflater inflater;
+    private String[] languages;
+    public CarouselAdapter(Context context, int[] icons, String[] languages) {
         this.context = context;
         this.icons = icons;
         this.languages = languages;
         inflater = LayoutInflater.from(context);
     }
 
-
     @NonNull
     @Override
-    public MyDataAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.item_spinner, parent, false);
+    public CarouselAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = inflater.inflate(R.layout.item_carousel, parent, false);
 
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyDataAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CarouselAdapter.ViewHolder holder, int position) {
 
         holder.carIcon.setImageResource(R.mipmap.ic_launcher_round);
         holder.carType.setText(languages[position]);
+
     }
 
     @Override

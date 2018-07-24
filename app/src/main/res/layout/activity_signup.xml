@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/signup_parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
     xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:background="@color/white">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        >
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
         <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:id="@+id/profile_img"
+            android:layout_width="95dp"
+            android:layout_height="95dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="28dp"
             android:layout_gravity="center"
             android:src="@mipmap/ic_launcher" />
 
@@ -29,103 +35,107 @@
         android:id="@+id/tx_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="25dp"
-        android:layout_marginStart="25dp"
+        android:layout_marginBottom="24dp"
+        android:textColor="#404B69"
         android:text="@string/email" />
-        <android.support.design.widget.TextInputLayout
+      <!--  <android.support.design.widget.TextInputLayout
             android:id="@+id/et_email_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="25dp"
-            android:layout_marginLeft="25dp"
-            >
-
+            android:layout_height="wrap_content">
+-->
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
-        </android.support.design.widget.TextInputLayout>
+                android:ems="10"
+                android:textColorHint="#B6B6B6"
+                android:drawableBottom="#404B69"
+                android:textSize="12sp"
+                android:hint="@string/enter_your_email"
+                android:imeOptions="actionNext"
+                android:focusable="auto"/>
+        <!--</android.support.design.widget.TextInputLayout>-->
         <TextView
             android:id="@+id/tx_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginStart="25dp"
-            android:text="@string/password" />
-        <android.support.design.widget.TextInputLayout
+            android:text="@string/password"
+            android:textColor="#404B69"
+            android:layout_marginBottom="24dp"/>
+   <!--     <android.support.design.widget.TextInputLayout
             android:id="@+id/et_password_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="25dp"
-            android:layout_marginLeft="25dp"
-            >
-
+            android:layout_height="wrap_content">-->
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/et_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
-        </android.support.design.widget.TextInputLayout>
+                android:textSize="12sp"
+                android:focusable="auto"
+                android:ems="10"
+                android:textColorHint="#B6B6B6"
+                android:drawableBottom="#404B69"
+                android:hint="@string/enter_your_password"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"/>
+        <!--</android.support.design.widget.TextInputLayout>-->
         <TextView
             android:id="@+id/tx_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginStart="25dp"
-            android:text="@string/username" />
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/et_username_layout"
-            android:layout_marginRight="25dp"
-            android:layout_marginLeft="25dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:text="@string/username"
+            android:textColor="#404B69"
+            android:layout_marginBottom="24dp"/>
+        <!--<android.support.design.widget.TextInputLayout-->
+            <!--android:id="@+id/et_username_layout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/et_user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
-        </android.support.design.widget.TextInputLayout>
+                android:focusable="auto"
+                android:ems="10"
+                android:textColorHint="#B6B6B6"
+                android:drawableBottom="#404B69"
+                android:hint="@string/enter_your_user_name"
+                android:inputType="textCapSentences"
+                android:textSize="12sp" />
+        <!--</android.support.design.widget.TextInputLayout>-->
         <TextView
             android:id="@+id/tx_car_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginStart="25dp"
-            android:text="@string/car_category" />
+            android:layout_marginBottom="17dp"
+            android:text="@string/car_category"
+            android:textColor="#404B69"/>
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:id="@+id/carousel_layout">
             <Button
                 android:layout_width="80dp"
                 android:layout_height="100dp"
                 android:id="@+id/type_back"
                 android:gravity="start"
+                android:visibility="gone"
                 android:layout_alignParentLeft="true"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/ic_keyboard_arrow_left_black_24dp"
                 android:layout_alignParentStart="true" />
-        <com.gtomato.android.ui.widget.CarouselView
-            android:id="@+id/carousel"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="true"
-            android:layout_toLeftOf="@id/type_front"
-            android:layout_toRightOf="@id/type_back"
-            android:layout_toStartOf="@id/type_front"
-            android:layout_toEndOf="@id/type_back" />
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/carousel_recycler"
+                />
             <Button
                 android:layout_width="80dp"
                 android:layout_height="100dp"
                 android:id="@+id/type_front"
                 android:gravity="end"
+                android:visibility="gone"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
@@ -152,12 +162,15 @@
                 <!--android:textSize="14sp" />-->
         <!--</android.support.design.widget.TextInputLayout>-->
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="35dp"
             android:id="@+id/sign_up_button"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:text="Sign Up"
+            android:text="@string/sign_up"
+            android:background="#00B9AB"
+            android:textColor="#FFF"
+            android:textSize="14sp"
             />
 
     <TextView
@@ -170,10 +183,10 @@
         android:layout_marginTop="15dp"
         android:textColorHighlight="@color/white"
         android:visibility="visible"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="12dp"
         />
     </LinearLayout>
-    </RelativeLayout>
+    <!--</ScrollView>-->
 </RelativeLayout>
 
 

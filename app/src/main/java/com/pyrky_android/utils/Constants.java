@@ -5,4 +5,6 @@ package com.pyrky_android.utils;
  */
 
 public class Constants {
+
+    public static String FIREBASE_TOKEN = "null";
 }

@@ -1,4 +1,4 @@
-package com.pyrky_android.activity;
+package com.pyrky_android.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,8 +19,8 @@ import com.pyrky_android.R;
 
 public class MySpinnerAdapter extends ArrayAdapter {
 
-    String[] languages;
-    Context context;
+    private String[] languages;
+    private Context context;
     public MySpinnerAdapter(@NonNull Context context, int resource, String[] objects) {
         super(context, resource, objects);
         this.context = context;
@@ -50,7 +50,7 @@ public class MySpinnerAdapter extends ArrayAdapter {
 // Removing the image view
 //            img.setVisibility(View.GONE);
 // Setting the size of the text
-            tvLanguage.setTextSize(20f);
+//            tvLanguage.setTextSize(20f);
 // Setting the text Color
 //            tvLanguage.setTextColor(Color.BLACK);
         }

@@ -1,40 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="100dp">
+    android:layout_height="wrap_content" android:background="@android:color/darker_gray">
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:id="@+id/car_icon"
+        android:layout_marginEnd="18.1dp"
         android:src="@mipmap/ic_launcher"
         />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/car_size"
-        android:layout_toRightOf="@id/car_icon"
         android:layout_toEndOf="@id/car_icon"
-        android:text="Small"
-        android:textStyle="bold"
+        android:text="Small[3 to 4.5m]"
         android:textAlignment="textStart"
         android:gravity="start"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:textSize="18sp"
+        android:layout_centerVertical="true"
         android:layout_marginStart="10dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/car_dimension"
         android:textStyle="bold"
-        android:layout_toRightOf="@id/car_icon"
+        android:visibility="gone"
         android:layout_toEndOf="@id/car_icon"
         android:layout_below="@id/car_size"
         android:text="[3 to 4.5m]"
-        android:layout_marginLeft="10dp"
         android:textSize="16sp"
         android:layout_marginStart="10dp" />
 </RelativeLayout>
