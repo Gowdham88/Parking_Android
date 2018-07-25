@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:background="@android:color/white">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,14 +17,32 @@
 
         <android.support.design.widget.TabLayout
             android:id="@+id/simpleTabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabBackground="@android:color/darker_gray"
-            app:tabIndicatorColor="#fff"
-            app:tabSelectedTextColor="#fff"
-            app:tabTextColor="#fff"
-            android:layout_marginTop="5dp"
+            android:layout_width="310dp"
+            app:tabTextAppearance="@style/TabWidget"
+            android:layout_height="40dp"
+            app:tabSelectedTextColor="#00B9AB"
+            app:tabTextColor="#404B69"
+            app:tabIndicatorColor="@color/transparent2"
+            android:background="@drawable/tab_bagroundcorner"
+            android:layout_marginRight="33dp"
+            android:layout_marginLeft="33dp"
+            android:layout_marginTop="30dp"
             />
+        <!--<android.support.design.widget.TabLayout-->
+            <!--app:tabBackground="@android:color/transparent"-->
+            <!--android:id="@+id/simpleTabLayout"-->
+            <!--android:layout_marginTop="1dp"-->
+            <!--android:layout_marginBottom="1dp"-->
+            <!--android:layout_marginLeft="20dp"-->
+            <!--android:layout_marginRight="20dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--app:tabIndicatorHeight="0dp"-->
+            <!--android:background="@color/white"-->
+            <!--app:tabSelectedTextColor="@drawable/tab_selector"-->
+            <!--app:tabTextAppearance="@style/TabWidget"-->
+            <!--app:tabIndicatorColor="@color/white"-->
+            <!--app:tabTextColor="#000000" />-->
         <android.support.v4.view.ViewPager
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

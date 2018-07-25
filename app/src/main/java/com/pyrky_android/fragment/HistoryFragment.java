@@ -24,7 +24,7 @@ public class HistoryFragment extends Fragment {
     RecyclerView mRecyclerView;
     String mPlace[] = {"Rio de Janeiro","Brasília","Salvador","Fortaleza","Belo Horizonte"};
     String mTimeDate[] = {"05 Jan, 12.30am","15 Feb, 03.10pm","25 Mar, 05.50pm","17 Jun, 10.30am","01 Jan, 12.00am"};
-    int[] mCurrentRating = {3,2,4,5,5};
+    int[] mCurrentRating = {5,5,5,5,5};
     HistoryRecyclerAdapter recyclerAdapter;
     public HistoryFragment() {
     }
