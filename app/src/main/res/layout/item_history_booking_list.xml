@@ -1,50 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="87dp">
     <TextView
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sao Paulo"
         android:layout_alignParentLeft="true"
         android:id="@+id/place"
+        android:layout_marginTop="16dp"
+        android:textSize="12dp"
+        android:textColor="@color/booking_txtclr"
         android:layout_alignParentStart="true" />
     <TextView
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View Car"
-        android:visibility="gone"
-        android:layout_alignParentRight="true"
+        android:text="Ratings:"
+        android:textSize="12dp"
+        android:layout_marginRight="5dp"
+        android:layout_toLeftOf="@+id/history_ratings"
+        android:textColor="@color/booking_txtclr"
+        android:layout_marginTop="18dp"
+        android:visibility="visible"
         android:id="@+id/view_car_text"
-        android:layout_alignParentEnd="true" />
+        />
 
     <RatingBar
+        android:id="@+id/history_ratings"
+        style="@style/Widget.AppCompat.RatingBar.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ratings"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/view_car_text"
         android:max="5"
+        android:isIndicator="true"
         android:numStars="5"
-        android:layout_alignParentRight="true"
-        android:id="@+id/history_ratings"
-        android:layout_marginBottom="10dp"
-        style="@style/Widget.AppCompat.RatingBar.Small"
-        android:layout_alignParentEnd="true" />
+        android:text="Ratings" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/date_time"
+        android:textSize="12dp"
+        android:textColor="@color/booking_txtclr"
         android:text="09 July, 10.30pm"
+        android:layout_marginTop="25dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_below="@id/history_ratings"
-        android:layout_marginTop="10dp"
         android:gravity="right"
         />
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_alignBottom="@id/date_time"
-        android:background="@android:color/darker_gray"
+        android:layout_height="1dp"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/date_time"
+        android:background="@color/border_color"
         />
 </RelativeLayout>

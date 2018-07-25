@@ -34,7 +34,7 @@ public class BookingsFragment extends Fragment {
         viewPager = view.findViewById(R.id.viewpager_events);
         BookingTabAdapter pagerAdapter = new BookingTabAdapter(getFragmentManager(),getActivity());
         viewPager.setAdapter(pagerAdapter);
-
+//        setupTabIcons();
         tabLayout = view.findViewById(R.id.simpleTabLayout);
         tabLayout.setupWithViewPager(viewPager);
         return view;
