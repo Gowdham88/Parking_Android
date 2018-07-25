@@ -39,7 +39,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull CarouselAdapter.ViewHolder holder, int position) {
 
-        holder.carIcon.setImageResource(R.mipmap.ic_launcher_round);
+        holder.carIcon.setImageResource(icons[position]);
         holder.carType.setText(languages[position]);
 
     }

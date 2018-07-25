@@ -5,7 +5,7 @@
     android:layout_height="88dp"
    >
     <TextView
-
+        style="@style/NunitoBlackLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sao Paulo"
@@ -17,7 +17,7 @@
         />
 
     <TextView
-
+        style="@style/NunitoBlackLight"
         android:textSize="12dp"
         android:id="@+id/view_car_text"
         android:layout_width="wrap_content"
@@ -38,7 +38,7 @@
         android:visibility="gone"
         />
     <TextView
-
+        style="@style/NunitoBlackLight"
         android:textSize="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
