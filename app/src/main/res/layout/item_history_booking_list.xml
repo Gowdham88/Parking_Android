@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="87dp">
     <TextView
-
+        style="@style/NunitoBlackLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sao Paulo"
@@ -15,7 +15,7 @@
         android:textColor="@color/booking_txtclr"
         android:layout_alignParentStart="true" />
     <TextView
-
+        style="@style/NunitoBlackLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ratings:"
@@ -40,7 +40,8 @@
         android:numStars="5"
         android:text="Ratings" />
     <TextView
-        android:layout_width="match_parent"
+        style="@style/NunitoBlackLight"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/date_time"
         android:textSize="12dp"

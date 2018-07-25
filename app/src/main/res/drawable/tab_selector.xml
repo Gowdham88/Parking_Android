@@ -9,8 +9,8 @@
     <!--<item android:color="@color/grey"/>-->
 
 
-    <item android:state_selected="true" android:drawable="@drawable/tab_focused" />
+    <item android:state_selected="true" android:drawable="@drawable/tab_baground" />
     <item android:state_focused="true" android:drawable="@drawable/tab_baground" />
     <item android:state_pressed="true" android:drawable="@drawable/tab_baground" />
-    <item android:drawable="@drawable/tab_baground" />
+    <item android:drawable="@drawable/tab_focused" />
 </selector>

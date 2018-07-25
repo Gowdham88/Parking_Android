@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +30,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.pyrky_android.R;
 import com.pyrky_android.pojo.Users;
 import com.pyrky_android.preferences.PreferencesHelper;
+import com.pyrky_android.utils.Utils;
 
 public class SignInActivity extends AppCompatActivity {
     Context mContext = this;
     TextInputEditText mEmail,mPassword;
     private FirebaseAuth mAuth;
     ProgressDialog progressDialog;
+    RelativeLayout parentsigninlay;
 
     @Override
     protected void onStart() {
@@ -59,6 +62,13 @@ public class SignInActivity extends AppCompatActivity {
         mEmail = findViewById(R.id.et_email);
         mPassword = findViewById(R.id.et_password);
         Button login = findViewById(R.id.sign_in_button);
+        parentsigninlay=(RelativeLayout)findViewById(R.id.signin_layout);
+        parentsigninlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.hideKeyboard(SignInActivity.this);
+            }
+        });
 
         mEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -91,7 +101,7 @@ public class SignInActivity extends AppCompatActivity {
         toSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SignInActivity.this,SignUpActivity.class));
+                startActivity(new Intent(SignInActivity.this,SignupScreenActivity.class));
                 SignInActivity.this.finish();
             }
         });
@@ -172,6 +182,7 @@ public class SignInActivity extends AppCompatActivity {
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+
 
                     final Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
                     startActivity(intent);

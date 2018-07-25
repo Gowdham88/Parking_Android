@@ -73,6 +73,8 @@ dependencies {
     //
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'pub.devrel:easypermissions:1.0.1'
 
 
     testImplementation 'junit:junit:4.12'
