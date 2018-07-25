@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -45,6 +46,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -55,7 +58,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 
     String[] mLanguages = {"Compact[3.5 - 4.5m]", "Small[2.5 - 3.5m]", "Mid size[4 - 5m]", "Full[5 - 5.5m]", "Van/Pick-up[5.5 - 6.5m]"};
     TextInputEditText email;
-    ImageView mProfileImage;
+    CircleImageView mProfileImage;
     private final int PICK_IMAGE_REQUEST = 71;
     private Uri filePath;
     ActionBar actionBar;
@@ -64,6 +67,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     FirebaseStorage storage;
     StorageReference storageReference;
     UploadTask uploadTask;
+    EditText nameEdt;
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
     }
@@ -95,9 +99,10 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                 .setWithImageCrop(1,1);
 
         email = view.findViewById(R.id.et_email);
-        mProfileImage = view.findViewById(R.id.profile_img);
-        final Spinner spinner = view.findViewById(R.id.car_category_spinner);
-        Button save = view.findViewById(R.id.save_button);
+        mProfileImage = (CircleImageView) view.findViewById(R.id.profile_img);
+        nameEdt=(EditText) view.findViewById(R.id.name_txt);
+//        final Spinner spinner = view.findViewById(R.id.car_category_spinner);
+//        Button save = view.findViewById(R.id.save_button);
 
 
         String profilePic = PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC);
@@ -114,21 +119,21 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 
             }
         });
-
+        nameEdt.setText(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME));
         email.setText(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_EMAIL));
 //        int carCategory = Integer.parseInt(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_CAR));
 //        mLanguages[0] = mLanguages[carCategory];
-        spinner.setAdapter(new MySpinnerAdapter(getActivity(), R.layout.item_carousel, mLanguages));
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UpdateData(email.getText().toString().trim(), spinner.getSelectedItem().toString());
-            }
-        });
-
-        save.setVisibility(View.GONE);
-        email.setEnabled(false);
-        spinner.setEnabled(false);
+//        spinner.setAdapter(new MySpinnerAdapter(getActivity(), R.layout.item_carousel, mLanguages));
+//        save.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                UpdateData(email.getText().toString().trim(), spinner.getSelectedItem().toString());
+//            }
+//        });
+//
+//        save.setVisibility(View.GONE);
+//        email.setEnabled(false);
+//        spinner.setEnabled(false);
 
         return view;
     }

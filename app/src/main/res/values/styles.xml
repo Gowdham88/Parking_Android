@@ -51,9 +51,13 @@
         <item name="android:fontFamily">fonts/Nunito-Light.ttf</item>
     </style>
 
-    <!--<style name="Nunitoregular">-->
-        <!--<item name="fontPath">fonts/Nunito-Regular.ttf</item>-->
-    <!--</style>-->
+    <style name="Nunitoregular">
+        <item name="android:fontFamily">fonts/Nunito-Regular.ttf</item>
+    </style>
+
+    <style name="Nunitosemibold">
+        <item name="android:fontFamily">fonts/Nunito-SemiBold.ttf</item>
+    </style>
 
     <!--<style name="FontAvenirLight">-->
         <!--<item name="fontPath">fonts/Avenir-Light.ttf</item>-->
