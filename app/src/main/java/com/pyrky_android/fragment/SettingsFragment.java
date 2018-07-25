@@ -16,6 +16,11 @@ import com.pyrky_android.R;
 
 public class SettingsFragment extends Fragment{
 
+
+    public static ProfileFragment newInstance() {
+        return new ProfileFragment();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

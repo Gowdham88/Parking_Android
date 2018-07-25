@@ -11,9 +11,12 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,8 +109,6 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                     .into(mProfileImage);
         }
 
-       downloadImage();
-
         mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,7 +166,27 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void writeToDatabase(String profileImage,String email){
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_profile, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_frame_layout, SettingsFragment.newInstance());
+            transaction.addToBackStack(null);
+            transaction.commit();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void writeToDatabase(String profileImage, String email){
 
         ProfileImage profileImages = new ProfileImage(profileImage,email);
     }
@@ -214,20 +235,25 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    private void downloadImage(){
-
-//        StorageReference storageRef =
-//                FirebaseStorage.getInstance().getReference();
-//                storageRef.child("profile_image/"+PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC))
-//                .getDownloadUrl()
-//                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                    @Override
-//                    public void onSuccess(Uri uri) {
-//                        Glide.with(getActivity())
-//                                .load(storageReference)
-//                                .into(mProfileImage);
-//                    }
-//                });
-    }
 
 }
+
+
+
+/*
+    private void downloadImage(){
+
+        StorageReference storageRef =
+                FirebaseStorage.getInstance().getReference();
+                storageRef.child("profile_image/"+PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC))
+                .getDownloadUrl()
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(getActivity())
+                                .load(storageReference)
+                                .into(mProfileImage);
+                    }
+                });
+    }
+*/
