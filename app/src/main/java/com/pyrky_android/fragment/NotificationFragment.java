@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 
 import com.pyrky_android.R;
 import com.pyrky_android.activity.NearestLocMapsActivity;
+import com.pyrky_android.adapter.NotificationAdapter;
 
 /**
  * Created by thulirsoft on 7/6/18.
@@ -24,19 +27,22 @@ import com.pyrky_android.activity.NearestLocMapsActivity;
 
 public class NotificationFragment extends Fragment {
 
+    RecyclerView mRecyclerView;
+    NotificationAdapter mRecyclerAdapter;
+
+    String[] mMessage = {"Hey buddy, something happened to your car","Hey buddy, something happened to your car","Hey buddy, something happened to your car"};
+    String[] mTime = {"2 minutes","5 days ago","2 months ago"};
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_notification, null);
+        mRecyclerView = view.findViewById(R.id.notification_recycler);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerAdapter = new NotificationAdapter(mMessage,mTime);
+        mRecyclerView.setAdapter(mRecyclerAdapter);
 
-        TextView textView = view.findViewById(R.id.alert_message);
-
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog();
-            }
-        });
         return view;
     }
 

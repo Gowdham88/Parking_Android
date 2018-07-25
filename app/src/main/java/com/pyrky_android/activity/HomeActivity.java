@@ -3,13 +3,18 @@ package com.pyrky_android.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.util.AttributeSet;
+import android.view.Menu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -42,6 +47,8 @@ public class HomeActivity extends AppCompatActivity
     Boolean isRunning = true;
     BottomNavigationView bottomNavigationView;
     Toolbar toolbar;
+    ActionBar actionbar;
+    ActionBarDrawerToggle toggle;
     @Override
     protected void onStart() {
         super.onStart();
@@ -53,14 +60,18 @@ public class HomeActivity extends AppCompatActivity
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-        toolbar.setTitle("Home");
-        /*TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        ImageView toolbarIcon = findViewById(R.id.toolbar_icon);
 
-        toolbarTitle.setText("Home");
-        toolbarIcon.setImageResource(R.drawable.ic_settings);*/
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        actionbar = getSupportActionBar();
+
+        /*actionbar.setDisplayHomeAsUpEnabled(false);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_ham_menu);
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeButtonEnabled(true);*/
+        actionbar.setTitle("Home");
+
+
         CoordinatorLayout coordinatorLayout = findViewById(R.id.home_coordinator);
         bottomNavigationView = findViewById(R.id.navigationView);
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -73,7 +84,7 @@ public class HomeActivity extends AppCompatActivity
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.setDrawerIndicatorEnabled(false);
@@ -91,12 +102,12 @@ public class HomeActivity extends AppCompatActivity
                 switch (item.getItemId()){
                     case R.id.b_nav_home:
                         fragment = new HomeFragment();
-                        toolbar.setTitle("Home");
+                        actionbar.setTitle("Home");
                         break;
 
                     case R.id.b_nav_notification:
                         fragment = new NotificationFragment();
-                        toolbar.setTitle("Notification");
+                        actionbar.setTitle("Notification");
                         break;
 
                     case R.id.b_nav_profile:
@@ -104,14 +115,16 @@ public class HomeActivity extends AppCompatActivity
                         transaction.replace(R.id.main_frame_layout, ProfileFragment.newInstance());
                         transaction.addToBackStack(null);
                         transaction.commit();
-                        toolbar.setTitle("Profile");
+
+
+                        actionbar.setTitle("Profile");
                         break;
                 }
                 return loadFragment(fragment);
             }
         });
         loadFragment(new HomeFragment());
-        toolbar.setTitle("Home");
+        actionbar.setTitle("Home");
     }
 
     private boolean loadFragment(Fragment fragment) {
@@ -136,11 +149,11 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-  /*  @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -150,14 +163,25 @@ public class HomeActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if (toggle.onOptionsItemSelected(item)){
+            return true;
+        }
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(context, "Settings", Toast.LENGTH_SHORT).show();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-*/
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        toggle.syncState();
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -166,16 +190,16 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             loadFragment(new HomeFragment());
-            toolbar.setTitle("Home");
+            actionbar.setTitle("Home");
         } else if (id == R.id.nav_booking) {
             loadFragment(new BookingsFragment());
-            toolbar.setTitle("Booking");
+            actionbar.setTitle("Booking");
         } else if (id == R.id.nav_profile) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.main_frame_layout, ProfileFragment.newInstance());
             transaction.addToBackStack(null);
             transaction.commit();
-            toolbar.setTitle("Profile");
+            actionbar.setTitle("Profile");
         } else if (id == R.id.nav_logout) {
             PreferencesHelper.signOut(context);
             FirebaseAuth.getInstance().signOut();

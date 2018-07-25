@@ -12,6 +12,7 @@ public class Users {
     private String carCategory;
     private String profileImageUrl;
     private String platform;
+
     public Users(String userName, String email,String profileImageUrl, String carCategory) {
         this.userName = userName;
         this.email = email;
