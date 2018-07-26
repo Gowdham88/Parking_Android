@@ -7,11 +7,17 @@ package com.pyrky_android.pojo;
 public class Users {
 
     private String userName;
+
+
     private String email;
     private String password;
     private String carCategory;
     private String profileImageUrl;
     private String platform;
+
+    public Users() {
+
+    }
 
     public Users(String userName, String email,String profileImageUrl, String carCategory) {
         this.userName = userName;
@@ -51,4 +57,5 @@ public class Users {
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
+
 }

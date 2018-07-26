@@ -90,7 +90,7 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class SignupScreenActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     EditText EmailEdt,UsernameEdt,PassEdt;
-    Button SignupBtn,signupfil;
+    TextView SignupBtn,signupfil;
     TextView AccntTxt;
     LinearLayout cancelLay;
     CircleImageView profileImg;
@@ -117,6 +117,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     int mCarouselCount = 0;
     String[] mCarCategory = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
     String[] mCarCategoryId = { "1", "2", "3", "4", "5" };
+    String[] mCarranze = { "3.5 - 4.5m", "2.5 - 3.5m", "4 -5m", "5 - 5.5m", "5.5 - 6.5m" };
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     LinearLayout signupScrlin;
     @Override
@@ -136,12 +137,12 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                 Utils.hideKeyboard(SignupScreenActivity.this);
             }
         });
-        SignupBtn=(Button)findViewById(R.id.sign_up_button);
+        SignupBtn=(TextView)findViewById(R.id.sign_up_button);
 //        signupfil=(Button)findViewById(R.id.signup_btn1);
-        EmailEdt.addTextChangedListener(mTextWatcher);
-        UsernameEdt.addTextChangedListener(mTextWatcher);
-        PassEdt.addTextChangedListener(mTextWatcher);
-        checkFieldsForEmptyValues();
+//        EmailEdt.addTextChangedListener(mTextWatcher);
+//        UsernameEdt.addTextChangedListener(mTextWatcher);
+//        PassEdt.addTextChangedListener(mTextWatcher);
+//        checkFieldsForEmptyValues();
         profileImg=(CircleImageView)findViewById(R.id.profile_img);
 
         EmailEdt.setInputType(EmailEdt.getInputType()
@@ -178,7 +179,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         final RecyclerView recyclerView = findViewById(R.id.carousel_recycler);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(new CarouselAdapter(this, mIcons, mCarCategory));
+        recyclerView.setAdapter(new CarouselAdapter(this, mIcons, mCarCategory,mCarranze));
         recyclerView.addOnScrollListener(new CenterScrollListener());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
@@ -220,7 +221,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                 Intent intent = new Intent(SignupScreenActivity.this,SignInActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-//                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
                 finish();
 
             }
@@ -512,7 +513,9 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
                             Toast.makeText(SignupScreenActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                            postimageurl = taskSnapshot.getUploadSessionUri().toString();
+                            postimageurl =taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+
+                            Log.e("postimageurl",postimageurl);
 
                             if (postimageurl.equals("failed")) {
 
@@ -521,17 +524,15 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                             }
                             final FirebaseUser user = mAuth.getCurrentUser();
                             AddDatabase(user,view);
-
                         }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(SignupScreenActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                            postimageurl = "failed";
-                        }
-                    })
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(SignupScreenActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    postimageurl = "failed";
+                }
+            })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
@@ -540,6 +541,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                             progressDialog.setMessage("Uploaded "+(int)progress+"%");
                         }
                     });
+
         } else {
 
             return ;
@@ -551,16 +553,16 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     }
 
 
-    public static ObjectAnimator createTopDownAnimation(View view, AnimatorListenerAdapter listener,
-                                                        float distance) {
-        view.setTranslationY(-distance);
-        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationY", 0);
-        animator.removeAllListeners();
-        if (listener != null) {
-            animator.addListener(listener);
-        }
-        return animator;
-    }
+//    public static ObjectAnimator createTopDownAnimation(View view, AnimatorListenerAdapter listener,
+//                                                        float distance) {
+//        view.setTranslationY(-distance);
+//        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationY", 0);
+//        animator.removeAllListeners();
+//        if (listener != null) {
+//            animator.addListener(listener);
+//        }
+//        return animator;
+//    }
 
     public void showProgressDialog() {
 
@@ -607,7 +609,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                 Toast.makeText(this, "Enter username.", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
-            else if (TextUtils.isEmpty(password) || password.length()<4) {
+            else if (TextUtils.isEmpty(password) || password.length()<6) {
                 Toast.makeText(this, "Enter password.", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
@@ -630,7 +632,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     private void AddDatabase(final FirebaseUser user, final View view){
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final Users users = new Users(EmailEdt.getText().toString(), String.valueOf(postimageurl),UsernameEdt.getText().toString(), mCarCategoryId[mCarouselCount]);
+        final Users users = new Users(UsernameEdt.getText().toString(),EmailEdt.getText().toString(), String.valueOf(postimageurl), mCarCategoryId[mCarouselCount]);
         showProgressDialog();
 
         DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -645,7 +647,8 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
                     Toast.makeText(getApplicationContext(),"Success", Toast.LENGTH_SHORT).show();
 
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,UsernameEdt.getText().toString());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,EmailEdt.getText().toString());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME,UsernameEdt.getText().toString());
 
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(postimageurl));
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
@@ -685,11 +688,13 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 //                    startActivity(intent);
 //                    overridePendingTransition(0, 0);
 
-                    PreferencesHelper.setPreferenceBoolean(getApplicationContext(), PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,UsernameEdt.getText().toString());
+
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,EmailEdt.getText().toString());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME,UsernameEdt.getText().toString());
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(postimageurl));
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
                     PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(mCarouselCount));
+                    PreferencesHelper.setPreferenceBoolean(getApplicationContext(), PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
 
                 }
 

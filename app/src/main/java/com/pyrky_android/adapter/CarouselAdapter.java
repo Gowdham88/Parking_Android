@@ -21,10 +21,12 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
     private int[] icons;
     private LayoutInflater inflater;
     private String[] languages;
-    public CarouselAdapter(Context context, int[] icons, String[] languages) {
+    private String[] mCarranze;
+    public CarouselAdapter(Context context, int[] icons, String[] languages, String[] carCategoryMeter) {
         this.context = context;
         this.icons = icons;
         this.languages = languages;
+        this.mCarranze=carCategoryMeter;
         inflater = LayoutInflater.from(context);
     }
 
@@ -41,6 +43,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
 
         holder.carIcon.setImageResource(icons[position]);
         holder.carType.setText(languages[position]);
+        holder.Cardim.setText(mCarranze[position]);
 
     }
 
@@ -51,11 +54,12 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView carIcon;
-        TextView carType;
+        TextView carType,Cardim;
         ViewHolder(View itemView) {
             super(itemView);
             carIcon = itemView.findViewById(R.id.car_icon);
             carType = itemView.findViewById(R.id.car_size);
+                    Cardim = itemView.findViewById(R.id.car_dimension);
 
         }
     }

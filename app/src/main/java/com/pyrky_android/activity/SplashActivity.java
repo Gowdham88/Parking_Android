@@ -1,6 +1,9 @@
 package com.pyrky_android.activity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +27,7 @@ public class SplashActivity extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
+//        setLightStatusBar(mWindow,SplashActivity.this);
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run() {
@@ -55,4 +59,17 @@ public class SplashActivity extends AppCompatActivity {
             }
         }, SPLASH_DISPLAY_LENGTH);
     }
+
+//    public static void setLightStatusBar(Window view, Activity activity){
+//
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//
+//            int flags = view.getSystemUiVisibility();
+//            flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+//            view.setSystemUiVisibility(flags);
+//            activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+//        }
+//    }
+
 }
