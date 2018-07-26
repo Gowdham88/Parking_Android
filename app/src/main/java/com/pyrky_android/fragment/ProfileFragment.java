@@ -76,7 +76,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 //        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-//        actionBar.setIcon(R.drawable.ic_settings);
+//        actionBar.setIcon(R.drawable.ic_settings_new);
 
     }
 
@@ -110,8 +110,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
             Picasso.with(getActivity()).load(profilePic)
                     .into(mProfileImage);
         }
-       downloadImage();
 
+       downloadImage();
 
         mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
