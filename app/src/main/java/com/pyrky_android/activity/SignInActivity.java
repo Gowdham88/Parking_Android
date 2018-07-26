@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +35,7 @@ import com.pyrky_android.utils.Utils;
 
 public class SignInActivity extends AppCompatActivity {
     Context mContext = this;
-    TextInputEditText mEmail,mPassword;
+    EditText mEmail,mPassword;
     private FirebaseAuth mAuth;
     ProgressDialog progressDialog;
     RelativeLayout parentsigninlay;
