@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/b_nav_home"
-        android:icon="@drawable/ic_tab_home"
+        android:icon="@drawable/ic_tab_home1"
         android:title=""
         />
     <item
         android:id="@+id/b_nav_notification"
-        android:icon="@drawable/ic_tab_notification"
+        android:icon="@drawable/ic_tab_notification1"
         android:title=""
         />
     <item
         android:id="@+id/b_nav_profile"
-        android:icon="@drawable/ic_tab_user"
+        android:icon="@drawable/ic_tab_user1"
         android:title=""
         />
 </menu>

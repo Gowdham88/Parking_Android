@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
@@ -7,6 +7,11 @@
     android:focusableInTouchMode="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:paddingBottom="22dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,9 +47,7 @@
                 app:searchIcon="@drawable/ic_search1"
                 android:imeOptions="actionSearch"
                 android:background="@android:color/white"
-                android:text="Search"
-
-                android:tooltipText="Search"
+                app:queryHint="Search your destination"
                 android:inputType="textNoSuggestions"
                 android:clickable="true"
                 android:focusable="true"
@@ -124,7 +127,15 @@
         android:id="@+id/filter_fragment"
         android:layout_below="@+id/search_layout"
         />-->
-    <ExpandableListView
+       <!-- <fragment
+            android:name="com.pyrky_android.fragment.FiltersFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/filter_fragment"
+            android:visibility="gone"
+            android:layout_below="@id/search_layout"
+            />-->
+        <ExpandableListView
         android:id="@+id/expandableListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -136,10 +147,11 @@
         android:layout_margin="5dp"
         android:layout_below="@id/search_layout"
         tools:targetApi="lollipop" />
+    </RelativeLayout>
     <!--<fragment
         android:id="@+id/place_autocomplete_fragment"
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/search_layout"/>-->
-    </RelativeLayout>
+    </ScrollView>

@@ -159,7 +159,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mImagePicker.handleActivityResult(resultCode,requestCode,data);
         File file = mImagePicker.getImageFile();
-        if (file!=null){
+        if (file != null){
             filePath = Uri.fromFile(file);
             uploadImage();
         }

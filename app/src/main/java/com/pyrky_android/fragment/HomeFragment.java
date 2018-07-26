@@ -124,7 +124,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
         //Carousel
         final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
         carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-        carouselLayoutManager.setMaxVisibleItems(3);
+        carouselLayoutManager.setMaxVisibleItems(1);
         //NearestPlace Recycler
         mNearestPlaceRecycler = view.findViewById(R.id.nearest_places_recycler);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -337,8 +337,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
                 markerOptions.snippet("someDesc");
                 mGoogleMap.addMarker(markerOptions);
             }
-
     }
+
     }
         protected synchronized void buildGoogleApiClient() {
             mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
