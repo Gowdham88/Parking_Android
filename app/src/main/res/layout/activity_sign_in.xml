@@ -18,7 +18,8 @@
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:descendantFocusability="beforeDescendants"
-        android:focusableInTouchMode="true">
+        android:focusableInTouchMode="true"
+        android:id="@+id/linearLayout">
         <ImageView
             android:id="@+id/sigin_logo"
             android:layout_width="68dp"
@@ -27,16 +28,17 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="70dp"
             android:layout_gravity="center"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@drawable/logo_icon" />
 
         <TextView
+
             android:id="@+id/tx_email"
+            style="@style/NunitoBlackLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="31dp"
+            android:layout_marginTop="70dp"
             android:text="@string/email"
-            android:textColor="#404B69"/>
+            android:textColor="@color/booking_txtclr" />
        <!-- <android.support.design.widget.TextInputLayout
             android:id="@+id/et_email_layout"
             android:layout_width="match_parent"
@@ -45,44 +47,67 @@
             android:layout_marginLeft="25dp"
             >-->
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/et_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_your_email"
-                android:textColorHint="#B6B6B6"
-                android:ems="10"
-                android:drawableBottom="#404B69"
-                android:textSize="12sp"
-                android:nextFocusDown="@id/et_password"
-                android:imeOptions="actionNext"
-                android:singleLine="true"
-                />
-            <requestFocus/>
+        <EditText
+            android:id="@+id/et_email"
+            style="@style/NunitoBlackLight"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:backgroundTint="@color/booking_txtclr"
+            android:gravity="bottom"
+            android:hint="@string/enter_your_email"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress"
+            android:singleLine="true"
+            android:textColorHint="@color/email_txtclr"
+            android:textSize="12sp" />
+        <View
+            android:id="@+id/passline1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/booking_txtclr"/>
+
         <!--</android.support.design.widget.TextInputLayout>-->
 
         <TextView
+
             android:id="@+id/tx_password"
+            style="@style/NunitoBlackLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="31dp"
+            android:layout_above="@+id/dont_have_account"
+            android:layout_alignStart="@+id/linearLayout"
             android:text="@string/password"
-            android:textColor="#404B69"/>
+            android:layout_marginTop="10dp"
+            android:textColor="@color/booking_txtclr" />
        <!-- <android.support.design.widget.TextInputLayout
             android:id="@+id/et_password_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="25dp"
             android:layout_marginLeft="25dp">-->
-            <android.support.design.widget.TextInputEditText
+            <EditText
+                android:layout_height="25dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="bottom"
+                android:background="@null"
+                android:inputType="textPassword"
+                android:layout_marginTop="10dp"
+                style="@style/NunitoBlackLight"
                 android:id="@+id/et_password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="auto"
                 android:textColorHint="#B6B6B6"
+                android:imeOptions="actionDone"
                 android:ems="10"
                 android:hint="@string/enter_your_password"
                 android:textSize="12sp" />
+        <View
+            android:id="@+id/passline"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/booking_txtclr"/>
         <!--</android.support.design.widget.TextInputLayout>-->
         <!--<TextView-->
             <!--android:id="@+id/tx_username"-->
@@ -134,40 +159,46 @@
         <!--android:layout_height="wrap_content"-->
         <!--android:textSize="14sp" />-->
         <!--</android.support.design.widget.TextInputLayout>-->
-        <Button
+        <TextView
+            style="@style/NunitoBlackLight"
             android:layout_width="200dp"
             android:layout_height="35dp"
             android:id="@+id/sign_in_button"
             android:layout_marginStart="88dp"
             android:layout_marginEnd="87dp"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:background="#00B9AB"
+            android:gravity="center"
+            android:layout_marginTop="44dp"
+            android:background="@drawable/signin_bg"
             android:textSize="14sp"
-            android:textColor="#FFF"
-            android:text="Login" />
+            android:textColor="@color/white"
+            android:text="Sign In" />
 
         <TextView
+            style="@style/NunitoBlackLight"
             android:id="@+id/tx_forget_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="18dp"
             android:layout_marginBottom="14dp"
+            android:textColor="@color/booking_txtclr"
             android:text="@string/forget_password"
-            android:textSize="18sp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
     <TextView
+        style="@style/NunitoBlackLight"
         android:id="@+id/dont_have_account"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_height="25dp"
+        android:gravity="center"
         android:text="@string/dont_have_account"
         android:textSize="12sp"
-        android:textColorHighlight="@color/white"
-        android:visibility="visible"
-        android:layout_marginBottom="15dp"
+        android:layout_marginTop="110dp"
+        android:textColor="@color/booking_txtclr"
+         android:visibility="visible"
+        android:layout_marginBottom="16dp"
         android:layout_alignParentBottom="true"
         />
 </RelativeLayout>

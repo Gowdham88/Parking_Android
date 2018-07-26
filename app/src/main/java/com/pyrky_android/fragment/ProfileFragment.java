@@ -14,6 +14,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,8 +22,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -41,12 +44,15 @@ import com.pyrky_android.pojo.ProfileImage;
 import com.pyrky_android.R;
 import com.pyrky_android.adapter.MySpinnerAdapter;
 import com.pyrky_android.preferences.PreferencesHelper;
+import com.pyrky_android.utils.CircleTransformation;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -57,8 +63,8 @@ import static android.app.Activity.RESULT_OK;
 public class ProfileFragment extends android.support.v4.app.Fragment {
 
     String[] mLanguages = {"Compact[3.5 - 4.5m]", "Small[2.5 - 3.5m]", "Mid size[4 - 5m]", "Full[5 - 5.5m]", "Van/Pick-up[5.5 - 6.5m]"};
-    TextInputEditText email;
-    ImageView mProfileImage;
+    TextView email;
+    CircleImageView mProfileImage;
     private final int PICK_IMAGE_REQUEST = 71;
     private Uri filePath;
     ActionBar actionBar;
@@ -67,6 +73,9 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     FirebaseStorage storage;
     StorageReference storageReference;
     UploadTask uploadTask;
+    TextView nameEdt;
+    String mEmail,mName,mProfilepic;
+    private int avatarSize;
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
     }
@@ -91,49 +100,32 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         //Image picker
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
+//        storage = FirebaseStorage.getInstance();
+//        storageReference = storage.getReference();
 
-        mImagePicker = new com.myhexaville.smartimagepicker.ImagePicker(getActivity(),this, imageUri -> {mProfileImage.setImageURI(imageUri);})
-                .setWithImageCrop(1,1);
-
+//        mImagePicker = new com.myhexaville.smartimagepicker.ImagePicker(getActivity(),this, imageUri -> {mProfileImage.setImageURI(imageUri);})
+//                .setWithImageCrop(1,1);
+        mEmail = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_EMAIL);
+        mName = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME);
+        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         email = view.findViewById(R.id.et_email);
-        mProfileImage = view.findViewById(R.id.profile_img);
-        final Spinner spinner = view.findViewById(R.id.car_category_spinner);
-        Button save = view.findViewById(R.id.save_button);
-
-
-        String profilePic = PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC);
-        if (!profilePic.equals("")) {
-            Picasso.with(getActivity()).load(profilePic)
+        mProfileImage = ( CircleImageView ) view.findViewById(R.id.profile_img);
+        nameEdt = ( TextView ) view.findViewById(R.id.name_txt);
+        this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+        email.setText(mEmail);
+        nameEdt.setText(mName);
+        Log.e("mProfilepic", mProfilepic);
+        if (mProfilepic != null && !mProfilepic.isEmpty()) {
+            Picasso.with(getActivity())
+                    .load(mProfilepic)
+                    .resize(avatarSize, avatarSize)
+                    .centerCrop()
+                    .transform(new CircleTransformation())
                     .into(mProfileImage);
+
         }
-
-        mProfileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        email.setText(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_EMAIL));
-//        int carCategory = Integer.parseInt(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_CAR));
-//        mLanguages[0] = mLanguages[carCategory];
-        spinner.setAdapter(new MySpinnerAdapter(getActivity(), R.layout.item_carousel, mLanguages));
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UpdateData(email.getText().toString().trim(), spinner.getSelectedItem().toString());
-            }
-        });
-
-        save.setVisibility(View.GONE);
-        email.setEnabled(false);
-        spinner.setEnabled(false);
-
         return view;
     }
-
     private void UpdateData(final String email, String carCategory) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));

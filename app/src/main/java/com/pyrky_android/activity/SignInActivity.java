@@ -11,8 +11,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +32,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.pyrky_android.R;
 import com.pyrky_android.pojo.Users;
 import com.pyrky_android.preferences.PreferencesHelper;
+import com.pyrky_android.utils.Utils;
+
+import org.w3c.dom.Text;
 
 public class SignInActivity extends AppCompatActivity {
     Context mContext = this;
-    TextInputEditText mEmail,mPassword;
+    EditText mEmail,mPassword;
     private FirebaseAuth mAuth;
     ProgressDialog progressDialog;
+    RelativeLayout parentsigninlay;
 
     @Override
     protected void onStart() {
@@ -58,31 +65,39 @@ public class SignInActivity extends AppCompatActivity {
         TextView toSignUp = findViewById(R.id.dont_have_account);
         mEmail = findViewById(R.id.et_email);
         mPassword = findViewById(R.id.et_password);
-        Button login = findViewById(R.id.sign_in_button);
-
-        mEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        TextView login = findViewById(R.id.sign_in_button);
+        parentsigninlay=(RelativeLayout)findViewById(R.id.signin_layout);
+        parentsigninlay.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus){
-                    hideKeyboard(v);
-                }
+            public void onClick(View view) {
+                Utils.hideKeyboard(SignInActivity.this);
             }
         });
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        mPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus){
-                    hideKeyboard(v);
-                }
-            }
-        });
+//        mEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (!hasFocus){
+//                    hideKeyboard(v);
+//                }
+//            }
+//        });
+//
+//        mPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (!hasFocus){
+//                    hideKeyboard(v);
+//                }
+//            }
+//        });
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (validateForm()){
-                    login(mEmail.getText().toString().trim(),mPassword.getText().toString().trim());
+                    signIn(mEmail.getText().toString().trim(),mPassword.getText().toString().trim());
                 }
 
             }
@@ -91,35 +106,71 @@ public class SignInActivity extends AppCompatActivity {
         toSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SignInActivity.this,SignUpActivity.class));
+                startActivity(new Intent(SignInActivity.this,SignupScreenActivity.class));
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 SignInActivity.this.finish();
             }
         });
     }
 
-    private void login(String email, String password) {
+    private void signIn(final String email, final String password) {
+        if (!validateForm()) {
+            return;
+        }
         showProgressDialog();
+
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
 
-                        if (task.isSuccessful()){
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            final FirebaseUser users = mAuth.getCurrentUser();
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            DocumentReference docRef = db.collection("users").document(users.getUid());
+                            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                            AddDatabase(user);
-                            Toast.makeText(mContext, "Successfully Signed in"+user.getEmail(), Toast.LENGTH_LONG).show();
-                            hideProgressDialog();
-                            PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
-                            PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
-//                            PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
 
-                        }else {
+                                    if (documentSnapshot.exists()){
+
+                                        Users user = documentSnapshot.toObject(Users.class);
+
+
+                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,user.getEmail());
+                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME,user.getUserName());
+                                        PreferencesHelper.setPreferenceBoolean(getApplicationContext(), PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
+
+                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, user.getProfileImageUrl());
+                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, users.getUid());
+                                        Log.e("profile",user.getProfileImageUrl());
+//
+                                        Intent in=new Intent(SignInActivity.this,HomeActivity.class);
+                                        startActivity(in);
+                                        finish();
+                                        hideProgressDialog();
+
+                                    } else {
+                                        Toast.makeText(SignInActivity.this, "No user exits", Toast.LENGTH_LONG).show();
+
+                                    }
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    Log.w("Error", "Error adding document", e);
+                                    Toast.makeText(getApplicationContext(),"Login failed",Toast.LENGTH_SHORT).show();
+                                    hideProgressDialog();
+                                }
+                            });
+
+                        } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(mContext, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignInActivity.this, "Registration failed! " + "\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             hideProgressDialog();
-//                            updateUI(null);
                         }
 
                     }
@@ -127,73 +178,105 @@ public class SignInActivity extends AppCompatActivity {
 
     }
 
-    private void AddDatabase(final FirebaseUser user){
-
-        final Users users = new Users("Dinesh",mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),"Small");
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        DocumentReference docRef = db.collection("users").document(user.getUid());
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-
-                if (documentSnapshot.exists()){
-
-                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
-
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
-                    PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
-
-                    final Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    SignInActivity.this.finish();
-                    hideProgressDialog();
-                    overridePendingTransition(0, 0);
-
-                } else {
-                    db.collection("users").document(user.getUid())
-                            .set(users)
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-
-                                    hideProgressDialog();
-                                    Log.w("Error", "Error adding document", e);
+//    private void login(String email, String password) {
+//        showProgressDialog();
+//        mAuth.signInWithEmailAndPassword(email, password)
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//
+//                        if (task.isSuccessful()){
+//                            FirebaseUser user = mAuth.getCurrentUser();
+//
+//                            AddDatabase(user);
+//                            Toast.makeText(mContext, "Successfully Signed in"+user.getEmail(), Toast.LENGTH_LONG).show();
+//                            hideProgressDialog();
+//                            PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
+//                            PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
+////                            PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
+//
+//                        }else {
+//                            // If sign in fails, display a message to the user.
+//                            Toast.makeText(mContext, "Authentication failed.",
+//                                    Toast.LENGTH_SHORT).show();
+//                            hideProgressDialog();
+////                            updateUI(null);
+//                        }
+//
+//                    }
+//                });
+//
+//    }
+//
+//    private void AddDatabase(final FirebaseUser user){
+//
+//        final Users users = new Users("Dinesh",mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),"Small");
+//        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+//
+//        DocumentReference docRef = db.collection("users").document(user.getUid());
+//        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//
+//
+//                if (documentSnapshot.exists()){
+//
+//                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
+//
+//                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
+//                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME, user.getDisplayName());
+//                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
+//                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+//                    PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
+//
+//                    final Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+//                    startActivity(intent);
+//                    SignInActivity.this.finish();
+//                    hideProgressDialog();
+//                    overridePendingTransition(0, 0);
+//
+//                } else {
+//                    db.collection("users").document(user.getUid())
+//                            .set(users)
+//                            .addOnFailureListener(new OnFailureListener() {
+//                                @Override
+//                                public void onFailure(@NonNull Exception e) {
+//
 //                                    hideProgressDialog();
-                                    Toast.makeText(mContext,"Login failed",Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-                            });
-                    PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
-
-                    final Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    SignInActivity.this.finish();
-                    hideProgressDialog();
-                    overridePendingTransition(0, 0);
-
-
-                }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                hideProgressDialog();
-                Log.w("Error", "Error adding document", e);
-                Toast.makeText(getApplicationContext(),"Login failed",Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-    }
+//                                    Log.w("Error", "Error adding document", e);
+////                                    hideProgressDialog();
+//                                    Toast.makeText(mContext,"Login failed",Toast.LENGTH_SHORT).show();
+//                                    return;
+//                                }
+//
+//                            });
+//                    PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
+//                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
+//                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(user.getPhotoUrl()));
+//                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+//
+//
+//                    final Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+//                    startActivity(intent);
+//                    SignInActivity.this.finish();
+//                    hideProgressDialog();
+//                    overridePendingTransition(0, 0);
+//
+//
+//                }
+//
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                hideProgressDialog();
+//                Log.w("Error", "Error adding document", e);
+//                Toast.makeText(getApplicationContext(),"Login failed",Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//
+//    }
 
     public void showProgressDialog() {
         progressDialog = new ProgressDialog(this);
@@ -229,7 +312,7 @@ public class SignInActivity extends AppCompatActivity {
 //            mEmail.setError("enter a valid email address");
                 valid = false;
             }
-            else if (TextUtils.isEmpty(password) || password.length()<4) {
+            else if (TextUtils.isEmpty(password) || password.length()<6) {
                 Toast.makeText(this, "Enter valid password.", Toast.LENGTH_SHORT).show();
                 valid = false;
             }

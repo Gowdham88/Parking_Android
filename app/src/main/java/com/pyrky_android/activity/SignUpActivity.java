@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -73,7 +76,7 @@ public class SignUpActivity extends AppCompatActivity {
     String[] mCarCategoryImages = {"compactCar", "smallCar", "mediumCar", "fullCar", "vanPickup"};
     String[] carCategoryMeter = {"3.5 - 4.5m", "2.5 - 3.5m", "4 - 5m", "5 - 5.5m", "5.5 - 6.5m"};
 
-    int mIcons[] = {R.mipmap.ic_launcher,R.mipmap.ic_launcher_round,R.mipmap.ic_launcher,R.mipmap.ic_launcher_round, R.mipmap.ic_launcher};
+    int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     TextInputEditText mEmail,mPassword,mUserName;
     ImageView mProfileImage;
     ImagePicker mImagePicker;
@@ -83,6 +86,7 @@ public class SignUpActivity extends AppCompatActivity {
     FirebaseStorage storage;
     StorageReference storageReference;
     UploadTask uploadTask;
+    String email,password,username;
     @Override
     protected void onStart() {
         super.onStart();
@@ -115,6 +119,13 @@ public class SignUpActivity extends AppCompatActivity {
 
         mImagePicker = new ImagePicker(SignUpActivity.this,null,imageUri -> {mProfileImage.setImageURI(imageUri);})
                 .setWithImageCrop(1,1);
+        mProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                showBottomSheet();
+            }
+        });
+
 
         mEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
            @Override
@@ -150,13 +161,55 @@ public class SignUpActivity extends AppCompatActivity {
                 mImagePicker.choosePicture(true);
             }
         });
-        signUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-              signUp(mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),mUserName.getText().toString().trim(), mProfileImageUrl);
-            }
-        });
+//        signUp.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                Utils.hideKeyboard(SignUpActivity.this);
+//
+//                email = mEmail.getText().toString();
+//                username = mUserName.getText().toString().trim();
+//                password = mPassword.getText().toString().trim();
+//
+//
+//
+//                if(TextUtils.isEmpty(email) && TextUtils.isEmpty(username)) {
+//                    Toast.makeText(SignUpActivity.this, "Enter email address and username.", Toast.LENGTH_SHORT).show();
+//
+//                }
+//                else if((email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()))
+//                {
+//                    Toast.makeText(SignUpActivity.this, "enter a valid email address", Toast.LENGTH_SHORT).show();
+////            mEmail.setError("enter a valid email address");
+//
+//                }
+//                else if(username.equals(null) && username.isEmpty()){
+//                    Toast.makeText(SignUpActivity.this, "Please enter the user name", Toast.LENGTH_SHORT).show();
+//                }
+//                else if(password.length()<6){
+//                    Toast.makeText(SignUpActivity.this, "Please enter the user name more than 6 charecters", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                else if(password.contains(" ")){
+//                    Toast.makeText(SignUpActivity.this, "Please remove the space", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                else if(postimageurl != null)
+//                {
+//                    uploadImage(view);
+//
+//
+//                } else {
+//
+//
+//
+//                    AddDatabase(email,username,postimageurl);
+//
+//                }
+//
+//              signUp(mEmail.getText().toString().trim(),mPassword.getText().toString().trim(),mUserName.getText().toString().trim(), mProfileImageUrl);
+//            }
+//        });
         mEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,7 +243,7 @@ public class SignUpActivity extends AppCompatActivity {
         final RecyclerView recyclerView = findViewById(R.id.carousel_recycler);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(new CarouselAdapter(this, mIcons, mCarCategory));
+        recyclerView.setAdapter(new CarouselAdapter(this, mIcons, mCarCategory, carCategoryMeter));
         recyclerView.addOnScrollListener(new CenterScrollListener());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
@@ -223,6 +276,215 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        // Forward results to EasyPermissions
+//        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+//    }
+//
+//    private void showBottomSheet() {
+//
+//        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(SignUpActivity.this);
+//        LayoutInflater factory = LayoutInflater.from(this);
+//        View bottomSheetView = factory.inflate(R.layout.dialo_camera_bottomsheet, null);
+//        bottomSheetDialog.setContentView(bottomSheetView);
+//        bottomSheetDialog.show();
+//
+//        Camera = (TextView) bottomSheetView.findViewById(R.id.camera_title);
+//        Gallery = (TextView) bottomSheetView.findViewById(R.id.gallery_title);
+//        cancel = (TextView)bottomSheetView.findViewById(R.id.cancel_txt);
+//        cancelLay = (LinearLayout) bottomSheetView.findViewById(R.id.cance_lay);
+//        Camera.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                bottomSheetDialog.dismiss();
+//
+//                if (hasPermissions()) {
+//                    captureImage();
+//                } else {
+//                    EasyPermissions.requestPermissions(SignupScreenActivity.this, "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
+//                }
+//            }
+//        });
+//
+//        Gallery.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (hasPermissions()) {
+//                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(i, RC_PICK_IMAGE);
+//                } else {
+//                    EasyPermissions.requestPermissions(SignupScreenActivity.this, "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
+//                }
+//                bottomSheetDialog.dismiss();
+//            }
+//        });
+//        cancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                bottomSheetDialog.dismiss();
+//            }
+//        });
+//        cancelLay.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                bottomSheetDialog.dismiss();
+//            }
+//        });
+//
+//    }
+//
+//    @Override
+//    public void onPermissionsGranted(int requestCode, List<String> perms) {
+//
+//        switch (requestCode){
+//
+//            case PERMISSIONS_REQUEST_GALLERY:
+//                if(perms.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)&&perms.contains(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+//                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(i, RC_PICK_IMAGE);
+//                }
+//                break;
+//
+//            case PERMISSIONS_REQUEST_CAMERA:
+//                if(perms.contains(Manifest.permission.CAMERA)) {
+//                    captureImage();
+//                }
+//                break;
+//
+//        }
+//
+//
+//    }
+//
+//    @Override
+//    public void onPermissionsDenied(int requestCode, List<String> perms) {
+//        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
+//
+//        // (Optional) Check whether the user denied any permissions and checked "NEVER ASK AGAIN."
+//        // This will display a dialog directing them to enable the permission in app settings.
+//        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+//            new AppSettingsDialog.Builder(this).build().show();
+//        }
+//
+//    }
+//
+//
+//
+//    private boolean hasPermissions() {
+//        return EasyPermissions.hasPermissions(SignupScreenActivity.this, CAMERA);
+//    }
+//
+//    private void captureImage() {
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        fileUri = getOutputMediaFileUri(1);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+//        startActivityForResult(intent, RC_CAPTURE_IMAGE);
+//    }
+//
+//    public Uri getOutputMediaFileUri(int type) {
+//        return FileProvider.getUriForFile(getApplicationContext(),
+//                BuildConfig.APPLICATION_ID + ".provider",
+//                getOutputMediaFile(type));
+//    }
+//
+//    private File getOutputMediaFile(int type) {
+//
+//        File mediaStorageDir = new File(
+//                Environment
+//                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+//                Constants.IMAGE_DIRECTORY_NAME);
+//
+//        if (!mediaStorageDir.exists()) {
+//            if (!mediaStorageDir.mkdirs()) {
+//                Log.d(TAG, "Oops! Failed create "
+//                        + Constants.IMAGE_DIRECTORY_NAME + " directory");
+//                return null;
+//            }
+//        }
+//
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+//                Locale.getDefault()).format(new Date());
+//        File mediaFile;
+//        if (type == MEDIA_TYPE_IMAGE) {
+//            mediaFile = new File(mediaStorageDir.getPath() + File.separator
+//                    + "IMG_" + timeStamp + ".jpg");
+//        } else {
+//            return null;
+//        }
+//        // Save a file: path for use with ACTION_VIEW intents
+//        mCurrentPhotoPath = "file:" + mediaFile.getAbsolutePath();
+//
+//        return mediaFile;
+//    }
+//
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode,
+//                                 Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+////        showProgressDialog();
+//        if (resultCode != Activity.RESULT_CANCELED) {
+//            if (requestCode == RC_PICK_IMAGE) {
+//                if (data != null) {
+//                    Uri contentURI = data.getData();
+//                    isPhotoValid = true;
+//                    this.contentURI = contentURI;
+//                    try {
+//                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), contentURI);
+//                        profileImg.setImageBitmap(bitmap);
+//                        selectedImagePath=getRealPathFromURI(contentURI);
+////                        uploadImage(getRealPathFromURI(contentURI));
+//
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        Toast.makeText(getApplicationContext(), "Failed!", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            } else if (requestCode == RC_CAPTURE_IMAGE) {
+//                // Show the thumbnail on ImageView
+////                showProgressDialog();
+//                Uri imageUri = Uri.parse(mCurrentPhotoPath);
+//                this.contentURI = imageUri;
+//                isPhotoValid = true;
+//                File file = new File(imageUri.getPath());
+//                try {
+//                    InputStream ims = new FileInputStream(file);
+//                    profileImg.setImageBitmap(BitmapFactory.decodeStream(ims));
+//                } catch (FileNotFoundException e) {
+//                    return;
+//                }
+//
+//                // ScanFile so it will be appeared on Gallery
+//                MediaScannerConnection.scanFile(getApplicationContext(),
+//                        new String[]{imageUri.getPath()}, null,
+//                        new MediaScannerConnection.OnScanCompletedListener() {
+//                            public void onScanCompleted(String path, Uri uri) {
+//                            }
+//                        });
+//                selectedImagePath = imageUri.getPath();
+////                uploadImage(imageUri.getPath());
+//
+//            }
+//
+//        } else {
+//            super.onActivityResult(requestCode, resultCode,
+//                    data);
+//        }
+//    }
+
+    private String getRealPathFromURI(Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        CursorLoader loader = new CursorLoader(getApplicationContext(), contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result = cursor.getString(column_index);
+        cursor.close();
+        return result;
+    }
     protected void hideKeyboard(View view)
     {
         InputMethodManager inputMethodManager =(InputMethodManager )getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -317,6 +579,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, user.getEmail());
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC,mProfileImageUrl);
                     PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
                 }
 
