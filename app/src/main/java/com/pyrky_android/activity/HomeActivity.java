@@ -60,8 +60,9 @@ public class HomeActivity extends AppCompatActivity
     ActionBar actionbar;
     ActionBarDrawerToggle toggle;
     TextView textview;
-    TextView toolbarText;
+    TextView toolbarText,Username;
     RelativeLayout.LayoutParams layoutparams;
+    String UsrName;
     private FirebaseAuth mAuth;
     @Override
     protected void onStart() {
@@ -85,6 +86,10 @@ public class HomeActivity extends AppCompatActivity
 
         toolbarText = findViewById(R.id.toolbar_text);
         setSupportActionBar(toolbar);
+        UsrName=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
+//
+//        Username=findViewById(R.id.);
+//        Username.setText(UsrName);
 
 
         CoordinatorLayout coordinatorLayout = findViewById(R.id.home_coordinator);
@@ -116,6 +121,8 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
+        txtProfileName.setText(UsrName);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

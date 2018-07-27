@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +60,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     UploadTask uploadTask;
     TextView nameEdt;
     String mEmail,mName,mProfilepic;
+    ImageView SettingsImg;
     private int avatarSize;
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
@@ -108,6 +110,16 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                     .into(mProfileImage);
 
         }
+//        SettingsImg=view.findViewById(R.id.action_settings);
+//        SettingsImg.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                transaction.replace(R.id.main_frame_layout, SettingsFragment.newInstance());
+//                transaction.addToBackStack(null);
+//                transaction.commit();
+//            }
+//        });
         return view;
     }
     private void UpdateData(final String email, String carCategory) {
