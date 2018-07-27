@@ -100,7 +100,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-    Marker mCurrLocationMarker;
+//    Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
     private LocationManager mLocationManager;
     String mProvider;
