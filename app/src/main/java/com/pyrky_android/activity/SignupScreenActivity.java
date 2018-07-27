@@ -155,13 +155,6 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
             }
         });
 
-
-//        profileImg.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showBottomSheet();
-//            }
-//        });
         mAuth = FirebaseAuth.getInstance();
 //        FirebaseUser currentUser = mAuth.getCurrentUser();
 //        if(currentUser!=null) {
@@ -247,44 +240,28 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         Gallery = (TextView) bottomSheetView.findViewById(R.id.gallery_title);
         cancel = (TextView)bottomSheetView.findViewById(R.id.cancel_txt);
         cancelLay = (LinearLayout) bottomSheetView.findViewById(R.id.cance_lay);
-        Camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        Camera.setOnClickListener(view -> {
 
-                bottomSheetDialog.dismiss();
+            bottomSheetDialog.dismiss();
 
-                if (hasPermissions()) {
-                    captureImage();
-                } else {
-                    EasyPermissions.requestPermissions(SignupScreenActivity.this, "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
-                }
+            if (hasPermissions()) {
+                captureImage();
+            } else {
+                EasyPermissions.requestPermissions(SignupScreenActivity.this, "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
             }
         });
 
-        Gallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (hasPermissions()) {
-                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(i, RC_PICK_IMAGE);
-                } else {
-                    EasyPermissions.requestPermissions(SignupScreenActivity.this, "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
-                }
-                bottomSheetDialog.dismiss();
+        Gallery.setOnClickListener(view -> {
+            if (hasPermissions()) {
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, RC_PICK_IMAGE);
+            } else {
+                EasyPermissions.requestPermissions(SignupScreenActivity.this, "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
             }
+            bottomSheetDialog.dismiss();
         });
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-        cancelLay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
+        cancel.setOnClickListener(view -> bottomSheetDialog.dismiss());
+        cancelLay.setOnClickListener(view -> bottomSheetDialog.dismiss());
 
     }
 
@@ -471,9 +448,6 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                             Toast.makeText(getApplicationContext(), "Registration failed! " + "\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             hideProgressDialog();
                             // If sign in fails, display a message to the user.
-
-
-
 //                                showerror(" email is already exists");
 
                         }

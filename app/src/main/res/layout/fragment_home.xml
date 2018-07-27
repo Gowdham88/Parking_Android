@@ -12,8 +12,8 @@
         android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/home_lay"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -21,12 +21,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/destination_title"
             android:text="Destination"
+            style="@style/Nunitoregular"
             android:textSize="14sp"
             android:textColor="#404B69"
             android:layout_marginTop="10dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="10dp"
-            android:layout_alignParentTop="true"
             />
         <!--<RelativeLayout-->
             <!--android:background="@drawable/shape_search_view"-->
@@ -53,12 +53,12 @@
                 android:layout_height="35dp"
                 android:id="@+id/home_search_view"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                app:iconifiedByDefault="true"
+                app:iconifiedByDefault="false"
                 app:searchIcon="@drawable/ic_search1"
                 android:imeOptions="actionSearch"
                 android:background="@android:color/white"
                 app:queryHint="Search your destination"
+                style="@style/NunitoBlackLight"
                 android:inputType="textNoSuggestions"
                 android:clickable="true"
                 android:focusable="true"
