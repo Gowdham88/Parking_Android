@@ -16,15 +16,16 @@
         android:layout_above="@+id/navigationView">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_height="match_parent">
         <TextView
+            style="@style/Nunitoregular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/destination_title"
             android:text="Destination"
             android:textSize="14sp"
-            android:textStyle="bold"
+            android:textColor="@color/booking_txtclr"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
@@ -64,8 +65,10 @@
             />
             <fragment
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="173dp"
                 android:background="@color/white"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
                 android:layout_below="@id/home_search_view"
                 android:layout_marginTop="5dp"
                 android:id="@+id/current_location_view"
@@ -96,7 +99,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/nearest_places_title"
             android:textSize="14sp"
-            android:textStyle="bold"
+            style="@style/Nunitoregular"
             android:text="@string/nearest_parking_places_next_to_my_current_location"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
@@ -122,10 +125,10 @@
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigationView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
-        android:paddingTop="16dp"
+        android:paddingTop="10dp"
         android:layout_alignParentBottom="true"
         android:background="?android:attr/windowBackground"
         app:menu="@menu/bottom_navigation"

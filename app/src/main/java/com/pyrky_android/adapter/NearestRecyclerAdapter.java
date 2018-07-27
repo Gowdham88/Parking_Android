@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.model.LatLng;
 import com.pyrky_android.R;
 import com.pyrky_android.activity.NearestLocMapsActivity;
+import com.squareup.picasso.Picasso;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
     private String mDistance[] = {"10 - 30m","50 - 100m","70 - 400m","500 - 550m","60 - 600m",
             "150 - 300m","80 - 90m","150 - 155m","30 - 35m","800 - 850m"};
     private int mLocationImage[];
+    private int avatarSize;
 
     public NearestRecyclerAdapter(Context context, int[] images, String[] mAve, String[] mCity, int[] mLocationImage) {
         this.context = context;
@@ -53,7 +56,12 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
 
     @Override
     public void onBindViewHolder(@NonNull final NearestRecyclerAdapter.ViewHolder holder, int position) {
-        holder.nearestPlaceImage.setImageResource(mLocationImage[position]);
+//        holder.nearestPlaceImage.setImageResource(mLocationImage[position]);
+        this.avatarSize = context.getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+
+        Picasso.with(context).load(this.mLocationImage[position])
+                .fit()
+                .into(holder.nearestPlaceImage);
         holder.nearestPlaceAve.setText(mAve[position]);
         holder.nearestPlaceCity.setText(mCity[position]);
         holder.nearestPlaceDistance.setText(mDistance[position]);

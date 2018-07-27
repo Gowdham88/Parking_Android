@@ -1,5 +1,6 @@
 package com.pyrky_android.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -61,12 +62,14 @@ public class HomeActivity extends AppCompatActivity
     TextView textview;
     TextView toolbarText;
     RelativeLayout.LayoutParams layoutparams;
+    private FirebaseAuth mAuth;
     @Override
     protected void onStart() {
         super.onStart();
         ((MyApplication )getApplication()).getNetComponent().inject(this);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
@@ -77,7 +80,7 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         actionbar = getSupportActionBar();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+        mAuth = FirebaseAuth.getInstance();
 //        actionbar.setTitle("Home");
 
         toolbarText = findViewById(R.id.toolbar_text);
@@ -85,6 +88,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         CoordinatorLayout coordinatorLayout = findViewById(R.id.home_coordinator);
+        coordinatorLayout = findViewById(R.id.home_coordinator);
         bottomNavigationView = findViewById(R.id.navigationView);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -212,10 +216,17 @@ public class HomeActivity extends AppCompatActivity
             loadFragment(new ProfileFragment());
             toolbarText.setText("Profile");
         } else if (id == R.id.nav_logout) {
-            PreferencesHelper.signOut(context);
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(HomeActivity.this,SignInActivity.class));
+
+
+            Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("EXIT", true);
+//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            startActivity(intent);
+            PreferencesHelper.signOut(HomeActivity.this);
+            mAuth.signOut();
             HomeActivity.this.finish();
+
         }else if (id == R.id.profile_img){
             Toast.makeText(context, "Image selected", Toast.LENGTH_SHORT).show();
         }else if (id == R.id.profile_name){

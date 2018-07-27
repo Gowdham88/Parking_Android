@@ -33,13 +33,6 @@
 
         </activity>-->
         <activity
-            android:name=".activity.SignUpActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeSignup"
-            android:windowSoftInputMode="adjustResize|adjustNothing">
-
-        </activity>
-        <activity
             android:name=".activity.SignInActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeSignup"
@@ -72,7 +65,6 @@
         </activity>
         <activity
             android:name=".activity.HomeActivity"
-            android:label="Pyrky"
             android:theme="@style/AppTheme.Launcher"
             android:windowSoftInputMode="adjustResize|adjustNothing">
             <!--android:theme="@style/AppTheme.NoActionBar"-->

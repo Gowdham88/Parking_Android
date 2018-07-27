@@ -43,17 +43,17 @@ public class SignInActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     RelativeLayout parentsigninlay;
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //Check whether the user already loggedIn
-        if ((PreferencesHelper.getPreferenceBoolean(mContext,PreferencesHelper.PREFERENCE_ISLOGGEDIN))){
-            final Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
-            SignInActivity.this.finish();
-        }
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        //Check whether the user already loggedIn
+//        if ((PreferencesHelper.getPreferenceBoolean(mContext,PreferencesHelper.PREFERENCE_ISLOGGEDIN))){
+//            final Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+//            startActivity(intent);
+//            overridePendingTransition(0, 0);
+//            SignInActivity.this.finish();
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,11 +140,11 @@ public class SignInActivity extends AppCompatActivity {
 
                                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,user.getEmail());
                                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME,user.getUserName());
-                                        PreferencesHelper.setPreferenceBoolean(getApplicationContext(), PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
+
 
                                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, user.getProfileImageUrl());
                                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, users.getUid());
-                                        Log.e("profile",user.getProfileImageUrl());
+                                        PreferencesHelper.setPreferenceBoolean(getApplicationContext(), PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
 //
                                         Intent in=new Intent(SignInActivity.this,HomeActivity.class);
                                         startActivity(in);
