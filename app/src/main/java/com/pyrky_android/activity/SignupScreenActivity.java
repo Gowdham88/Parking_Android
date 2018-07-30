@@ -155,13 +155,6 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
             }
         });
 
-
-//        profileImg.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showBottomSheet();
-//            }
-//        });
         mAuth = FirebaseAuth.getInstance();
 //        FirebaseUser currentUser = mAuth.getCurrentUser();
 //        if(currentUser!=null) {
@@ -247,44 +240,28 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         Gallery = (TextView) bottomSheetView.findViewById(R.id.gallery_title);
         cancel = (TextView)bottomSheetView.findViewById(R.id.cancel_txt);
         cancelLay = (LinearLayout) bottomSheetView.findViewById(R.id.cance_lay);
-        Camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        Camera.setOnClickListener(view -> {
 
-                bottomSheetDialog.dismiss();
+            bottomSheetDialog.dismiss();
 
-                if (hasPermissions()) {
-                    captureImage();
-                } else {
-                    EasyPermissions.requestPermissions(SignupScreenActivity.this, "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
-                }
+            if (hasPermissions()) {
+                captureImage();
+            } else {
+                EasyPermissions.requestPermissions(SignupScreenActivity.this, "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
             }
         });
 
-        Gallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (hasPermissions()) {
-                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(i, RC_PICK_IMAGE);
-                } else {
-                    EasyPermissions.requestPermissions(SignupScreenActivity.this, "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
-                }
-                bottomSheetDialog.dismiss();
+        Gallery.setOnClickListener(view -> {
+            if (hasPermissions()) {
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, RC_PICK_IMAGE);
+            } else {
+                EasyPermissions.requestPermissions(SignupScreenActivity.this, "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
             }
+            bottomSheetDialog.dismiss();
         });
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-        cancelLay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
+        cancel.setOnClickListener(view -> bottomSheetDialog.dismiss());
+        cancelLay.setOnClickListener(view -> bottomSheetDialog.dismiss());
 
     }
 
@@ -471,9 +448,6 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                             Toast.makeText(getApplicationContext(), "Registration failed! " + "\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             hideProgressDialog();
                             // If sign in fails, display a message to the user.
-
-
-
 //                                showerror(" email is already exists");
 
                         }
@@ -543,15 +517,9 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                     });
 
         } else {
-
             return ;
-
         }
-
-
-
     }
-
 
 //    public static ObjectAnimator createTopDownAnimation(View view, AnimatorListenerAdapter listener,
 //                                                        float distance) {
@@ -584,51 +552,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     //    public void startSlideDownAnimation(View view) {
 //        AccntTxt.startAnimation(slideDownAnimation);
 //    }
-    private boolean validateForm() {
-        boolean valid = true;
 
-        String email = EmailEdt.getText().toString();
-        String username = UsernameEdt.getText().toString();
-        String password = PassEdt.getText().toString();
-        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && isPhotoValid) {
-
-            valid = true;
-
-        } else {
-
-            if(TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
-                Toast.makeText(this, "Enter email address and password.", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
-            else if((email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()))
-            {
-                Toast.makeText(getApplicationContext(), "enter a valid email address", Toast.LENGTH_SHORT).show();
-//            mEmail.setError("enter a valid email address");
-                valid = false;
-            }else if (username.isEmpty()&&username.equals(null)) {
-                Toast.makeText(this, "Enter username.", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
-            else if (TextUtils.isEmpty(password) || password.length()<6) {
-                Toast.makeText(this, "Enter password.", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
-            else if (!isPhotoValid) {
-                Toast.makeText(this, "" +
-                        "please fill the image", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
-
-            else {
-                Toast.makeText(this, "Enter email address.", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
-
-
-        }
-
-        return valid;
-    }
     private void AddDatabase(final FirebaseUser user, final View view){
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -710,6 +634,54 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
 
     }
+
+    private boolean validateForm() {
+        boolean valid = true;
+
+        String email = EmailEdt.getText().toString();
+        String username = UsernameEdt.getText().toString();
+        String password = PassEdt.getText().toString();
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && isPhotoValid) {
+
+            valid = true;
+
+        } else {
+
+            if(TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
+                Toast.makeText(this, "Enter email address and password.", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+            else if((email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()))
+            {
+                Toast.makeText(getApplicationContext(), "enter a valid email address", Toast.LENGTH_SHORT).show();
+//            mEmail.setError("enter a valid email address");
+                valid = false;
+            }else if (username.isEmpty()&&username.equals(null)) {
+                Toast.makeText(this, "Enter username.", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+            else if (TextUtils.isEmpty(password) || password.length()<6) {
+                Toast.makeText(this, "Enter password.", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+            else if (!isPhotoValid) {
+                Toast.makeText(this, "" +
+                        "please fill the image", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+
+            else {
+                Toast.makeText(this, "Enter email address.", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+
+
+        }
+
+        return valid;
+    }
+
+
     private void checkFieldsForEmptyValues() {
         if ((TextUtils.isEmpty(EmailEdt.getText()))
                 || (TextUtils.isEmpty(UsernameEdt.getText())||(TextUtils.isEmpty(PassEdt.getText())))){
