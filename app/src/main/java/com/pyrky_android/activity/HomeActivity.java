@@ -29,6 +29,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -92,7 +93,7 @@ public class HomeActivity extends AppCompatActivity
 //        Username.setText(UsrName);
 
 
-        CoordinatorLayout coordinatorLayout = findViewById(R.id.home_coordinator);
+        LinearLayout coordinatorLayout = findViewById(R.id.home_coordinator);
         coordinatorLayout = findViewById(R.id.home_coordinator);
         bottomNavigationView = findViewById(R.id.navigationView);
 
@@ -129,22 +130,26 @@ public class HomeActivity extends AppCompatActivity
                 switch (item.getItemId()){
                     case R.id.b_nav_home:
                         fragment = new HomeFragment();
+//                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Home");
                         break;
 
                     case R.id.b_nav_notification:
                         fragment = new NotificationFragment();
+//                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Notification");
                         break;
 
                     case R.id.b_nav_profile:
                         fragment = new ProfileFragment();
+//                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Profile");
                         break;
                 }
                 return loadFragment(fragment);
             }
         });
+//        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         loadFragment(new HomeFragment());
         toolbarText.setText("Home");
     }
@@ -211,12 +216,15 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             loadFragment(new HomeFragment());
             toolbarText.setText("Home");
         } else if (id == R.id.nav_booking) {
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             loadFragment(new BookingsFragment());
             toolbarText.setText("Booking");
         } else if (id == R.id.nav_profile) {
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             loadFragment(new ProfileFragment());
             toolbarText.setText("Profile");
         } else if (id == R.id.nav_logout) {
