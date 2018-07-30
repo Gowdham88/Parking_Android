@@ -31,6 +31,12 @@
                 android:id="@+id/toolbar_text"
                 style="@style/Nunitoregular"
                 />
+            <!--<ImageView-->
+                <!--android:src="@drawable/ic_settings_new"-->
+                <!--android:layout_width="46dp"-->
+                <!--android:layout_height="46dp" -->
+            <!---->
+                <!--/>-->
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
