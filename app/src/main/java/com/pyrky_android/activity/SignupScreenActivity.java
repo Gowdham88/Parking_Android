@@ -45,6 +45,7 @@ import android.widget.Toast;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,9 +54,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -74,6 +78,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -84,6 +89,7 @@ import java.util.zip.Inflater;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.http.Url;
 
 import static android.content.ContentValues.TAG;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -120,6 +126,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     String[] mCarranze = { "3.5 - 4.5m", "2.5 - 3.5m", "4 -5m", "5 - 5.5m", "5.5 - 6.5m" };
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     LinearLayout signupScrlin;
+    Button imageUpload;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,8 +136,17 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         UsernameEdt =(EditText)findViewById(R.id.et_user_name);
         PassEdt=(EditText)findViewById(R.id.et_password);
         AccntTxt=(TextView)findViewById(R.id.already_have_account);
+        imageUpload = findViewById(R.id.image_upload);
         Signuprellay=(RelativeLayout) findViewById(R.id.signup_parent_layout);
         signupScrlin=(LinearLayout) findViewById(R.id.scrollviewlin);
+
+        imageUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadImage(v);
+            }
+        });
+
         signupScrlin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -179,7 +195,6 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                     mCarouselCount = layoutManager.getCenterItemPosition();
-
                 }
             });
         }
@@ -187,7 +202,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
             @Override
             public void onClick(View view) {
                 Utils.hideKeyboard(SignupScreenActivity.this);
-                createAccount(EmailEdt.getText().toString(), UsernameEdt.getText().toString(),PassEdt.getText().toString(),view);
+                createAccount(EmailEdt.getText().toString().trim(),PassEdt.getText().toString().trim(),UsernameEdt.getText().toString(),view);
 
 //                if(validateForm()){
 //                    Intent in=new Intent(SignupScreenActivity.this,LoginScreen.class);
@@ -282,10 +297,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                     captureImage();
                 }
                 break;
-
         }
-
-
     }
 
     @Override
@@ -480,15 +492,33 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
             byte[] data = baos.toByteArray();
 
             StorageReference ref = storageRef.child("images/"+ UUID.randomUUID().toString()+".jpg");
-            UploadTask uploadTask = ref.putBytes(data);
-            uploadTask
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            UploadTask uploadTask = riversRef.putBytes(data);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
-                            Toast.makeText(SignupScreenActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignupScreenActivity.this, "Uploaded" + riversRef, Toast.LENGTH_SHORT).show();
                             postimageurl =taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
 
+
+                            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                @Override
+                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                    if (!task.isSuccessful()) {
+                                        throw task.getException();
+                                    }
+
+                                    return riversRef.getDownloadUrl();
+                                }
+                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+
+                                    postimageurl = task.getResult().toString();
+                                    final FirebaseUser user = mAuth.getCurrentUser();
+                                    AddDatabase(user,view);
+                                }
+                            });
                             Log.e("postimageurl",postimageurl);
 
                             if (postimageurl.equals("failed")) {
@@ -496,8 +526,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
                                 return;
                             }
-                            final FirebaseUser user = mAuth.getCurrentUser();
-                            AddDatabase(user,view);
+
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -512,7 +541,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            progressDialog.setMessage("Uploading "+(int)progress+"%");
                         }
                     });
 
@@ -556,7 +585,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     private void AddDatabase(final FirebaseUser user, final View view){
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final Users users = new Users(UsernameEdt.getText().toString(),EmailEdt.getText().toString(), String.valueOf(postimageurl), mCarCategoryId[mCarouselCount]);
+        final Users users = new Users(UsernameEdt.getText().toString(),EmailEdt.getText().toString(), postimageurl, mCarCategoryId[mCarouselCount]);
         showProgressDialog();
 
         DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -574,7 +603,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,EmailEdt.getText().toString());
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME,UsernameEdt.getText().toString());
 
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, String.valueOf(postimageurl));
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, postimageurl);
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, user.getUid());
 
                     PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(mCarouselCount));
@@ -582,7 +611,6 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                         Intent mainIntent = new Intent(SignupScreenActivity.this, HomeActivity.class);
                         startActivity(mainIntent);
                         finish();
-
 
                 } else {
 
@@ -599,7 +627,6 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                                     Snackbar.make(view,"Login failed", Snackbar.LENGTH_SHORT).show();
                                     return;
                                 }
-
                             });
 
                         Intent mainIntent = new Intent(SignupScreenActivity.this, HomeActivity.class);
@@ -664,12 +691,12 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                 Toast.makeText(this, "Enter password.", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
-            else if (!isPhotoValid) {
+           /* else if (!isPhotoValid) {
                 Toast.makeText(this, "" +
                         "please fill the image", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
-
+*/
             else {
                 Toast.makeText(this, "Enter email address.", Toast.LENGTH_SHORT).show();
                 valid = false;
