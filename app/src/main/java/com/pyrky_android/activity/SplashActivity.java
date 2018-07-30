@@ -15,7 +15,7 @@ import com.pyrky_android.preferences.PreferencesHelper;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private final int SPLASH_DISPLAY_LENGTH = 3000;
+    private final int SPLASH_DISPLAY_LENGTH = 2000;
     private Window mWindow;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
