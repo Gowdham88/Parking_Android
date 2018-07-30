@@ -1,5 +1,6 @@
 package com.pyrky_android.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -59,14 +60,17 @@ public class HomeActivity extends AppCompatActivity
     ActionBar actionbar;
     ActionBarDrawerToggle toggle;
     TextView textview;
-    TextView toolbarText;
+    TextView toolbarText,Username;
     RelativeLayout.LayoutParams layoutparams;
+    String UsrName;
+    private FirebaseAuth mAuth;
     @Override
     protected void onStart() {
         super.onStart();
         ((MyApplication )getApplication()).getNetComponent().inject(this);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
@@ -77,14 +81,19 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         actionbar = getSupportActionBar();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+        mAuth = FirebaseAuth.getInstance();
 //        actionbar.setTitle("Home");
 
         toolbarText = findViewById(R.id.toolbar_text);
         setSupportActionBar(toolbar);
+        UsrName=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
+//
+//        Username=findViewById(R.id.);
+//        Username.setText(UsrName);
 
 
         CoordinatorLayout coordinatorLayout = findViewById(R.id.home_coordinator);
+        coordinatorLayout = findViewById(R.id.home_coordinator);
         bottomNavigationView = findViewById(R.id.navigationView);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -112,6 +121,8 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
+        txtProfileName.setText(UsrName);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -212,10 +223,17 @@ public class HomeActivity extends AppCompatActivity
             loadFragment(new ProfileFragment());
             toolbarText.setText("Profile");
         } else if (id == R.id.nav_logout) {
-            PreferencesHelper.signOut(context);
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(HomeActivity.this,SignInActivity.class));
+
+
+            Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("EXIT", true);
+//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            startActivity(intent);
+            PreferencesHelper.signOut(HomeActivity.this);
+            mAuth.signOut();
             HomeActivity.this.finish();
+
         }else if (id == R.id.profile_img){
             Toast.makeText(context, "Image selected", Toast.LENGTH_SHORT).show();
         }else if (id == R.id.profile_name){

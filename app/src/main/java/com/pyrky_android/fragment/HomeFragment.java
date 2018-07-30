@@ -12,15 +12,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
@@ -42,9 +47,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.pyrky_android.ExpandableListData;
 import com.pyrky_android.MyApplication;
 import com.pyrky_android.R;
+import com.pyrky_android.activity.HomeActivity;
 import com.pyrky_android.activity.NearestLocMapsActivity;
+import com.pyrky_android.activity.SignInActivity;
 import com.pyrky_android.adapter.ExpandableListAdapter;
 import com.pyrky_android.adapter.NearestRecyclerAdapter;
+import com.pyrky_android.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -92,14 +100,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-    Marker mCurrLocationMarker;
+//    Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
     private LocationManager mLocationManager;
     String mProvider;
     LatLng mLatLng;
     SupportMapFragment mMapView;
     GoogleMap mGoogleMap;
-    Button mSearchButton;
+    TextView mSearchButton;
+    LinearLayout HomeRelativeLay;
     PlaceAutocompleteFragment autocompleteFragment;
     @Inject
     Retrofit retrofit;
@@ -127,6 +136,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
         carouselLayoutManager.setMaxVisibleItems(1);
         //NearestPlace Recycler
         mNearestPlaceRecycler = view.findViewById(R.id.nearest_places_recycler);
+                HomeRelativeLay = view.findViewById(R.id.home_lay);
+                HomeRelativeLay.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Utils.hideKeyboard(getActivity());
+                    }
+                });
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
         mNearestPlaceRecycler.setHasFixedSize(true);
@@ -138,7 +154,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
         //Expandable List and Searchview
         mExpandableListView = view.findViewById(R.id.expandableListView);
         mSearchView = view.findViewById(R.id.home_search_view);
-        Button filterButton = view.findViewById(R.id.filter_button);
+                Button filterButton = view.findViewById(R.id.filter_button);
         mSearchButton = view.findViewById(R.id.search_btn);
         mSearchView.setOnClickListener(new View.OnClickListener() {
             @Override

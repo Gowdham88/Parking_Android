@@ -18,19 +18,25 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
-            app:titleTextColor="@color/colorAccent"
             android:gravity="center"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+          >
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorAccent"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
+                android:textSize="18dp"
                 android:id="@+id/toolbar_text"
-                android:layout_marginEnd="?attr/actionBarSize"
-                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
+                style="@style/Nunitoregular"
+                />
+            <!--<ImageView-->
+                <!--android:src="@drawable/ic_settings_new"-->
+                <!--android:layout_width="46dp"-->
+                <!--android:layout_height="46dp" -->
+            <!---->
+                <!--/>-->
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

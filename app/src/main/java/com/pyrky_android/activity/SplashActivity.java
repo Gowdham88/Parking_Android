@@ -38,7 +38,7 @@ public class SplashActivity extends AppCompatActivity {
 //                    if(isDashboard){
                     Intent mainIntent = new Intent(SplashActivity.this,HomeActivity.class);
                     mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    SplashActivity.this.startActivity(mainIntent);
+                    startActivity(mainIntent);
                     SplashActivity.this.finish();
 
 ////                    }
