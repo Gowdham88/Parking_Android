@@ -39,6 +39,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@null"
+            android:text="name"
+            android:textColor="@color/booking_txtclr"
             android:layout_marginTop="19dp"
             android:gravity="bottom"
             android:textSize="12sp" />
