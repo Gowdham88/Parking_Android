@@ -65,11 +65,11 @@ public class HomeActivity extends AppCompatActivity
     RelativeLayout.LayoutParams layoutparams;
     String UsrName;
     private FirebaseAuth mAuth;
-    @Override
-    protected void onStart() {
-        super.onStart();
-        ((MyApplication )getApplication()).getNetComponent().inject(this);
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        ((MyApplication )getApplication()).getNetComponent().inject(this);
+//    }
 
     @SuppressLint("RestrictedApi")
     @Override
