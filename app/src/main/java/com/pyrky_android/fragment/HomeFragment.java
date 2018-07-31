@@ -2,8 +2,10 @@ package com.pyrky_android.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -16,13 +18,19 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +39,7 @@ import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.internal.service.Common;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -38,17 +47,42 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.pyrky_android.ExpandableListData;
 import com.pyrky_android.R;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 import com.pyrky_android.adapter.ExpandableListAdapter;
 import com.pyrky_android.adapter.NearestRecyclerAdapter;
+import com.pyrky_android.pojo.TimeModelClass;
+import com.pyrky_android.pojo.UserLocationData;
 import com.pyrky_android.utils.Utils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,7 +91,14 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.content.ContentValues.TAG;
+import static android.content.Context.LOCATION_SERVICE;
 
 /**
  * Created by thulirsoft on 7/6/18.
@@ -90,8 +131,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             String address1;
             Location mLocation;
             List<Address> addresses;
-            String lattitude,longitude,address,city,state,country,postalCode,knownName;
+            String lattitude,longitude,address,city,state,country,postalCode,knownName,distance;
+            public static String BaseUrl;
             double latitud, longitud,latitu,longitu;
+            List<UserLocationData> datalist = new ArrayList<UserLocationData>();
+            Marker marker;
+
+
+            private GoogleMap mMap;
+            LocationManager locationManager;
+
+            String type,str;
+
+            private static final String LOG_TAG = "ExampleApp";
+
+            private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
+            private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
+            private static final String OUT_JSON = "/json";
+
+            //------------ make your specific key ------------
+            private static final String API_KEY = "AIzaSyCsmEae3SidD5e6-jwwPOpPXOfNnPnwCmQ";
+            //			sb.append("&types=(chennai)");
 
     //Location
     double lat[] = {70.01383623,56.50329796,1.23736985,-24.33605988,11.38350584,-58.68375965,44.87310434,147.64797704,-3.02408824,-21.33447419};
@@ -133,11 +193,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, null);
-
+                Utils.hideKeyboard(getActivity());
         //Carousel
         final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
         carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
         carouselLayoutManager.setMaxVisibleItems(1);
+                mSearchView = view.findViewById(R.id.home_search_view);
+
 
         //NearestPlace Recycler
 //                Utils.hideKeyboard(getActivity());
@@ -149,8 +211,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                         Utils.hideKeyboard(getActivity());
                     }
                 });
-                SupportMapFragment mapFragment = (SupportMapFragment) getFragmentManager()
-                        .findFragmentById(R.id.current_location_view);
+//                SupportMapFragment mapFragment = (SupportMapFragment) getFragmentManager()
+//                        .findFragmentById(R.id.current_location_view);
 //                mapFragment.getMapAsync((OnMapReadyCallback) getActivity());
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
@@ -161,7 +223,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 //                onBackPressed();
         //Expandable List and Searchview
         mExpandableListView = view.findViewById(R.id.expandableListView);
-        mSearchView = view.findViewById(R.id.home_search_view);
+
                 Button filterButton = view.findViewById(R.id.filter_button);
         mSearchButton = view.findViewById(R.id.search_btn);
         mSearchView.setOnClickListener(new View.OnClickListener() {
@@ -197,13 +259,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 isExpandableListEnabled = false;
             }
         });
-        mSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),NearestLocMapsActivity.class);
-                getActivity().startActivity(intent);
-            }
-        });
+
 
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -294,12 +350,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 gps = new TrackGPS(getActivity());
                 try {
                     if(gps.canGetLocation()){
-//                for (int i = 0; i < datalist.size(); i++) {
 //
-//                    marker = Mmap.addMarker(new MarkerOptions().position(new LatLng(datalist.get(i).getLat(), datalist.get(i).getLongitude()))
-//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.bitmapfordriver))
+
+//                    marker = Mmap.addMarker(new MarkerOptions().position(new LatLng(gps .getLatitude(),gps.getLongitude()))
+//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.smallcar_icon))
 //                            .flat(true));
-//
+
 //                }
                         Double lat =gps .getLatitude();
                         Double lng =  gps.getLongitude();
@@ -322,11 +378,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                                     String knownName = addresses.get(0).getFeatureName();
                                     address1=(address + "," + city + "," + state + "," + country + "," + postalCode);
                                     Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
+                                    Log.e("address1",address1);
 //                            for (int i = 0; i < datalist.size(); i++) {
 //
-//                                marker = Mmap.addMarker(new MarkerOptions().position(new LatLng(datalist.get(i).getLat(), datalist.get(i).getLongitude()))
-//                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.bitmapfordriver))
-//                                        .flat(true));
+                                marker = Mmap.addMarker(new MarkerOptions().position(new LatLng(gps .getLatitude(), gps .getLatitude()))
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.smallcar_icon))
+                                        .flat(true));
 //
 //                            }
 
@@ -346,7 +403,56 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                     e.printStackTrace();
                 }
 
-        return view;
+
+                mSearchButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(),NearestLocMapsActivity.class);
+                        intent.putExtra("lattitude",gps .getLatitude());
+                        intent.putExtra("longitude",gps.getLongitude());
+//                        String latlan= String.valueOf(gps .getLatitude()+gps.getLongitude());
+//                        Toast.makeText(getActivity(), latlan, Toast.LENGTH_SHORT).show();
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+//        showProgressDialog();
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                Query first = db.collection("camera");
+
+                first.get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot documentSnapshots) {
+
+                                if (documentSnapshots.getDocuments().size() < 1) {
+
+                                    return;
+
+                                }
+
+                                for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
+
+                                    UserLocationData comment = document.toObject(UserLocationData.class);
+                                    datalist.add(comment);
+                                    Log.e("dbbd", String.valueOf(document.getData()));
+
+//                                    for(int i=0;i<=datalist.size();i++) {
+//
+//                                        marker = Mmap.addMarker(new MarkerOptions().position(new LatLng(datalist.get(i).getUserLat(),datalist.get(i).getUserLong()))
+//                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.smallcar_icon))
+//                                                .flat(true));
+//
+//                                    }
+
+                                }
+
+//
+                            }
+
+                        });
+                return view;
     }
             @Override
             public void onLocationChanged(Location location) {
@@ -358,7 +464,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,6.5f));
                 Mmap.animateCamera(CameraUpdateFactory.zoomTo(12.5f), 2000, null);
                 Mmap.setMaxZoomPreference(14.5f);
-                Mmap.setMinZoomPreference(6.5f);
+              
             }
 
             @Override
@@ -399,54 +505,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                         return true;
                     }
                 });
-                Mmap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-                    @Override
-                    public void onCameraChange(CameraPosition cameraPosition) {
-                        laln = cameraPosition.target;
-                        Mmap.clear();
-
-                        try {
-                            Location mLocation = new Location("");
-                            mLocation.setLatitude(laln.latitude);
-                            mLocation.setLongitude(laln.longitude);
-                            List<Address> addresses = null;
-                            Geocoder geo = new Geocoder(getActivity().getApplicationContext(), Locale.getDefault());
-                            addresses = geo.getFromLocation(laln.latitude, laln.longitude, 1);
-                            if (addresses.isEmpty()) {
-                            }
-                            else {
-                                if (addresses.size() > 0) {
-                                    String latti= String.valueOf(addresses.get(0).getLatitude());
-                                    latvalue=latti;
-
-                                    longitude= String.valueOf(addresses.get(0).getLongitude());
-                                    double lat= Double.parseDouble(String.valueOf(addresses.get(0).getLatitude()));
-                                    double logs=Double.parseDouble(String.valueOf(addresses.get(0).getLongitude()));
-                                    address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                                    city = addresses.get(0).getLocality();
-                                    state = addresses.get(0).getAdminArea();
-                                    country = addresses.get(0).getCountryName();
-                                    postalCode = addresses.get(0).getPostalCode();
-                                    knownName = addresses.get(0).getFeatureName();
-                                    address1=(address + "," + city + "," + state + "," + country + "," + postalCode);
-//                            Circle circle = Mmap.addCircle(new CircleOptions()
-//                                    .center(new LatLng(dblat,dblon))
-//                                    .radius(10000)
-//                                    .strokeColor(Color.BLUE)
-//                                    .fillColor(getResources().getColor(R.color.transporent_clr)).strokeWidth(2.0f));
-                                    Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
-
-                                    //                         Eaddress.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
-//                            Toast.makeText(getApplicationContext(), "Address:- " + addresses.get(0).getFeatureName() + addresses.get(0).getAdminArea() + addresses.get(0).getLocality(), Toast.LENGTH_LONG).show();
-                                }
-                            }
-
-//                    changelocation.setText(address1);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+//
             }
 
             public void handlenewlocation(final LatLng laln)
@@ -456,7 +515,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 //  Mmap.addMarker(new MarkerOptions().position(laln).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_pin2)));
                 Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,6.5f));
                 // map.animateCamera(CameraUpdateFactory.zoomIn());
-                Mmap.animateCamera(CameraUpdateFactory.zoomTo(12.5f), 2000, null);
+                Mmap.animateCamera(CameraUpdateFactory.zoomTo(12.5f), 1500, null);
                 latitu=laln.latitude;
                 longitu=laln.longitude;
 
@@ -555,6 +614,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             public boolean onMarkerClick(Marker marker) {
                 return false;
             }
+
+
+
 
 //          @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event) {

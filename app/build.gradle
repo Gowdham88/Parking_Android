@@ -75,6 +75,8 @@ dependencies {
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'pub.devrel:easypermissions:1.0.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
 
 
     testImplementation 'junit:junit:4.12'

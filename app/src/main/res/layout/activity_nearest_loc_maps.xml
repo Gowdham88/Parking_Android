@@ -1,13 +1,53 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    >
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/nearloc_toolbar" />
 
+    <View
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/myview"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/search_boarder_clr" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/myview"
+        android:orientation="vertical">
     <fragment
+
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/map"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/map_locabv"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:src="@drawable/smallcar_icon"
+            />
+        <!--<ImageView-->
+            <!--android:id="@+id/map_loc"-->
+            <!--android:layout_width="25dp"-->
+            <!--android:layout_height="25dp"-->
+            <!--android:layout_gravity="center"-->
+            <!--/>-->
+        <!--<TextView-->
+            <!--android:id="@+id/location_txt"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:text=""-->
+            <!--android:layout_marginTop="35dp"/>-->
+    </FrameLayout>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="140dp"
@@ -40,5 +80,5 @@
 
     </LinearLayout>
 
-
-</FrameLayout>
+    </FrameLayout>
+</RelativeLayout>

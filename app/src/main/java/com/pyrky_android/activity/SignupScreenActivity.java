@@ -136,16 +136,16 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         UsernameEdt =(EditText)findViewById(R.id.et_user_name);
         PassEdt=(EditText)findViewById(R.id.et_password);
         AccntTxt=(TextView)findViewById(R.id.already_have_account);
-        imageUpload = findViewById(R.id.image_upload);
+//        imageUpload = findViewById(R.id.image_upload);
         Signuprellay=(RelativeLayout) findViewById(R.id.signup_parent_layout);
         signupScrlin=(LinearLayout) findViewById(R.id.scrollviewlin);
-
-        imageUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadImage(v);
-            }
-        });
+//
+//        imageUpload.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                uploadImage(v);
+//            }
+//        });
 
         signupScrlin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -691,12 +691,12 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                 Toast.makeText(this, "Enter password.", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
-           /* else if (!isPhotoValid) {
-                Toast.makeText(this, "" +
-                        "please fill the image", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
-*/
+          else if (!isPhotoValid) {
+                    Toast.makeText(this, "" +
+                            "please fill the image", Toast.LENGTH_SHORT).show();
+                    valid = false;
+                }
+
             else {
                 Toast.makeText(this, "Enter email address.", Toast.LENGTH_SHORT).show();
                 valid = false;

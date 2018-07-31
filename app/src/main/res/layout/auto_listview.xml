@@ -1,0 +1,12 @@
+<TextView android:layout_width="370dp"
+    android:layout_height="35dp"
+    android:id="@+id/textview"
+    android:textSize="12dp"
+    android:layout_centerVertical="true"
+    android:layout_centerHorizontal="true"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp"
+    android:textColor="@color/booking_txtclr"
+ style="@style/NunitoBlackLight"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

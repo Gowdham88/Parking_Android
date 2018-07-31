@@ -2,27 +2,44 @@ package com.pyrky_android.pojo;
 
 public class UserLocationData {
 
-    private String userLat;
-    private String userLong;
+    private double userLat;
 
-    public UserLocationData(String userLat, String userLong) {
-        this.userLat = userLat;
-        this.userLong = userLong;
+    private double userLong;
+    private String cameraLocationName;
+
+
+
+    public UserLocationData() {
     }
 
-    public String getUserLat() {
+    public UserLocationData(double userLat, double userLong, String cameraLocationName) {
+        this.userLat = userLat;
+        this.userLong = userLong;
+        this.cameraLocationName=cameraLocationName;
+    }
+
+    public double getUserLat() {
         return userLat;
     }
 
-    public void setUserLat(String userLat) {
+    public void setUserLat(double userLat) {
         this.userLat = userLat;
     }
 
-    public String getUserLong() {
+    public double getUserLong() {
         return userLong;
     }
 
-    public void setUserLong(String userLong) {
+    public void setUserLong(double userLong) {
         this.userLong = userLong;
     }
+
+    public String getCameraLocationName() {
+        return cameraLocationName;
+    }
+
+    public void setCameraLocationName(String cameraLocationName) {
+        this.cameraLocationName = cameraLocationName;
+    }
+
 }
