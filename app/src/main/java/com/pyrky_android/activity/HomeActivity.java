@@ -42,11 +42,13 @@ import com.pyrky_android.fragment.NotificationFragment;
 import com.pyrky_android.fragment.ProfileFragment;
 import com.pyrky_android.R;
 import com.pyrky_android.preferences.PreferencesHelper;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Retrofit;
 
 public class HomeActivity extends AppCompatActivity
@@ -120,6 +122,8 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
+        CircleImageView profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
+        Picasso.with(context).load(PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_PROFILE_PIC)).into(profileImage);
         txtProfileName.setText(UsrName);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
