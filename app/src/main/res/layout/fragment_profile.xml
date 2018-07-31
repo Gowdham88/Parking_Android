@@ -104,6 +104,7 @@
             <ImageView
                 android:layout_width="27.86dp"
                 android:layout_height="53.16dp"
+                android:id="@+id/car_icon"
                 android:background="@drawable/smallcar_icon" />
 
             <LinearLayout
@@ -117,6 +118,7 @@
                     style="@style/NunitoBlackLight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/car_size"
                     android:layout_marginLeft="13dp"
                     android:layout_marginTop="8dp"
                     android:text="small"
@@ -129,6 +131,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="13dp"
                     android:layout_marginTop="5dp"
+                    android:id="@+id/car_dimension"
                     android:text="[3 to 4.5m]"
                     android:textColor="@color/booking_txtclr"
                     android:textSize="12dp" />

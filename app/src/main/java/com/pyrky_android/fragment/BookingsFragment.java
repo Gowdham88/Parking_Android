@@ -34,6 +34,9 @@ public class BookingsFragment extends Fragment implements  TabHost.OnTabChangeLi
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bookings,container,false);
 
+
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
         viewPager = view.findViewById(R.id.viewpager_events);
         tabLayout = view.findViewById(R.id.simpleTabLayout);
 //        BookingTabAdapter pagerAdapter = new BookingTabAdapter(getFragmentManager(),getActivity());
