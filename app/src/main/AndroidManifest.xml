@@ -43,7 +43,7 @@
         <activity
             android:name=".activity.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeSignup"
+            android:theme="@style/AppTheme.Launcher"
             android:windowSoftInputMode="adjustResize|adjustNothing|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -72,7 +72,7 @@
         </service>
 
         <activity android:name=".activity.SignInActivity"
-            android:theme="@style/AppTheme.Launcher">
+            android:theme="@style/AppThemeSignup">
 
         </activity>
         <activity

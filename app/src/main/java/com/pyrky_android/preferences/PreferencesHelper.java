@@ -17,6 +17,9 @@ public class PreferencesHelper {
     public static final String PREFERENCE_PROFILE_PIC = ".profilePic";
     public static final String PREFERENCE_ISLOGGEDIN = ".isloggedin";
     public static final String PREFERENCE_PROFILE_CAR = ".profileCar";
+    public static final String PREFERENCE_CAR_ICON = ".profileCar";
+    public static final String PREFERENCE_CAR_SIZE = ".profileCar";
+    public static final String PREFERENCE_CAR_DIMENSION = ".profileCar";
     public static final String PREF_FIREBASE_TOKEN = ".fbtoken";
     public static final String PREFERENCE_FIREBASE_UUID = ".fbuid";
     public static final String PREFERENCE_LOGGED_IN ="logged in";

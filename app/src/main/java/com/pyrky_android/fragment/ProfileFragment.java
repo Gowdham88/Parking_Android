@@ -47,19 +47,24 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends android.support.v4.app.Fragment {
 
-    String[] mLanguages = {"Compact[3.5 - 4.5m]", "Small[2.5 - 3.5m]", "Mid size[4 - 5m]", "Full[5 - 5.5m]", "Van/Pick-up[5.5 - 6.5m]"};
-    TextView email;
+    String[] mCarCategoryId = { "1", "2", "3", "4", "5" };
+    String[] mCarCategory = {"Compact", "Small", "Mid size", "Full", "Van/Pick-up"};
+    String[] mCarRange = {"[3.5 - 4.5m]", "[2.5 - 3.5m]", "[4 - 5m]", "[5 - 5.5m]", "[5.5 - 6.5m]"};
+    int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
+    TextView email,carSize,carDimension;
     CircleImageView mProfileImage;
     private final int PICK_IMAGE_REQUEST = 71;
     private Uri filePath;
     ActionBar actionBar;
     ImagePicker mImagePicker;
+    ImageView carIcon;
     //Firebase
     FirebaseStorage storage;
     StorageReference storageReference;
     UploadTask uploadTask;
-    TextView nameEdt;
+    TextView nameEdt,emailTxt;
     String mEmail,mName,mProfilepic;
+    int mCarIcon;
     ImageView SettingsImg;
     private int avatarSize;
     public static ProfileFragment newInstance() {
@@ -94,12 +99,22 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         mEmail = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_EMAIL);
         mName = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME);
         mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
+        mCarIcon = Integer.parseInt(PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR));
+
         email = view.findViewById(R.id.et_email);
-        mProfileImage = ( CircleImageView ) view.findViewById(R.id.profile_img);
-        nameEdt = ( TextView ) view.findViewById(R.id.name_txt);
+        mProfileImage = view.findViewById(R.id.profile_img);
+        nameEdt = view.findViewById(R.id.name_txt);
+        carIcon = view.findViewById(R.id.car_icon);
+        carSize = view.findViewById(R.id.car_size);
+        carDimension = view.findViewById(R.id.car_dimension);
+
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
         email.setText(mEmail);
         nameEdt.setText(mName);
+        carIcon.setImageResource(mIcons[mCarIcon]);
+        carSize.setText(mCarCategory[mCarIcon]);
+        carDimension.setText(mCarRange[mCarIcon]);
+
         Log.e("mProfilepic", mProfilepic);
         if (mProfilepic != null && !mProfilepic.isEmpty()) {
             Picasso.with(getActivity())
@@ -108,8 +123,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                     .centerCrop()
                     .transform(new CircleTransformation())
                     .into(mProfileImage);
-
         }
+
 //        SettingsImg=view.findViewById(R.id.action_settings);
 //        SettingsImg.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -128,6 +143,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 
         contact.update("email", email);
         contact.update("carCategory", carCategory)
+
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
