@@ -724,7 +724,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     }
 
 
-    
+
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
