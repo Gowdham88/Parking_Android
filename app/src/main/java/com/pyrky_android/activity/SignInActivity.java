@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -48,6 +50,8 @@ public class SignInActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     RelativeLayout parentsigninlay;
     private DatabaseReference mDatabase;
+    private AlertDialog dialog;
+    TextView ForgotPassTxt;
     @Override
     protected void onStart() {
         super.onStart();
@@ -70,6 +74,7 @@ public class SignInActivity extends AppCompatActivity {
         TextView toSignUp = findViewById(R.id.dont_have_account);
         mEmail = findViewById(R.id.et_email);
         mPassword = findViewById(R.id.et_password);
+        ForgotPassTxt=findViewById(R.id.tx_forget_password);
         TextView login = findViewById(R.id.sign_in_button);
         parentsigninlay=(RelativeLayout)findViewById(R.id.signin_layout);
 
@@ -88,6 +93,14 @@ public class SignInActivity extends AppCompatActivity {
                     signIn(mEmail.getText().toString().trim(),mPassword.getText().toString().trim());
                 }
 
+            }
+        });
+        ForgotPassTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SignInActivity.this,ForgotpasswordActivity.class));
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                SignInActivity.this.finish();
             }
         });
 
@@ -137,6 +150,7 @@ public class SignInActivity extends AppCompatActivity {
                                         hideProgressDialog();
 
                                     } else {
+                                        hideProgressDialog();
                                         Toast.makeText(SignInActivity.this, "No user exits", Toast.LENGTH_LONG).show();
 
                                     }
@@ -187,17 +201,34 @@ public class SignInActivity extends AppCompatActivity {
         });
     }*/
 
+//    public void showProgressDialog() {
+//        progressDialog = new ProgressDialog(this);
+//        progressDialog.setCancelable(false);
+//        progressDialog.setMessage("Loading...");
+//        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//        progressDialog.show();
+//    }
+//
+//    public void hideProgressDialog(){
+//        if(progressDialog!=null)
+//            progressDialog.dismiss();
+//    }
+
     public void showProgressDialog() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
+
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignInActivity.this);
+        //View view = getLayoutInflater().inflate(R.layout.progress);
+        alertDialog.setView(R.layout.progress);
+        dialog = alertDialog.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
     }
 
     public void hideProgressDialog(){
-        if(progressDialog!=null)
-            progressDialog.dismiss();
+        if(dialog!=null)
+            dialog.dismiss();
     }
 
     private boolean validateForm() {

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,7 +48,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends android.support.v4.app.Fragment {
 
-    String[] mCarCategoryId = { "1", "2", "3", "4", "5" };
+    String[] mCarCategoryId = {"0", "1", "2", "3", "4" };
     String[] mCarCategory = {"Compact", "Small", "Mid size", "Full", "Van/Pick-up"};
     String[] mCarRange = {"[3.5 - 4.5m]", "[2.5 - 3.5m]", "[4 - 5m]", "[5 - 5.5m]", "[5.5 - 6.5m]"};
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
@@ -78,7 +79,11 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 //        actionBar.setIcon(R.drawable.ic_settings_new);
 
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +129,33 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                     .transform(new CircleTransformation())
                     .into(mProfileImage);
         }
+
+
+       if(mCarIcon==0){
+           carIcon.setImageResource(R.drawable.compactcar_icon);
+           carSize.setText("Compact");
+           carDimension.setText("[3.5 - 4.5m]");
+       }
+       else if(mCarIcon==1){
+           carIcon.setImageResource(R.drawable.smallcar_icon);
+           carSize.setText("Small");
+           carDimension.setText("[2.5 - 3.5m]");
+       }
+       else if(mCarIcon==2){
+           carIcon.setImageResource(R.drawable.midsizecar_icon);
+           carSize.setText("Mid size");
+           carDimension.setText("[4 - 5m]");
+        }
+       else if(mCarIcon==3){
+           carIcon.setImageResource(R.drawable.fullcar_icon);
+           carSize.setText("Full");
+           carDimension.setText("[5 - 5.5m]");
+       }
+       else {
+           carIcon.setImageResource(R.drawable.vanpickupcar_icon);
+           carSize.setText("Van/Pick-up");
+           carDimension.setText("[5.5 - 6.5m]");
+       }
 
 //        SettingsImg=view.findViewById(R.id.action_settings);
 //        SettingsImg.setOnClickListener(new View.OnClickListener() {

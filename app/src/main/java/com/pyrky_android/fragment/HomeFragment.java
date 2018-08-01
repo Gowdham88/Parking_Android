@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -69,7 +70,6 @@ import com.pyrky_android.R;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 import com.pyrky_android.adapter.ExpandableListAdapter;
 import com.pyrky_android.adapter.NearestRecyclerAdapter;
-import com.pyrky_android.pojo.TimeModelClass;
 import com.pyrky_android.pojo.UserLocationData;
 import com.pyrky_android.utils.Utils;
 
@@ -176,6 +176,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
     PlaceAutocompleteFragment autocompleteFragment;
     @Inject
     Retrofit retrofit;
+            @Override
+            public void onResume() {
+                super.onResume();
+                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+            }
 
 //            @Override
 //            public void onAttach(Context context) {

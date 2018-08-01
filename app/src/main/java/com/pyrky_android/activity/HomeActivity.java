@@ -1,6 +1,7 @@
 package com.pyrky_android.activity;
 
 import android.annotation.SuppressLint;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,7 +14,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
@@ -41,7 +42,9 @@ import com.pyrky_android.fragment.HomeFragment;
 import com.pyrky_android.fragment.NotificationFragment;
 import com.pyrky_android.fragment.ProfileFragment;
 import com.pyrky_android.R;
+import com.pyrky_android.fragment.SettingsFragment;
 import com.pyrky_android.preferences.PreferencesHelper;
+import com.pyrky_android.utils.CircleTransformation;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -59,19 +62,23 @@ public class HomeActivity extends AppCompatActivity
     Retrofit retrofit;
     Boolean isRunning = true;
     BottomNavigationView bottomNavigationView;
-    Toolbar toolbar;
+   public Toolbar toolbar;
+//    public View myView;
     ActionBar actionbar;
     ActionBarDrawerToggle toggle;
     TextView textview;
     TextView toolbarText,Username;
     RelativeLayout.LayoutParams layoutparams;
-    String UsrName;
+    String UsrName,UserProfile;
     private FirebaseAuth mAuth;
+    private int avatarSize;
+    CircleImageView profileImage;
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
 //        ((MyApplication )getApplication()).getNetComponent().inject(this);
 //    }
+
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -82,6 +89,7 @@ public class HomeActivity extends AppCompatActivity
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+//        myView=findViewById(R.id.myview);
         actionbar = getSupportActionBar();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mAuth = FirebaseAuth.getInstance();
@@ -90,6 +98,7 @@ public class HomeActivity extends AppCompatActivity
         toolbarText = findViewById(R.id.toolbar_text);
         setSupportActionBar(toolbar);
         UsrName=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
+        UserProfile=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_PROFILE_PIC);
 //
 //        Username=findViewById(R.id.);
 //        Username.setText(UsrName);
@@ -122,10 +131,17 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
-        CircleImageView profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
-        Picasso.with(HomeActivity.this).load(PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC)).into(profileImage);
+        profileImage= (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
         txtProfileName.setText(UsrName);
-
+        this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+        if (UserProfile != null && !UserProfile.isEmpty()) {
+            Picasso.with(HomeActivity.this)
+                    .load(UserProfile)
+                    .resize(avatarSize, avatarSize)
+                    .centerCrop()
+                    .transform(new CircleTransformation())
+                    .into(profileImage);
+        }
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -133,12 +149,25 @@ public class HomeActivity extends AppCompatActivity
 
                 switch (item.getItemId()){
                     case R.id.b_nav_home:
+//                        loadFragment(new HomeFragment());
+//                        Fragment fragmenthome = new HomeFragment();
+//                        getSupportFragmentManager()
+//                                .beginTransaction()
+//                                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+//                                .add(R.id.main_frame_layout, fragmenthome)
+//                                .commit();
                         fragment = new HomeFragment();
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Home");
                         break;
 
                     case R.id.b_nav_notification:
+//                        Fragment fragmentnotification = new NotificationFragment();
+//                        getSupportFragmentManager()
+//                                .beginTransaction()
+//                                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+//                                .add(R.id.main_frame_layout, fragmentnotification)
+//                                .commit();
                         fragment = new NotificationFragment();
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Notification");
@@ -146,6 +175,12 @@ public class HomeActivity extends AppCompatActivity
 
                     case R.id.b_nav_profile:
                         fragment = new ProfileFragment();
+//                        Fragment fragmentprofile = new ProfileFragment();
+//                        getSupportFragmentManager()
+//                                .beginTransaction()
+//                                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+//                                .add(R.id.main_frame_layout, fragmentprofile)
+//                                .commit();
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Profile");
                         break;
@@ -153,6 +188,7 @@ public class HomeActivity extends AppCompatActivity
                 return loadFragment(fragment);
             }
         });
+
 //        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         loadFragment(new HomeFragment());
         toolbarText.setText("Home");
@@ -163,6 +199,7 @@ public class HomeActivity extends AppCompatActivity
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                     .replace(R.id.main_frame_layout, fragment)
                     .commit();
             return true;
@@ -220,16 +257,36 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            loadFragment(new HomeFragment());
+//            android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//            transaction.replace(R.id.main_frame_layout, HomeFragment.newInstance());
+//            transaction.addToBackStack(null);
+//            transaction.commit();
+
+            Fragment fragment = new HomeFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                    .add(R.id.main_frame_layout, fragment)
+                    .commit();
+//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            loadFragment(new HomeFragment());
             toolbarText.setText("Home");
         } else if (id == R.id.nav_booking) {
             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            loadFragment(new BookingsFragment());
-            toolbarText.setText("Booking");
+//            loadFragment(new BookingsFragment());
+//            toolbarText.setText("Booking");
+            Intent intent=new Intent(getApplicationContext(),BookingsActivity.class);
+           startActivity(intent);
         } else if (id == R.id.nav_profile) {
-            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            loadFragment(new ProfileFragment());
+
+            Fragment fragment = new ProfileFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                    .add(R.id.main_frame_layout, fragment)
+                    .commit();
+//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            loadFragment(new ProfileFragment());
             toolbarText.setText("Profile");
         } else if (id == R.id.nav_logout) {
 

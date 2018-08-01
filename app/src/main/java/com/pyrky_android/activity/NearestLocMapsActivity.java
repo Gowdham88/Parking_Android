@@ -34,7 +34,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.pyrky_android.Manifest;
 import com.pyrky_android.R;
 import com.pyrky_android.adapter.NearestRecyclerAdapter;
 import com.pyrky_android.fragment.TrackGPS;
