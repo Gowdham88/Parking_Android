@@ -40,8 +40,11 @@ import android.widget.Toast;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -70,6 +73,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -83,9 +87,10 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 public class SettingsFragment extends Fragment  implements EasyPermissions.PermissionCallbacks{
     Toolbar toolbar;
     TextView toolbarText;
-    EditText NameEdt;
+    EditText NameEdt,EmailEdt;
     ImageView ProfileImg;
-    TextView Camera,Gallery,cancel;
+    TextView Camera,Gallery,cancel,save;
+    CircleImageView mProfileImage;
     private android.support.v7.app.AlertDialog dialog;
     LinearLayout cancelLay;
     int mCarouselCount = 0;
@@ -94,8 +99,6 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     String[] mCarCategoryId = { "1", "2", "3", "4", "5" };
     String[] mCarranze = { "3.5 - 4.5m", "2.5 - 3.5m", "4 -5m", "5 - 5.5m", "5.5 - 6.5m" };
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
-
-
     private static final int PERMISSIONS_REQUEST_CAMERA = 1888;
     private static final int PERMISSIONS_REQUEST_GALLERY = 1889;
     private static final String[] CAMERA = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -123,15 +126,30 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         mEmail = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_EMAIL);
         mName = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME);
         mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
-        mUid= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_ID);
+        mUid= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 
         toolbar = view.findViewById(R.id.toolbar);
         ProfileImg=view.findViewById(R.id.profile_img);
+        mProfileImage = view.findViewById(R.id.profile_img);
+        save = view.findViewById(R.id.save_button);
 //        toolbarText.setText("Settings");
         NameEdt=view.findViewById(R.id.et_name);
+        EmailEdt=view.findViewById(R.id.et_email);
         NameEdt.setText(mName);
+        EmailEdt.setText(mEmail);
+
         mAuth = FirebaseAuth.getInstance();
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+
+        Log.e("mProfilepic", mProfilepic);
+        if (mProfilepic != null && !mProfilepic.isEmpty()) {
+            Picasso.with(getActivity())
+                    .load(mProfilepic)
+                    .resize(avatarSize, avatarSize)
+                    .centerCrop()
+                    .transform(new CircleTransformation())
+                    .into(mProfileImage);
+        }
 
         final CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
         layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
@@ -151,9 +169,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 }
             });
         }
-        ProfileImg.setOnClickListener(
-
-                new View.OnClickListener() {
+        ProfileImg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         showBottomSheet();
@@ -166,9 +182,19 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 PopUp();
             }
         });
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveUserImage(postimageurl);
+                String name = NameEdt.getText().toString().trim();
+                String email = EmailEdt.getText().toString().trim();
+
+                updateData(email,mCarCategoryId[mCarouselCount],postimageurl,name);
+            }
+        });
+
         return view;
-
-
 
     }
     private void PopUp() {
@@ -213,13 +239,12 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             e.printStackTrace();
         }
         alertDialog1.show();
-//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(alertDialog1.getWindow().getAttributes());
-//        lp.height=200dp;
-//        lp.width=228;
+
         lp.gravity = Gravity.CENTER;
-//        lp.windowAnimations = R.style.DialogAnimation;
+
         alertDialog1.getWindow().setAttributes(lp);
 
     }
@@ -235,7 +260,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        NameEdt .setText(name);
+//                        NameEdt .setText(name);
                         Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
                         PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME, name);
                         dialog.dismiss();
@@ -260,10 +285,10 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
 
-        Camera = (TextView) bottomSheetView.findViewById(R.id.camera_title);
-        Gallery = (TextView) bottomSheetView.findViewById(R.id.gallery_title);
-        cancel = (TextView)bottomSheetView.findViewById(R.id.cancel_txt);
-        cancelLay = (LinearLayout) bottomSheetView.findViewById(R.id.cance_lay);
+        Camera = bottomSheetView.findViewById(R.id.camera_title);
+        Gallery = bottomSheetView.findViewById(R.id.gallery_title);
+        cancel = bottomSheetView.findViewById(R.id.cancel_txt);
+        cancelLay = bottomSheetView.findViewById(R.id.cance_lay);
         Camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -304,6 +329,14 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         });
 
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
 
@@ -392,10 +425,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        showProgressDialog();
-//        if(requestCode==5555){
-//            loadPost();
-//        }
+
         if (resultCode != Activity.RESULT_CANCELED) {
             if (requestCode == RC_PICK_IMAGE) {
                 if (data != null) {
@@ -457,7 +487,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         cursor.close();
         return result;
     }
-    public void uploadImage(String realPathFromURI) {
+    public void uploadImage(final String view) {
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
@@ -466,10 +496,6 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             final ProgressDialog progressDialog = new ProgressDialog(getActivity());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-
-//            ivPhoto.setDrawingCacheEnabled(true);
-//            ivPhoto.buildDrawingCache();
-
 
             Uri file = Uri.fromFile(new File(selectedImagePath));
             StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
@@ -480,52 +506,80 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             byte[] data = baos.toByteArray();
 
             StorageReference ref = storageRef.child("images/"+ UUID.randomUUID().toString()+".jpg");
-            UploadTask uploadTask = ref.putBytes(data);
-            uploadTask
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            UploadTask uploadTask = riversRef.putBytes(data);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getActivity(), "Uploaded" + riversRef, Toast.LENGTH_SHORT).show();
+                    postimageurl =taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+
+                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(getActivity(), "Uploaded", Toast.LENGTH_SHORT).show();
-                            postimageurl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-
-                            if (postimageurl.equals("failed")) {
-
-
-                                return;
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
                             }
-                            final FirebaseUser user = mAuth.getCurrentUser();
-//                            AddDatabase(user,view);
-                            saveUserImage(postimageurl);
 
-
-
+                            return riversRef.getDownloadUrl();
                         }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                         @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(getActivity(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                            postimageurl = "failed";
+                        public void onComplete(@NonNull Task<Uri> task) {
+
+                            postimageurl = task.getResult().toString();
+                            final FirebaseUser user = mAuth.getCurrentUser();
+
+//                            AddDatabase(user,view);
                         }
-                    })
+                    });
+                    Log.e("postimageurl",postimageurl);
+
+                    if (postimageurl.equals("failed")) {
+
+
+                        return;
+                    }
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getActivity(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    postimageurl = "failed";
+                }
+            })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            progressDialog.setMessage("Uploading "+(int)progress+"%");
                         }
                     });
+
         } else {
-
             return ;
-
         }
+    }
 
+    private void updateData(final String email, String carCategory, String profileImageUrl,String userName) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
 
-
+        contact.update("email", email);
+        contact.update("profileImageURL",profileImageUrl);
+        contact.update("userName",userName);
+        contact.update("carCategory", carCategory)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_EMAIL,email);
+                        Toast.makeText(getActivity(), "Updated Successfully",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     public void saveUserImage(final String postimageurl) {
@@ -534,8 +588,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference ref = db.collection("users").document(mUid);
 
-
-        ref.update("profileImageURL", postimageurl)
+        ref.update("profileImageUrl", postimageurl)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

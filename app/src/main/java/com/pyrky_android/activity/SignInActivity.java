@@ -26,6 +26,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,13 +38,16 @@ import com.pyrky_android.utils.Utils;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SignInActivity extends AppCompatActivity {
     Context mContext = this;
     EditText mEmail,mPassword;
     private FirebaseAuth mAuth;
     ProgressDialog progressDialog;
     RelativeLayout parentsigninlay;
-
+    private DatabaseReference mDatabase;
     @Override
     protected void onStart() {
         super.onStart();
@@ -108,9 +113,9 @@ public class SignInActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
 
-                            final FirebaseUser users = mAuth.getCurrentUser();
+                            final FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            DocumentReference docRef = db.collection("users").document(users.getUid());
+                            DocumentReference docRef = db.collection("users").document(firebaseUser.getUid());
                             docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -122,9 +127,10 @@ public class SignInActivity extends AppCompatActivity {
                                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,user.getEmail());
                                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME,user.getUserName());
                                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, user.getProfileImageUrl());
-                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, users.getUid());
+                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_CAR, user.getCarCategory());
+                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, firebaseUser.getUid());
                                         PreferencesHelper.setPreferenceBoolean(getApplicationContext(), PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
-//
+
                                         Intent in=new Intent(SignInActivity.this,HomeActivity.class);
                                         startActivity(in);
                                         finish();
@@ -154,8 +160,32 @@ public class SignInActivity extends AppCompatActivity {
 
                     }
                 });
-
     }
+
+   /* private void getUserData(Users user, FirebaseUser firebaseUsers){
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference docRef = db.collection("users").document(firebaseUsers.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,user.getEmail());
+                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME,user.getUserName());
+                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, user.getProfileImageUrl());
+                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, firebaseUsers.getUid());
+                        PreferencesHelper.setPreferenceBoolean(getApplicationContext(), PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
+
+                    } else {
+                    }
+                } else {
+
+                }
+            }
+        });
+    }*/
 
     public void showProgressDialog() {
         progressDialog = new ProgressDialog(this);
