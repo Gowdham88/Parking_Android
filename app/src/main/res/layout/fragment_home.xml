@@ -9,7 +9,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
     <LinearLayout
         android:id="@+id/home_lay"
         android:layout_width="match_parent"
@@ -45,9 +45,22 @@
                  android:layout_marginEnd="15dp"
                  android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
-                android:layout_height="34dp"
+                android:layout_height="35dp"
                  app:cardCornerRadius="30dp"
                 android:background="@drawable/shape_search_view">
+                 <!--<RelativeLayout-->
+                     <!--android:layout_width="wrap_content"-->
+                     <!--android:layout_height="wrap_content"-->
+                     <!--android:background="@color/white">-->
+                     <!--<Button-->
+                         <!--android:id="@+id/search_button"-->
+                         <!--android:layout_width="20dp"-->
+                         <!--android:layout_height="20dp"-->
+                         <!--android:layout_gravity="center_vertical"-->
+                         <!--android:layout_marginLeft="10dp"-->
+                         <!--android:layout_centerVertical="true"-->
+                         <!--android:background="@drawable/ic_search1"-->
+                         <!--/>-->
             <android.support.v7.widget.SearchView
                 android:layout_width="match_parent"
                 android:layout_height="34dp"
@@ -58,12 +71,29 @@
                 android:imeOptions="actionSearch"
                 android:background="@android:color/white"
                 app:queryHint="Search your destination"
-                style="@style/NunitoBlackLight"
+
                 android:inputType="textNoSuggestions"
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_toStartOf="@id/filter_button"
                 />
+
+                 <!--<AutoCompleteTextView-->
+                     <!--android:textColor="@color/booking_txtclr"-->
+                     <!--style="@style/NunitoBlackLight"-->
+                     <!--android:textSize="13dp"-->
+                     <!--android:id="@+id/location_txt"-->
+                     <!--android:layout_width="match_parent"-->
+                     <!--android:text=""-->
+                     <!--android:layout_toRightOf="@+id/search_button"-->
+                     <!--android:layout_centerVertical="true"-->
+                     <!--android:layout_height="35dp"-->
+                     <!--android:layout_marginStart="35dp"-->
+                     <!--android:layout_marginEnd="20dp"-->
+                     <!--android:background="@color/white" >-->
+
+                     <!--<requestFocus />-->
+                 <!--</AutoCompleteTextView>-->
             <Button
                 android:id="@+id/filter_button"
                 android:layout_width="25dp"
@@ -73,6 +103,7 @@
                 android:layout_centerVertical="true"
                 android:background="@drawable/ic_fliter1"
                 />
+                 <!--</RelativeLayout>-->
     </android.support.v7.widget.CardView>
 
         <!--</RelativeLayout>-->
@@ -94,6 +125,30 @@
                     android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
                     android:layout_height="173dp" />
+                <!--<FrameLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="173dp">-->
+                    <!--<ImageView-->
+                        <!--android:id="@+id/map_locabv"-->
+                        <!--android:layout_width="25dp"-->
+                        <!--android:layout_height="25dp"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:src="@drawable/smallcar_icon"-->
+                        <!--/>-->
+                    <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:id="@+id/map_loc"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="25dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="25dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
+                    <!--&lt;!&ndash;/>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:id="@+id/location_txt"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:text=""&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginTop="35dp"/>&ndash;&gt;-->
+                <!--</FrameLayout>-->
             <!--<fragment-->
                 <!--android:layout_width="match_parent"-->
                 <!--android:layout_height=""-->
@@ -126,8 +181,8 @@
                 android:layout_width="match_parent"
                 android:layout_marginTop="5dp"
                 android:layout_height="180dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="30dp"
+                android:layout_marginLeft="27dp"
+                android:layout_marginRight="27dp"
                 android:id="@+id/nearest_places_recycler"
                 />
         </LinearLayout>

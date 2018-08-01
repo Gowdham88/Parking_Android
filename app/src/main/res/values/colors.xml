@@ -16,4 +16,5 @@
     <color name="email_txtclr">#B6B6B6</color>
     <color name="search_boarder_clr">#B6B6B6</color>
     <color name="colorred">#F8021E</color>
+    <color name="transporent_clr">#33000000</color>
 </resources>

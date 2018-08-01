@@ -123,7 +123,7 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
         CircleImageView profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
-        Picasso.with(context).load(PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_PROFILE_PIC)).into(profileImage);
+        Picasso.with(HomeActivity.this).load(PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC)).into(profileImage);
         txtProfileName.setText(UsrName);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
