@@ -512,7 +512,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             {
                 Mmap.clear();
 
-                //  Mmap.addMarker(new MarkerOptions().position(laln).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_pin2)))....;
+                //  Mmap.addMarker(new MarkerOptions().position(laln).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_pin2)));
+//                marker
                 Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,6.5f));
                 // map.animateCamera(CameraUpdateFactory.zoomIn());
                 Mmap.animateCamera(CameraUpdateFactory.zoomTo(12.5f), 1500, null);
