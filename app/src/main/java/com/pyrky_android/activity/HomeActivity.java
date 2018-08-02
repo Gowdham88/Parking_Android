@@ -42,6 +42,7 @@ import com.pyrky_android.fragment.NotificationFragment;
 import com.pyrky_android.fragment.ProfileFragment;
 import com.pyrky_android.R;
 import com.pyrky_android.preferences.PreferencesHelper;
+import com.pyrky_android.utils.CircleTransformation;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ public class HomeActivity extends AppCompatActivity
     RelativeLayout.LayoutParams layoutparams;
     String UsrName;
     private FirebaseAuth mAuth;
+    private int avatarSize;
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
@@ -124,10 +126,15 @@ public class HomeActivity extends AppCompatActivity
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
         CircleImageView profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
         String profileImageUrl = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC);
-        if (!profileImageUrl.equals("")){
-            Picasso.with(HomeActivity.this).load(profileImageUrl).into(profileImage);
+        this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            Picasso.with(HomeActivity.this)
+                    .load(profileImageUrl)
+                    .resize(avatarSize, avatarSize)
+                    .centerCrop()
+                    .transform(new CircleTransformation())
+                    .into(profileImage);
         }
-
         txtProfileName.setText(UsrName);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -224,16 +231,34 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            loadFragment(new HomeFragment());
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+            transaction.replace(R.id.main_frame_layout, new HomeFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
+//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            loadFragment(new ());
             toolbarText.setText("Home");
         } else if (id == R.id.nav_booking) {
-            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            loadFragment(new BookingsFragment());
+//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            loadFragment(new BookingsFragment());
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+            transaction.replace(R.id.main_frame_layout, new BookingsFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
             toolbarText.setText("Booking");
         } else if (id == R.id.nav_profile) {
-            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            loadFragment(new ProfileFragment());
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+            transaction.replace(R.id.main_frame_layout, new ProfileFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
+//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            loadFragment(new ProfileFragment());
             toolbarText.setText("Profile");
         } else if (id == R.id.nav_logout) {
 

@@ -86,7 +86,6 @@ import com.pyrky_android.map.PlacesPOJO;
 import com.pyrky_android.map.RecyclerViewAdapter;
 import com.pyrky_android.map.ResultDistanceMatrix;
 import com.pyrky_android.map.StoreModel;
-import com.pyrky_android.pojo.TimeModelClass;
 import com.pyrky_android.pojo.UserLocationData;
 import com.pyrky_android.utils.Utils;
 
