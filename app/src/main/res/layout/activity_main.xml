@@ -24,5 +24,5 @@
         app:itemIconTint="@color/colorAccent"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
-    <!--android:theme="@style/NavigationTheme"...-->
+    <!--android:theme="@style/NavigationTheme".......-->
 </android.support.v4.widget.DrawerLayout>
