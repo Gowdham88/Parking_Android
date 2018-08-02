@@ -20,8 +20,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -30,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -55,6 +58,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.pyrky_android.BuildConfig;
 import com.pyrky_android.R;
+import com.pyrky_android.activity.HomeActivity;
 import com.pyrky_android.adapter.CarouselAdapter;
 import com.pyrky_android.preferences.PreferencesHelper;
 import com.pyrky_android.utils.CircleTransformation;
@@ -84,7 +88,7 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
  * Created by thulirsoft on 7/21/18.
  */
 
-public class SettingsFragment extends Fragment  implements EasyPermissions.PermissionCallbacks{
+public class SettingsFragment extends Fragment  implements EasyPermissions.PermissionCallbacks,AdapterView.OnItemSelectedListener{
     Toolbar toolbar;
     TextView toolbarText;
     EditText NameEdt,EmailEdt;
@@ -96,7 +100,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     int mCarouselCount = 0;
     String mEmail,mName,mProfilepic,mUid,userName;
     String[] mCarCategory = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
-    String[] mCarCategoryId = { "1", "2", "3", "4", "5" };
+    String[] mCarCategoryId = {"0", "1", "2", "3", "4" };
     String[] mCarranze = { "3.5 - 4.5m", "2.5 - 3.5m", "4 -5m", "5 - 5.5m", "5.5 - 6.5m" };
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     private static final int PERMISSIONS_REQUEST_CAMERA = 1888;
@@ -113,6 +117,9 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     private String mCurrentPhotoPath;
     private int avatarSize;
     private FirebaseAuth mAuth;
+    ImageView BackImg;
+    TextView  TitlaTxt;
+    int mCarIcon;
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
@@ -127,8 +134,20 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         mName = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME);
         mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         mUid= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-
-        toolbar = view.findViewById(R.id.toolbar);
+        mCarIcon = Integer.parseInt(PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR));
+        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.GONE);
+//        ((AppCompatActivity)getActivity()).getActionBar().hide();
+        BackImg=(ImageView) view.findViewById(R.id.back_image);
+        TitlaTxt=(TextView)view.findViewById(R.id.extra_title);
+        TitlaTxt.setText("Settings");
+        BackImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
+//        toolbar = view.findViewById(R.id.toolbar);
         ProfileImg=view.findViewById(R.id.profile_img);
         mProfileImage = view.findViewById(R.id.profile_img);
         save = view.findViewById(R.id.save_button);
@@ -141,7 +160,34 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         mAuth = FirebaseAuth.getInstance();
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
 
-        Log.e("mProfilepic", mProfilepic);
+
+//        if(mCarIcon==0){
+//            carIcon.setImageResource(R.drawable.compactcar_icon);
+//            carSize.setText("Compact");
+//            carDimension.setText("[3.5 - 4.5m]");
+//        }
+//        else if(mCarIcon==1){
+//            carIcon.setImageResource(R.drawable.smallcar_icon);
+//            carSize.setText("Small");
+//            carDimension.setText("[2.5 - 3.5m]");
+//        }
+//        else if(mCarIcon==2){
+//            carIcon.setImageResource(R.drawable.midsizecar_icon);
+//            carSize.setText("Mid size");
+//            carDimension.setText("[4 - 5m]");
+//        }
+//        else if(mCarIcon==3){
+//            carIcon.setImageResource(R.drawable.fullcar_icon);
+//            carSize.setText("Full");
+//            carDimension.setText("[5 - 5.5m]");
+//        }
+//        else {
+//            carIcon.setImageResource(R.drawable.vanpickupcar_icon);
+//            carSize.setText("Van/Pick-up");
+//            carDimension.setText("[5.5 - 6.5m]");
+//        }
+
+//        Log.e("mProfilepic", mProfilepic);
         if (mProfilepic != null && !mProfilepic.isEmpty()) {
             Picasso.with(getActivity())
                     .load(mProfilepic)
@@ -154,6 +200,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         final CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
         layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
         layoutManager.setMaxVisibleItems(1);
+
 
         final RecyclerView recyclerView = view.findViewById(R.id.carousel_recycler);
         recyclerView.setLayoutManager(layoutManager);
@@ -529,10 +576,12 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
                             postimageurl = task.getResult().toString();
                             final FirebaseUser user = mAuth.getCurrentUser();
-
+                            saveUserImage(postimageurl);
 //                            AddDatabase(user,view);
                         }
                     });
+
+
                     Log.e("postimageurl",postimageurl);
 
                     if (postimageurl.equals("failed")) {
@@ -540,6 +589,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
                         return;
                     }
+
 
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -569,13 +619,13 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
 
         contact.update("email", email);
-        contact.update("profileImageURL",profileImageUrl);
         contact.update("userName",userName);
         contact.update("carCategory", carCategory)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_EMAIL,email);
+                        PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(carCategory));
                         Toast.makeText(getActivity(), "Updated Successfully",
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -644,4 +694,40 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             dialog.dismiss();
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        switch(mCarIcon){
+            case 0:
+
+                //view.setBackgroundResource(ids[0]);
+
+
+            case 1:
+                //view.setBackgroundResource(ids[1])......;
+
+
+            case 2:
+
+
+            case 3:
+
+
+            case 4:
+
+
+            case 5:
+
+
+
+        }
+
+    }
+
+
+
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
 }

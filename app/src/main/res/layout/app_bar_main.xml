@@ -17,10 +17,12 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
+
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
             android:gravity="center"
+
           >
 
             <TextView
@@ -33,6 +35,7 @@
                 android:id="@+id/toolbar_text"
                 style="@style/Nunitoregular"
                 />
+
             <!--<ImageView-->
                 <!--android:src="@drawable/ic_settings_new"-->
                 <!--android:layout_width="46dp"-->
@@ -41,13 +44,17 @@
                 <!--/>-->
         </android.support.v7.widget.Toolbar>
 
+        <View
+            android:layout_below="@+id/toolbar"
+            android:id="@+id/myview"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/search_boarder_clr" />
+
+
     </android.support.design.widget.AppBarLayout>
-    <View
-        android:layout_below="@+id/toolbar"
-        android:id="@+id/myview"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/search_boarder_clr" />
+
 
     <include layout="@layout/content_main" />
 

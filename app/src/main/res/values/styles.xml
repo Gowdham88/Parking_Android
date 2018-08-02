@@ -19,6 +19,7 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowDisablePreview">true</item>
     </style>
 
     <style name="AppThemeSignup" parent="Theme.AppCompat.Light.DarkActionBar">

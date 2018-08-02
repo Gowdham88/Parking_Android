@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- GCM connects to Google Services. -->
 
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -33,9 +34,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <!--<meta-data-->
-            <!--android:name="com.google.android.geo.API_KEY"-->
-            <!--android:value="AIzaSyCsmEae3SidD5e6-jwwPOpPXOfNnPnwCmQ" />-->
+        <!-- <meta-data -->
+        <!-- android:name="com.google.android.geo.API_KEY" -->
+        <!-- android:value="AIzaSyCsmEae3SidD5e6-jwwPOpPXOfNnPnwCmQ" /> -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -51,14 +52,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.SignupScreenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeSignup"
-            android:windowSoftInputMode="adjustResize|adjustNothing|stateHidden">
-
-        </activity>
+            android:windowSoftInputMode="adjustResize|adjustNothing|stateHidden" />
 
         <service android:name=".firebase.MyFirebaseMessagingService">
             <intent-filter>
@@ -71,15 +69,15 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activity.SignInActivity"
-            android:theme="@style/AppThemeSignup">
-
-        </activity>
+        <activity
+            android:name=".activity.SignInActivity"
+            android:theme="@style/AppThemeSignup" />
         <activity
             android:name=".activity.HomeActivity"
             android:theme="@style/AppTheme.Launcher"
             android:windowSoftInputMode="adjustResize|adjustNothing">
-            <!--android:theme="@style/AppTheme.NoActionBar"-->
+
+            <!-- android:theme="@style/AppTheme.NoActionBar" -->
 
         </activity>
 
@@ -106,10 +104,9 @@
 
         <activity
             android:name=".activity.NearestLocMapsActivity"
-            android:label="@string/title_activity_nearest_loc_maps">
-
-        </activity>
-
+            android:label="@string/title_activity_nearest_loc_maps" />
+        <activity android:name=".activity.BookingsActivity" />
+        <activity android:name=".activity.ForgotpasswordActivity"></activity>
     </application>
 
 </manifest>
