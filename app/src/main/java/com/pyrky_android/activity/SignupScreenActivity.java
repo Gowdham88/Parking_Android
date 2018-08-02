@@ -109,7 +109,6 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     String[] mCarranze = { "3.5 - 4.5m", "2.5 - 3.5m", "4 -5m", "5 - 5.5m", "5.5 - 6.5m" };
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     LinearLayout signupScrlin;
-    Button imageUpload;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,17 +118,8 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         mEtUsername = findViewById(R.id.et_user_name);
         mEtPassword = findViewById(R.id.et_password);
         AccntTxt = findViewById(R.id.already_have_account);
-        imageUpload = findViewById(R.id.image_upload);
         Signuprellay = findViewById(R.id.signup_parent_layout);
         signupScrlin = findViewById(R.id.scrollviewlin);
-
-        imageUpload.setVisibility(View.GONE);
-        imageUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadImage(v);
-            }
-        });
 
         signupScrlin.setOnClickListener(new View.OnClickListener() {
             @Override
