@@ -255,7 +255,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
         apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
 
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
@@ -263,8 +263,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        editText = (EditText) view.findViewById(R.id.editText);
-        button = (Button) view.findViewById(R.id.filter_button);
+        editText = view.findViewById(R.id.editText);
+        button = view.findViewById(R.id.filter_button);
 
         editText.setVisibility(View.GONE);
         button.setVisibility(View.GONE);
@@ -281,10 +281,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                     fetchStores(split[0], split[1]);
             }
         });
-
-
-
-
 
         //Carousel
         final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
@@ -358,7 +354,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                     mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
                     Collections.reverse(mExpandableListTitle);
                     mExpandableListAdapter = new ExpandableListAdapter(getActivity(), mExpandableListTitle, mExpandableListDetail);
-
                     mExpandableListView.setAdapter(mExpandableListAdapter);
                 } else {
                     mExpandableListView.setVisibility(View.GONE);
@@ -372,7 +367,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         });
 
         mExpandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-
             @Override
             public void onGroupExpand(int groupPosition) {
                 Toast.makeText(getActivity(),
@@ -506,7 +500,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             @Override
             public void onResume() {
                 super.onResume();
-//                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             }
             private void fetchStores(String placeType, String businessName) {
 
@@ -519,7 +513,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 Call<PlacesPOJO.Root> call = apiService.doPlaces(placeType, latLngString, businessName, true, "distance", ApiClient.GOOGLE_PLACE_API_KEY);
                 call.enqueue(new Callback<PlacesPOJO.Root>() {
                     @Override
-                    public void onResponse(Call<PlacesPOJO.Root> call, Response<PlacesPOJO.Root> response) {
+                    public void onResponse(@NonNull Call<PlacesPOJO.Root> call, @NonNull Response<PlacesPOJO.Root> response) {
                         PlacesPOJO.Root root = response.body();
 
 

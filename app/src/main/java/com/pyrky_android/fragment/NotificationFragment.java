@@ -45,28 +45,4 @@ public class NotificationFragment extends Fragment {
 
         return view;
     }
-
-    public void showDialog(){
-        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
-
-
-        popDialog.setTitle("Do you want to request a camera view for three seconds");
-
-        popDialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                getActivity().startActivity(new Intent(getActivity(), NearestLocMapsActivity.class));
-            }
-        });
-        popDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        popDialog.create();
-        popDialog.show();
-
-    }
 }

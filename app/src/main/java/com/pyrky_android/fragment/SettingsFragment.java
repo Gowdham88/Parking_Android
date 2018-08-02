@@ -698,26 +698,16 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         switch(mCarIcon){
             case 0:
-
                 //view.setBackgroundResource(ids[0]);
-
-
             case 1:
                 //view.setBackgroundResource(ids[1])......;
-
-
             case 2:
-
 
             case 3:
 
-
             case 4:
 
-
             case 5:
-
-
 
         }
 
