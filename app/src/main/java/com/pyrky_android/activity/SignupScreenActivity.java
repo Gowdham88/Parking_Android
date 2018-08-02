@@ -59,6 +59,7 @@ import com.google.firebase.storage.UploadTask;
 import com.pyrky_android.BuildConfig;
 import com.pyrky_android.R;
 import com.pyrky_android.adapter.CarouselAdapter;
+import com.pyrky_android.adapter.CarouselSignupAdapter;
 import com.pyrky_android.pojo.Users;
 import com.pyrky_android.preferences.PreferencesHelper;
 import com.pyrky_android.utils.Constants;
@@ -159,7 +160,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         final RecyclerView recyclerView = findViewById(R.id.carousel_recycler);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(new CarouselAdapter(this, mIcons, mCarCategory,mCarranze));
+        recyclerView.setAdapter(new CarouselSignupAdapter(this, mIcons, mCarCategory,mCarranze));
         recyclerView.addOnScrollListener(new CenterScrollListener());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {

@@ -80,6 +80,7 @@ import java.util.UUID;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Callback;
 
 import static android.content.ContentValues.TAG;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -97,7 +98,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     CircleImageView mProfileImage;
     private android.support.v7.app.AlertDialog dialog;
     LinearLayout cancelLay;
-    int mCarouselCount = 0;
+    int mCarouselCount,mCarouselCountpos;
     String mEmail,mName,mProfilepic,mUid,userName;
     String[] mCarCategory = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
     String[] mCarCategoryId = {"0", "1", "2", "3", "4" };
@@ -120,6 +121,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     ImageView BackImg;
     TextView  TitlaTxt;
     int mCarIcon;
+     CarouselLayoutManager layoutManager;
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
@@ -197,25 +199,93 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                     .into(mProfileImage);
         }
 
-        final CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
+        layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
         layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-        layoutManager.setMaxVisibleItems(1);
+        layoutManager.setMaxVisibleItems(1);;
+//        layoutManager.scrollToPosition(mCarIcon);
+//        layoutManager.addOnItemSelectionListener(new CarouselLayoutManager.OnCenterItemSelectionListener() {
+//            @Override
+//            public void onCenterItemChanged(int adapterPosition) {
+//                int pos=adapterPosition;
+//
+//                Toast.makeText(getActivity(),String.valueOf(pos) , Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
 
         final RecyclerView recyclerView = view.findViewById(R.id.carousel_recycler);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(new CarouselAdapter(getActivity(), mIcons, mCarCategory,mCarranze));
+
+        recyclerView.setAdapter(new CarouselAdapter(getActivity(), mIcons, mCarCategory,mCarranze,mCarIcon));
         recyclerView.addOnScrollListener(new CenterScrollListener());
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                     mCarouselCount = layoutManager.getCenterItemPosition();
 
+
                 }
             });
         }
+        recyclerView.scrollToPosition(mCarouselCount);
+//        if(mCarIcon==0){
+//            layoutManager.scrollToPosition(0);
+//
+//        }
+//        else if(mCarIcon==1){
+//            layoutManager.scrollToPosition(1);
+//        }
+//         else if(mCarIcon==2){
+//            layoutManager.scrollToPosition(2);
+//        }
+//         else if(mCarIcon==3){
+//            layoutManager.scrollToPosition(3);
+//        }
+//         else{
+//            layoutManager.scrollToPosition(4);
+//        }
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+//                    Toast.makeText(getActivity(), "pos", Toast.LENGTH_SHORT).show();
+//                    //Dragging
+//                } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                    Toast.makeText(getActivity(), "possi", Toast.LENGTH_SHORT).show();
+//
+////                 /*
+////                    Here load the Image to image view with picaso
+////                 */
+////                    Picasso.with(itemView.getContext())
+////                            .load(url)
+////                            .into(yourImageView, new Callback() {
+////                                @Override
+////                                public void onSuccess() {
+////
+////                                }
+////
+////                                @Override
+////                                public void onError() {
+////
+////                                }
+////                            });
+//                }
+//            }
+//
+//
+//        @Override
+//        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//            super.onScrolled(recyclerView, dx, dy);
+//
+////            int firstVisibleItem = recylerViewLayoutManager.findFirstVisibleItemPosition();
+//               /* Log.e ("VisibleItem", String.valueOf(firstVisibleItem));*/
+//
+//        }
+//    });
         ProfileImg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -229,15 +299,15 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 PopUp();
             }
         });
-
+        String profileimg= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveUserImage(postimageurl);
+//                saveUserImage(postimageurl);
                 String name = NameEdt.getText().toString().trim();
                 String email = EmailEdt.getText().toString().trim();
 
-                updateData(email,mCarCategoryId[mCarouselCount],postimageurl,name);
+                updateData(email,mCarCategoryId[mCarouselCount],name);
             }
         });
 
@@ -614,12 +684,13 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         }
     }
 
-    private void updateData(final String email, String carCategory, String profileImageUrl,String userName) {
+    private void updateData(final String email, String carCategory,String userName) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
-
+//        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         contact.update("email", email);
         contact.update("userName",userName);
+        contact.update("profileImageUrl",mProfilepic);
         contact.update("carCategory", carCategory)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -696,30 +767,33 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
         switch(mCarIcon){
             case 0:
 
-                //view.setBackgroundResource(ids[0]);
-
-
+                Toast.makeText(getActivity(), "Position=" + i, Toast.LENGTH_LONG).show();
+                break;
             case 1:
-                //view.setBackgroundResource(ids[1])......;
+                //view.setBackgroundResource(ids[1]);
 
-
+                Toast.makeText(getActivity(), "Position=" + i, Toast.LENGTH_LONG).show();
+                break;
             case 2:
 
-
+                Toast.makeText(getActivity(), "Position=" + i, Toast.LENGTH_LONG).show();
+                break;
             case 3:
 
-
+                Toast.makeText(getActivity(), "Position=" + i, Toast.LENGTH_LONG).show();
+                break;
             case 4:
 
-
-            case 5:
-
+                Toast.makeText(getActivity(), "Position=" + i, Toast.LENGTH_LONG).show();
+                break;
 
 
         }
+//
 
     }
 

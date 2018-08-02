@@ -22,11 +22,13 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
     private LayoutInflater inflater;
     private String[] languages;
     private String[] mCarranze;
-    public CarouselAdapter(Context context, int[] icons, String[] languages, String[] carCategoryMeter) {
+    int mCarIcon;
+    public CarouselAdapter(Context context, int[] icons, String[] languages, String[] carCategoryMeter, int mCarIcon) {
         this.context = context;
         this.icons = icons;
         this.languages = languages;
         this.mCarranze=carCategoryMeter;
+        this.mCarIcon=mCarIcon;
         inflater = LayoutInflater.from(context);
     }
 
@@ -40,6 +42,11 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull CarouselAdapter.ViewHolder holder, int position) {
+        int pos=holder.getAdapterPosition();
+
+//        if(mCarIcon==pos){
+//
+//        }
 
         holder.carIcon.setImageResource(icons[position]);
         holder.carType.setText(languages[position]);
