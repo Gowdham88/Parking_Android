@@ -703,7 +703,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
 
             case 1:
-                //view.setBackgroundResource(ids[1]);
+                //view.setBackgroundResource(ids[1])......;
 
 
             case 2:
