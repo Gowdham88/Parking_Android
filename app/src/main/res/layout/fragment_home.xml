@@ -9,7 +9,11 @@
     xmlns:tools="http://schemas.android.com/tools">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
     <LinearLayout
         android:id="@+id/home_lay"
         android:layout_width="match_parent"
@@ -28,17 +32,8 @@
             android:layout_marginStart="15dp"
             android:layout_marginEnd="10dp"
             />
-        <!--<RelativeLayout-->
-            <!--android:background="@drawable/shape_search_view"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@id/destination_title"-->
-            <!--android:id="@+id/search_layout"-->
-            <!--android:layout_marginStart="15dp"-->
-            <!--android:layout_marginEnd="15dp"-->
-            <!--android:layout_marginTop="15dp">-->
              <android.support.v7.widget.CardView
-           app:cardElevation="2dp"
+                app:cardElevation="2dp"
                  android:layout_below="@id/destination_title"
                  android:id="@+id/search_layout"
                  android:layout_marginStart="15dp"
@@ -48,19 +43,12 @@
                 android:layout_height="35dp"
                  app:cardCornerRadius="30dp"
                 android:background="@drawable/shape_search_view">
-                 <!--<RelativeLayout-->
-                     <!--android:layout_width="wrap_content"-->
-                     <!--android:layout_height="wrap_content"-->
-                     <!--android:background="@color/white">-->
-                     <!--<Button-->
-                         <!--android:id="@+id/search_button"-->
-                         <!--android:layout_width="20dp"-->
-                         <!--android:layout_height="20dp"-->
-                         <!--android:layout_gravity="center_vertical"-->
-                         <!--android:layout_marginLeft="10dp"-->
-                         <!--android:layout_centerVertical="true"-->
-                         <!--android:background="@drawable/ic_search1"-->
-                         <!--/>-->
+                 <RelativeLayout
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:background="@color/white"
+                     android:layout_marginEnd="15dp">
+
             <android.support.v7.widget.SearchView
                 android:layout_width="match_parent"
                 android:layout_height="34dp"
@@ -71,42 +59,46 @@
                 android:imeOptions="actionSearch"
                 android:background="@android:color/white"
                 app:queryHint="Search your destination"
-
                 android:inputType="textNoSuggestions"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_toStartOf="@id/filter_button"
+                android:visibility="gone"
                 />
+                     <EditText
+                         android:layout_width="match_parent"
+                         android:layout_height="34dp"
+                         android:id="@+id/editText"
+                         android:hint="type name"
+                         android:visibility="gone"
+                         android:drawableStart="@drawable/ic_search1"
+                         android:layout_marginStart="5dp"
+                         />
+                 <fragment
+                     android:id="@+id/place_autocomplete_fragment"
+                     android:layout_width="match_parent"
+                     android:layout_height="34dp"
+                     android:layout_alignParentStart="true"
+                     android:layout_marginEnd="30dp"
+                     android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                     />
+                     <Button
+                         android:id="@+id/filter_button"
+                         android:layout_width="25dp"
+                         android:layout_height="25dp"
+                         android:layout_gravity="center_vertical"
+                         android:layout_alignParentEnd="true"
+                         android:layout_centerVertical="true"
+                         android:background="@drawable/ic_fliter1"
+                         />
+                 </RelativeLayout>
 
-                 <!--<AutoCompleteTextView-->
-                     <!--android:textColor="@color/booking_txtclr"-->
-                     <!--style="@style/NunitoBlackLight"-->
-                     <!--android:textSize="13dp"-->
-                     <!--android:id="@+id/location_txt"-->
-                     <!--android:layout_width="match_parent"-->
-                     <!--android:text=""-->
-                     <!--android:layout_toRightOf="@+id/search_button"-->
-                     <!--android:layout_centerVertical="true"-->
-                     <!--android:layout_height="35dp"-->
-                     <!--android:layout_marginStart="35dp"-->
-                     <!--android:layout_marginEnd="20dp"-->
-                     <!--android:background="@color/white" >-->
-
-                     <!--<requestFocus />-->
-                 <!--</AutoCompleteTextView>-->
-            <Button
-                android:id="@+id/filter_button"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="290dp"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ic_fliter1"
-                />
-                 <!--</RelativeLayout>-->
     </android.support.v7.widget.CardView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical" />
 
-        <!--</RelativeLayout>-->
             <android.support.v7.widget.CardView
                 android:id="@+id/current_location_card"
                 android:layout_width="match_parent"
@@ -157,7 +149,6 @@
                 <!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
                 <!--/>-->
             </android.support.v7.widget.CardView>
-
 
         <LinearLayout
             android:layout_width="match_parent"
