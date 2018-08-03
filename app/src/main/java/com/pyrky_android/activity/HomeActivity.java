@@ -69,6 +69,7 @@ public class HomeActivity extends AppCompatActivity
     String UsrName;
     private FirebaseAuth mAuth;
     private int avatarSize;
+    View view;
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
@@ -91,6 +92,8 @@ public class HomeActivity extends AppCompatActivity
 
         toolbarText = findViewById(R.id.toolbar_text);
         setSupportActionBar(toolbar);
+        view=(View)findViewById(R.id.myview);
+        view.setVisibility(View.VISIBLE);
         UsrName=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
 //
 //        Username=findViewById(R.id.);

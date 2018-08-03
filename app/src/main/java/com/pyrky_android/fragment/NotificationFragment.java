@@ -19,6 +19,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.pyrky_android.R;
+import com.pyrky_android.activity.HomeActivity;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 import com.pyrky_android.adapter.NotificationAdapter;
 
@@ -36,6 +37,7 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
     @Nullable

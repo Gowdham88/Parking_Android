@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -61,6 +62,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pyrky_android.ExpandableListData;
 import com.pyrky_android.R;
+import com.pyrky_android.activity.HomeActivity;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 import com.pyrky_android.adapter.ExpandableListAdapter;
 import com.pyrky_android.adapter.NearestRecyclerAdapter;
@@ -509,7 +511,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             @Override
             public void onResume() {
                 super.onResume();
-//                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
+                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             }
             private void fetchStores(String placeType, String businessName) {
 

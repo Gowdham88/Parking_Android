@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.pyrky_android.R;
+import com.pyrky_android.activity.HomeActivity;
 import com.pyrky_android.adapter.CustomViewPagerAdapter;
 
 /**
@@ -26,6 +28,12 @@ public class BookingsFragment extends Fragment implements  TabHost.OnTabChangeLi
         return new BookingsFragment();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+    }
     ViewPager viewPager;
     TabLayout tabLayout;
 
