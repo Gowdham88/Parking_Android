@@ -41,6 +41,7 @@ import android.widget.Toast;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.places.GeoDataApi;
 import com.google.android.gms.location.places.Place;
@@ -111,7 +112,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 //        GoogleApiClient.ConnectionCallbacks,
 //        GoogleApiClient.OnConnectionFailedListener
         {
-    //Search View
+            private static List<String> placeidList;
+            private static String placeidval;
+            //Search View
     SearchView mSearchView;
     //Nearest Place recycler
     RecyclerView mNearestPlaceRecycler;
@@ -136,6 +139,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             double latitu,longitu;
             List<UserLocationData> datalist = new ArrayList<UserLocationData>();
             Marker marker;
+
 
             private static final String LOG_TAG = "ExampleApp";
 
@@ -174,6 +178,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             Button button;
             List<PlacesPOJO.CustomA> results;
             AutoCompleteTextView autoCompView;
+            String placeid;
+            List<String> places= new ArrayList<String>();
+            List<String> placesid = new ArrayList<String>();
 
 //            @Override
 //            public void onAttach(Context context) {
@@ -214,28 +221,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 //            }
 //        });
 
-
-        // Set the desired behaviour on click
-//        searchIcon.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                Toast.makeText(getActivity(), "YOUR DESIRED BEHAVIOUR HERE", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//                autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//                    @Override
-//                    public void onPlaceSelected(Place place) {
-//                        // TODO: Get info about the selected place.
-//                        Log.i(TAG, "Place: " + place.getName());
-//                    }
-//
-//                    @Override
-//                    public void onError(Status status) {
-//                        // TODO: Handle the error.
-//                        Log.i(TAG, "An error occurred: " + status);
-//                    }
-//                });
-
         permissions.add(ACCESS_FINE_LOCATION);
         permissions.add(ACCESS_COARSE_LOCATION);
 
@@ -259,14 +244,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
 
         apiService = ApiClient.getClient().create(ApiInterface.class);
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setHasFixedSize(true);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
+//
+//        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+//
+//        recyclerView.setNestedScrollingEnabled(false);
+//        recyclerView.setHasFixedSize(true);
+//
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+//        recyclerView.setLayoutManager(layoutManager);
 
 //        editText = (EditText) view.findViewById(R.id.editText);
         button = (Button) view.findViewById(R.id.filter_button);
@@ -277,19 +262,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                String s = editText.getText().toString().trim();
-//                String[] split = s.split("\\s+");
 
-//                if (split.length != 2) {
-//                    Toast.makeText(getActivity(), "Please enter text in the required format", Toast.LENGTH_SHORT).show();
-//                } else
-//                    fetchStores(split[0], split[1]);
             }
         });
-
-
-
-
 
         //Carousel
         final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
@@ -677,8 +652,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
 
                                 if (storeModels.size() == 10 || storeModels.size() == results.size()) {
-                                    RecyclerViewAdapter adapterStores = new RecyclerViewAdapter(results, storeModels);
-                                    recyclerView.setAdapter(adapterStores);
+//                                    RecyclerViewAdapter adapterStores = new RecyclerViewAdapter(results, storeModels);
+//                                    recyclerView.setAdapter(adapterStores);
                                 }
 
                             }
@@ -770,10 +745,26 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             }
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String str = (String) adapterView.getItemAtPosition(position);
+
                 Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show();
+//                String selection = (String) adapterView.getItemAtPosition(position);
+//                int pos = -1;
+//
+//                for (int i = 0; i < placeidList.size(); i++) {
+//                    if (placeidList.get(i).equals(selection)) {
+//                        pos = i;
+//                        placeid = placeidList.get(pos);
+//                        Log.e("placeid",placeid);
+//
+//                        break;
+//                    }
+//                }
+
+
+
             }
 
-            public static ArrayList<String> autocomplete(String input) {
+            public ArrayList<String> autocomplete(String input) {
                 ArrayList<String> resultList = null;
                 ArrayList<String> resultListval = null;
 
@@ -786,8 +777,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                     sb.append("&input=" + URLEncoder.encode(input, "utf8"));
 
                     URL url = new URL(sb.toString());
+                    Log.e("url", String.valueOf(url));
 
-                    System.out.println("URL: "+url);
+
                     conn = (HttpURLConnection) url.openConnection();
                     InputStreamReader in = new InputStreamReader(conn.getInputStream());
 
@@ -796,13 +788,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                     char[] buff = new char[1024];
                     while ((read = in.read(buff)) != -1) {
                         jsonResults.append(buff, 0, read);
+//
                     }
                 } catch (MalformedURLException e) {
                     Log.e(LOG_TAG, "Error processing Places API URL", e);
-                    return resultList;
+//                    return resultList;
                 } catch (IOException e) {
                     Log.e(LOG_TAG, "Error connecting to Places API", e);
-                    return resultList;
+//                    return resultList;
                 } finally {
                     if (conn != null) {
                         conn.disconnect();
@@ -810,21 +803,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 }
 
                 try {
-
+                    parseJSON(jsonResults);
                     // Create a JSON object hierarchy from the results
-                    JSONObject jsonObj = new JSONObject(jsonResults.toString());
-                    JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
+//                    JSONObject jsonObj = new JSONObject(jsonResults.toString());
+//                    JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
 
-
-
-//                    System.out.println("la chaine Json "+results);
-//                    Double longitude  = results.getDouble("lng");
-//                    Double latitude =  results.getDouble("lat");
-//                    System.out.println("longitude et latitude "+ longitude+latitude);
-//                    resultListval = new ArrayList<Double>(results.length());
-//                    resultListval.add(results.getDouble("lng"));
-//                    resultListval.add(results.getDouble("lat"));
-//                    System.out.println("les latitude dans le table"+resultList);
 
 //                    GeoDataApi mGeoDataClient = null;
 //                    mGeoDataClient.getPlaceById(placeId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
@@ -842,17 +825,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 //                    });
 
                     // Extract the Place descriptions from the results
-                    resultList = new ArrayList<String>(predsJsonArray.length());
-                    for (int i = 0; i < predsJsonArray.length(); i++) {
-                        System.out.println(predsJsonArray.getJSONObject(i).getString("description"));
-                        System.out.println("============================================================");
-                        resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
+//                    resultList = new ArrayList<String>(predsJsonArray.length());
+//                    resultListval=new ArrayList<String>(predsJsonArray.length());
+//                    for (int i = 0; i < predsJsonArray.length(); i++) {
+////                        System.out.println(predsJsonArray.getJSONObject(i).getString("description"));
+////                        System.out.println("============================================================");
+//                        resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
+//                        Log.e("resultList", String.valueOf(resultList));
+////                        placeidval =predsJsonArray.getJSONObject(i).getString("place_id");
+//                        resultListval.add(predsJsonArray.getJSONObject(i).getString("place_id"));
+//                        Log.e("resultListval", String.valueOf(resultListval));
+////
+////                        placeidList.add(predsJsonArray.getJSONObject(i).getString("place_id"));
 //
-//                        String placeid = String.valueOf(predsJsonArray.getJSONObject(i).get("place_id"));
-//                        Log.e("placeid", String.valueOf(placeid));
-//                        resultListval.add(placeid);
+////
+////                        String placeid = String.valueOf(predsJsonArray.getJSONObject(i).get("place_id"));
+////                        Log.e("placeid", String.valueOf(placeid));
+////                        resultListval.add(placeid);
+//
+//                    }
 
-                    }
+
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "Cannot process JSON results", e);
                 }
@@ -860,9 +853,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 return resultList;
             }
 
+
             class GooglePlacesAutocompleteAdapter extends ArrayAdapter<String> implements Filterable {
                 private ArrayList<String> resultList;
-                ArrayList<String> resultListval;
+                private ArrayList<String> resultListval;
 
                 public GooglePlacesAutocompleteAdapter(Context context, int textViewResourceId) {
                     super(context, textViewResourceId);
@@ -886,12 +880,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                             FilterResults filterResults = new FilterResults();
                             if (constraint != null) {
                                 // Retrieve the autocomplete results.
-                                resultList = autocomplete(constraint.toString());
-//                                resultListval=autocomplete(constraint.toString());
-
+//                                resultList = autocomplete(constraint.toString());
                                 // Assign the data to the FilterResults
                                 filterResults.values = resultList;
-                                filterResults.values = resultListval;
                                 filterResults.count = resultList.size();
                             }
                             return filterResults;
@@ -909,4 +900,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                     return filter;
                 }
             }
+
+            public void parseJSON(StringBuilder url)throws JSONException {
+
+                JSONObject jsonObj = new JSONObject(url.toString());
+                JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
+
+                for (int i = 0; i < predsJsonArray.length(); i++) {
+//                        System.out.println(predsJsonArray.getJSONObject(i).getString("description"));
+//                        System.out.println("============================================================");
+                    places.add(predsJsonArray.getJSONObject(i).getString("description"));
+                    Log.e("places", String.valueOf(places));
+                    places=autocomplete(predsJsonArray.getJSONObject(i).getString("description"));
+//                        placeidval =predsJsonArray.getJSONObject(i).getString("place_id");
+                    placesid.add(predsJsonArray.getJSONObject(i).getString("place_id"));
+                    Log.e("placesid", String.valueOf(placesid));
+//
+//                        placeidList.add(predsJsonArray.getJSONObject(i).getString("place_id"));
+
+//
+//                        String placeid = String.valueOf(predsJsonArray.getJSONObject(i).get("place_id"));
+//                        Log.e("placeid", String.valueOf(placeid));
+//                        resultListval.add(placeid);
+
+                }
+
+            }
+
         }
