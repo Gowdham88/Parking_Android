@@ -1,6 +1,5 @@
 package com.pyrky_android.fragment;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -8,11 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,7 +22,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +34,6 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,37 +41,28 @@ import android.widget.Toast;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.internal.service.Common;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.places.GeoDataApi;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.location.places.PlaceBufferResponse;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pyrky_android.ExpandableListData;
 import com.pyrky_android.R;
+import com.pyrky_android.activity.HomeActivity;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 import com.pyrky_android.adapter.ExpandableListAdapter;
 import com.pyrky_android.adapter.NearestRecyclerAdapter;
@@ -113,18 +99,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.content.ContentValues.TAG;
-import static android.content.Context.LOCATION_SERVICE;
 
 /**
  * Created by thulirsoft on 7/6/18.
  */
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback,LocationListener,GoogleMap.OnMarkerClickListener
+public class HomeFragment extends Fragment implements OnMapReadyCallback,LocationListener,GoogleMap.OnMarkerClickListener, AdapterView.OnItemClickListener
 //        GoogleApiClient.ConnectionCallbacks,
 //        GoogleApiClient.OnConnectionFailedListener
         {
@@ -154,6 +137,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             List<UserLocationData> datalist = new ArrayList<UserLocationData>();
             Marker marker;
 
+            private static final String LOG_TAG = "ExampleApp";
+
+            private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
+            private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
+            private static final String OUT_JSON = "/json";
+
+            //------------ make your specific key ------------
+            private static final String API_KEY = "AIzaSyAU9ShujnIg3IDQxtPr7Q1qOvFVdwNmWc4";
+
     //Location
     double lat[] = {70.01383623,56.50329796,1.23736985,-24.33605988,11.38350584,-58.68375965,44.87310434,147.64797704,-3.02408824,-21.33447419};
     double lng[] = {-24.21957723,56.50329796,-163.58662616,16.88948658,62.62863347,-43.46925429,-91.28527609,85.94545339,-82.49033554,-175.53067807};
@@ -181,7 +173,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             EditText editText;
             Button button;
             List<PlacesPOJO.CustomA> results;
-
+            AutoCompleteTextView autoCompView;
 
 //            @Override
 //            public void onAttach(Context context) {
@@ -203,33 +195,46 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 Utils.hideKeyboard(getActivity());
 
                 //AutoCompleteText
-                PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                        getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+//                PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+//                        getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        ImageView searchIcon = (ImageView)((LinearLayout)autocompleteFragment.getView()).getChildAt(0);
+//        ImageView searchIcon = (ImageView)((LinearLayout)autocompleteFragment.getView()).getChildAt(0);
+//
+//        searchIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_search1));
+        autoCompView= (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
 
-        searchIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_search1));
+        autoCompView.setAdapter(new GooglePlacesAutocompleteAdapter(getActivity(), R.layout.auto_listview));
+        autoCompView.setOnItemClickListener((AdapterView.OnItemClickListener) this);
+//        autoCompView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                String str = (String) adapterView.getItemAtPosition(i);
+//                autoCompView.setText(str);
+//                Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
 
         // Set the desired behaviour on click
-        searchIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Toast.makeText(getActivity(), "YOUR DESIRED BEHAVIOUR HERE", Toast.LENGTH_SHORT).show();
-            }
-        });
-                autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                    @Override
-                    public void onPlaceSelected(Place place) {
-                        // TODO: Get info about the selected place.
-                        Log.i(TAG, "Place: " + place.getName());
-                    }
-
-                    @Override
-                    public void onError(Status status) {
-                        // TODO: Handle the error.
-                        Log.i(TAG, "An error occurred: " + status);
-                    }
-                });
+//        searchIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Toast.makeText(getActivity(), "YOUR DESIRED BEHAVIOUR HERE", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//                autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//                    @Override
+//                    public void onPlaceSelected(Place place) {
+//                        // TODO: Get info about the selected place.
+//                        Log.i(TAG, "Place: " + place.getName());
+//                    }
+//
+//                    @Override
+//                    public void onError(Status status) {
+//                        // TODO: Handle the error.
+//                        Log.i(TAG, "An error occurred: " + status);
+//                    }
+//                });
 
         permissions.add(ACCESS_FINE_LOCATION);
         permissions.add(ACCESS_COARSE_LOCATION);
@@ -255,7 +260,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
         apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
@@ -263,24 +268,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        editText = view.findViewById(R.id.editText);
-        button = view.findViewById(R.id.filter_button);
+//        editText = (EditText) view.findViewById(R.id.editText);
+        button = (Button) view.findViewById(R.id.filter_button);
 
-        editText.setVisibility(View.GONE);
-        button.setVisibility(View.GONE);
+//        editText.setVisibility(View.GONE);
+        button.setVisibility(View.VISIBLE);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s = editText.getText().toString().trim();
-                String[] split = s.split("\\s+");
+//                String s = editText.getText().toString().trim();
+//                String[] split = s.split("\\s+");
 
-                if (split.length != 2) {
-                    Toast.makeText(getActivity(), "Please enter text in the required format", Toast.LENGTH_SHORT).show();
-                } else
-                    fetchStores(split[0], split[1]);
+//                if (split.length != 2) {
+//                    Toast.makeText(getActivity(), "Please enter text in the required format", Toast.LENGTH_SHORT).show();
+//                } else
+//                    fetchStores(split[0], split[1]);
             }
         });
+
+
+
+
 
         //Carousel
         final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
@@ -354,6 +363,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                     mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
                     Collections.reverse(mExpandableListTitle);
                     mExpandableListAdapter = new ExpandableListAdapter(getActivity(), mExpandableListTitle, mExpandableListDetail);
+
                     mExpandableListView.setAdapter(mExpandableListAdapter);
                 } else {
                     mExpandableListView.setVisibility(View.GONE);
@@ -367,6 +377,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         });
 
         mExpandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
             @Override
             public void onGroupExpand(int groupPosition) {
                 Toast.makeText(getActivity(),
@@ -500,6 +511,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             @Override
             public void onResume() {
                 super.onResume();
+                ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
                 ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             }
             private void fetchStores(String placeType, String businessName) {
@@ -513,7 +525,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 Call<PlacesPOJO.Root> call = apiService.doPlaces(placeType, latLngString, businessName, true, "distance", ApiClient.GOOGLE_PLACE_API_KEY);
                 call.enqueue(new Callback<PlacesPOJO.Root>() {
                     @Override
-                    public void onResponse(@NonNull Call<PlacesPOJO.Root> call, @NonNull Response<PlacesPOJO.Root> response) {
+                    public void onResponse(Call<PlacesPOJO.Root> call, Response<PlacesPOJO.Root> response) {
                         PlacesPOJO.Root root = response.body();
 
 
@@ -756,5 +768,145 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             public boolean onMarkerClick(Marker marker) {
                 return false;
             }
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String str = (String) adapterView.getItemAtPosition(position);
+                Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show();
+            }
 
+            public static ArrayList<String> autocomplete(String input) {
+                ArrayList<String> resultList = null;
+                ArrayList<String> resultListval = null;
+
+                HttpURLConnection conn = null;
+                StringBuilder jsonResults = new StringBuilder();
+                try {
+                    StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
+                    sb.append("?key=" + API_KEY);
+                    sb.append("&components=country:in");
+                    sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+
+                    URL url = new URL(sb.toString());
+
+                    System.out.println("URL: "+url);
+                    conn = (HttpURLConnection) url.openConnection();
+                    InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+                    // Load the results into a StringBuilder
+                    int read;
+                    char[] buff = new char[1024];
+                    while ((read = in.read(buff)) != -1) {
+                        jsonResults.append(buff, 0, read);
+                    }
+                } catch (MalformedURLException e) {
+                    Log.e(LOG_TAG, "Error processing Places API URL", e);
+                    return resultList;
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Error connecting to Places API", e);
+                    return resultList;
+                } finally {
+                    if (conn != null) {
+                        conn.disconnect();
+                    }
+                }
+
+                try {
+
+                    // Create a JSON object hierarchy from the results
+                    JSONObject jsonObj = new JSONObject(jsonResults.toString());
+                    JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
+
+
+
+//                    System.out.println("la chaine Json "+results);
+//                    Double longitude  = results.getDouble("lng");
+//                    Double latitude =  results.getDouble("lat");
+//                    System.out.println("longitude et latitude "+ longitude+latitude);
+//                    resultListval = new ArrayList<Double>(results.length());
+//                    resultListval.add(results.getDouble("lng"));
+//                    resultListval.add(results.getDouble("lat"));
+//                    System.out.println("les latitude dans le table"+resultList);
+
+//                    GeoDataApi mGeoDataClient = null;
+//                    mGeoDataClient.getPlaceById(placeId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
+//                            if (task.isSuccessful()) {
+//                                PlaceBufferResponse places = task.getResult();
+//                                Place myPlace = places.get(0);
+////                                Log.i(TAG, "Place found: " + myPlace.getName());
+//                                places.release();
+//                            } else {
+////                                Log.e(TAG, "Place not found.");
+//                            }
+//                        }
+//                    });
+
+                    // Extract the Place descriptions from the results
+                    resultList = new ArrayList<String>(predsJsonArray.length());
+                    for (int i = 0; i < predsJsonArray.length(); i++) {
+                        System.out.println(predsJsonArray.getJSONObject(i).getString("description"));
+                        System.out.println("============================================================");
+                        resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
+//
+//                        String placeid = String.valueOf(predsJsonArray.getJSONObject(i).get("place_id"));
+//                        Log.e("placeid", String.valueOf(placeid));
+//                        resultListval.add(placeid);
+
+                    }
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, "Cannot process JSON results", e);
+                }
+
+                return resultList;
+            }
+
+            class GooglePlacesAutocompleteAdapter extends ArrayAdapter<String> implements Filterable {
+                private ArrayList<String> resultList;
+                ArrayList<String> resultListval;
+
+                public GooglePlacesAutocompleteAdapter(Context context, int textViewResourceId) {
+                    super(context, textViewResourceId);
+                }
+
+                @Override
+                public int getCount() {
+                    return resultList.size();
+                }
+
+                @Override
+                public String getItem(int index) {
+                    return resultList.get(index);
+                }
+
+                @Override
+                public Filter getFilter() {
+                    Filter filter = new Filter() {
+                        @Override
+                        protected FilterResults performFiltering(CharSequence constraint) {
+                            FilterResults filterResults = new FilterResults();
+                            if (constraint != null) {
+                                // Retrieve the autocomplete results.
+                                resultList = autocomplete(constraint.toString());
+//                                resultListval=autocomplete(constraint.toString());
+
+                                // Assign the data to the FilterResults
+                                filterResults.values = resultList;
+                                filterResults.values = resultListval;
+                                filterResults.count = resultList.size();
+                            }
+                            return filterResults;
+                        }
+
+                        @Override
+                        protected void publishResults(CharSequence constraint, FilterResults results) {
+                            if (results != null && results.count > 0) {
+                                notifyDataSetChanged();
+                            } else {
+                                notifyDataSetInvalidated();
+                            }
+                        }
+                    };
+                    return filter;
+                }
+            }
         }

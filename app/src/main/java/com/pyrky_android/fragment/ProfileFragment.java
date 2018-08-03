@@ -31,6 +31,7 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.myhexaville.smartimagepicker.ImagePicker;
+import com.pyrky_android.activity.HomeActivity;
 import com.pyrky_android.pojo.ProfileImage;
 import com.pyrky_android.R;
 import com.pyrky_android.preferences.PreferencesHelper;
@@ -82,6 +83,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
     @Override

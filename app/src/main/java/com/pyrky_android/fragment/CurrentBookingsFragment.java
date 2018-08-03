@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pyrky_android.R;
+import com.pyrky_android.activity.HomeActivity;
 import com.pyrky_android.adapter.CurrentBookingRecyclerAdapter;
 
 /**
@@ -27,6 +29,7 @@ public class CurrentBookingsFragment extends Fragment {
     public CurrentBookingsFragment() {
         // Required empty public constructor
     }
+
 
     @Nullable
     @Override
@@ -46,6 +49,8 @@ public class CurrentBookingsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
         mRecyclerView = view.findViewById(R.id.current_booking_recycler);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
