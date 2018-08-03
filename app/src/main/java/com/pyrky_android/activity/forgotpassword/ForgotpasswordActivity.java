@@ -1,4 +1,4 @@
-package com.pyrky_android.activity;
+package com.pyrky_android.activity.forgotpassword;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.pyrky_android.R;
+import com.pyrky_android.activity.signin.SignInActivity;
 import com.pyrky_android.utils.Utils;
 
 public class ForgotpasswordActivity extends AppCompatActivity {

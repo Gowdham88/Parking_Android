@@ -97,12 +97,6 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        //Image picker
-//        storage = FirebaseStorage.getInstance();
-//        storageReference = storage.getReference();
-
-//        mImagePicker = new com.myhexaville.smartimagepicker.ImagePicker(getActivity(),this, imageUri -> {mProfileImage.setImageURI(imageUri);})
-//                .setWithImageCrop(1,1);
         mEmail = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_EMAIL);
         mName = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME);
         mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
@@ -240,11 +234,6 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
             Uri file = Uri.fromFile(new File(String.valueOf(filePath)));
             PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC,profileImageUrl);
 
-            // Create file metadata including the content type
-            StorageMetadata metadata = new StorageMetadata.Builder()
-                    .setContentType("image/jpg")
-                    .build();
-
             StorageReference ref = storageReference.child("profile_image/"+ filePath.getLastPathSegment());
             uploadTask = ref.putFile(filePath);
 
@@ -259,7 +248,6 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     progressDialog.dismiss();
                     Toast.makeText(getActivity(), taskSnapshot.getUploadSessionUri().toString(), Toast.LENGTH_SHORT).show();
-//                    downloadUrl();
                 }
             }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -275,23 +263,3 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 
 
 }
-
-
-
-/*
-    private void downloadImage(){
-
-        StorageReference storageRef =
-                FirebaseStorage.getInstance().getReference();
-                storageRef.child("profile_image/"+PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_PIC))
-                .getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Glide.with(getActivity())
-                                .load(storageReference)
-                                .into(mProfileImage);
-                    }
-                });
-    }
-*/

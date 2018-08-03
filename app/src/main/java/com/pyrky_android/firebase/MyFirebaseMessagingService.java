@@ -30,7 +30,6 @@ import com.pyrky_android.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.pyrky_android.activity.HomeActivity;
-import com.pyrky_android.activity.SignupScreenActivity;
 
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {

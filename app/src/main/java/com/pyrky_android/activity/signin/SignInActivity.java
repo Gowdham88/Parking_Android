@@ -1,12 +1,12 @@
-package com.pyrky_android.activity;
+package com.pyrky_android.activity.signin;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,19 +28,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pyrky_android.R;
+import com.pyrky_android.activity.HomeActivity;
+import com.pyrky_android.activity.signup.SignupScreenActivity;
+import com.pyrky_android.activity.forgotpassword.ForgotpasswordActivity;
 import com.pyrky_android.pojo.Users;
 import com.pyrky_android.preferences.PreferencesHelper;
 import com.pyrky_android.utils.Utils;
-
-import org.w3c.dom.Text;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class SignInActivity extends AppCompatActivity {
     Context mContext = this;
@@ -74,9 +70,9 @@ public class SignInActivity extends AppCompatActivity {
         TextView toSignUp = findViewById(R.id.dont_have_account);
         mEmail = findViewById(R.id.et_email);
         mPassword = findViewById(R.id.et_password);
-        ForgotPassTxt=findViewById(R.id.tx_forget_password);
+        ForgotPassTxt = findViewById(R.id.tx_forget_password);
         TextView login = findViewById(R.id.sign_in_button);
-        parentsigninlay=(RelativeLayout)findViewById(R.id.signin_layout);
+        parentsigninlay =findViewById(R.id.signin_layout);
 
         parentsigninlay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +87,8 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (validateForm()){
                     signIn(mEmail.getText().toString().trim(),mPassword.getText().toString().trim());
+
+//                    SigninViewModel model = ViewModelProviders.of(SignInActivity.this).get(SigninViewModel.class);
                 }
 
             }
@@ -152,7 +150,6 @@ public class SignInActivity extends AppCompatActivity {
                                     } else {
                                         hideProgressDialog();
                                         Toast.makeText(SignInActivity.this, "No user exits", Toast.LENGTH_LONG).show();
-
                                     }
 
                                 }
@@ -175,44 +172,6 @@ public class SignInActivity extends AppCompatActivity {
                     }
                 });
     }
-
-   /* private void getUserData(Users user, FirebaseUser firebaseUsers){
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        DocumentReference docRef = db.collection("users").document(firebaseUsers.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,user.getEmail());
-                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME,user.getUserName());
-                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, user.getProfileImageUrl());
-                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, firebaseUsers.getUid());
-                        PreferencesHelper.setPreferenceBoolean(getApplicationContext(), PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
-
-                    } else {
-                    }
-                } else {
-
-                }
-            }
-        });
-    }*/
-
-//    public void showProgressDialog() {
-//        progressDialog = new ProgressDialog(this);
-//        progressDialog.setCancelable(false);
-//        progressDialog.setMessage("Loading...");
-//        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//        progressDialog.show();
-//    }
-//
-//    public void hideProgressDialog(){
-//        if(progressDialog!=null)
-//            progressDialog.dismiss();
-//    }
 
     public void showProgressDialog() {
 
