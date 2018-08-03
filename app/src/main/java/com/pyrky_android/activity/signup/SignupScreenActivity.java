@@ -1,4 +1,4 @@
-package com.pyrky_android.activity;
+package com.pyrky_android.activity.signup;
 
 import android.Manifest;
 import android.app.Activity;
@@ -58,6 +58,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.pyrky_android.BuildConfig;
 import com.pyrky_android.R;
+import com.pyrky_android.activity.HomeActivity;
+import com.pyrky_android.activity.signin.SignInActivity;
 import com.pyrky_android.adapter.CarouselAdapter;
 import com.pyrky_android.pojo.Users;
 import com.pyrky_android.preferences.PreferencesHelper;

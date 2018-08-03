@@ -1,9 +1,6 @@
-package com.pyrky_android.activity;
+package com.pyrky_android.activity.splash;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +8,8 @@ import android.view.View;
 import android.view.Window;
 
 import com.pyrky_android.R;
+import com.pyrky_android.activity.HomeActivity;
+import com.pyrky_android.activity.signin.SignInActivity;
 import com.pyrky_android.preferences.PreferencesHelper;
 
 public class SplashActivity extends AppCompatActivity {

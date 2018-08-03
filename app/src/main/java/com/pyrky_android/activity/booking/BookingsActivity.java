@@ -1,15 +1,11 @@
-package com.pyrky_android.activity;
+package com.pyrky_android.activity.booking;
 
-import android.content.Intent;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toolbar;
@@ -18,7 +14,6 @@ import com.pyrky_android.R;
 import com.pyrky_android.adapter.CustomViewPagerAdapter;
 import com.pyrky_android.fragment.CurrentBookingsFragment;
 import com.pyrky_android.fragment.HistoryFragment;
-import com.pyrky_android.fragment.SettingsFragment;
 
 public class BookingsActivity extends AppCompatActivity {
     ViewPager viewPager;
