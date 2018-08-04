@@ -3,6 +3,7 @@ package com.pyrky_android.fragment;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,16 +44,23 @@ import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.places.GeoDataApi;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.PlaceBufferResponse;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -67,20 +76,27 @@ import com.pyrky_android.activity.HomeActivity;
 import com.pyrky_android.activity.NearestLocMapsActivity;
 import com.pyrky_android.adapter.ExpandableListAdapter;
 import com.pyrky_android.adapter.NearestRecyclerAdapter;
+import com.pyrky_android.adapter.PlaceArrayAdapter;
 import com.pyrky_android.map.ApiClient;
 import com.pyrky_android.map.ApiInterface;
 import com.pyrky_android.map.PlacesPOJO;
 import com.pyrky_android.map.RecyclerViewAdapter;
 import com.pyrky_android.map.ResultDistanceMatrix;
 import com.pyrky_android.map.StoreModel;
+import com.pyrky_android.pojo.DistanceApi;
+import com.pyrky_android.pojo.TimeModelClass;
 import com.pyrky_android.pojo.UserLocationData;
 import com.pyrky_android.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -93,6 +109,8 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -100,6 +118,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -108,9 +127,9 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
  * Created by thulirsoft on 7/6/18.
  */
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback,LocationListener,GoogleMap.OnMarkerClickListener, AdapterView.OnItemClickListener
-//        GoogleApiClient.ConnectionCallbacks,
-//        GoogleApiClient.OnConnectionFailedListener
+public class HomeFragment extends Fragment implements OnMapReadyCallback,LocationListener,GoogleMap.OnMarkerClickListener,
+   GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks
         {
             private static List<String> placeidList;
             private static String placeidval;
@@ -132,7 +151,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             GoogleMap Mmap;
             SupportMapFragment mapFrag;
             private TrackGPS gps;
-            String  Strlat,Strlong;
+            double  Strlat,Strlong;
             LatLng laln;
             String address1;
             Location mLocation;
@@ -181,6 +200,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             String placeid;
             List<String> places= new ArrayList<String>();
             List<String> placesid = new ArrayList<String>();
+            double latt,longi;
+            Location loc1 = new Location("");
+            Location loc2 = new Location("");
+            Location currentloc1 = new Location("");
+            Location currentloc2 = new Location("");
+            public static String BaseUrl;
 
 //            @Override
 //            public void onAttach(Context context) {
@@ -188,12 +213,45 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 //                super.onAttach(context);
 //            }
 
+            private static final String TAG = "MainActivity";
+            private static final int GOOGLE_API_CLIENT_ID = 0;
+            private TextView mNameView;
+            GeoDataApi mGeoDataClient;
+
+            private GoogleApiClient mGoogleApiClient;
+            private PlaceArrayAdapter mPlaceArrayAdapter;
+            private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
+                    new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
+            double Latitude,Longitude;
+             ArrayList<Double> distances = new ArrayList<>();
+            ArrayList<Double> distancesmtrs = new ArrayList<>();
+            ArrayList<String> caldis = new ArrayList<>();
+            ArrayList<String> nearlat = new ArrayList<>();
+            ArrayList<String> nearlong = new ArrayList<>();
+
+
+
+            ArrayList<Double> distancesmtrcurrent = new ArrayList<>();
+            ArrayList<Double> distancesmtrscurrent = new ArrayList<>();
+            ArrayList<String> caldiscurrent = new ArrayList<>();
+            ArrayList<String> nearlatcurrent = new ArrayList<>();
+            ArrayList<String> nearlongcurrent = new ArrayList<>();
+
+            List<Address> addresses = null;
+            String distanceval;
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
-
+            @Override
+            public void onResume() {
+                super.onResume();
+                ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
+                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+            }
     @SuppressLint("CutPasteId")
     @Nullable
     @Override
@@ -210,16 +268,29 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 //        searchIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_search1));
         autoCompView= (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
 
-        autoCompView.setAdapter(new GooglePlacesAutocompleteAdapter(getActivity(), R.layout.auto_listview));
-        autoCompView.setOnItemClickListener((AdapterView.OnItemClickListener) this);
-//        autoCompView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                String str = (String) adapterView.getItemAtPosition(i);
-//                autoCompView.setText(str);
-//                Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        autoCompView.setThreshold(1);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(Places.GEO_DATA_API)
+                .enableAutoManage(getActivity(), GOOGLE_API_CLIENT_ID, this)
+                .addConnectionCallbacks(this)
+                .build();
+
+        autoCompView.setOnItemClickListener(mAutocompleteClickListener);
+        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,
+                BOUNDS_MOUNTAIN_VIEW, null);
+        autoCompView.setAdapter(mPlaceArrayAdapter);
+
+//        autoCompView.setAdapter(new GooglePlacesAutocompleteAdapter(getActivity(), R.layout.auto_listview));
+//        autoCompView.setOnItemClickListener((AdapterView.OnItemClickListener) this);
+////        autoCompView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+////            @Override
+////            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+////                String str = (String) adapterView.getItemAtPosition(i);
+////                autoCompView.setText(str);
+////                Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show();
+////            }
+////        });
 
         permissions.add(ACCESS_FINE_LOCATION);
         permissions.add(ACCESS_COARSE_LOCATION);
@@ -230,17 +301,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         permissionsToRequest = findUnAskedPermissions(permissions);
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-
-            if (permissionsToRequest.size() > 0)
-                requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
-            else {
-                fetchLocation();
-            }
-        } else {
-            fetchLocation();
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//
+//
+//            if (permissionsToRequest.size() > 0)
+//                requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
+//            else {
+//                fetchLocation();
+//            }
+//        } else {
+//            fetchLocation();
+//        }
 
 
         apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -408,15 +479,39 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
             }
         });*/
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query first = db.collection("camera");
+        first.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        if (documentSnapshots.getDocuments().size() < 1) {
+                            return;
+                        }
+
+                        for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
+
+                            UserLocationData comment = document.toObject(UserLocationData.class);
+                            datalist.add(comment);
+                            Log.e("dbbd", String.valueOf(document.getData()));
+                            double lattitude= Double.parseDouble(comment.getCameraLat());
+                            double longitude= Double.parseDouble(comment.getCameraLong());
+//                            loc2.setLatitude(lattitude);
+//                            loc2.setLongitude(longitude);
+
+                        }
+                    }
+
+                });
 
                 gps = new TrackGPS(getActivity());
                 try {
                     if(gps.canGetLocation()){
                         Double lat =gps .getLatitude();
                         Double lng =  gps.getLongitude();
-                        Strlat= String.valueOf(laln.latitude);
-                        Strlong= String.valueOf(laln.longitude);
-                        List<Address> addresses = null;
+                        Strlat=laln.latitude;
+                        Strlong= laln.longitude;
+
 
                         try {
                             Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
@@ -425,7 +520,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                             }
                             else {
                                 if (addresses.size() > 0) {
-                                    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                                    String address = addresses.get(0).getAddressLine(0);
+                                     latt=addresses.get(0).getLatitude();
+                                     longi=addresses.get(0).getLongitude();
+                                    // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
                                     String city = addresses.get(0).getLocality();
                                     String state = addresses.get(0).getAdminArea();
                                     String country = addresses.get(0).getCountryName();
@@ -437,11 +535,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                                 marker = Mmap.addMarker(new MarkerOptions().position(new LatLng(gps .getLatitude(), gps .getLatitude()))
                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.smallcar_icon))
                                         .flat(true));
-                                }
+
+                                    Log.e("latt", String.valueOf(latt));
+                                    Log.e("latt", String.valueOf(latt));
+//                                    loc1.setLatitude(latt);
+//                                    loc1.setLongitude(latt);
+
+
+                            }
+
+//                                for(int i=0;i<datalist.size();i++){
+//                                    distance(latt,longi,datalist.get(i).getUserLat(),datalist.get(i).getUserLong());
+//                                }
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
+
                     }
                     else
                     {
@@ -451,44 +562,137 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                     e.printStackTrace();
                 }
 
-                mSearchButton.setOnClickListener(new View.OnClickListener() {
+        for(int i=0;i<datalist.size();i++){
+            currentloc1.setLatitude(gps .getLatitude());
+            currentloc1.setLongitude(gps .getLongitude());
+            currentloc2.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
+            currentloc2.setLatitude(Double.parseDouble(datalist.get(i).getCameraLong()));
+
+            double distancecurrent = 0;
+            double distancemtrscurrent = currentloc1.distanceTo(currentloc2);
+            distancesmtrcurrent.add(distancemtrscurrent);
+            Log.e("distancesmtrcurrent", String.valueOf(distancesmtrcurrent));
+
+        }
+
+
+
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(),NearestLocMapsActivity.class);
                         intent.putExtra("lattitude",gps .getLatitude());
                         intent.putExtra("longitude",gps.getLongitude());
+                        intent.putStringArrayListExtra("placesarray",caldis);
                         getActivity().startActivity(intent);
                     }
                 });
 
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                Query first = db.collection("camera");
-                first.get()
-                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot documentSnapshots) {
-                                if (documentSnapshots.getDocuments().size() < 1) {
-                                    return;
-                                }
 
-                                for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
-
-                                    UserLocationData comment = document.toObject(UserLocationData.class);
-                                    datalist.add(comment);
-                                    Log.e("dbbd", String.valueOf(document.getData()));
-                                }
-                            }
-
-                        });
                 return view;
     }
 
-            @Override
-            public void onResume() {
-                super.onResume();
-                ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
-                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+            public AdapterView.OnItemClickListener mAutocompleteClickListener
+                    = new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
+                    Utils.hideKeyboard(getActivity());
+                    String placeId = String.valueOf(item.placeId);
+                    Log.e(TAG, "Selected: " + item.description);
+                    PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                            .getPlaceById(mGoogleApiClient, placeId);
+                    placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+                    Log.e(TAG, "Fetching details for ID: " + item.placeId);
+
+                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
+                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                                @Override
+                                public void onResult(PlaceBuffer places) {
+                                    if (places.getStatus().isSuccess()) {
+                                        final Place myPlace = places.get(0);
+                                        LatLng queriedLocation = myPlace.getLatLng();
+                                         Latitude= queriedLocation.latitude;
+                                         Longitude=queriedLocation.longitude;
+                                         Log.e("Latitude is", "" + queriedLocation.latitude);
+                                        Log.e("Longitude is", "" + queriedLocation.longitude);
+
+
+                                        distancesmtrs.clear();
+                                        for(int i=0;i<datalist.size();i++){
+
+                                            Log.e("Latitude", "" +datalist.get(i).getCameraLat());
+                                            Log.e("Longitude", "" + datalist.get(i).getCameraLong());
+
+                                            loc1.setLatitude(Latitude);
+                                            loc1.setLongitude(Longitude);
+                                            loc2.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
+                                            loc2.setLongitude(Double.parseDouble(datalist.get(i).getCameraLong()));
+                                            double distance = 0;
+                                           double distancemtrs = loc1.distanceTo(loc2);
+                                            distancesmtrs.add(distancemtrs);
+                                            Log.e("distancemtrs", String.valueOf(distancesmtrs));
+//                        for(int j =0;j<distancesmtrs.size();j++){
+
+                            if(distancemtrs<1500){
+                                caldis.add(String.valueOf(distancesmtrs));
+                                Log.e("caldis", String.valueOf(caldis));
+                                nearlat.add(datalist.get(i).getCameraLat());
+                                nearlong.add(datalist.get(i).getCameraLong());
+                                Log.e("nearlat", String.valueOf(nearlat));
+                                Log.e("nearlong", String.valueOf(nearlong));
+//                            }
+                        }
+                                            distance = loc1.distanceTo(loc2)/1000;
+                                            Log.e("distance", String.valueOf(distance));
+                                            distances.add(distance);
+//                                          distancedata();
+
+
+//                                            caldis.add(distance);
+//                                            Log.e("caldis", String.valueOf(caldis));
+//                                            distance(Latitude,Longitude,Double.parseDouble(datalist.get(i).getCameraLat()),Double.parseDouble(datalist.get(i).getCameraLong()));
+
+
+//
+                                }
+
+                                    }
+                                    places.release();
+                                }
+                            });
+                }
+            };
+
+
+            public double distance(double lat1, double lon1, double lat2, double lon2) {
+                double theta = lon1 - lon2;
+                double dist = Math.sin(deg2rad(lat1))
+                        * Math.sin(deg2rad(lat2))
+                        + Math.cos(deg2rad(lat1))
+                        * Math.cos(deg2rad(lat2))
+                        * Math.cos(deg2rad(theta));
+                dist = Math.acos(dist);
+                dist = rad2deg(dist);
+                dist = dist / 1000;
+
+                distances.add(dist);
+                Log.e("dist", String.valueOf(distances));
+
+
+                return (dist);
             }
+
+            private double deg2rad(double deg) {
+                return (deg * Math.PI / 180.0);
+            }
+
+            private double rad2deg(double rad) {
+                return (rad * 180.0 / Math.PI);
+            }
+
+
             private void fetchStores(String placeType, String businessName) {
 
                 /**
@@ -739,192 +943,129 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
 
+
+
+            private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
+                    = new ResultCallback<PlaceBuffer>() {
+                @Override
+                public void onResult(PlaceBuffer places) {
+                    if (!places.getStatus().isSuccess()) {
+                        Log.e(TAG, "Place query did not complete. Error: " +
+                                places.getStatus().toString());
+                        return;
+                    }
+                    // Selecting the first object buffer.
+                    final Place place = places.get(0);
+                    CharSequence attributions = places.getAttributions();
+
+//                    mNameView.setText(Html.fromHtml(place.getAddress() + ""));
+
+
+                }
+            };
+
+            @Override
+            public void onConnected(@Nullable Bundle bundle) {
+
+                mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
+                Log.i(TAG, "Google Places API connected.");
+
+            }
+
+            @Override
+            public void onConnectionSuspended(int i) {
+                mPlaceArrayAdapter.setGoogleApiClient(null);
+                Log.e(TAG, "Google Places API connection suspended.");
+            }
+
+            @Override
+            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+                Log.e(TAG, "Google Places API connection failed with error code: "
+                        + connectionResult.getErrorCode());
+
+                Toast.makeText(getActivity(),
+                        "Google Places API connection failed with error code:" +
+                                connectionResult.getErrorCode(),
+                        Toast.LENGTH_LONG).show();
+
+            }
+
+
             @Override
             public boolean onMarkerClick(Marker marker) {
                 return false;
             }
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String str = (String) adapterView.getItemAtPosition(position);
 
-                Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show();
-//                String selection = (String) adapterView.getItemAtPosition(position);
-//                int pos = -1;
-//
-//                for (int i = 0; i < placeidList.size(); i++) {
-//                    if (placeidList.get(i).equals(selection)) {
-//                        pos = i;
-//                        placeid = placeidList.get(pos);
-//                        Log.e("placeid",placeid);
-//
-//                        break;
-//                    }
-//                }
+            private void distancedata() {
+
+                final ProgressDialog dialog = ProgressDialog.show(getActivity(),"Fetching data","Please wait...",false,false);
+                StringBuilder googlePlacesUrl = new StringBuilder("api/distancematrix/json?");
+                googlePlacesUrl.append("origins=" + Latitude+ "," +Longitude);
+                googlePlacesUrl.append("&destinations=" +datalist.get(0).getCameraLat()  + "," +datalist.get(0).getCameraLong());
+                googlePlacesUrl.append("&key=" + "AIzaSyCsmEae3SidD5e6-jwwPOpPXOfNnPnwCmQ");
 
 
+//        Log.e("dsdjsh",filterserviceproviders.get(minIndex.get(0)).getLatitude()+filterserviceproviders.get(minIndex.get(0)).getLongitude());
 
-            }
+                BaseUrl = googlePlacesUrl.toString();
 
-            public ArrayList<String> autocomplete(String input) {
-                ArrayList<String> resultList = null;
-                ArrayList<String> resultListval = null;
-
-                HttpURLConnection conn = null;
-                StringBuilder jsonResults = new StringBuilder();
-                try {
-                    StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
-                    sb.append("?key=" + API_KEY);
-                    sb.append("&components=country:in");
-                    sb.append("&input=" + URLEncoder.encode(input, "utf8"));
-
-                    URL url = new URL(sb.toString());
-                    Log.e("url", String.valueOf(url));
+//        RestAdapter adapter = new RestAdapter.Builder()
+//                .setEndpoint("https://maps.googleapis.com/maps")
+//                .setLogLevel(RestAdapter.LogLevel.FULL)
+//                .build();
 
 
-                    conn = (HttpURLConnection) url.openConnection();
-                    InputStreamReader in = new InputStreamReader(conn.getInputStream());
-
-                    // Load the results into a StringBuilder
-                    int read;
-                    char[] buff = new char[1024];
-                    while ((read = in.read(buff)) != -1) {
-                        jsonResults.append(buff, 0, read);
-//
-                    }
-                } catch (MalformedURLException e) {
-                    Log.e(LOG_TAG, "Error processing Places API URL", e);
-//                    return resultList;
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Error connecting to Places API", e);
-//                    return resultList;
-                } finally {
-                    if (conn != null) {
-                        conn.disconnect();
-                    }
-                }
-
-                try {
-                    parseJSON(jsonResults);
-                    // Create a JSON object hierarchy from the results
-//                    JSONObject jsonObj = new JSONObject(jsonResults.toString());
-//                    JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl("https://maps.googleapis.com/maps/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
 
 
-//                    GeoDataApi mGeoDataClient = null;
-//                    mGeoDataClient.getPlaceById(placeId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
-//                            if (task.isSuccessful()) {
-//                                PlaceBufferResponse places = task.getResult();
-//                                Place myPlace = places.get(0);
-////                                Log.i(TAG, "Place found: " + myPlace.getName());
-//                                places.release();
-//                            } else {
-////                                Log.e(TAG, "Place not found.");
-//                            }
-//                        }
-//                    });
+                DistanceApi distanceApi =  retrofit.create(DistanceApi.class);
 
-                    // Extract the Place descriptions from the results
-//                    resultList = new ArrayList<String>(predsJsonArray.length());
-//                    resultListval=new ArrayList<String>(predsJsonArray.length());
-//                    for (int i = 0; i < predsJsonArray.length(); i++) {
-////                        System.out.println(predsJsonArray.getJSONObject(i).getString("description"));
-////                        System.out.println("============================================================");
-//                        resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
-//                        Log.e("resultList", String.valueOf(resultList));
-////                        placeidval =predsJsonArray.getJSONObject(i).getString("place_id");
-//                        resultListval.add(predsJsonArray.getJSONObject(i).getString("place_id"));
-//                        Log.e("resultListval", String.valueOf(resultListval));
-////
-////                        placeidList.add(predsJsonArray.getJSONObject(i).getString("place_id"));
-//
-////
-////                        String placeid = String.valueOf(predsJsonArray.getJSONObject(i).get("place_id"));
-////                        Log.e("placeid", String.valueOf(placeid));
-////                        resultListval.add(placeid);
-//
-//                    }
+                Call<TimeModelClass> call = distanceApi.getUsers(BaseUrl);
+                call.enqueue(new Callback<TimeModelClass>() {
+                    @Override
+                    public void onResponse(Call<TimeModelClass> call, Response<TimeModelClass> response) {
 
+                        if(response.body().getStatus().equals("OK")){
 
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, "Cannot process JSON results", e);
-                }
+                            try {
 
-                return resultList;
-            }
+                                Log.e("Dsdsds", response.body().getRows().get(0).getElements().get(0).getDistance().getText());
+//                                                            Log.e("latl", String.valueOf(datalist.get(i).getCameraLat()));
+//                                                            Log.e("latl", String.valueOf(datalist.get(i).getCameraLong()));
 
+                                distanceval = "Distance :" + response.body().getRows().get(0).getElements().get(0).getDistance().getText();
+//                                                            time = "Expected time :" + response.body().getRows().get(0).getElements().get(0).getDuration().getText();
+                                Log.e("distance",distanceval);
+//                                                            caldis.add(Double.valueOf(distanceval));
+//                                                            dialog.dismiss();
+//                                                            showConfirmDialog();
 
-            class GooglePlacesAutocompleteAdapter extends ArrayAdapter<String> implements Filterable {
-                private ArrayList<String> resultList;
-                private ArrayList<String> resultListval;
+                            } catch (NullPointerException e){
 
-                public GooglePlacesAutocompleteAdapter(Context context, int textViewResourceId) {
-                    super(context, textViewResourceId);
-                }
-
-                @Override
-                public int getCount() {
-                    return resultList.size();
-                }
-
-                @Override
-                public String getItem(int index) {
-                    return resultList.get(index);
-                }
-
-                @Override
-                public Filter getFilter() {
-                    Filter filter = new Filter() {
-                        @Override
-                        protected FilterResults performFiltering(CharSequence constraint) {
-                            FilterResults filterResults = new FilterResults();
-                            if (constraint != null) {
-                                // Retrieve the autocomplete results.
-//                                resultList = autocomplete(constraint.toString());
-                                // Assign the data to the FilterResults
-                                filterResults.values = resultList;
-                                filterResults.count = resultList.size();
+                                e.printStackTrace();
                             }
-                            return filterResults;
+
+
+                        } else {
+
+//                                                        dialog.dismiss();
+//                                                        showConfirmDialog();
                         }
 
-                        @Override
-                        protected void publishResults(CharSequence constraint, FilterResults results) {
-                            if (results != null && results.count > 0) {
-                                notifyDataSetChanged();
-                            } else {
-                                notifyDataSetInvalidated();
-                            }
-                        }
-                    };
-                    return filter;
-                }
-            }
+                    }
 
-            public void parseJSON(StringBuilder url)throws JSONException {
+                    @Override
+                    public void onFailure(Call<TimeModelClass> call, Throwable t) {
 
-                JSONObject jsonObj = new JSONObject(url.toString());
-                JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
+//                                                    dialog.dismiss();
+//                                                    showConfirmDialog();
 
-                for (int i = 0; i < predsJsonArray.length(); i++) {
-//                        System.out.println(predsJsonArray.getJSONObject(i).getString("description"));
-//                        System.out.println("============================================================");
-                    places.add(predsJsonArray.getJSONObject(i).getString("description"));
-                    Log.e("places", String.valueOf(places));
-                    places=autocomplete(predsJsonArray.getJSONObject(i).getString("description"));
-//                        placeidval =predsJsonArray.getJSONObject(i).getString("place_id");
-                    placesid.add(predsJsonArray.getJSONObject(i).getString("place_id"));
-                    Log.e("placesid", String.valueOf(placesid));
-//
-//                        placeidList.add(predsJsonArray.getJSONObject(i).getString("place_id"));
-
-//
-//                        String placeid = String.valueOf(predsJsonArray.getJSONObject(i).get("place_id"));
-//                        Log.e("placeid", String.valueOf(placeid));
-//                        resultListval.add(placeid);
-
-                }
-
+                    }
+                });
             }
 
         }
