@@ -55,7 +55,17 @@ public class FiltersFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_filters, null);
 
         mEnableButton = view.findViewById(R.id.enable_button);
+        mEnableButton.setVisibility(View.GONE);
         mExpandableListView = view.findViewById(R.id.expandableListView);
+
+
+        mExpandableListDetail = ExpandableListData.getData();
+        mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
+        Collections.reverse(mExpandableListTitle);
+        mExpandableListAdapter = new ExpandableListAdapter(getActivity(), mExpandableListTitle, mExpandableListDetail);
+        mExpandableListView.setAdapter(mExpandableListAdapter);
+
+
         mEnableButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -51,7 +51,7 @@ public class BookingsFragment extends Fragment implements  TabHost.OnTabChangeLi
         tabLayout.setupWithViewPager(viewPager);
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
         setupTabLayout();
         viewPager.setCurrentItem(0);
         return view;
