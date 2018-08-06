@@ -10,14 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.maps.model.LatLng;
 import com.pyrky_android.R;
 import com.pyrky_android.activity.NearestLocMapsActivity;
+import com.pyrky_android.pojo.UserLocationData;
 import com.squareup.picasso.Picasso;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by thulirsoft on 7/3/18.
@@ -36,6 +35,10 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
             "150 - 300m","80 - 90m","150 - 155m","30 - 35m","800 - 850m"};
     private int mLocationImage[];
     private int avatarSize;
+    List<UserLocationData> datalist = new ArrayList<UserLocationData>();
+    ArrayList<String> nearlat1 = new ArrayList<>();
+    ArrayList<String> nearlong1 = new ArrayList<>();
+    ArrayList<Double> distances1 = new ArrayList<>();
 
     public NearestRecyclerAdapter(Context context, int[] images, String[] mAve, String[] mCity, int[] mLocationImage) {
         this.context = context;
@@ -96,3 +99,38 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
         }
     }
 }
+//Picasso.with(context).load(this.datalist.get(position).getCameraImageUrl())
+//        .fit()
+//        .into(holder.nearestPlaceImage);
+//final double latitude = Double.parseDouble(nearlat1.get(position));
+//final double  longitude =  Double.parseDouble(nearlong1.get(position));
+//        Geocoder geocoder;
+//        List<Address> addresses = null;
+//        geocoder = new Geocoder(context, Locale.getDefault());
+//
+//        try {
+//        addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+//        } catch (IOException e) {
+//        e.printStackTrace();
+//        }
+//
+//        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+//        String city = addresses.get(0).getLocality();
+//        String state = addresses.get(0).getAdminArea();
+//        String country = addresses.get(0).getCountryName();
+//        String postalCode = addresses.get(0).getPostalCode();
+//        String knownName = addresses.get(0).getFeatureName();
+//        holder.nearestPlaceAve.setText(address);
+////        holder.nearestPlaceCity.setText(mCity[position]);
+//        holder.nearestPlaceDistance.setText(String.valueOf(distances1.get(position)));
+//
+//
+//        holder.nearestPlaceImage.setOnClickListener(new View.OnClickListener() {
+//@Override
+//public void onClick(View v) {
+//        Intent intent = new Intent(context,NearestLocMapsActivity.class);
+//        intent.putExtra("lat",latitude);
+//        intent.putExtra("lng",longitude);
+//        context.startActivity(intent);
+//        }
+//        });

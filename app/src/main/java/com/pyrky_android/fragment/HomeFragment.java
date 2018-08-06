@@ -44,6 +44,7 @@ import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.BitmapDrawableResource;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -203,9 +204,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             double latt,longi;
             Location loc1 = new Location("");
             Location loc2 = new Location("");
+            Location loc3 = new Location("");
+            Location loc4 = new Location("");
             Location currentloc1 = new Location("");
             Location currentloc2 = new Location("");
             public static String BaseUrl;
+            private GoogleMap mMap;
+            String placeId;
 
 //            @Override
 //            public void onAttach(Context context) {
@@ -223,11 +228,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
                     new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
             double Latitude,Longitude;
+            String StrLatitude,StrLongitude;
              ArrayList<Double> distances = new ArrayList<>();
             ArrayList<Double> distancesmtrs = new ArrayList<>();
             ArrayList<String> caldis = new ArrayList<>();
             ArrayList<String> nearlat = new ArrayList<>();
             ArrayList<String> nearlong = new ArrayList<>();
+
+
+            ArrayList<Double> distances1 = new ArrayList<>();
+            ArrayList<Double> distancesmtrs1 = new ArrayList<>();
+            ArrayList<String> caldis1 = new ArrayList<>();
+            ArrayList<String> nearlat1 = new ArrayList<>();
+            ArrayList<String> nearlong1 = new ArrayList<>();
 
 
 
@@ -236,9 +249,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             ArrayList<String> caldiscurrent = new ArrayList<>();
             ArrayList<String> nearlatcurrent = new ArrayList<>();
             ArrayList<String> nearlongcurrent = new ArrayList<>();
-
+            ArrayList<String> distancescurrentarr = new ArrayList<>();
             List<Address> addresses = null;
-            String distanceval;
+            double distanceval;
+            private List<Marker> markers = new ArrayList<>();
+                   double distancecurrent,distancecurrentkm;
+            double distance = 0;
+            GoogleMap googleMap;
+
 
 
     @Override
@@ -258,7 +276,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, null);
                 Utils.hideKeyboard(getActivity());
-
+        mSearchButton = view.findViewById(R.id.search_btn);
+        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFrag.getMapAsync(this);
                 //AutoCompleteText
 //                PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
 //                        getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -276,10 +296,191 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 .addConnectionCallbacks(this)
                 .build();
 
+
+        gps = new TrackGPS(getActivity());
+        try {
+            if(gps.canGetLocation()){
+                Double lat =gps .getLatitude();
+                Double lng =  gps.getLongitude();
+                Strlat=laln.latitude;
+                Strlong= laln.longitude;
+
+
+
+                try {
+                    Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
+                    addresses = geo.getFromLocation(lat, lng, 1);
+                    if (addresses.isEmpty()) {
+                    }
+                    else {
+                        if (addresses.size() > 0) {
+                            String address = addresses.get(0).getAddressLine(0);
+                            latt=addresses.get(0).getLatitude();
+                            longi=addresses.get(0).getLongitude();
+                            // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                            String city = addresses.get(0).getLocality();
+                            String state = addresses.get(0).getAdminArea();
+                            String country = addresses.get(0).getCountryName();
+                            String postalCode = addresses.get(0).getPostalCode();
+                            String knownName = addresses.get(0).getFeatureName();
+                            address1=(address + "," + city + "," + state + "," + country + "," + postalCode);
+                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
+                            Log.e("address1",address1);
+                            marker = Mmap.addMarker(new MarkerOptions().position(new LatLng(gps .getLatitude(), gps .getLatitude()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.smallcar_icon))
+                                    .flat(true));
+
+                            Log.e("lattd", String.valueOf(latt));
+                            Log.e("latgd", String.valueOf(longi));
+//                                    loc1.setLatitude(latt);
+//                                    loc1.setLongitude(latt);
+
+
+                        }
+
+
+
+//                                for(int i=0;i<datalist.size();i++){
+//                                    distance(latt,longi,datalist.get(i).getUserLat(),datalist.get(i).getUserLong());
+//                                }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+            else
+            {
+                gps.showSettingsAlert();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query first = db.collection("camera");
+        first.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        if (documentSnapshots.getDocuments().size() < 1) {
+                            return;
+                        }
+
+                        for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
+
+                            UserLocationData comment = document.toObject(UserLocationData.class);
+                            datalist.add(comment);
+                            Log.e("dbbd", String.valueOf(document.getData()));
+                            double lattitude= Double.parseDouble(comment.getCameraLat());
+                            double longitude= Double.parseDouble(comment.getCameraLong());
+//                            loc2.setLatitude(lattitude);
+//                            loc2.setLongitude(longitude);
+
+//                            distance(Double.parseDouble(datalist.get(i).getCameraLat()),gps.getLatitude(),Double.parseDouble(datalist.get(i).getCameraLong()),gps.getLongitude());
+                            distancesmtrscurrent.clear();
+                            distancescurrentarr.clear();
+                    for(int i=0;i<datalist.size();i++){
+//                distFrom(gps.getLatitude(),Double.parseDouble(datalist.get(i).getCameraLat()),gps.getLongitude(),Double.parseDouble(datalist.get(i).getCameraLong()));
+
+
+//                                Log.e("flatt", String.valueOf(datalist.get(i).getCameraLat()));
+//                                Log.e("flatg", String.valueOf(datalist.get(i).getCameraLong()));
+//
+//                                Log.e("latt", String.valueOf(gps.getLatitude()));
+//                                Log.e("latg", String.valueOf(gps.getLongitude()));
+//                                double lat1 =gps.getLatitude();
+//                                double longi1=gps.getLongitude();
+
+                        caldis1.clear();
+                        distancesmtrs1.clear();
+                        distances1.clear();
+                        for(int j=0;j<datalist.size();j++){
+
+//                            Log.e("Latitude", "" +datalist.get(i).getCameraLat());
+//                            Log.e("Longitude", "" + datalist.get(i).getCameraLong());
+
+
+
+                            loc1.setLatitude(gps.getLatitude());
+                            loc1.setLongitude(gps.getLongitude());
+                            loc2.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
+                            loc2.setLongitude(Double.parseDouble(datalist.get(i).getCameraLong()));
+
+                            double distancemtrs1 = loc1.distanceTo(loc2);
+                            distancesmtrs1.add(distancemtrs1);
+                            Log.e("distancemtrs1", String.valueOf(distancesmtrs1));
+//                        for(int j =0;j<distancesmtrs.size();j++){
+                            nearlat1.clear();
+                            nearlong1.clear();
+                            if(distancemtrs1<1500){
+                                caldis1.add(String.valueOf(distancesmtrs1));
+                                Log.e("caldis1", String.valueOf(caldis1));
+                                nearlat1.add(datalist.get(i).getCameraLat());
+                                nearlong1.add(datalist.get(i).getCameraLong());
+                                Log.e("nearlat1", String.valueOf(nearlat1));
+                                Log.e("nearlong1", String.valueOf(nearlong1));
+
+                                LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()),Double.parseDouble(datalist.get(i).getCameraLong()));
+                                Mmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+                                Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+
+                            }
+                            distanceval = loc1.distanceTo(loc2)/1000;
+                            Log.e("distance", String.valueOf(distanceval));
+                            distances1.add(distanceval);
+//                                          distancedata();
+
+//                                            caldis.add(distance);
+//                                            Log.e("caldis", String.valueOf(caldis));
+//                                            distance(Latitude,Longitude,Double.parseDouble(datalist.get(i).getCameraLat()),Double.parseDouble(datalist.get(i).getCameraLong()));
+
+
+//
+                        }
+
+                    }
+
+                        }
+                    }
+
+                });
+
+
+//        googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+//            @Override
+//            public void onCameraIdle() {
+//                for (Marker marker : markers) {
+//                    if (googleMap.getCameraPosition().zoom > 18) {
+//                        marker.setVisible(true);
+//                    } else {
+//                        marker.setVisible(false);
+//                    }
+//                }
+//            }
+//        });
+
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
         mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,
                 BOUNDS_MOUNTAIN_VIEW, null);
         autoCompView.setAdapter(mPlaceArrayAdapter);
+
+
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),NearestLocMapsActivity.class);
+                intent.putExtra("placeid",placeId);
+                intent.putExtra("longitude",String.valueOf(Longitude));
+                Log.e("strLongitude", String.valueOf(Longitude));
+                intent.putExtra("latitude",String.valueOf(Latitude));
+                intent.putStringArrayListExtra("placesarray",caldis);
+                getActivity().startActivity(intent);
+            }
+        });
+
 
 //        autoCompView.setAdapter(new GooglePlacesAutocompleteAdapter(getActivity(), R.layout.auto_listview));
 //        autoCompView.setOnItemClickListener((AdapterView.OnItemClickListener) this);
@@ -355,6 +556,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
         mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
         mNearestPlaceRecycler.setHasFixedSize(true);
+//        mNearestrecyclerAdapter = new NearestRecyclerAdapter(getActivity(),datalist,nearlat1,nearlong1,distances1);
         mNearestrecyclerAdapter = new NearestRecyclerAdapter(getActivity(), mNearestPlacesImages, mNearestPlacesAve, mNearestPlacesCity, mLocationImage);
         mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
         mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
@@ -363,7 +565,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         mExpandableListView = view.findViewById(R.id.expandableListView);
 
                 Button filterButton = view.findViewById(R.id.filter_button);
-        mSearchButton = view.findViewById(R.id.search_btn);
+
         mSearchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -457,8 +659,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 return false;
             }
         });
-                mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-                mapFrag.getMapAsync(this);
+
 //                mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 //                mapFrag.getMapAsync(getActivity());
 //                mapFrag.getMapAsync(getActivity());
@@ -479,119 +680,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
             }
         });*/
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Query first = db.collection("camera");
-        first.get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot documentSnapshots) {
-                        if (documentSnapshots.getDocuments().size() < 1) {
-                            return;
-                        }
-
-                        for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
-
-                            UserLocationData comment = document.toObject(UserLocationData.class);
-                            datalist.add(comment);
-                            Log.e("dbbd", String.valueOf(document.getData()));
-                            double lattitude= Double.parseDouble(comment.getCameraLat());
-                            double longitude= Double.parseDouble(comment.getCameraLong());
-//                            loc2.setLatitude(lattitude);
-//                            loc2.setLongitude(longitude);
-
-                        }
-                    }
-
-                });
-
-                gps = new TrackGPS(getActivity());
-                try {
-                    if(gps.canGetLocation()){
-                        Double lat =gps .getLatitude();
-                        Double lng =  gps.getLongitude();
-                        Strlat=laln.latitude;
-                        Strlong= laln.longitude;
-
-
-                        try {
-                            Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
-                            addresses = geo.getFromLocation(lat, lng, 1);
-                            if (addresses.isEmpty()) {
-                            }
-                            else {
-                                if (addresses.size() > 0) {
-                                    String address = addresses.get(0).getAddressLine(0);
-                                     latt=addresses.get(0).getLatitude();
-                                     longi=addresses.get(0).getLongitude();
-                                    // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                                    String city = addresses.get(0).getLocality();
-                                    String state = addresses.get(0).getAdminArea();
-                                    String country = addresses.get(0).getCountryName();
-                                    String postalCode = addresses.get(0).getPostalCode();
-                                    String knownName = addresses.get(0).getFeatureName();
-                                    address1=(address + "," + city + "," + state + "," + country + "," + postalCode);
-                                    Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
-                                    Log.e("address1",address1);
-                                marker = Mmap.addMarker(new MarkerOptions().position(new LatLng(gps .getLatitude(), gps .getLatitude()))
-                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.smallcar_icon))
-                                        .flat(true));
-
-                                    Log.e("latt", String.valueOf(latt));
-                                    Log.e("latt", String.valueOf(latt));
-//                                    loc1.setLatitude(latt);
-//                                    loc1.setLongitude(latt);
-
-
-                            }
-
-//                                for(int i=0;i<datalist.size();i++){
-//                                    distance(latt,longi,datalist.get(i).getUserLat(),datalist.get(i).getUserLong());
-//                                }
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-                    else
-                    {
-                        gps.showSettingsAlert();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-        for(int i=0;i<datalist.size();i++){
-            currentloc1.setLatitude(gps .getLatitude());
-            currentloc1.setLongitude(gps .getLongitude());
-            currentloc2.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
-            currentloc2.setLatitude(Double.parseDouble(datalist.get(i).getCameraLong()));
-
-            double distancecurrent = 0;
-            double distancemtrscurrent = currentloc1.distanceTo(currentloc2);
-            distancesmtrcurrent.add(distancemtrscurrent);
-            Log.e("distancesmtrcurrent", String.valueOf(distancesmtrcurrent));
-
-        }
 
 
 
-        mSearchButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(),NearestLocMapsActivity.class);
-                        intent.putExtra("lattitude",gps .getLatitude());
-                        intent.putExtra("longitude",gps.getLongitude());
-                        intent.putStringArrayListExtra("placesarray",caldis);
-                        getActivity().startActivity(intent);
-                    }
-                });
 
 
                 return view;
     }
+            public  float distFrom(double lat1, double lng1, double lat2, double lng2) {
+                double earthRadius = 6371000; //meters
+                double dLat = Math.toRadians(lat2-lat1);
+                double dLng = Math.toRadians(lng2-lng1);
+                double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                        Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                                Math.sin(dLng/2) * Math.sin(dLng/2);
+                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                float dist = (float) (earthRadius * c);
+                distancescurrentarr.add(String.valueOf(dist));
+                Log.e("dist", String.valueOf(distancescurrentarr));
 
+                return dist;
+            }
             public AdapterView.OnItemClickListener mAutocompleteClickListener
                     = new AdapterView.OnItemClickListener() {
                 @Override
@@ -677,8 +786,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 dist = rad2deg(dist);
                 dist = dist / 1000;
 
-                distances.add(dist);
-                Log.e("dist", String.valueOf(distances));
+                distancescurrentarr.add(String.valueOf(dist));
+                Log.e("dist", String.valueOf(distancescurrentarr));
 
 
                 return (dist);
@@ -880,6 +989,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 Mmap.clear();
 
+
                 //    Mmap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_markf)));
                 Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,6.5f));
                 Mmap.animateCamera(CameraUpdateFactory.zoomTo(12.5f), 2000, null);
@@ -903,6 +1013,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 Mmap.setMyLocationEnabled(true);
                 Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateme,6.5f));
                 Mmap.animateCamera(CameraUpdateFactory.zoomTo(12.5f), 2000, null);
+
                 Mmap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
                     public boolean onMyLocationButtonClick() {
@@ -997,75 +1108,5 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 return false;
             }
 
-            private void distancedata() {
-
-                final ProgressDialog dialog = ProgressDialog.show(getActivity(),"Fetching data","Please wait...",false,false);
-                StringBuilder googlePlacesUrl = new StringBuilder("api/distancematrix/json?");
-                googlePlacesUrl.append("origins=" + Latitude+ "," +Longitude);
-                googlePlacesUrl.append("&destinations=" +datalist.get(0).getCameraLat()  + "," +datalist.get(0).getCameraLong());
-                googlePlacesUrl.append("&key=" + "AIzaSyCsmEae3SidD5e6-jwwPOpPXOfNnPnwCmQ");
-
-
-//        Log.e("dsdjsh",filterserviceproviders.get(minIndex.get(0)).getLatitude()+filterserviceproviders.get(minIndex.get(0)).getLongitude());
-
-                BaseUrl = googlePlacesUrl.toString();
-
-//        RestAdapter adapter = new RestAdapter.Builder()
-//                .setEndpoint("https://maps.googleapis.com/maps")
-//                .setLogLevel(RestAdapter.LogLevel.FULL)
-//                .build();
-
-
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://maps.googleapis.com/maps/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-
-
-                DistanceApi distanceApi =  retrofit.create(DistanceApi.class);
-
-                Call<TimeModelClass> call = distanceApi.getUsers(BaseUrl);
-                call.enqueue(new Callback<TimeModelClass>() {
-                    @Override
-                    public void onResponse(Call<TimeModelClass> call, Response<TimeModelClass> response) {
-
-                        if(response.body().getStatus().equals("OK")){
-
-                            try {
-
-                                Log.e("Dsdsds", response.body().getRows().get(0).getElements().get(0).getDistance().getText());
-//                                                            Log.e("latl", String.valueOf(datalist.get(i).getCameraLat()));
-//                                                            Log.e("latl", String.valueOf(datalist.get(i).getCameraLong()));
-
-                                distanceval = "Distance :" + response.body().getRows().get(0).getElements().get(0).getDistance().getText();
-//                                                            time = "Expected time :" + response.body().getRows().get(0).getElements().get(0).getDuration().getText();
-                                Log.e("distance",distanceval);
-//                                                            caldis.add(Double.valueOf(distanceval));
-//                                                            dialog.dismiss();
-//                                                            showConfirmDialog();
-
-                            } catch (NullPointerException e){
-
-                                e.printStackTrace();
-                            }
-
-
-                        } else {
-
-//                                                        dialog.dismiss();
-//                                                        showConfirmDialog();
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<TimeModelClass> call, Throwable t) {
-
-//                                                    dialog.dismiss();
-//                                                    showConfirmDialog();
-
-                    }
-                });
-            }
 
         }

@@ -1,5 +1,6 @@
 package com.pyrky_android.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +9,8 @@ import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -24,7 +27,15 @@ import android.widget.Toast;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -45,8 +56,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class NearestLocMapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+public class NearestLocMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener,
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks {
     private static final float METERS_100 = 100;
     /* Latitude: 70°00′50″N   70.01383623
          Longitude: 24°13′10″W   -24.21957723
@@ -85,8 +101,6 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             R.drawable.loc4, R.drawable.loc5, R.drawable.loc6, R.drawable.loc7, R.drawable.loc8, R.drawable.loc9};
 
 
-    private GoogleMap mMap;
-
     private LatLng currLocation;
 
     private static final LatLng POINTA = new LatLng(32.820193, -117.232568);
@@ -98,29 +112,57 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     private ArrayList<LatLng> markerCoords = new ArrayList<LatLng>();
     private static final int POINTS = 4;
 
+    private GoogleApiClient mGoogleApiClient;
+    String placeId;
+    double Latitude, Longitude;
+    ArrayList<Double> distances = new ArrayList<>();
+    ArrayList<Double> distancesmtrs = new ArrayList<>();
+    ArrayList<String> caldis = new ArrayList<>();
+    ArrayList<String> nearlat = new ArrayList<>();
+    ArrayList<String> nearlong = new ArrayList<>();
 
-    GoogleMap Mmap;
+
+    ArrayList<Double> distancesmtrcurrent = new ArrayList<>();
+    ArrayList<Double> distancesmtrscurrent = new ArrayList<>();
+    ArrayList<String> caldiscurrent = new ArrayList<>();
+    ArrayList<String> nearlatcurrent = new ArrayList<>();
+    ArrayList<String> nearlongcurrent = new ArrayList<>();
+
+
+    String distanceval;
+    Location loc1 = new Location("");
+    Location loc2 = new Location("");
+    Location currentloc1 = new Location("");
+    Location currentloc2 = new Location("");
+    private static final int GOOGLE_API_CLIENT_ID = 0;
+
+    Location mLastLocation;
+    Marker myLocatMarker;
+
     SupportMapFragment mapFrag;
     private TrackGPS gps;
-    String  Strlat,Strlong,latvalue;
+    String Strlat, Strlong, latvalue;
     LatLng laln;
     String address1;
     Location mLocation;
     List<Address> addresses;
-    String lattitude,longitude,address,city,state,country,postalCode,knownName;
-    double latitud, longitud,latitu,longitu;
+    String lattitude, longitude, address, city, state, country, postalCode, knownName;
+    double latitud, longitud, latitu, longitu;
     List<UserLocationData> datalist = new ArrayList<UserLocationData>();
     Marker marker;
-    double maplat,maplongitude;
-ImageView BackImg;
-TextView  TitlaTxt;
-    GoogleMap googleMap;
+    String maplat, maplongitude;
+    ImageView BackImg;
+    TextView TitlaTxt;
+    GoogleMap Mmap;
+    String mLat,mLongi;
+    Double Mlat,Mlongi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearest_loc_maps);
-        BackImg=(ImageView) findViewById(R.id.back_image);
-        TitlaTxt=(TextView)findViewById(R.id.extra_title);
+        BackImg = (ImageView) findViewById(R.id.back_image);
+        TitlaTxt = (TextView) findViewById(R.id.extra_title);
         TitlaTxt.setText("Map");
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,27 +170,27 @@ TextView  TitlaTxt;
                 onBackPressed();
             }
         });
-//        setUpMapIfNeeded();
-//       Intent in=getIntent();
-////        if (in != null) {
-//
-//            maplat = Double.parseDouble(getIntent().getExtras().getString("lattitude"));
-//            maplongitude =Double.parseDouble(getIntent().getExtras().getString("longitude"));
-//            Log.e("lattitude", String.valueOf(maplat));
-//        Log.e("longitude", String.valueOf(maplongitude));
-//        }
+        Intent chatIntent = getIntent();
+        if(chatIntent!=null){
+//            placeId = chatIntent.getStringExtra("placeid");
+            mLat = chatIntent.getStringExtra("latitude");
+            mLongi = chatIntent.getStringExtra("longitude");
+//            placeId = chatIntent.getStringExtra("placeid");
+//            Mlat= Double.valueOf(mLat);
+//            Mlongi= Double.valueOf(mLongi);
+////        maplongitude = chatIntent.getStringExtra("longitude");
+            Log.e("lattitude", String.valueOf(mLat));
+        }
 
-        //Looping for multiple lat/lng input
-//        for (int i= 0; i<lat.length;i++){
-//            latlngs.add(new LatLng(lat[i],lng[i]));
-//        }
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(NearestLocMapsActivity.this);
+        mGoogleApiClient = new GoogleApiClient.Builder(NearestLocMapsActivity.this)
+                .addApi(Places.GEO_DATA_API)
+                .enableAutoManage(NearestLocMapsActivity.this, GOOGLE_API_CLIENT_ID, NearestLocMapsActivity.this)
+                .addConnectionCallbacks(NearestLocMapsActivity.this)
+                .build();
 //
-//
-//        if (getIntent()!=null){
-//            mLatitude = getIntent().getDoubleExtra("lat",1.0);
-//            mLongitude = getIntent().getDoubleExtra("lng",1.0);
-//        }
-
         //Carousel View
         final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
         carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
@@ -162,79 +204,49 @@ TextView  TitlaTxt;
         mNearestrecyclerAdapter = new NearestRecyclerAdapter(context, mNearestPlacesImages, mNearestPlacesAve, mNearestPlacesCity, mLocationImage);
         mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
         mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
 
-//
-//        LatLng placeLocation = new LatLng(maplat,maplongitude); //Make them global
-//        Marker placeMarker = googleMap.addMarker(new MarkerOptions().position(placeLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.smallcar_icon)));
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(placeLocation));
-//        googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 1000, null);
-
-//                mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-//                mapFrag.getMapAsync(getActivity());
-//                mapFrag.getMapAsync(getActivity());
-
-       /* autocompleteFragment = getSupportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment);
-
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                mGoogleMap.clear();
-                mGoogleMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 12.0f));
-            }
-
-            @Override
-            public void onError(Status status) {
-
-            }
-        });*/
-
-        //Looping for multiple lat/lng input
-//        for (int i= 0; i<lat.length;i++){
-//            latlngs.add(new LatLng(lat[i],lng[i]));
-//        }
-
-
-
-//        mLatitude = 13.0002586;
-//        mLongitude = 80.2046057;
-//        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-//
-//
-//        Button search = findViewById(R.id.search_button);
-//        final Object dataTransfer[] = new Object[2];
-//        search.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                mMap.clear();
-//                String hospital = "hospital";
-//                String url = getUrl(mLatitude,mLongitude,hospital);
-//
-//                dataTransfer[0] = mMap;
-//                dataTransfer[1] = url;
-//
-//                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
-//                getNearbyPlacesData.execute(dataTransfer);
-//
-//                Toast.makeText(NearestLocMapsActivity.this, "Showing Nearby Hospitals", Toast.LENGTH_SHORT).show();
-//            }
-//        });
     }
+
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        // Add a marker in Sydney, Australia, and move the camera.
-        LatLng sydney = new LatLng(12.8448, 80.2255);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//        Mmap=googleMap;
+//        Mmap.clear();
+//        Double lat = Double.valueOf(mLat);
+//        Double lng = Double.valueOf(mLongi);
+//        LatLng locateme = new LatLng(lat, lng);
+//        Mmap.getUiSettings().isZoomControlsEnabled();
+//
+//        if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//            return;
+//        }
+//        Mmap.setMyLocationEnabled(true);
+//        Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateme,6.5f));
+//        Mmap.animateCamera(CameraUpdateFactory.zoomTo(12.5f), 2000, null);
+//        Mmap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+//            @Override
+//            public boolean onMyLocationButtonClick() {
+//
+//                if(gps.canGetLocation()) {
+//                    Double lat = gps.getLatitude();
+//                    Double lng = gps.getLongitude();
+//                    LatLng locateme = new LatLng(lat, lng);
+//                    handlenewlocation(locateme);
+//
+//                }
+//                else
+//                {
+//                    Toast.makeText(getActivity(),"SORRY WE COULDN`T TRACK YOUR LOCATION",Toast.LENGTH_SHORT).show();
+//                }
+//                return true;
+//            }
+//        });
+//
     }
+
 
 //    @Override
 //    public void onLocationChanged(Location location) {
@@ -306,68 +318,97 @@ TextView  TitlaTxt;
 //    }
 
 
-    private void setUpMapIfNeeded() {
-        if (mMap == null) {
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(this);
+//    private void setUpMapIfNeeded() {
+//        if (mMap == null) {
+//
+//
+//
+//            // Check if we were successful in obtaining the map.
+//            if (mMap != null) {
+//                markerCoords.add(POINTA);
+//                markerCoords.add(POINTB);
+//                markerCoords.add(POINTC);
+//                markerCoords.add(POINTD);
+//
+////                mMap.setMyLocationEnabled(true);
+////                mMap.setOnMyLocationChangeListener((GoogleMap.OnMyLocationChangeListener) this);
+//
+////                setUpMap();
+//            }
+//        }
+//    }
+//
+//    private void setUpMap() {
+//        // Set My Location blue dot
+//        if (ActivityCompat.checkSelfPermission(NearestLocMapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(NearestLocMapsActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        mMap.setMyLocationEnabled(true);
+//
+//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        Criteria criteria = new Criteria();
+//        String provider = locationManager.getBestProvider(criteria, true);
+//        if (ActivityCompat.checkSelfPermission(NearestLocMapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(NearestLocMapsActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        Location myLocation = locationManager.getLastKnownLocation(provider);
+//
+//        if (myLocation != null) {
+//            double latitude = myLocation.getLatitude();
+//            double longitude = myLocation.getLongitude();
+//            currLocation = new LatLng(latitude, longitude);
+//        }
+//
+//        for (int i = 0; i < POINTS; i++) {
+//            mMap.addMarker(new MarkerOptions()
+//                    .position(markerCoords.get(i))
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_compact)));
+//        }
+//    }
 
 
-            // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                markerCoords.add(POINTA);
-                markerCoords.add(POINTB);
-                markerCoords.add(POINTC);
-                markerCoords.add(POINTD);
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
 
-//                mMap.setMyLocationEnabled(true);
-//                mMap.setOnMyLocationChangeListener((GoogleMap.OnMyLocationChangeListener) this);
-
-                setUpMap();
-            }
-        }
     }
 
-    private void setUpMap() {
-        // Set My Location blue dot
-        if (ActivityCompat.checkSelfPermission(NearestLocMapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(NearestLocMapsActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
+    @Override
+    public void onConnectionSuspended(int i) {
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String provider = locationManager.getBestProvider(criteria, true);
-        if (ActivityCompat.checkSelfPermission(NearestLocMapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(NearestLocMapsActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location myLocation = locationManager.getLastKnownLocation(provider);
+    }
 
-        if (myLocation != null) {
-            double latitude = myLocation.getLatitude();
-            double longitude = myLocation.getLongitude();
-            currLocation = new LatLng(latitude, longitude);
-        }
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-        for (int i = 0; i < POINTS; i++) {
-            mMap.addMarker(new MarkerOptions()
-                    .position(markerCoords.get(i))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_compact)));
-        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+//        double latitude = Latitude;
+//        double longitude = Longitude;
+//        LatLng latLng = new LatLng(latitude, longitude);
+//        googleMap.addMarker(new MarkerOptions().position(latLng));
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
     }
 
 //    @Override
