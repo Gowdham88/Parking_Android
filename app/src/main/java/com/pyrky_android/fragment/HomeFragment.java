@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +38,7 @@ import android.widget.ExpandableListView;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +57,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.PlaceBufferResponse;
 import com.google.android.gms.location.places.Places;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -64,14 +67,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.pyrky_android.ExpandableListData;
 import com.pyrky_android.R;
 import com.pyrky_android.activity.HomeActivity;
 import com.pyrky_android.activity.NearestLocMapsActivity;
@@ -104,7 +104,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -149,6 +148,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
     List<String> mExpandableListTitle;
     HashMap<String, List<String>> mExpandableListDetail;
     Boolean isExpandableListEnabled = false;
+
+
             GoogleMap Mmap;
             SupportMapFragment mapFrag;
             private TrackGPS gps;
@@ -178,7 +179,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
 
     TextView mSearchButton;
-    LinearLayout HomeRelativeLay;
+    RelativeLayout HomeRelativeLay;
     @Inject
     Retrofit retrofit;
 
@@ -195,7 +196,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
             RecyclerView recyclerView;
             EditText editText;
-            Button button;
+            Button filterButton;
             List<PlacesPOJO.CustomA> results;
             AutoCompleteTextView autoCompView;
             String placeid;
@@ -276,6 +277,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, null);
                 Utils.hideKeyboard(getActivity());
+
         mSearchButton = view.findViewById(R.id.search_btn);
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
@@ -286,6 +288,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 //        ImageView searchIcon = (ImageView)((LinearLayout)autocompleteFragment.getView()).getChildAt(0);
 //
 //        searchIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_search1));
+
         autoCompView= (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
 
         autoCompView.setThreshold(1);
@@ -493,6 +496,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 ////            }
 ////        });
 
+
         permissions.add(ACCESS_FINE_LOCATION);
         permissions.add(ACCESS_COARSE_LOCATION);
 
@@ -514,6 +518,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 //            fetchLocation();
 //        }
 
+        filterButton = (Button) view.findViewById(R.id.filter_button);
 
         apiService = ApiClient.getClient().create(ApiInterface.class);
 //
@@ -534,6 +539,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+        filterButton.setVisibility(View.VISIBLE);
+
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            FragmentTransaction transaction;
+            @Override
+            public void onClick(View v) {
+                if (!isExpandableListEnabled){
+                    isExpandableListEnabled = true;
+                    Toast.makeText(getActivity(), "Filter Enabled", Toast.LENGTH_SHORT).show();
+                    Fragment filterFragment = new FiltersFragment();
+                    transaction = getChildFragmentManager().beginTransaction();
+                    transaction.add(R.id.frame_layout, filterFragment).addToBackStack(null).commit();
+                }else {
+                    isExpandableListEnabled = false;
+                    Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
+                    getChildFragmentManager().popBackStack();
+                }
+
 
             }
         });
@@ -599,6 +622,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                 isExpandableListEnabled = false;
             }
         });
+
 
 
         filterButton.setOnClickListener(new View.OnClickListener() {
@@ -680,6 +704,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
             }
         });*/
+                mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+                mapFrag.getMapAsync(this);
+
 
 
 
@@ -1109,4 +1136,277 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             }
 
 
+
         }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
+        *//*
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isExpandableListEnabled) {
+                    isExpandableListEnabled = true;
+                    mExpandableListView.setVisibility(View.VISIBLE);
+                    mExpandableListDetail = ExpandableListData.getData();
+                    mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
+                    Collections.reverse(mExpandableListTitle);
+                    mExpandableListAdapter = new ExpandableListAdapter(getActivity(), mExpandableListTitle, mExpandableListDetail);
+
+                    mExpandableListView.setAdapter(mExpandableListAdapter);
+                } else {
+                    mExpandableListView.setVisibility(View.GONE);
+                    isExpandableListEnabled = false;
+                }
+             *//**//*   FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.filter_fragment,FiltersFragment.newInstance());
+                transaction.addToBackStack(null);
+                transaction.commit();*//**//*
+            }
+        });*//*
+
+        mExpandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
+@Override
+public void onGroupExpand(int groupPosition) {
+        Toast.makeText(getActivity(),
+        mExpandableListTitle.get(groupPosition) + " List Expanded.",
+        Toast.LENGTH_SHORT).show();
+        }
+        });
+
+        mExpandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+
+@Override
+public void onGroupCollapse(int groupPosition) {
+        Toast.makeText(getActivity(),
+        mExpandableListTitle.get(groupPosition) + " List Collapsed.",
+        Toast.LENGTH_SHORT).show();
+        }
+        });
+
+        mExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+@Override
+public boolean onChildClick(ExpandableListView parent, View v,
+        int groupPosition, int childPosition, long id) {
+        Toast.makeText(
+        getActivity(),
+        mExpandableListTitle.get(groupPosition)
+        + " -> "
+        + mExpandableListDetail.get(
+        mExpandableListTitle.get(groupPosition)).get(
+        childPosition), Toast.LENGTH_SHORT
+        ).show();
+        return false;
+        }
+        });*/
+>>>>>>> 0a2b232b9ac2a4cee4897127d26204a49647ac70
