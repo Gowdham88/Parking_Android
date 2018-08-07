@@ -39,7 +39,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     private int[] currentRating;
     private int mPosition;
     private Boolean isPopUpShowing = false;
-    float currenRating = 0;
+    int[] currenRating;
     int count = 0;
 
     public HistoryRecyclerAdapter(Context context, String[] places, String[] mTimeDate, int[] mCurrentRating) {
@@ -67,7 +67,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         mPosition = position;
         holder.city.setText(places[position]);
         holder.dateTime.setText(dateTime[position]);
-        holder.ratingBar.setRating(currenRating);
+//        holder.ratingBar.setRating(Integer.parseInt(String.valueOf(currenRating)));
 //       ratingBar.setRating(currenRating);
 //        holder.ratingBar.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -75,18 +75,18 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 //                showDialog();
 //            }
 //        });
-        holder.ratingBar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-//                if (!isPopUpShowing){
-                     showDialog();
-
-//                }
+//        holder.ratingBar.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+////                if (!isPopUpShowing){
+//                     showDialog();
 //
-                return false;
-            }
-        });
-
+////                }
+////
+//                return false;
+//            }
+//        });
+//
     }
 
     private void showDialog() {
@@ -104,15 +104,15 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         RatingBar ratingbar = (RatingBar) dialog.findViewById(R.id.rtbHighscr);
         TextView Gallery = (TextView) dialog.findViewById(R.id.cancel_txt);
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
-       ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                currenRating = Float.valueOf(decimalFormat.format((currenRating * count + v)
-                        / ++count));
-
-
-            }
-        });
+//       ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+//            @Override
+//            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+//                currenRating = Float.valueOf(decimalFormat.format((currenRating * count + v)
+//                        / ++count));
+//
+//
+//            }
+//        });
 //        GalleryIcon = (ImageView) bottomSheetView.findViewById(R.id.gallery_icon);
 //        CameraIcon = (ImageView) bottomSheetView.findViewById(R.id.camera_image);
         Camera.setOnClickListener(new View.OnClickListener() {
