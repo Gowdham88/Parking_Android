@@ -110,8 +110,9 @@ final double  longitude = Double.parseDouble(nearlong1.get(position));
 @Override
 public void onClick(View v) {
         Intent intent = new Intent(context,NearestLocMapsActivity.class);
-        intent.putExtra("lat",latitude);
-        intent.putExtra("lng",longitude);
+        intent.putExtra("lat",nearlat1.get(position));
+        intent.putExtra("lng",nearlong1.get(position));
+        intent.putExtra("value","carousel");
         context.startActivity(intent);
         }
         });

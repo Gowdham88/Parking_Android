@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.pyrky_android.ExpandableListData;
@@ -33,7 +34,7 @@ public class FiltersFragment extends Fragment {
     List<String> mExpandableListTitle;
     HashMap<String, List<String>> mExpandableListDetail;
     Boolean isExpandableListEnabled = false;
-
+RelativeLayout mHomeRelaLay;
     Button mEnableButton;
 
     public FiltersFragment() {
@@ -58,7 +59,13 @@ public class FiltersFragment extends Fragment {
         mEnableButton.setVisibility(View.GONE);
         mExpandableListView = view.findViewById(R.id.expandableListView);
 
-
+        mHomeRelaLay=view.findViewById(R.id.parent_filter);
+        mHomeRelaLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mHomeRelaLay.setVisibility(View.GONE);
+            }
+        });
         mExpandableListDetail = ExpandableListData.getData();
         mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
         Collections.reverse(mExpandableListTitle);
