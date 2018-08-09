@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.pyrky_android.activity.booking.BookingsActivity;
 import com.pyrky_android.activity.signin.SignInActivity;
 import com.pyrky_android.fragment.BookingsFragment;
 import com.pyrky_android.fragment.HomeFragment;
@@ -234,13 +235,15 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_booking) {
 //            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 //            loadFragment(new BookingsFragment());
-
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-            transaction.replace(R.id.main_frame_layout, new BookingsFragment());
-            transaction.addToBackStack(null);
-            transaction.commit();
-            toolbarText.setText("Booking");
+Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
+overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+startActivity(intent);
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+//            transaction.replace(R.id.main_frame_layout, new BookingsFragment());
+//            transaction.addToBackStack(null);
+//            transaction.commit();
+//            toolbarText.setText("Booking");
         } else if (id == R.id.nav_profile) {
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

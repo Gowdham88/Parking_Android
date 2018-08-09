@@ -133,7 +133,12 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 //                uploadImage(v);
 //            }
 //        });
-
+        Signuprellay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.hideKeyboard(SignupScreenActivity.this);
+            }
+        });
         signupScrlin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,6 +170,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         recyclerView.setAdapter(new CarouselSignupAdapter(this, mIcons, mCarCategory,mCarranze));
         recyclerView.addOnScrollListener(new CenterScrollListener());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
             recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -177,6 +183,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
             public void onClick(View view) {
                 Utils.hideKeyboard(SignupScreenActivity.this);
                 createAccount(mEtEmail.getText().toString().trim(), mEtPassword.getText().toString().trim(), mEtUsername.getText().toString(),view);
+                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_LOGGED_INPASS, mEtPassword.getText().toString().trim());
             }
         });
         AccntTxt.setOnClickListener(new View.OnClickListener() {
@@ -417,9 +424,10 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         StorageReference storageRef = storage.getReference();
         if(contentURI != null)
         {
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
+//            final ProgressDialog progressDialog = new ProgressDialog(this);
+//            progressDialog.setTitle("Uploading...");
+//            progressDialog.show();
+            showProgressDialog();
 
             Uri file = Uri.fromFile(new File(selectedImagePath));
             StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
@@ -433,8 +441,8 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(SignupScreenActivity.this, "Uploaded" + riversRef, Toast.LENGTH_SHORT).show();
+                            hideProgressDialog();
+                            Toast.makeText(SignupScreenActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
                             postimageurl =taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
 
                             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -467,7 +475,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    progressDialog.dismiss();
+                    hideProgressDialog();
                     Toast.makeText(SignupScreenActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     postimageurl = "failed";
                 }
@@ -476,7 +484,8 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploading "+(int)progress+"%");
+//                            progressDialog.setMessage("Uploading "+(int)progress+"%");
+                            showProgressDialog();
                         }
                     });
 

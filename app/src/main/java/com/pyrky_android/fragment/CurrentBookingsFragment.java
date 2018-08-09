@@ -49,8 +49,8 @@ public class CurrentBookingsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+//        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
         mRecyclerView = view.findViewById(R.id.current_booking_recycler);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

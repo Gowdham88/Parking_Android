@@ -108,6 +108,9 @@
         <activity android:name=".activity.booking.BookingsActivity" />
 
         <activity android:name=".activity.forgotpassword.ForgotpasswordActivity"/>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="941d1bd16bc6b7e98066de5acdd5eabab024ed2f" />
     </application>
 
 </manifest>

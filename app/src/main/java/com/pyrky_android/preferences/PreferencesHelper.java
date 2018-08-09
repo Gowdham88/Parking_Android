@@ -23,6 +23,7 @@ public class PreferencesHelper {
     public static final String PREF_FIREBASE_TOKEN = ".fbtoken";
     public static final String PREFERENCE_FIREBASE_UUID = ".fbuid";
     public static final String PREFERENCE_LOGGED_IN ="logged in";
+    public static final String PREFERENCE_LOGGED_INPASS ="pass in";
     //End Region
 
     //Region Constructor
@@ -42,6 +43,7 @@ public class PreferencesHelper {
         editor.remove(PREF_FIREBASE_TOKEN);
         editor.remove(PREFERENCE_PROFILE_CAR);
         editor.remove(PREFERENCE_ISLOGGEDIN);
+        editor.remove(PREFERENCE_LOGGED_INPASS);
 
         editor.apply();
     }
