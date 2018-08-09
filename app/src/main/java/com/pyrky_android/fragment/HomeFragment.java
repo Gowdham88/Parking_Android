@@ -117,6 +117,7 @@ import java.util.List;
 import java.util.Locale;
 
 
+import okhttp3.internal.Util;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -207,6 +208,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
     ArrayList<String> Placename = new ArrayList<>();
     List<Address> addresses = null;
     double distanceval;
+    RelativeLayout HomeRelLayout;
 
 
     @Override
@@ -233,6 +235,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
         mExpandableListView=(ExpandableListView)view.findViewById(R.id.expandableListView);
+        HomeRelLayout=(RelativeLayout)view.findViewById(R.id.home_lay);
+        HomeRelLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isExpandableListEnabled = false;
+              mExpandableListView.setVisibility(View.GONE);
+                Utils.hideKeyboard(getActivity());
+            }
+        });
 
         autoCompView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
@@ -243,7 +254,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Places.GEO_DATA_API)
-                .enableAutoManage(getActivity(),0, this)
+                .enableAutoManage(getActivity(), this)
                 .addConnectionCallbacks(this)
                 .build();
 
@@ -359,13 +370,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                                         mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
                                         mNearestPlaceRecycler.setHasFixedSize(true);
 //        mNearestrecyclerAdapter = new NearestRecyclerAdapter(getActivity(),datalist,nearlat1,nearlong1,distances1);
-                                        mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(),nearimg,nearlat1,nearlong1,distances1,Placename );
+                                        mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(),nearimg,nearlat1,nearlong1,distances1,Placename);
                                         mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                         mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
                                         mNearestrecyclerAdapter.notifyDataSetChanged();
 
                                         LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
-                                        Mmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney")).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+                                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
                                         Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
 
@@ -392,9 +403,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
                 intent.putExtra("placeid", placeId);
-                intent.putExtra("longitude", String.valueOf(Longitude));
+                intent.putExtra("latitude",String.valueOf(Latitude).toString().trim());
+                intent.putExtra("longitude",String.valueOf(Longitude).toString().trim());
+                intent.putExtra("value","home");
+                Log.e("strLatitude", String.valueOf(Latitude));
                 Log.e("strLongitude", String.valueOf(Longitude));
-                intent.putExtra("latitude", String.valueOf(Latitude));
                 intent.putStringArrayListExtra("placesarray", caldis);
                 getActivity().startActivity(intent);
             }
@@ -415,6 +428,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                                                       Fragment filterFragment = new FiltersFragment();
                                                       transaction = getChildFragmentManager().beginTransaction();
                                                       transaction.add(R.id.frame_layout, filterFragment).addToBackStack(null).commit();
+                                                      Utils.hideKeyboard(getActivity());
                                                   } else {
                                                       isExpandableListEnabled = false;
                                                       Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
@@ -668,12 +682,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             }
 
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mGoogleApiClient.stopAutoManage(getActivity());
-        mGoogleApiClient.disconnect();
-    }
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        mGoogleApiClient.stopAutoManage(getActivity());
+//        mGoogleApiClient.disconnect();
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        mGoogleApiClient.stopAutoManage(getActivity());
+//        mGoogleApiClient.disconnect();
+//    }
 
 
 }

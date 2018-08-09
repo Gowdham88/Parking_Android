@@ -12,47 +12,48 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/search_boarder_clr" />
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/myview"
-        android:orientation="vertical">
+    <!--<FrameLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_below="@+id/myview"-->
+        <!--android:orientation="vertical">-->
     <fragment
 
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/myview"
         android:id="@+id/map"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/map_locabv"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center"
-            android:src="@drawable/smallcar_icon"
-            />
+    <!--<FrameLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
         <!--<ImageView-->
-            <!--android:id="@+id/map_loc"-->
+            <!--android:id="@+id/map_locabv"-->
             <!--android:layout_width="25dp"-->
             <!--android:layout_height="25dp"-->
             <!--android:layout_gravity="center"-->
+            <!--android:src="@drawable/smallcar_icon"-->
             <!--/>-->
-        <!--<TextView-->
-            <!--android:id="@+id/location_txt"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:text=""-->
-            <!--android:layout_marginTop="35dp"/>-->
-    </FrameLayout>
+        <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/map_loc"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="25dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="25dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
+            <!--&lt;!&ndash;/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/location_txt"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text=""&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_marginTop="35dp"/>&ndash;&gt;-->
+    <!--</FrameLayout>-->
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="140dp"
-        android:background="#00000000"
-        android:layout_alignParentTop="true"
+        android:background="#80000000"
+        android:layout_below="@+id/myview"
         android:id="@+id/nearest_places_recycler"
         />
     <LinearLayout
@@ -80,5 +81,5 @@
 
     </LinearLayout>
 
-    </FrameLayout>
+    <!--</FrameLayout>-->
 </RelativeLayout>
