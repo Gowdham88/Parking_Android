@@ -35,8 +35,8 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+//        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
 
     @Nullable

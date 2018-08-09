@@ -48,14 +48,16 @@ private int avatarSize;
         ArrayList<String> nearlat1 = new ArrayList<>();
         ArrayList<String> nearlong1 = new ArrayList<>();
         ArrayList<String> distances1 = new ArrayList<>();
+    ArrayList<String> Placename = new ArrayList<>();
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
-public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1) {
+public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename) {
         this.context = context;
         this.nearimg = nearimg;
         this.nearlat1 = nearlat1;
         this.nearlong1 = nearlong1;
         this.distances1 = distances1;
+        this.Placename=Placename;
         }
 
 @NonNull
@@ -98,12 +100,12 @@ final double  longitude = Double.parseDouble(nearlong1.get(position));
         String yourAddress = yourAddresses.get(0).getAddressLine(0);
         String yourCity = yourAddresses.get(0).getAddressLine(1);
         String yourCountry = yourAddresses.get(0).getAddressLine(2);
-        holder.nearestPlaceAve.setText(yourAddress);
+
 
     }
 
 //    Toast.makeText(context, (int) latitude, Toast.LENGTH_SHORT).show();
-
+    holder.nearestPlaceAve.setText(Placename.get(position));
         holder.nearestPlaceImage.setOnClickListener(new View.OnClickListener() {
 @Override
 public void onClick(View v) {

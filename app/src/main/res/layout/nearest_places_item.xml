@@ -27,6 +27,7 @@
         android:layout_centerHorizontal="true"
         android:textSize="8sp"
         android:text=""
+        android:singleLine="true"
         android:textColor="#404B69"
         android:layout_below="@id/nearest_place_img_card"
         />

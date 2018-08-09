@@ -204,6 +204,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
     ArrayList<String> nearimg = new ArrayList<>();
     ArrayList<Double> distancesmtrscurrent = new ArrayList<>();
     ArrayList<String> distancescurrentarr = new ArrayList<>();
+    ArrayList<String> Placename = new ArrayList<>();
     List<Address> addresses = null;
     double distanceval;
 
@@ -322,6 +323,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                             distancesmtrs1.clear();
                             distances1.clear();
                             nearimg.clear();
+                            Placename.clear();
                             for (int i = 0; i < datalist.size(); i++) {
 //
 
@@ -336,8 +338,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
 //                        for(int j =0;j<distancesmtrs.size();j++){
 //
                                 distanceval = loc1.distanceTo(loc2) / 1000;
-                                Log.e("distance", String.valueOf(distanceval));
                                 distances1.add(String.valueOf(distanceval));
+                                Log.e("distance", String.valueOf(distances1));
 
                                     if (distancemtrs1 < 1500) {
                                         caldis1.add(String.valueOf(distancesmtrs1));
@@ -345,6 +347,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                                         nearlat1.add(datalist.get(i).getCameraLat());
                                         nearlong1.add(datalist.get(i).getCameraLong());
                                         nearimg.add(datalist.get(i).getCameraImageUrl());
+                                        Placename.add(datalist.get(i).getCameraLocationName());
                                         Log.e("nearlat1", String.valueOf(nearlat1));
                                         Log.e("nearlong1", String.valueOf(nearlong1));
                                         Log.e("nearimg", String.valueOf(nearimg));
@@ -356,7 +359,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                                         mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
                                         mNearestPlaceRecycler.setHasFixedSize(true);
 //        mNearestrecyclerAdapter = new NearestRecyclerAdapter(getActivity(),datalist,nearlat1,nearlong1,distances1);
-                                        mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(),nearimg,nearlat1,nearlong1,distances1);
+                                        mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(),nearimg,nearlat1,nearlong1,distances1,Placename );
                                         mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                         mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
                                         mNearestrecyclerAdapter.notifyDataSetChanged();
