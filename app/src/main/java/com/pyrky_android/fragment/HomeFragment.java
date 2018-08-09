@@ -244,7 +244,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                     Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
                     getChildFragmentManager().popBackStack();
                 }
-
             }
         });
 
@@ -432,8 +431,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
                         } else if (response.code() != 200) {
                             Toast.makeText(getActivity(), "Error " + response.code() + " found.", Toast.LENGTH_SHORT).show();
                         }
-
-
                     }
 
                     @Override

@@ -186,7 +186,9 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                 Intent intent = new Intent(SignupScreenActivity.this,SignInActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+                    overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+                }
                 finish();
 
             }
@@ -265,10 +267,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             new AppSettingsDialog.Builder(this).build().show();
         }
-
     }
-
-
 
     private boolean hasPermissions() {
         return EasyPermissions.hasPermissions(SignupScreenActivity.this, CAMERA);
@@ -487,7 +486,6 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     }
 
     public void showProgressDialog() {
-
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignupScreenActivity.this);
         //View view = getLayoutInflater().inflate(R.layout.progress);

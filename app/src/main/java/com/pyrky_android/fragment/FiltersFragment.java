@@ -87,9 +87,15 @@ public class FiltersFragment extends Fragment {
         });
 
         mExpandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-
+            int previousGroup = -1;
             @Override
             public void onGroupExpand(int groupPosition) {
+
+                if(groupPosition != previousGroup){
+                    mExpandableListView.collapseGroup(previousGroup);
+                previousGroup = groupPosition;
+            }
+
                 Toast.makeText(getActivity(),
                         mExpandableListTitle.get(groupPosition) + " List Expanded.",
                         Toast.LENGTH_SHORT).show();
