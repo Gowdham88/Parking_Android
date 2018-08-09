@@ -87,6 +87,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (validateForm()){
                     signIn(mEmail.getText().toString().trim(),mPassword.getText().toString().trim());
+                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_LOGGED_INPASS, mPassword.getText().toString().trim());
 
 //                    SigninViewModel model = ViewModelProviders.of(SignInActivity.this).get(SigninViewModel.class);
                 }
@@ -136,8 +137,8 @@ public class SignInActivity extends AppCompatActivity {
                                         Users user = documentSnapshot.toObject(Users.class);
 
                                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL,user.getEmail());
-                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME,user.getUserName());
-                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, user.getProfileImageUrl());
+                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME,user.getUsername());
+                                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_PIC, user.getProfileImageURL());
                                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_PROFILE_CAR, user.getCarCategory());
                                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID, firebaseUser.getUid());
                                         PreferencesHelper.setPreferenceBoolean(getApplicationContext(), PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);

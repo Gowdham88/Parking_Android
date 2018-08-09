@@ -48,6 +48,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -122,6 +124,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     TextView  TitlaTxt;
     int mCarIcon;
      CarouselLayoutManager layoutManager;
+    String Pass;
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
@@ -161,6 +164,8 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
         mAuth = FirebaseAuth.getInstance();
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+        Pass =PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_LOGGED_INPASS);
+
 
 
 //        if(mCarIcon==0){
@@ -308,6 +313,11 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 String email = EmailEdt.getText().toString().trim();
 
                 updateData(email,mCarCategoryId[mCarouselCount],name);
+
+
+
+
+
             }
         });
 
@@ -628,7 +638,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     progressDialog.dismiss();
-                    Toast.makeText(getActivity(), "Uploaded" + riversRef, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Uploaded", Toast.LENGTH_SHORT).show();
                     postimageurl =taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
 
                     uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -684,13 +694,14 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         }
     }
 
+
     private void updateData(final String email, String carCategory,String userName) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
 //        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         contact.update("email", email);
-        contact.update("userName",userName);
-        contact.update("profileImageUrl",mProfilepic);
+        contact.update("username",userName);
+        contact.update("profileImageURL",mProfilepic);
         contact.update("carCategory", carCategory)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -701,6 +712,34 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        // Get auth credentials from the user for re-authentication
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(user.getEmail(),Pass); // Current Login Credentials \\
+        // Prompt the user to re-provide their sign-in credentials
+        user.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d(TAG, "User re-authenticated.");
+                        //Now change your email address \\
+                        //----------------Code for Changing Email Address----------\\
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        user.updateEmail(email)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Log.d(TAG, "User email address updated.");
+                                        }
+                                    }
+                                });
+                        //----------------------------------------------------------\\
+                    }
+                });
+
+
     }
 
     public void saveUserImage(final String postimageurl) {

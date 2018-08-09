@@ -1,4 +1,18 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply plugin: 'io.fabric'
 android {
     compileSdkVersion 27
@@ -42,13 +56,13 @@ dependencies {
     implementation "com.android.support:support-v4:${support_library_version}"
     implementation "com.android.support.constraint:constraint-layout:1.1.2"
 
-    implementation 'com.google.firebase:firebase-messaging:17.1.0'
+    implementation "com.google.firebase:firebase-messaging:17.1.0"
     implementation "com.google.firebase:firebase-core:16.0.1"
-    implementation "com.google.firebase:firebase-firestore:17.0.3"
-    implementation "com.google.firebase:firebase-database:15.0.1"
-    implementation "com.google.firebase:firebase-iid:15.0.1"
+    implementation "com.google.firebase:firebase-firestore:17.0.4"
+    implementation "com.google.firebase:firebase-database:16.0.1"
+    implementation "com.google.firebase:firebase-iid:16.2.0"
     implementation "com.google.firebase:firebase-auth:16.0.2"
-    implementation "com.google.firebase:firebase-storage:15.0.1"
+    implementation "com.google.firebase:firebase-storage:16.0.1"
     implementation 'com.firebaseui:firebase-ui-storage:4.1.0'
 
 //    implementation "com.google.android.gms:play-services:16.0.0"

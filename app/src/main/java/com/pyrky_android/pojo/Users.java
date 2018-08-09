@@ -6,33 +6,28 @@ package com.pyrky_android.pojo;
 
 public class Users {
 
-    private String userName;
+
+    private String username;
 
 
     private String email;
     private String password;
     private String carCategory;
-    private String profileImageUrl;
+    private String profileImageURL;
     private String platform;
 
     public Users() {
 
     }
 
-    public Users(String userName, String email,String profileImageUrl, String carCategory) {
-        this.userName = userName;
+    public Users(String username, String email,String profileImageUrl, String carCategory) {
+        this.username = username;
         this.email = email;
-        this.profileImageUrl = profileImageUrl;
+        this.profileImageURL = profileImageUrl;
         this.carCategory = carCategory;
     }
 
-    public String getUserName() {
-        return userName;
-    }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public String getEmail() {
         return email;
@@ -49,13 +44,21 @@ public class Users {
     public void setCarCategory(String carCategory) {
         this.carCategory = carCategory;
     }
-
-    public String getProfileImageUrl() {
-        return profileImageUrl;
+    public String getUsername() {
+        return username;
     }
 
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
+    public void setUsername(String username) {
+        this.username = username;
     }
+
+    public String getProfileImageURL() {
+        return profileImageURL;
+    }
+
+    public void setProfileImageURL(String profileImageURL) {
+        this.profileImageURL = profileImageURL;
+    }
+
 
 }

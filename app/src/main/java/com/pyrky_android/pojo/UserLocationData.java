@@ -7,12 +7,14 @@ public class UserLocationData {
 
     private String cameraLong;
     private String cameraImageUrl;
+    private String cameraLocationName;
 
 
-    public UserLocationData(String cameraLat, String cameraLong, String cameraImageUrl) {
+    public UserLocationData(String cameraLat, String cameraLong, String cameraImageUrl, String cameraLocationName) {
         this.cameraLat = cameraLat;
         this.cameraLong = cameraLong;
         this.cameraImageUrl=cameraImageUrl;
+        this.cameraLocationName=cameraLocationName;
 
     }
 
@@ -43,6 +45,13 @@ public class UserLocationData {
         this.cameraImageUrl = cameraImageUrl;
     }
 
+    public String getCameraLocationName() {
+        return cameraLocationName;
+    }
+
+    public void setCameraLocationName(String cameraLocationName) {
+        this.cameraLocationName = cameraLocationName;
+    }
 
 
 }
