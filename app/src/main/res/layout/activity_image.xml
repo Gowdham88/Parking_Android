@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.pyrky_android.activity.ViewImage.ViewImageActivity">
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/nearloc_toolbar" />
+
+    <View
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/myview"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/search_boarder_clr" />
+    <ImageView
+        android:layout_below="@+id/myview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/parking_img"/>
+
+</RelativeLayout>
