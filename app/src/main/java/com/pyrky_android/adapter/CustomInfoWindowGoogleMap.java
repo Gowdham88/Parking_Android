@@ -1,5 +1,6 @@
 package com.pyrky_android.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ public class CustomInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter,Vi
     public View getInfoContents(Marker marker) {
         return null;
     }
+    @SuppressLint("ServiceCast")
     @Override
     public View getInfoWindow(Marker marker) {
         inflater = (LayoutInflater)
@@ -44,33 +46,16 @@ public class CustomInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter,Vi
         NavigateTxt=(TextView)v.findViewById(R.id.navi_txt);
 
         ViewLay.setOnClickListener(this);
+        ViewTxt.setOnClickListener(this);
+        NavigateLay.setOnClickListener(this);
+        NavigateTxt.setOnClickListener(this);
 //        ViewLay.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
 //
 //            }
 //        });
-        ViewTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                Intent intent=new Intent(context,ViewImageActivity.class);
-                context.startActivity(intent);
-            }
-        });
-
-        NavigateLay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        NavigateTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
 
         return v;
     }
@@ -79,8 +64,29 @@ public class CustomInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter,Vi
     @Override
     public void onClick(View view) {
 
-        Intent intent=new Intent(context,ViewImageActivity.class);
-        context.startActivity(intent);
+        switch (view.getId()){
+            case R.id.view_lay :
+                Intent intent=new Intent(context,ViewImageActivity.class) ;
+                context.startActivity(intent);
+                //once logged in, load the main page
+
+            case R.id.view_txt :
+                Intent intent1=new Intent(context,ViewImageActivity.class) ;
+                context.startActivity(intent1);
+                break;
+
+            case R.id.navi_lay :
+
+                break;
+
+            case R.id.navi_txt :
+
+                break;
+
+        }
+
+//        Intent intent=new Intent(context,ViewImageActivity.class);
+//        context.startActivity(intent);
     }
 }
 

@@ -682,13 +682,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
             }
 
 
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        mGoogleApiClient.stopAutoManage(getActivity());
-//        mGoogleApiClient.disconnect();
-//    }
-//
+    @Override
+    public void onPause() {
+        super.onPause();
+        mGoogleApiClient.stopAutoManage(getActivity());
+        mGoogleApiClient.disconnect();
+    }
+
 //    @Override
 //    public void onDestroy() {
 //        super.onDestroy();
