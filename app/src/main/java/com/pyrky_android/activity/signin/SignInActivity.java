@@ -175,15 +175,12 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void showProgressDialog() {
-
-
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignInActivity.this);
         //View view = getLayoutInflater().inflate(R.layout.progress);
         alertDialog.setView(R.layout.progress);
         dialog = alertDialog.create();
         dialog.show();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
     }
 
     public void hideProgressDialog(){
@@ -196,32 +193,37 @@ public class SignInActivity extends AppCompatActivity {
 
         String email = mEmail.getText().toString().trim();
         String password = mPassword.getText().toString().trim();
-        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && password.length()>=6) {
 
             valid = true;
 
         } else {
-
             if(TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
-                Toast.makeText(this, "Enter email address and password.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Enter e-mail address and password", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
-            else if((email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()))
+            else if (email.isEmpty()){
+                Toast.makeText(getApplicationContext(), "Enter e-mail address", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+            else if((!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()))
             {
-                Toast.makeText(getApplicationContext(), "enter a valid email address", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Enter valid e-mail address", Toast.LENGTH_SHORT).show();
 //            mEmail.setError("enter a valid email address");
                 valid = false;
             }
-            else if (TextUtils.isEmpty(password) || password.length()<6) {
-                Toast.makeText(this, "Enter valid password.", Toast.LENGTH_SHORT).show();
+            else if (TextUtils.isEmpty(password)) {
+                Toast.makeText(this, "Enter valid password", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+            else if (password.length()<6){
+                Toast.makeText(this, "Enter valid password", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
             else {
                 Toast.makeText(this, "Something wrong with the credentials", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
-
-
         }
 
         return valid;

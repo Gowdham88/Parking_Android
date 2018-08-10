@@ -99,13 +99,13 @@ RelativeLayout mHomeRelaLay;
             @Override
             public void onGroupExpand(int groupPosition) {
 
-                Toast.makeText(getActivity(),
-                        mExpandableListTitle.get(groupPosition) + " List Expanded.",
-                        Toast.LENGTH_SHORT).show();
-
-                if(groupPosition != previousGroup)
+                if(groupPosition != previousGroup){
                     mExpandableListView.collapseGroup(previousGroup);
                 previousGroup = groupPosition;
+            }
+             Toast.makeText(getActivity(),
+                        mExpandableListTitle.get(groupPosition) + " List Expanded.",
+                        Toast.LENGTH_SHORT).show();
             }
 
         });

@@ -81,7 +81,7 @@ public class HomeActivity extends AppCompatActivity
 
         toolbarText = findViewById(R.id.toolbar_text);
         setSupportActionBar(toolbar);
-        view=(View)findViewById(R.id.myview);
+        view = (View)findViewById(R.id.myview);
         view.setVisibility(View.VISIBLE);
         UsrName=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
 //
@@ -235,9 +235,9 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_booking) {
 //            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 //            loadFragment(new BookingsFragment());
-Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
-overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-startActivity(intent);
+                Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                startActivity(intent);
 //            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
 //            transaction.replace(R.id.main_frame_layout, new BookingsFragment());
@@ -245,7 +245,6 @@ startActivity(intent);
 //            transaction.commit();
 //            toolbarText.setText("Booking");
         } else if (id == R.id.nav_profile) {
-
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
             transaction.replace(R.id.main_frame_layout, new ProfileFragment());

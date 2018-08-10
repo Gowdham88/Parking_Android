@@ -65,6 +65,7 @@
             android:layout_marginRight="33dp"
             android:layout_marginTop="30dp"
             app:tabGravity="fill"
+            app:tabMode="fixed"
             app:tabIndicatorHeight="0dp"
             app:tabTextColor="@color/booking_txtclr" />
 
