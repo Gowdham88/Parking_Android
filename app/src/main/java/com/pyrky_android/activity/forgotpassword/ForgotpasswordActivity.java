@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,11 +31,11 @@ import com.pyrky_android.activity.signin.SignInActivity;
 import com.pyrky_android.utils.Utils;
 
 public class ForgotpasswordActivity extends AppCompatActivity {
-    ImageView backBtn;
-    LinearLayout cancelbtn;
+    ImageView backBtnclose;
+    RelativeLayout cancelbtnrel;
     EditText mEmail;
     Button resetBtn,resetbutton1;
-    LinearLayout LinLay;
+    RelativeLayout LinLay;
     TextView txt_error;
     private AlertDialog dialog;
     @Override
@@ -43,10 +44,11 @@ public class ForgotpasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgotpassword);
         mEmail =(EditText)findViewById(R.id.email_edit);
-        cancelbtn=(LinearLayout)findViewById(R.id.btncancel);
+        cancelbtnrel=(RelativeLayout)findViewById(R.id.btncancel);
         resetBtn=(Button)findViewById(R.id.sinin_edt);
 //        txt_error = (TextView)findViewById(R.id.txt_error);
-        LinLay=(LinearLayout)findViewById(R.id.const_lay);
+        LinLay=(RelativeLayout)findViewById(R.id.const_lay);
+        backBtnclose=(ImageView)findViewById(R.id.close_img);
 //
         mEmail.addTextChangedListener(mTextWatcher);
         mEmail.setInputType(mEmail.getInputType()
@@ -60,11 +62,22 @@ public class ForgotpasswordActivity extends AppCompatActivity {
             }
         });
 
-        cancelbtn.setOnClickListener(new View.OnClickListener() {
+        cancelbtnrel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
+//                startActivity(intent);
+                finish();
+
+
+            }
+        });
+
+        backBtnclose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
+//                startActivity(intent);
                 finish();
 
 

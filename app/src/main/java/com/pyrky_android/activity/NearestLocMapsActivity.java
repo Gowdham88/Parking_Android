@@ -4,8 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,9 +22,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AbsoluteLayout;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
@@ -43,6 +50,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pyrky_android.R;
+import com.pyrky_android.activity.ViewImage.ViewImageActivity;
 import com.pyrky_android.adapter.CarouselDetailMapAdapter;
 import com.pyrky_android.adapter.CustomInfoWindowGoogleMap;
 import com.pyrky_android.fragment.TrackGPS;
@@ -55,58 +63,11 @@ import java.util.List;
 public class NearestLocMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks {
-    private static final float METERS_100 = 100;
-    /* Latitude: 70°00′50″N   70.01383623
-         Longitude: 24°13′10″W   -24.21957723
-         Latitude: 56°30′12″N   56.50329796
-         Longitude: 147°38′53″E   147.64797704
-         Latitude: 1°14′15″N   1.23736985
-         Longitude: 163°35′12″W   -163.58662616
-         Latitude: 24°20′10″S   -24.33605988
-         Longitude: 16°53′22″E   16.88948658
-         Latitude: 11°23′01″N   11.38350584
-         Longitude: 62°37′43″E   62.62863347
-         Latitude: 58°41′02″S   -58.68375965
-         Longitude: 43°28′09″W   -43.46925429
-         Latitude: 44°52′23″N   44.87310434
-         Longitude: 91°17′07″W   -91.28527609
-         Latitude: 41°44′56″S   -41.74890304
-         Longitude: 85°56′44″E   85.94545339
-         Latitude: 3°01′27″S   -3.02408824
-         Longitude: 82°29′25″W   -82.49033554
-         Latitude: 21°20′04″S   -21.33447419
-         Longitude: 175°31′50″W   -175.53067807*/
+
     Context context = this;
-    double lat[] = {70.01383623, 56.50329796, 1.23736985, -24.33605988, 11.38350584, -58.68375965, 44.87310434, 147.64797704, -3.02408824, -21.33447419};
-    double lng[] = {-24.21957723, 56.50329796, -163.58662616, 16.88948658, 62.62863347, -43.46925429, -91.28527609, 85.94545339, -82.49033554, -175.53067807};
-    private ArrayList<LatLng> latlngs = new ArrayList<>();
-    double mLatitude;
-    double mLongitude;
-    private int PROXIMITY_RADIUS = 10000;
-    //Carousel
+
     CarouselDetailMapAdapter mNearestrecyclerAdapter;
     RecyclerView mNearestPlaceRecycler;
-    int mNearestPlacesImages[] = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
-    String[] mNearestPlacesAve = {"1st Avenue", "2nd Avenue", "3rd Avenue", "4th Avenue", "5th Avenue", "6th Avenue", "7th Avenue", "8th Avenue", "9th Avenue", "10th Avenue",};
-    String[] mNearestPlacesCity = {"City 1", "City 2", "City 3", "City 4", "City 5", "City 6", "City 7", "City 8", "City 9", "City 10"};
-    int mLocationImage[] = {R.drawable.loc0, R.drawable.loc1, R.drawable.loc2, R.drawable.loc3,
-            R.drawable.loc4, R.drawable.loc5, R.drawable.loc6, R.drawable.loc7, R.drawable.loc8, R.drawable.loc9};
-
-
-    private LatLng currLocation;
-
-    private static final LatLng POINTA = new LatLng(32.820193, -117.232568);
-    private static final LatLng POINTB = new LatLng(32.829129, -117.232204);
-    private static final LatLng POINTC = new LatLng(32.821114, -117.231534);
-    private static final LatLng POINTD = new LatLng(32.825157, -117.232003);
-
-    // Array to store hotspot coordinates
-    private ArrayList<LatLng> markerCoords = new ArrayList<LatLng>();
-    private static final int POINTS = 4;
-
-    private GoogleApiClient mGoogleApiClient;
-    String placeId;
-    double Latitude, Longitude;
 
 
     Location loc1 = new Location("");
@@ -157,6 +118,8 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(NearestLocMapsActivity.this);
 
+
+
         BackImg = (ImageView) findViewById(R.id.back_image);
         TitlaTxt = (TextView) findViewById(R.id.extra_title);
         TitlaTxt.setText("Map");
@@ -166,6 +129,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 onBackPressed();
             }
         });
+
         Intent chatIntent = getIntent();
         if(chatIntent!=null){
             String Value=chatIntent.getStringExtra("value");
@@ -339,14 +303,159 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker m) {
+
+
 //                ShowRulesAlert();
 
-
-                CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(NearestLocMapsActivity.this);
-                Mmap.setInfoWindowAdapter(customInfoWindow);
+//                mNearestPlaceRecycler.setVisibility(View.GONE);
+//                CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(NearestLocMapsActivity.this);
+//                Mmap.setInfoWindowAdapter(customInfoWindow);
+//                Intent intent=new Intent(NearestLocMapsActivity.this, ViewImageActivity.class);
+//                intent.putExtra("latitude",m.getPosition().latitude);
+//                intent.putExtra("longitude",m.getPosition().longitude);
+//
+//                Log.e("lattitude", String.valueOf(m.getPosition().latitude));
+//                Log.e("longitude", String.valueOf(m.getPosition().longitude));
+//                startActivity(intent);
+//
+//
+                showBottomSheet(m.getPosition().latitude,m.getPosition().longitude);
                 return false;
+
             }
+
     });
+        Mmap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            RelativeLayout ViewLay,NavigateLay;
+            Button NavigateTxt;
+            // Use default InfoWindow frame
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            // Defines the contents of the InfoWindow
+            @Override
+            public View getInfoContents(Marker arg0) {
+
+
+
+                final View infoview = getLayoutInflater().inflate(R.layout.rules_layout,
+                        null);
+
+                LatLng latLng = arg0.getPosition();
+
+                ViewLay=(RelativeLayout) infoview.findViewById(R.id.view_lay);
+
+                NavigateLay=(RelativeLayout)infoview.findViewById(R.id.navi_lay);
+                NavigateTxt=(Button)infoview.findViewById(R.id.navi_txt);
+
+                //tvLat.setText("Latitude:" + latLng.latitude);
+
+                //tvLng.setText("Longitude:" + latLng.longitude);
+                //
+                 Button pickMe = (Button)infoview.findViewById(R.id.view_txt);
+
+//                Button ViewTxt=(Button) infoview.findViewById(R.id.view_txt);
+                pickMe.setOnClickListener(new Button.OnClickListener(){
+
+                    @Override
+                    public void onClick(View v) {
+                        // TODO Auto-generated method stub
+                        Toast.makeText(getApplicationContext(), "Requested Send", Toast.LENGTH_SHORT).show();
+
+                    }});
+
+
+                //String reverceGeoCode=new GetLocationAddress().getAddress(String.valueOf(latLng.latitude), String.valueOf(latLng.longitude));
+                //Toast.makeText(getApplicationContext(), "Rev :"+reverceGeoCode, Toast.LENGTH_LONG).show();
+
+                return infoview;
+
+            }
+        });
+
+
+    }
+
+    private void showBottomSheet(double latitude, double longitude) {
+
+
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NearestLocMapsActivity.this);
+        LayoutInflater factory = LayoutInflater.from(NearestLocMapsActivity.this);
+        View bottomSheetView = factory.inflate(R.layout.mapspyrky_bottomsheet, null);
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+
+        TextView map = (TextView) bottomSheetView.findViewById(R.id.maps_title);
+        TextView pyrky = (TextView) bottomSheetView.findViewById(R.id.pyrky_title);
+        TextView cancel = (TextView) bottomSheetView.findViewById(R.id.cancel_txt);
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                PackageManager pm = NearestLocMapsActivity.this.getPackageManager();
+                if(isPackageInstalled()){
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                            Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
+                    startActivity(intent);
+                    Toast.makeText(NearestLocMapsActivity.this, "true", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                            Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
+                    startActivity(intent);
+                    Toast.makeText(NearestLocMapsActivity.this, "false", Toast.LENGTH_SHORT).show();
+
+
+                }
+//
+
+//                Intent postintent = new Intent(getActivity(), PostActivity.class);
+//                startActivity(postintent);
+                bottomSheetDialog.dismiss();
+//
+//                if (hasPermissions()) {
+//                    captureImage();
+//                } else {
+//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
+//                }
+            }
+        });
+
+        pyrky.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                if (hasPermissions()) {
+//                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(i, RC_PICK_IMAGE);
+//                } else {
+//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
+//                }
+//                Intent checkinintent = new Intent(getActivity(), CheckScreenActivity.class);
+//                startActivity(checkinintent);
+                bottomSheetDialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+    }
+
+
+    private boolean isPackageInstalled() {
+        try
+        {
+            ApplicationInfo info = getPackageManager().getApplicationInfo("com.google.android.apps.maps", 0 );
+            return true;
+        }
+        catch(PackageManager.NameNotFoundException e)
+        {
+            return false;
+        }
     }
 
     private void ShowRulesAlert() {
@@ -394,6 +503,8 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
     }
 
+
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -417,6 +528,8 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
         return false;
     }
+
+
 
 //
     }

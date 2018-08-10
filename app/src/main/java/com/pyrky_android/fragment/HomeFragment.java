@@ -157,8 +157,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
     double latitu, longitu;
     List<UserLocationData> datalist = new ArrayList<UserLocationData>();
 
-    int mLocationImage[] = {R.drawable.loc0, R.drawable.loc1, R.drawable.loc2, R.drawable.loc3,
-            R.drawable.loc4, R.drawable.loc5, R.drawable.loc6, R.drawable.loc7, R.drawable.loc8, R.drawable.loc9};
 
     TextView mSearchButton;
     RelativeLayout HomeRelativeLay;
