@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ import com.pyrky_android.utils.Utils;
 public class ForgotpasswordActivity extends AppCompatActivity {
     ImageView backBtn;
     LinearLayout cancelbtn;
-    EditText emailEdit;
+    EditText mEmail;
     Button resetBtn,resetbutton1;
     LinearLayout LinLay;
     TextView txt_error;
@@ -41,14 +42,14 @@ public class ForgotpasswordActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgotpassword);
-        emailEdit=(EditText)findViewById(R.id.email_edit);
+        mEmail =(EditText)findViewById(R.id.email_edit);
         cancelbtn=(LinearLayout)findViewById(R.id.btncancel);
         resetBtn=(Button)findViewById(R.id.sinin_edt);
 //        txt_error = (TextView)findViewById(R.id.txt_error);
         LinLay=(LinearLayout)findViewById(R.id.const_lay);
 //
-        emailEdit.addTextChangedListener(mTextWatcher);
-        emailEdit.setInputType(emailEdit.getInputType()
+        mEmail.addTextChangedListener(mTextWatcher);
+        mEmail.setInputType(mEmail.getInputType()
                 | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
                 | EditorInfo.TYPE_TEXT_VARIATION_FILTER);
 
@@ -59,12 +60,6 @@ public class ForgotpasswordActivity extends AppCompatActivity {
             }
         });
 
-        resetBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Utils.hideKeyboard(ForgotpasswordActivity.this);
-            }
-        });
         cancelbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,34 +74,36 @@ public class ForgotpasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Utils.hideKeyboard(ForgotpasswordActivity.this);
-                String emailAddress = emailEdit.getText().toString();
-                if (emailAddress.isEmpty()||!emailAddress.contains("@")||!android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
+                String emailAddress = mEmail.getText().toString();
+                if (validateForm()) {
+                    if (emailAddress.isEmpty() || !emailAddress.contains("@") || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
 
 //                    showerror("invalid email address");
-                    Toast.makeText(ForgotpasswordActivity.this, "inavalid email", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ForgotpasswordActivity.this, "inavalid email", Toast.LENGTH_SHORT).show();
 
-                } else {
-                    showProgressDialog();
-                    FirebaseAuth auth = FirebaseAuth.getInstance();
+                    } else {
+                        showProgressDialog();
+                        FirebaseAuth auth = FirebaseAuth.getInstance();
 
-                    auth.sendPasswordResetEmail(emailAddress)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
+                        auth.sendPasswordResetEmail(emailAddress)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
 
-                                        Popup();
+                                            Popup();
 
 //                                            Toast.makeText(getContext(), "Reset Successsfully", Toast.LENGTH_SHORT).show();
 //                                            Log.d(TAG, "Email sent.");
-                                    }else {
+                                        } else {
 //                                        showerror("Reset password failed.");
-                                        Toast.makeText(ForgotpasswordActivity.this, "Reset password failed.", Toast.LENGTH_SHORT).show();
-                                        hideProgressDialog();
+                                            Toast.makeText(ForgotpasswordActivity.this, "Reset password failed.", Toast.LENGTH_SHORT).show();
+                                            hideProgressDialog();
 
+                                        }
                                     }
-                                }
-                            });
+                                });
+                    }
                 }
             }
 
@@ -169,7 +166,27 @@ public class ForgotpasswordActivity extends AppCompatActivity {
         alertDialog1.getWindow().setAttributes(lp);
     }
 
-    private TextWatcher mTextWatcher = new TextWatcher() {
+
+    private boolean validateForm() {
+        boolean valid = true;
+
+        String email = mEmail.getText().toString().trim();
+        if (!TextUtils.isEmpty(email)) {
+            valid = true;
+        }else{
+            if (TextUtils.isEmpty(email)){
+                Toast.makeText(this, "Enter e-mail address", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+            if ((!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches())){
+                Toast.makeText(this, "Enter valid e-mail address", Toast.LENGTH_SHORT).show();
+                valid = false;
+            }
+        }
+
+        return valid;
+    }
+        private TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
         }

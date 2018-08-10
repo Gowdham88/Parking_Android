@@ -595,25 +595,25 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
         } else {
 
-            if(TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
-                Toast.makeText(this, "Enter email address and password.", Toast.LENGTH_SHORT).show();
+            if(TextUtils.isEmpty(email) && TextUtils.isEmpty(password) && TextUtils.isEmpty(username)) {
+                Toast.makeText(this, "E-mail or Password or Username should not be empty", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
             else if((email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()))
             {
-                Toast.makeText(getApplicationContext(), "enter a valid email address", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Enter valid e-mail address", Toast.LENGTH_SHORT).show();
                 valid = false;
             }else if (username.isEmpty()&&username.equals(null)) {
                 Toast.makeText(this, "Enter username.", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
             else if (TextUtils.isEmpty(password) || password.length()<6) {
-                Toast.makeText(this, "Enter password.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Password should have minimum 6 characters", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
           else if (!isPhotoValid) {
-                Toast.makeText(this, "" +
-                        "please fill the image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Profile image should not be empty"
+                        , Toast.LENGTH_SHORT).show();
                 valid = false;
             }
 

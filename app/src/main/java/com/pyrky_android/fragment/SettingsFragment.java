@@ -230,8 +230,6 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                     mCarouselCount = layoutManager.getCenterItemPosition();
-
-
                 }
             });
         }
