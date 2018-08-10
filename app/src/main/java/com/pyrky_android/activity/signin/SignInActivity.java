@@ -74,25 +74,19 @@ public class SignInActivity extends AppCompatActivity {
         TextView login = findViewById(R.id.sign_in_button);
         parentsigninlay =findViewById(R.id.signin_layout);
 
-        parentsigninlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Utils.hideKeyboard(SignInActivity.this);
-            }
-        });
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        parentsigninlay.setOnClickListener(view -> Utils.hideKeyboard(SignInActivity.this));
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateForm()){
-                    signIn(mEmail.getText().toString().trim(),mPassword.getText().toString().trim());
-                    PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_LOGGED_INPASS, mPassword.getText().toString().trim());
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
+        login.setOnClickListener(v -> {
+            if (validateForm()){
+                signIn(mEmail.getText().toString().trim(),mPassword.getText().toString().trim());
+                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_LOGGED_INPASS, mPassword.getText().toString().trim());
 
 //                    SigninViewModel model = ViewModelProviders.of(SignInActivity.this).get(SigninViewModel.class);
-                }
-
             }
+
         });
         ForgotPassTxt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,10 +200,8 @@ public class SignInActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Enter e-mail address", Toast.LENGTH_SHORT).show();
                 valid = false;
             }
-            else if((!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()))
-            {
+            else if((!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches())) {
                 Toast.makeText(getApplicationContext(), "Enter valid e-mail address", Toast.LENGTH_SHORT).show();
-//            mEmail.setError("enter a valid email address");
                 valid = false;
             }
             else if (TextUtils.isEmpty(password)) {
@@ -225,7 +217,6 @@ public class SignInActivity extends AppCompatActivity {
                 valid = false;
             }
         }
-
         return valid;
     }
 

@@ -28,6 +28,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -133,6 +134,9 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 //                uploadImage(v);
 //            }
 //        });
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         Signuprellay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
