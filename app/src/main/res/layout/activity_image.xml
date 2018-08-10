@@ -20,5 +20,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/parking_img"/>
+    <Button
+        android:id="@+id/book_btn"
+        android:background="@drawable/booknavbtnbg"
+        android:layout_width="200dp"
+        android:layout_height="37dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:text="Book &amp; Navigate"
+        android:textAllCaps="false"
+        style="@style/Nunitoregular"
+        android:layout_centerInParent="true"
+        android:textColor="@color/booking_txtclr"
+        android:textSize="12dp"/>
 
 </RelativeLayout>

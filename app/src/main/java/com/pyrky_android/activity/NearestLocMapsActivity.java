@@ -1,50 +1,39 @@
 package com.pyrky_android.activity;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Address;
-import android.location.Criteria;
-import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
-import android.provider.MediaStore;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -55,22 +44,12 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pyrky_android.R;
 import com.pyrky_android.adapter.CarouselDetailMapAdapter;
-import com.pyrky_android.adapter.CarouselNearestAdapter;
 import com.pyrky_android.adapter.CustomInfoWindowGoogleMap;
-import com.pyrky_android.adapter.NearestRecyclerAdapter;
 import com.pyrky_android.fragment.TrackGPS;
-import com.pyrky_android.location.GetNearbyPlacesData;
 import com.pyrky_android.pojo.UserLocationData;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-
-import pub.devrel.easypermissions.EasyPermissions;
-
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 
 public class NearestLocMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener,
@@ -326,9 +305,9 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         Mmap.clear();
 
         //    Mmap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_markf)));
-        Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,6.5f));
-        Mmap.animateCamera(CameraUpdateFactory.zoomTo(15.5f), 2000, null);
-        Mmap.setMaxZoomPreference(14.5f);
+        Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,10.5f));
+        Mmap.animateCamera(CameraUpdateFactory.zoomTo(25.5f), 2000, null);
+        Mmap.setMaxZoomPreference(24.5f);
         Mmap.setMinZoomPreference(6.5f);
     }
 
@@ -353,7 +332,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         LatLng placeLocation = new LatLng(Double.parseDouble(mLat), Double.parseDouble(mLongi)); //Make them global
         Marker placeMarker = Mmap.addMarker(new MarkerOptions().position(placeLocation));
         Mmap.moveCamera(CameraUpdateFactory.newLatLng(placeLocation));
-        Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 1000, null);
+        Mmap.animateCamera(CameraUpdateFactory.zoomTo(25), 1000, null);
 
 
 
@@ -361,6 +340,8 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             @Override
             public boolean onMarkerClick(Marker m) {
 //                ShowRulesAlert();
+
+
                 CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(NearestLocMapsActivity.this);
                 Mmap.setInfoWindowAdapter(customInfoWindow);
                 return false;
@@ -372,52 +353,44 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NearestLocMapsActivity.this);
         LayoutInflater factory = LayoutInflater.from(NearestLocMapsActivity.this);
-        View bottomSheetView = factory.inflate(R.layout.dialo_camera_bottomsheet, null);
+        View bottomSheetView = factory.inflate(R.layout.rules_layout, null);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
+        RelativeLayout ViewLay=(RelativeLayout)bottomSheetDialog.findViewById(R.id.view_lay);
+        RelativeLayout NaviLay=(RelativeLayout)bottomSheetDialog.findViewById(R.id.navi_lay);
 
-//        Camera = bottomSheetView.findViewById(R.id.camera_title);
-//        Gallery = bottomSheetView.findViewById(R.id.gallery_title);
-//        cancel = bottomSheetView.findViewById(R.id.cancel_txt);
-//        cancelLay = bottomSheetView.findViewById(R.id.cance_lay);
-//        Camera.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                bottomSheetDialog.dismiss();
-//
-//                if (hasPermissions()) {
-//                    captureImage();
-//                } else {
-//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
-//                }
-//            }
-//        });
-//
-//        Gallery.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (hasPermissions()) {
-//                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                    startActivityForResult(i, RC_PICK_IMAGE);
-//                } else {
-//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
-//                }
-//                bottomSheetDialog.dismiss();
-//            }
-//        });
-//        cancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                bottomSheetDialog.dismiss();
-//            }
-//        });
-//        cancelLay.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                bottomSheetDialog.dismiss();
-//            }
-//        });
+        TextView ViewLTxt=(TextView)bottomSheetDialog.findViewById(R.id.view_txt);
+        TextView NaviTxt=(TextView)bottomSheetDialog.findViewById(R.id.navi_txt);
+
+
+        ViewLTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                bottomSheetDialog.dismiss();
+
+            }
+        });
+
+        NaviTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                bottomSheetDialog.dismiss();
+            }
+        });
+        ViewLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+        NaviLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.dismiss();
+            }
+        });
 
     }
 
