@@ -252,11 +252,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .addApi(Places.GEO_DATA_API)
-                .enableAutoManage(getActivity(), this)
-                .addConnectionCallbacks(this)
-                .build();
+            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                    .addApi(Places.GEO_DATA_API)
+                    .enableAutoManage(getActivity(), this)
+                    .addConnectionCallbacks(this)
+                    .build();
+
 
 
         gps = new TrackGPS(getActivity());
@@ -689,12 +690,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         mGoogleApiClient.disconnect();
     }
 
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        mGoogleApiClient.stopAutoManage(getActivity());
-//        mGoogleApiClient.disconnect();
-//    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mGoogleApiClient.stopAutoManage(getActivity());
+        mGoogleApiClient.disconnect();
+    }
 
 
 }

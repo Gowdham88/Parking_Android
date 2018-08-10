@@ -16,6 +16,7 @@ repositories {
 apply plugin: 'io.fabric'
 android {
     compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.pyrky_android"
         minSdkVersion 17
@@ -94,13 +95,9 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
 
-
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
-
-
-
 
 apply plugin: 'com.google.gms.google-services'
