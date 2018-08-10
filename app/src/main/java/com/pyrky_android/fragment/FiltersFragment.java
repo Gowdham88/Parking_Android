@@ -95,6 +95,7 @@ RelativeLayout mHomeRelaLay;
 
         mExpandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int previousGroup = -1;
+
             @Override
             public void onGroupExpand(int groupPosition) {
 
@@ -102,20 +103,20 @@ RelativeLayout mHomeRelaLay;
                     mExpandableListView.collapseGroup(previousGroup);
                 previousGroup = groupPosition;
             }
-
-                Toast.makeText(getActivity(),
+             Toast.makeText(getActivity(),
                         mExpandableListTitle.get(groupPosition) + " List Expanded.",
                         Toast.LENGTH_SHORT).show();
             }
+
         });
 
         mExpandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getActivity(),
+               /* Toast.makeText(getActivity(),
                         mExpandableListTitle.get(groupPosition) + " List Collapsed.",
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();*/
             }
         });
 
