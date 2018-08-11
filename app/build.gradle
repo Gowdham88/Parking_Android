@@ -18,7 +18,7 @@ android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
     defaultConfig {
-        applicationId "com.pyrky_android"
+        applicationId "com.polsec.pyrky"
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 1

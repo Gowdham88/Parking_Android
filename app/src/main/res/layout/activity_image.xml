@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.pyrky_android.activity.ViewImage.ViewImageActivity">
+    tools:context="com.polsec.pyrky.activity.ViewImage.ViewImageActivity">
     <!--<include-->
         <!--android:id="@+id/toolbar"-->
         <!--layout="@layout/nearloc_toolbar" />-->
