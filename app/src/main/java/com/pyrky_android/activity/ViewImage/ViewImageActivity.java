@@ -1,33 +1,86 @@
 package com.pyrky_android.activity.ViewImage;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pyrky_android.R;
 
+import java.util.Locale;
+
 public class ViewImageActivity extends AppCompatActivity {
-Button BookBtn;
+    TextView BookBtn;
+    ImageView CloseImg;
+    double latitude,longitude;
+    Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
+//        BackImg = (ImageView) findViewById(R.id.back_image);
+//        BackImg.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                onBackPressed();
+//            }
+//        });
 
-        BookBtn=(Button)findViewById(R.id.book_btn);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            latitude = extras.getDouble("latitude");
+            longitude= extras.getDouble("longitude");
+
+            Log.e("lattitudeview", String.valueOf(latitude));
+                Log.e("longitudeview", String.valueOf(longitude));
+
+
+//            Toast.makeText(ViewImageActivity.this, latitude, Toast.LENGTH_SHORT).show();
+
+            //The key argument here must match that used in the other activity
+        }
+
+
+        BookBtn=(TextView)findViewById(R.id.book_btn);
         BookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showBottomSheet();
+                showBottomSheet(latitude,longitude);
+            }
+        });
+        CloseImg=(ImageView)findViewById(R.id.close_iconimg);
+        CloseImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
     }
+    private boolean isPackageInstalled() {
+        try
+        {
+            ApplicationInfo info = getPackageManager().getApplicationInfo("com.google.android.apps.maps", 0 );
+            return true;
+        }
+        catch(PackageManager.NameNotFoundException e)
+        {
+            return false;
+        }
+    }
 
-    private void showBottomSheet() {
+    private void showBottomSheet(double latitude, double longitude) {
 
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ViewImageActivity.this);
         LayoutInflater factory = LayoutInflater.from(ViewImageActivity.this);
@@ -43,6 +96,24 @@ Button BookBtn;
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+                PackageManager pm = ViewImageActivity.this.getPackageManager();
+                if(isPackageInstalled()){
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                            Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
+                    startActivity(intent);
+//                    Toast.makeText(ViewImageActivity.this, "true", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                            Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
+                    startActivity(intent);
+//                    Toast.makeText(ViewImageActivity.this, "false", Toast.LENGTH_SHORT).show();
+
+
+                }
+//
+
 //                Intent postintent = new Intent(getActivity(), PostActivity.class);
 //                startActivity(postintent);
                 bottomSheetDialog.dismiss();
@@ -78,5 +149,6 @@ Button BookBtn;
 
 
     }
+
 
 }

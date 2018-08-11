@@ -8,6 +8,7 @@
 
     <uses-feature android:name="android.hardware.camera" />
 
+
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- GCM connects to Google Services. -->
@@ -71,10 +72,12 @@
 
         <activity
             android:name=".activity.signin.SignInActivity"
-            android:theme="@style/AppThemeSignup" />
+            android:theme="@style/AppThemeSignup"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.HomeActivity"
             android:theme="@style/AppTheme.Launcher"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|adjustNothing">
 
         </activity>
@@ -102,16 +105,19 @@
 
         <activity
             android:name=".activity.NearestLocMapsActivity"
-            android:label="@string/title_activity_nearest_loc_maps" />
-        <activity android:name=".activity.booking.BookingsActivity" />
-        <activity android:name=".activity.forgotpassword.ForgotpasswordActivity" />
+            android:label="@string/title_activity_nearest_loc_maps"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.booking.BookingsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.forgotpassword.ForgotpasswordActivity"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="941d1bd16bc6b7e98066de5acdd5eabab024ed2f" />
 
-        <activity android:name=".activity.ViewImage.ViewImageActivity">
-
+        <activity android:name=".activity.ViewImage.ViewImageActivity"
+            android:screenOrientation="portrait">
 
         </activity>
     </application>
