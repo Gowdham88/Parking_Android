@@ -8,9 +8,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <!--<ScrollView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <!--android:background="@android:color/white"-->
         <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
         <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
@@ -195,7 +195,7 @@
             tools:targetApi="lollipop" />
     </RelativeLayout>
 
-    <!--</ScrollView>-->
+    </ScrollView>
     </RelativeLayout>
 
     <!--<fragment

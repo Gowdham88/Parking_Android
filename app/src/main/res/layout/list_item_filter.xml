@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+    android:paddingStart="?android:attr/expandableListPreferredChildPaddingLeft"
+    android:gravity="left"
+    android:layoutDirection="ltr">
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView"
+        android:id="@+id/radioGroup"/>
 
-</android.support.constraint.ConstraintLayout>
+        <!--<RadioButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text=""-->
+            <!--android:id="@+id/radioButton"-->
+            <!--android:checked="false"-->
+            <!--android:textSize="12dp" />-->
+
+        <!--<RadioButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text=""-->
+            <!--android:id="@+id/radioButton2"-->
+            <!--android:checked="false"-->
+            <!--android:textSize="12dp"-->
+            <!--android:layout_weight="0.13" />-->
+
+        <!--<RadioButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text=""-->
+            <!--android:id="@+id/radioButton3"-->
+            <!--android:checked="false"-->
+            <!--android:textSize="12dp"-->
+            <!--android:layout_weight="0.13" />-->
+    <!--</RadioGroup>-->
+
+    <TextView
+        android:id="@+id/expandedListItem"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:visibility="gone"
+        android:paddingBottom="10dp" />
+</LinearLayout>

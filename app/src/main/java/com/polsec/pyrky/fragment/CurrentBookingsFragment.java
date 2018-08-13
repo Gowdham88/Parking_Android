@@ -52,15 +52,15 @@ public class CurrentBookingsFragment extends Fragment {
         super.onResume();
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
 //        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
-//        loadPost(ACTION_SHOW_LOADING_ITEM);
-//        recyclerAdapter.notifyDataSetChanged();
+        loadPost(ACTION_SHOW_LOADING_ITEM);
+        recyclerAdapter.notifyDataSetChanged();
     }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_current_booking, null);
         uid = PreferencesHelper.getPreference(getContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-        loadPost(ACTION_SHOW_LOADING_ITEM);
+//        loadPost(ACTION_SHOW_LOADING_ITEM);
 
 
 

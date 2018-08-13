@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
     android:layout_marginLeft="46dp"
-    android:layout_marginRight="46dp"
+    android:layout_marginRight="40dp"
     android:layout_marginTop="160dp"
     android:background="@drawable/rating_boarder"
     android:layout_marginBottom="160dp">
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:text="Rate the space"
         android:layout_marginTop="17dp"
-        android:textSize="14dp"
+        android:textSize="12dp"
         android:textColor="@color/booking_txtclr"
         android:layout_centerHorizontal="true"
       />
@@ -29,29 +29,41 @@
         android:layout_below="@+id/rate_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp">
+        android:layout_marginTop="30dp">
         <TextView
             android:id="@+id/security_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Security Ratings:"
             android:layout_marginTop="17dp"
-            android:textSize="14dp"
-            android:layout_marginLeft="5dp"
+            android:textSize="12dp"
+            android:layout_marginLeft="20dp"
             android:textColor="@color/booking_txtclr"
             android:layout_centerVertical="true"
             />
 
+        <!--<RatingBar-->
+            <!--android:id="@+id/rtbHighscr"-->
+            <!--style="@style/Widget.AppCompat.RatingBar.Small"-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_alignBottom="@+id/security_txt"-->
+            <!--android:layout_marginStart="5dp"-->
+            <!--android:layout_toEndOf="@+id/security_txt"-->
+            <!--android:isIndicator="true"-->
+            <!--android:max="5"-->
+            <!--android:numStars="5"-->
+            <!--android:text="" />-->
 
         <RatingBar
-        android:id="@+id/rtbHighscr"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_alignParentStart="true"
+            android:id="@+id/rtbHighscr"
+            android:layout_width="235dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:scaleX="0.6"
-            android:layout_marginLeft="60dp"
-            android:scaleY="0.6" />
+            android:scaleX="0.5"
+            android:scaleY="0.5" />
 
     </RelativeLayout>
 
@@ -74,16 +86,15 @@
 
         <TextView
             android:id="@+id/cancel_txt"
-
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/ok_txt"
             android:layout_alignBottom="@+id/ok_txt"
             android:layout_marginStart="37dp"
             android:layout_toEndOf="@+id/view1"
             android:text="Cancel"
             android:textColor="@color/booking_txtclr"
-            android:textSize="14dp" />
+            android:textSize="12dp" />
 
         <View
             android:id="@+id/view1"
@@ -104,6 +115,6 @@
             android:layout_toStartOf="@+id/view1"
             android:text="Okay"
             android:textColor="@color/booking_txtclr"
-            android:textSize="14dp" />
+            android:textSize="12dp" />
     </RelativeLayout>
 </RelativeLayout>

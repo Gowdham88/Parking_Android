@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.polsec.pyrky;
+package com.polsec.pyrky.firebase;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
