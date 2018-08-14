@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+   <TextView
+       style="@style/NunitoBlackLight"
+       android:textSize="12dp"
+       android:text="Parking Rules"
+       android:textColor="@color/booking_txtclr"
+       android:id="@+id/rulstxt"
+       android:layout_marginTop="10dp"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_centerHorizontal="true"/>
+    <LinearLayout
+        android:id="@+id/rule1_lay"
+        android:layout_below="@+id/rulstxt"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/rule1_img"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+           android:layout_marginTop="5dp"
+            android:layout_marginLeft="17dp"
+            android:src="@drawable/ellipseselcted"/>
+        <TextView
+            android:id="@+id/rule1_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            style="@style/NunitoBlackLight"
+            android:textColor="@color/booking_txtclr"
+            android:textSize="12dp"
+            android:layout_marginLeft="12dp"
+            android:text="Time for street parking 7am - 9am"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+
+        android:id="@+id/rule2_lay"
+        android:layout_below="@+id/rule1_lay"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/rule2_img"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="17dp"
+            android:src="@drawable/ellipseselcted"/>
+        <TextView
+            android:id="@+id/rule2_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            style="@style/NunitoBlackLight"
+            android:textColor="@color/booking_txtclr"
+            android:textSize="12dp"
+            android:layout_marginLeft="12dp"
+            android:text="2h hours/open time 8am and close time 8pm"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+
+        android:id="@+id/rule3_lay"
+        android:layout_below="@+id/rule2_lay"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/rule3_img"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="17dp"
+            android:src="@drawable/ellipseselcted"/>
+        <TextView
+            android:id="@+id/rule3_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            style="@style/NunitoBlackLight"
+            android:textColor="@color/booking_txtclr"
+            android:textSize="12dp"
+            android:layout_marginLeft="12dp"
+            android:text="$10 per hour"/>
+    </LinearLayout>
+
+   <View
+       android:id="@+id/view"
+       android:background="@color/border_color"
+       android:layout_marginTop="15dp"
+       android:layout_below="@+id/rule3_lay"
+       android:layout_width="wrap_content"
+       android:layout_height="1dp"
+       android:layout_marginLeft="30dp"
+       android:layout_marginRight="30dp"/>
+    <LinearLayout
+
+        android:layout_below="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/view_txt"
+            android:textAllCaps="false"
+            style="@style/NunitoBlackLight"
+            android:textColor="@color/booking_txtclr"
+            android:textSize="12dp"
+            android:text="View Image"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp" />
+
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="1dp"
+           android:layout_centerInParent="true"
+            android:layout_height="wrap_content"
+            android:background="@color/border_color"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"/>
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/navi_txt"
+            android:textAllCaps="false"
+            style="@style/NunitoBlackLight"
+            android:textColor="@color/booking_txtclr"
+            android:textSize="12dp"
+            android:text="Navigate"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

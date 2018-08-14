@@ -5,7 +5,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
@@ -52,7 +56,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
  String currenRating;
     int count = 0;
     String docid,uid,Rating;
-    RatingBar ratingBar;
+    RatingBar ratingBar,ratingbar1;
 
 
     List<Booking> bookingList = new ArrayList<Booking>();
@@ -90,6 +94,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             dateTime = itemView.findViewById(R.id.date_time);
             viewCar = itemView.findViewById(R.id.view_car_text);
             ratingBar = itemView.findViewById(R.id.history_ratings);
+            ratingbar1 = itemView.findViewById(R.id.history_ratingsanother);
             Rating_lay=itemView.findViewById(R.id.view_car_text_lay);
         }
     }
@@ -108,10 +113,12 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 //        Datetime= new SimpleDateFormat("").format(df);
 //        Datemothname=getMonthShortName(Integer.parseInt(Datemonth));
 
-            holder.Rating_lay.setOnClickListener(new View.OnClickListener() {
+         ratingBar.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View view) {
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+
                     showDialog();
+                    return false;
                 }
             });
 
@@ -121,7 +128,16 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         if(!status){
             holder.city.setText(bookingList.get(position).getDestName());
             holder.dateTime.setText(strh);
-//            ratingBar.setRating(Float.parseFloat(bookingList.get(position).getParkingSpaceRating()));
+
+            String rate=bookingList.get(position).getParkingSpaceRating();
+            Toast.makeText(context, rate, Toast.LENGTH_SHORT).show();
+
+            ratingBar.setRating(Float.parseFloat(rate));
+            Drawable drawable = ratingBar.getProgressDrawable();
+            drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
+//            ratingBar.setRating(Float.parseFloat(rate));
+//            Drawable drawable = ratingBar.getProgressDrawable();
+//            drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
 
         }
         else{
@@ -151,7 +167,11 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                 currenRating = String.valueOf(v);
-                ratingBar.setRating(Float.parseFloat(currenRating));
+
+
+
+//                ratingBar.setVisibility(View.GONE);
+//                ratingbar1.setRating(Float.parseFloat(currenRating));
                 Toast.makeText(context, "New default rating: " + v, Toast.LENGTH_SHORT).show();
             }
         });
@@ -168,8 +188,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 db.collection("Bookings").document(docid).update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-
-                  ratingBar.setRating(Float.parseFloat(currenRating));
+                        Toast.makeText(context, "Rating updated", Toast.LENGTH_SHORT).show();
+//                        ratingBar.setVisibility(View.GONE);
+//                  ratingbar1.setRating(Float.parseFloat(currenRating));
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -212,6 +233,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
 
     }
+
 
         public void showDialog(int currentRating, View v){
         isPopUpShowing = true;

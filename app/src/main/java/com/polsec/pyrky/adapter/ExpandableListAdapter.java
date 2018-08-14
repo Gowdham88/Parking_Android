@@ -147,13 +147,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
 
                       layoutInflater = (LayoutInflater) this.context
                             .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    convertView = layoutInflater.inflate(R.layout.list_item, null);
+                    convertView = layoutInflater.inflate(R.layout.list_item_filter, null);
 
-                    CheckBox checkBox2 = convertView.findViewById(R.id.checkbox);
-                    checkBox2.setText(expandedListText);
-                    TextView expandedListTextView1 = convertView
-                            .findViewById(R.id.expandedListItem);
-                 expandedListTextView1.setText(expandedListText);
+//                    CheckBox checkBox2 = convertView.findViewById(R.id.checkbox);
+//                    checkBox2.setText(expandedListText);
+//                    TextView expandedListTextView1 = convertView
+//                            .findViewById(R.id.expandedListItem);
+//                 expandedListTextView1.setText(expandedListText);
                     break;
                 case FILTER:
                      layoutInflater = (LayoutInflater) this.context

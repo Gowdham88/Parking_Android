@@ -185,14 +185,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         mapFrag.getMapAsync(this);
         mExpandableListView=(ExpandableListView)view.findViewById(R.id.expandableListView);
         HomeRelLayout=(RelativeLayout)view.findViewById(R.id.home_lay);
-        HomeRelLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isExpandableListEnabled = false;
-              mExpandableListView.setVisibility(View.GONE);
-                Utils.hideKeyboard(getActivity());
-            }
-        });
 
         autoCompView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
@@ -201,11 +193,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
 
-            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                    .addApi(Places.GEO_DATA_API)
-                    .enableAutoManage(getActivity(), this)
-                    .addConnectionCallbacks(this)
-                    .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(Places.GEO_DATA_API)
+                .enableAutoManage(getActivity(), this)
+                .addConnectionCallbacks(this)
+                .build();
+
+
+        HomeRelLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isExpandableListEnabled = false;
+              mExpandableListView.setVisibility(View.GONE);
+                Utils.hideKeyboard(getActivity());
+            }
+        });
 
 
 
@@ -351,16 +353,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,Locatio
         mSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
-                intent.putExtra("placeid", placeId);
-                intent.putExtra("latitude",String.valueOf(Latitude).toString().trim());
-                intent.putExtra("longitude",String.valueOf(Longitude).toString().trim());
-                intent.putExtra("value","home");
-                intent.putExtra("place",description);
-                Log.e("strLatitude", String.valueOf(Latitude));
-                Log.e("strLongitude", String.valueOf(Longitude));
-                intent.putStringArrayListExtra("placesarray", caldis);
-                getActivity().startActivity(intent);
+                
+                if(autoCompView.getText().toString().equals(null) || autoCompView.getText().toString().isEmpty() || description.equals(null) ){
+                    Toast.makeText(getActivity(), "Please enter the search location", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
+                    intent.putExtra("placeid", placeId);
+                    intent.putExtra("latitude",String.valueOf(Latitude).toString().trim());
+                    intent.putExtra("longitude",String.valueOf(Longitude).toString().trim());
+                    intent.putExtra("value","home");
+                    intent.putExtra("place",description);
+                    Log.e("strLatitude", String.valueOf(Latitude));
+                    Log.e("strLongitude", String.valueOf(Longitude));
+                    intent.putStringArrayListExtra("placesarray", caldis);
+                    getActivity().startActivity(intent);
+                }
+                
             }
         });
 
