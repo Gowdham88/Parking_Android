@@ -91,9 +91,10 @@ public class ViewImageActivity extends AppCompatActivity {
 
         final String uid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 
+
         parkingSpaceRating="0";
         protectCar=false;
-        bookingStatus=false;
+        bookingStatus=true;
 //          locationTxt=Location_Txt.getText().toString();
 //        String photoURL = PreferencesHelper.getPreference(this, PreferencesHelper.PREFERENCE_PHOTOURL);
 
@@ -103,7 +104,7 @@ public class ViewImageActivity extends AppCompatActivity {
         likeData.put(uid, false);
         documentID="";
 
-        Booking bookingdata = new Booking(uid,latitude,longitude,destName,String.valueOf(getPostTime()),String.valueOf(bookingStatus),documentID,parkingSpaceRating,String.valueOf(protectCar));
+        Booking bookingdata = new Booking(uid,latitude,longitude,destName,String.valueOf(getPostTime()),bookingStatus,documentID,parkingSpaceRating,protectCar);
 
 
         db.collection("Bookings").add(bookingdata).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -111,15 +112,19 @@ public class ViewImageActivity extends AppCompatActivity {
             public void onSuccess(DocumentReference documentReference) {
 
                 documentID = documentReference.getId();
-                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
+//                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
 
-                Booking bookingdata = new Booking(uid,latitude,longitude,destName,String.valueOf(getPostTime()),String.valueOf(bookingStatus),documentID,parkingSpaceRating,String.valueOf(protectCar));
+                Booking bookingdata = new Booking(uid,latitude,longitude,destName,String.valueOf(getPostTime()),bookingStatus,documentID,parkingSpaceRating,protectCar);
                 Map<String, Object> docID = new HashMap<>();
                 docID.put("documentID", documentID);
+
 
                 db.collection("Bookings").document(documentID).update(docID).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+
+
+                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCUMENTID,documentID);
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {

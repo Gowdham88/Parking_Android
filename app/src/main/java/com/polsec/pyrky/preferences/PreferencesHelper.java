@@ -25,6 +25,14 @@ public class PreferencesHelper {
     public static final String PREFERENCE_LOGGED_IN ="logged in";
     public static final String PREFERENCE_LOGGED_INPASS ="pass in";
     public static final String PREFERENCE_DOCMENTID ="document id";
+    public static final String PREFERENCE_DESTLATITUDE ="destlat";
+    public static final String PREFERENCE_DESTLONGITUDE ="destlong";
+    public static final String PREFERENCE_DESTNAME ="destname";
+    public static final String PREFERENCE_CARPRO ="carprot";
+    public static final String PREFERENCE_PARKINGSTATUS ="parkingstatus";
+    public static final String PREFERENCE_DOCUMENTID ="docid";
+    public static final String PREFERENCE_POSTTIME ="posttime";
+//    public static final String PREFERENCE_PARKINGSTATUS ="parkingstatus";
     //End Region
 
     //Region Constructor

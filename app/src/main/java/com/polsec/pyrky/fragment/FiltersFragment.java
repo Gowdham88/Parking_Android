@@ -36,6 +36,7 @@ public class FiltersFragment extends Fragment {
     Boolean isExpandableListEnabled = false;
 RelativeLayout mHomeRelaLay;
     Button mEnableButton;
+    private List<Boolean> setValueForSeletedFilter;
 
     public FiltersFragment() {
 

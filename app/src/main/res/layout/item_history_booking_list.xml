@@ -5,25 +5,31 @@
     android:layout_height="87dp">
     <TextView
         style="@style/NunitoBlackLight"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Sao Paulo"
+        android:text=""
         android:layout_alignParentLeft="true"
         android:id="@+id/place"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:textSize="12dp"
         android:textColor="@color/booking_txtclr"
         android:layout_alignParentStart="true" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginTop="13dp"
+        android:layout_toRightOf="@+id/place"
+        android:layout_marginRight="5dp"
+        android:id="@+id/view_car_text_lay">
     <TextView
         style="@style/NunitoBlackLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ratings:"
         android:textSize="12dp"
-        android:layout_marginRight="5dp"
+        android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/history_ratings"
         android:textColor="@color/booking_txtclr"
-        android:layout_marginTop="18dp"
         android:visibility="visible"
         android:id="@+id/view_car_text"
         />
@@ -36,9 +42,10 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/view_car_text"
         android:max="5"
-        android:isIndicator="true"
+        android:isIndicator="false"
         android:numStars="5"
-        android:text="Ratings" />
+        android:text="" />
+    </RelativeLayout>
     <TextView
         style="@style/NunitoBlackLight"
         android:layout_width="wrap_content"
@@ -50,7 +57,7 @@
         android:layout_marginTop="25dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/history_ratings"
+        android:layout_below="@id/view_car_text_lay"
         android:gravity="right"
         />
     <View

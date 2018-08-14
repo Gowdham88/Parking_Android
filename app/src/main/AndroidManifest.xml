@@ -34,7 +34,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA1HKxDK4yY_W7RkioUSyEMiDDKLPjyQeQ" />
+            android:value="AIzaSyCy2by09ttSxyAhv-9FE5b_ASECaChzU08" />
 
         <!-- <meta-data -->
         <!-- android:name="com.google.android.geo.API_KEY" -->
@@ -65,7 +65,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name="firebase.MyFirebaseInstanceIDService">
+        <service android:name=".firebase.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>

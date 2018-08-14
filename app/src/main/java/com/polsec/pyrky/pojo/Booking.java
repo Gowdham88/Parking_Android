@@ -11,10 +11,10 @@ public class Booking implements Serializable {
     private String DestLong;
     private String DestName;
     private String DateTime;
-    private String bookingStatus;
+    private Boolean bookingStatus;
     private String documentID;
     private String parkingSpaceRating;
-    private String protectCar;
+    private Boolean protectCar;
 
     public Booking() {
         Current_User_UID="";
@@ -24,7 +24,7 @@ public class Booking implements Serializable {
         DateTime="";
     }
 
-    public Booking(String Current_User_UID, String DestLat, String DestLong, String DestName, String DateTime, String bookingStatus, String documentID, String parkingSpaceRating, String protectCar) {
+    public Booking(String Current_User_UID, String DestLat, String DestLong, String DestName, String DateTime, Boolean bookingStatus, String documentID, String parkingSpaceRating, Boolean protectCar) {
         this.Current_User_UID = Current_User_UID;
         this.DestLat = DestLat;
         this.DestLong = DestLong;
@@ -82,14 +82,13 @@ public class Booking implements Serializable {
     }
 
 
-    public String getBookingStatus() {
+    public Boolean getBookingStatus() {
         return bookingStatus;
     }
 
-    public void setBookingStatus(String bookingStatus) {
+    public void setBookingStatus(Boolean bookingStatus) {
         this.bookingStatus = bookingStatus;
     }
-
 
     public String getDocumentID() {
         return documentID;
@@ -109,13 +108,16 @@ public class Booking implements Serializable {
     }
 
 
-    public String getProtectCar() {
+    public Boolean getProtectCar() {
         return protectCar;
     }
 
-    public void setProtectCar(String protectCar) {
+    public void setProtectCar(Boolean protectCar) {
         this.protectCar = protectCar;
     }
+
+
+
 
 
 }

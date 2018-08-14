@@ -1,23 +1,42 @@
 package com.polsec.pyrky.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
+import com.polsec.pyrky.pojo.Booking;
+import com.polsec.pyrky.preferences.PreferencesHelper;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by thulirsoft on 7/9/18.
@@ -30,21 +49,29 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     private int[] currentRating;
     private int mPosition;
     private Boolean isPopUpShowing = false;
-    int[] currenRating;
+ String currenRating;
     int count = 0;
+    String docid,uid,Rating;
+    RatingBar ratingBar;
 
-    public HistoryRecyclerAdapter(Context context, String[] places, String[] mTimeDate, int[] mCurrentRating) {
+
+    List<Booking> bookingList = new ArrayList<Booking>();
+    String Datetime;
+    public HistoryRecyclerAdapter(Context context, List<Booking> bookingList) {
         this.context = context;
-        this.places = places;
-        this.dateTime = mTimeDate;
-        this.currentRating = mCurrentRating;
-    }
+        this.bookingList = bookingList;
 
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_history_booking_list, parent, false);
+
+        uid = PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+        docid=PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_DOCUMENTID);
+//        Toast.makeText(context, docid, Toast.LENGTH_SHORT).show();
+
 
         //view.setOnClickListener(HomeActivity.myOnClickListener);
 
@@ -52,31 +79,56 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         return myViewHolder;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        TextView city,dateTime,viewCar;
+        RelativeLayout Rating_lay;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+            city = itemView.findViewById(R.id.place);
+            dateTime = itemView.findViewById(R.id.date_time);
+            viewCar = itemView.findViewById(R.id.view_car_text);
+            ratingBar = itemView.findViewById(R.id.history_ratings);
+            Rating_lay=itemView.findViewById(R.id.view_car_text_lay);
+        }
+    }
+
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         mPosition = position;
-        holder.city.setText(places[position]);
-        holder.dateTime.setText(dateTime[position]);
-//        holder.ratingBar.setRating(Integer.parseInt(String.valueOf(currenRating)));
-//       ratingBar.setRating(currenRating);
-//        holder.ratingBar.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showDialog();
-//            }
-//        });
-//        holder.ratingBar.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-////                if (!isPopUpShowing){
-//                     showDialog();
-//
-////                }
-////
-//                return false;
-//            }
-//        });
+        long time= Long.parseLong(bookingList.get(position).getDateTime());
+
+        long dv = Long.valueOf(time)*1000;// its need to be in milisecond
+        Date df = new Date(dv);
+        Datetime= new SimpleDateFormat("dd MMM,  hh:mma").format(df);
+        String strh = Datetime.replace("AM", "am").replace("PM","pm");
+        Log.e("vv",strh);
+//        Dateday= new SimpleDateFormat("").format(df);
+//        Datetime= new SimpleDateFormat("").format(df);
+//        Datemothname=getMonthShortName(Integer.parseInt(Datemonth));
+
+            holder.Rating_lay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDialog();
+                }
+            });
+
+
+        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
+        Boolean status= Boolean.valueOf(bookingList.get(position).getBookingStatus());
+        if(!status){
+            holder.city.setText(bookingList.get(position).getDestName());
+            holder.dateTime.setText(strh);
+//            ratingBar.setRating(Float.parseFloat(bookingList.get(position).getParkingSpaceRating()));
+
+        }
+        else{
+            holder.itemView.setVisibility(View.GONE);
+            param.height = 0;
+            param.width = 0;
+        }
 //
     }
 
@@ -95,24 +147,37 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         RatingBar ratingbar = (RatingBar) dialog.findViewById(R.id.rtbHighscr);
         TextView Gallery = (TextView) dialog.findViewById(R.id.cancel_txt);
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
-//       ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-//            @Override
-//            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-//                currenRating = Float.valueOf(decimalFormat.format((currenRating * count + v)
-//                        / ++count));
-//
-//
-//            }
-//        });
+        ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                currenRating = String.valueOf(v);
+                ratingBar.setRating(Float.parseFloat(currenRating));
+                Toast.makeText(context, "New default rating: " + v, Toast.LENGTH_SHORT).show();
+            }
+        });
+
 //        GalleryIcon = (ImageView) bottomSheetView.findViewById(R.id.gallery_icon);
 //        CameraIcon = (ImageView) bottomSheetView.findViewById(R.id.camera_image);
         Camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                Map<String, Object> rating = new HashMap<>();
+                rating.put("parkingSpaceRating", currenRating);
                 Toast.makeText(context, "New default rating: " + currenRating, Toast.LENGTH_SHORT).show();
+                db.collection("Bookings").document(docid).update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
+                  ratingBar.setRating(Float.parseFloat(currenRating));
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
 
                 dialog.dismiss();
 //
@@ -148,78 +213,68 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
     }
 
-    //    public void showDialog(int currentRating, View v){
-//        isPopUpShowing = true;
-//        AlertDialog.Builder popDialog = new AlertDialog.Builder(context);
-//
-//        LinearLayout linearLayout = new LinearLayout(context);
-//        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.WRAP_CONTENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT
-//        );
-//        final RatingBar rating = new RatingBar(context);
-//        rating.setLayoutParams(lp);
-//        rating.setMax(5);
-//        rating.setNumStars(5);
-//        rating.setRating(currentRating);
-//        linearLayout.setGravity(Gravity.CENTER);
-//        linearLayout.addView(rating);
-//
-//        rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-//            @Override
-//            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-////                currentRating[mPosition] = ( int ) v;
-//                System.out.println("Rated val:"+v);
-//            }
-//        });
-//
-//        popDialog.setTitle("Rate the space");
-//
-//        popDialog.setView(linearLayout);
-//        popDialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//
-//                int pos = getItemCount();
-//                if (pos != RecyclerView.NO_POSITION){
-//
-//                }
-//                String stars = String.valueOf(rating.getRating());
-//                Toast.makeText(context, stars, Toast.LENGTH_SHORT).show();
-//                dialog.dismiss();
-//                isPopUpShowing = false;
-//            }
-//        });
-//        popDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//
-//                dialog.cancel();
-//                isPopUpShowing = false;
-//            }
-//        });
-//        popDialog.setCancelable(false);
-//        popDialog.create();
-//        popDialog.show();
-//
-//    }
+        public void showDialog(int currentRating, View v){
+        isPopUpShowing = true;
+        AlertDialog.Builder popDialog = new AlertDialog.Builder(context);
+
+        LinearLayout linearLayout = new LinearLayout(context);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        final RatingBar rating = new RatingBar(context);
+        rating.setLayoutParams(lp);
+        rating.setMax(5);
+        rating.setNumStars(5);
+        rating.setRating(currentRating);
+        linearLayout.setGravity(Gravity.CENTER);
+        linearLayout.addView(rating);
+
+        rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+//                currentRating[mPosition] = ( int ) v;
+                System.out.println("Rated val:"+v);
+            }
+        });
+
+        popDialog.setTitle("Rate the space");
+
+        popDialog.setView(linearLayout);
+        popDialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                int pos = getItemCount();
+                if (pos != RecyclerView.NO_POSITION){
+
+                }
+                String stars = String.valueOf(rating.getRating());
+                Toast.makeText(context, stars, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+                isPopUpShowing = false;
+            }
+        });
+        popDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.cancel();
+                isPopUpShowing = false;
+            }
+        });
+        popDialog.setCancelable(false);
+        popDialog.create();
+        popDialog.show();
+
+    }
 //
 
 
     @Override
     public int getItemCount() {
-        return places.length;
+        return bookingList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        TextView city,dateTime,viewCar;
-        RatingBar ratingBar;
-        ViewHolder(View itemView) {
-            super(itemView);
-            city = itemView.findViewById(R.id.place);
-            dateTime = itemView.findViewById(R.id.date_time);
-            viewCar = itemView.findViewById(R.id.view_car_text);
-            ratingBar = itemView.findViewById(R.id.history_ratings);
-        }
-    }
+
 }

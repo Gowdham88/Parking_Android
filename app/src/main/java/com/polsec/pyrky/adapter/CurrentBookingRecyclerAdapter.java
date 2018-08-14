@@ -18,6 +18,7 @@ import com.polsec.pyrky.pojo.Booking;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
     private Context context;
 
     List<Booking> bookingList = new ArrayList<Booking>();
-    String Datetime;
+    String Datetime,Datemonth,Dateday,Datemothname;
     public CurrentBookingRecyclerAdapter(Context context, List<Booking> bookingList) {
         this.context = context;
         this.bookingList = bookingList;
@@ -55,17 +56,28 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
 
         long dv = Long.valueOf(time)*1000;// its need to be in milisecond
         Date df = new Date(dv);
-        Datetime= new SimpleDateFormat("MM/dd/yyyy hh:mm:ss").format(df);
+        Datetime= new SimpleDateFormat("dd MMM,  hh:mma").format(df);
+        String str = Datetime.replace("AM", "am").replace("PM","pm");
+//        Dateday= new SimpleDateFormat("").format(df);
+//        Datetime= new SimpleDateFormat("").format(df);
+//        Datemothname=getMonthShortName(Integer.parseInt(Datemonth));
 
-        Log.e("vv",Datetime);
+        Log.e("vv",str);
 
-
-        Boolean status= Boolean.valueOf(bookingList.get(position).getDestName());
+        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
+        Boolean status= Boolean.valueOf(bookingList.get(position).getBookingStatus());
         if(status){
             holder.city.setText(bookingList.get(position).getDestName());
-            holder.dateTime.setText(Datetime);
+            holder.dateTime.setText(str);
+        }
+        else{
+
+            holder.itemView.setVisibility(View.GONE);
+            param.height = 0;
+            param.width = 0;
         }
     }
+
 
     @Override
     public int getItemCount() {
