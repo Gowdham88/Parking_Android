@@ -1,8 +1,11 @@
 package com.polsec.pyrky.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -27,6 +30,8 @@ import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +50,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -55,13 +63,18 @@ import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
 import com.polsec.pyrky.adapter.CustomInfoWindowGoogleMap;
 import com.polsec.pyrky.fragment.TrackGPS;
+import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.UserLocationData;
+import com.polsec.pyrky.preferences.PreferencesHelper;
 
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 public class NearestLocMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener,
@@ -86,10 +99,14 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     ArrayList<Double> distancesmtrscurrentmap = new ArrayList<>();
     ArrayList<String> distancescurrentarrmap = new ArrayList<>();
     ArrayList<String> Placename = new ArrayList<>();
+    private Boolean isPopUpShowing = false;
     double distanceval;
     GoogleMap Mmap;
     List<Address> yourAddresses;
     String yourplace,area;
+    String parkingSpaceRating,documentID;
+    Boolean protectCar,bookingStatus;
+    String lat,longi;
 
 
     private static final int GOOGLE_API_CLIENT_ID = 0;
@@ -123,7 +140,8 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(NearestLocMapsActivity.this);
-
+        mNearestPlaceRecycler = findViewById(R.id.nearest_places_recycler);
+        mNearestPlaceRecycler.setVisibility(View.VISIBLE);
 
 
         BackImg = (ImageView) findViewById(R.id.back_image);
@@ -144,10 +162,6 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 mLat = chatIntent.getStringExtra("latitude").toString().trim();
                 mLongi = chatIntent.getStringExtra("longitude").toString().trim();
                 PlaceName= chatIntent.getStringExtra("place").toString().trim();
-//            placeId = chatIntent.getStringExtra("placeid");
-//            Mlat= Double.valueOf(mLat);
-//            Mlongi= Double.valueOf(mLongi);
-////        maplongitude = chatIntent.getStringExtra("longitude");
                 Log.e("hlattitude", String.valueOf(mLat));
                 Log.e("hlongitude", String.valueOf(mLongi));
                 Log.e("hplace", String.valueOf(PlaceName));
@@ -156,15 +170,11 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 mLat = chatIntent.getStringExtra("lat").toString().trim();
                 mLongi = chatIntent.getStringExtra("lng").toString().trim();
                 PlaceName= chatIntent.getStringExtra("placename").toString().trim();
-//            placeId = chatIntent.getStringExtra("placeid");
-//            Mlat= Double.valueOf(mLat);
-//            Mlongi= Double.valueOf(mLongi);
-////        maplongitude = chatIntent.getStringExtra("longitude");
+
                 Log.e("lattitude", String.valueOf(mLat));
                 Log.e("longitude", String.valueOf(mLongi));
                 Log.e("plc", String.valueOf(PlaceName));
             }
-//            placeId = chatIntent.getStringExtra("placeid");
 
         }
 
@@ -228,7 +238,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                     carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
                                     carouselLayoutManager.setMaxVisibleItems(3);
 
-                                    mNearestPlaceRecycler = findViewById(R.id.nearest_places_recycler);
+
                                     LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
                                     mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
                                     mNearestPlaceRecycler.setHasFixedSize(true);
@@ -308,36 +318,54 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         Mmap.moveCamera(CameraUpdateFactory.newLatLng(placeLocation));
         Mmap.animateCamera(CameraUpdateFactory.zoomTo(25), 1000, null);
 
-
-
+        mNearestPlaceRecycler.setVisibility(View.VISIBLE);
         Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker m) {
 
+                showDialog(m);
+                mNearestPlaceRecycler.setVisibility(View.GONE);
 
-//                ShowRulesAlert();
+                return false;
 
-//                mNearestPlaceRecycler.setVisibility(View.GONE);
-//                CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(NearestLocMapsActivity.this);
-//                Mmap.setInfoWindowAdapter(customInfoWindow);
+            }
 
-                Geocoder geocoder;
+    });
 
-                geocoder = new Geocoder(context, Locale.getDefault());
-                try {
-                    yourAddresses= geocoder.getFromLocation(Double.parseDouble(String.valueOf(m.getPosition().latitude)),Double.parseDouble(String.valueOf(m.getPosition().longitude)) , 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    }
 
-                if (yourAddresses.size() > 0)
-                {
-                     yourplace = yourAddresses.get(0).getAddressLine(0);
-                    String yourCity = yourAddresses.get(0).getAddressLine(1);
-                    String yourCountry = yourAddresses.get(0).getAddressLine(2);
+    public void showDialog(Marker m){
+        LayoutInflater layoutInflater = LayoutInflater.from(NearestLocMapsActivity.this);
+        View promptView = layoutInflater.inflate(R.layout.ruls_layout , null);
+        final AlertDialog alertD = new AlertDialog.Builder(this).create();
+
+            TextView ViewTxt,NavigateTxt;
+
+        ViewTxt=(TextView)promptView.findViewById(R.id.view_txt);
+        NavigateTxt=(TextView)promptView.findViewById(R.id.navi_txt);
+
+        Geocoder geocoder;
+////
+        geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            yourAddresses= geocoder.getFromLocation(Double.parseDouble(String.valueOf(m.getPosition().latitude)),Double.parseDouble(String.valueOf(m.getPosition().longitude)) , 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (yourAddresses.size() > 0)
+        {
+            yourplace = yourAddresses.get(0).getAddressLine(0);
+            String yourCity = yourAddresses.get(0).getAddressLine(1);
+            String yourCountry = yourAddresses.get(0).getAddressLine(2);
 
 
-                }
+        }
+
+        ViewTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
                 Intent intent=new Intent(NearestLocMapsActivity.this, ViewImageActivity.class);
                 intent.putExtra("latitude",m.getPosition().latitude);
                 intent.putExtra("longitude",m.getPosition().longitude);
@@ -347,66 +375,84 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 Log.e("longitude", String.valueOf(m.getPosition().longitude));
                 Log.e("yourplace",yourplace);
                 startActivity(intent);
-//
-//
-//                showBottomSheet(m.getPosition().latitude,m.getPosition().longitude);
-                return false;
-
+                alertD.cancel();
+                mNearestPlaceRecycler.setVisibility(View.VISIBLE);
             }
+        });
+        NavigateTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showBottomSheet(m.getPosition().latitude,m.getPosition().longitude);
+                lat= String.valueOf(m.getPosition().latitude);
+                longi= String.valueOf(m.getPosition().longitude);
 
-    });
-//        Mmap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-//            RelativeLayout ViewLay,NavigateLay;
-//            Button NavigateTxt;
-//            // Use default InfoWindow frame
-//            @Override
-//            public View getInfoWindow(Marker arg0) {
-//                return null;
-//            }
-//
-//            // Defines the contents of the InfoWindow
-//            @Override
-//            public View getInfoContents(Marker arg0) {
-//
-//
-//
-//                final View infoview = getLayoutInflater().inflate(R.layout.rules_layout,
-//                        null);
-//
-//                LatLng latLng = arg0.getPosition();
-//
-//                ViewLay=(RelativeLayout) infoview.findViewById(R.id.view_lay);
-//
-//                NavigateLay=(RelativeLayout)infoview.findViewById(R.id.navi_lay);
-//                NavigateTxt=(Button)infoview.findViewById(R.id.navi_txt);
-//
-//                //tvLat.setText("Latitude:" + latLng.latitude);
-//
-//                //tvLng.setText("Longitude:" + latLng.longitude);
-//                //
-//                 Button pickMe = (Button)infoview.findViewById(R.id.view_txt);
-//
-////                Button ViewTxt=(Button) infoview.findViewById(R.id.view_txt);
-//                pickMe.setOnClickListener(new Button.OnClickListener(){
-//
-//                    @Override
-//                    public void onClick(View v) {
-//                        // TODO Auto-generated method stub
-//                        Toast.makeText(getApplicationContext(), "Requested Send", Toast.LENGTH_SHORT).show();
-//
-//                    }});
-//
-//
-//                //String reverceGeoCode=new GetLocationAddress().getAddress(String.valueOf(latLng.latitude), String.valueOf(latLng.longitude));
-//                //Toast.makeText(getApplicationContext(), "Rev :"+reverceGeoCode, Toast.LENGTH_LONG).show();
-//
-//                return infoview;
-//
-//            }
-//        });
+                SaveData(lat,longi,yourplace);
+                alertD.cancel();
+                mNearestPlaceRecycler.setVisibility(View.VISIBLE);
+            }
+        });
+        alertD.setView(promptView);
+        alertD.getWindow().setDimAmount(0.0f);
+        alertD.getWindow().setGravity(Gravity.NO_GRAVITY);
 
+        alertD.show();
 
     }
+
+    private void SaveData(String latitude, String longitude, String yourplace) {
+
+
+        final String uid = PreferencesHelper.getPreference(NearestLocMapsActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+
+
+        parkingSpaceRating="0";
+        protectCar=false;
+        bookingStatus=true;
+//          locationTxt=Location_Txt.getText().toString();
+//        String photoURL = PreferencesHelper.getPreference(this, PreferencesHelper.PREFERENCE_PHOTOURL);
+
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        final Map<String, Boolean> likeData = new HashMap<>();
+        likeData.put(uid, false);
+        documentID="";
+
+        Booking bookingdata = new Booking(uid,latitude,longitude,yourplace,String.valueOf(getPostTime()),bookingStatus,documentID,parkingSpaceRating,protectCar);
+
+
+        db.collection("Bookings").add(bookingdata).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+
+                documentID = documentReference.getId();
+//                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
+
+                Booking bookingdata = new Booking(uid,latitude,longitude,yourplace,String.valueOf(getPostTime()),bookingStatus,documentID,parkingSpaceRating,protectCar);
+                Map<String, Object> docID = new HashMap<>();
+                docID.put("documentID", documentID);
+
+
+                db.collection("Bookings").document(documentID).update(docID).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+
+                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCUMENTID,documentID);
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+//
+
+
+            }
+        });
+    }
+//
 
     private void showBottomSheet(double latitude, double longitude) {
 
@@ -430,12 +476,12 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                     Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                             Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
                     startActivity(intent);
-                    Toast.makeText(NearestLocMapsActivity.this, "true", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(NearestLocMapsActivity.this, "true", Toast.LENGTH_SHORT).show();
                 }else{
                     Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                             Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
                     startActivity(intent);
-                    Toast.makeText(NearestLocMapsActivity.this, "false", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(NearestLocMapsActivity.this, "false", Toast.LENGTH_SHORT).show();
 
 
                 }
@@ -488,50 +534,50 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         }
     }
 
-    private void ShowRulesAlert() {
-
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NearestLocMapsActivity.this);
-        LayoutInflater factory = LayoutInflater.from(NearestLocMapsActivity.this);
-        View bottomSheetView = factory.inflate(R.layout.rules_layout, null);
-        bottomSheetDialog.setContentView(bottomSheetView);
-        bottomSheetDialog.show();
-        RelativeLayout ViewLay=(RelativeLayout)bottomSheetDialog.findViewById(R.id.view_lay);
-        RelativeLayout NaviLay=(RelativeLayout)bottomSheetDialog.findViewById(R.id.navi_lay);
-
-        TextView ViewLTxt=(TextView)bottomSheetDialog.findViewById(R.id.view_txt);
-        TextView NaviTxt=(TextView)bottomSheetDialog.findViewById(R.id.navi_txt);
-
-
-        ViewLTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                bottomSheetDialog.dismiss();
-
-            }
-        });
-
-        NaviTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                bottomSheetDialog.dismiss();
-            }
-        });
-        ViewLay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-        NaviLay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-
-    }
+//    private void ShowRulesAlert() {
+//
+//        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NearestLocMapsActivity.this);
+//        LayoutInflater factory = LayoutInflater.from(NearestLocMapsActivity.this);
+//        View bottomSheetView = factory.inflate(R.layout.rules_layout, null);
+//        bottomSheetDialog.setContentView(bottomSheetView);
+//        bottomSheetDialog.show();
+//        RelativeLayout ViewLay=(RelativeLayout)bottomSheetDialog.findViewById(R.id.view_lay);
+//        RelativeLayout NaviLay=(RelativeLayout)bottomSheetDialog.findViewById(R.id.navi_lay);
+//
+//        TextView ViewLTxt=(TextView)bottomSheetDialog.findViewById(R.id.view_txt);
+//        TextView NaviTxt=(TextView)bottomSheetDialog.findViewById(R.id.navi_txt);
+//
+//
+//        ViewLTxt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                bottomSheetDialog.dismiss();
+//
+//            }
+//        });
+//
+//        NaviTxt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                bottomSheetDialog.dismiss();
+//            }
+//        });
+//        ViewLay.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                bottomSheetDialog.dismiss();
+//            }
+//        });
+//        NaviLay.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                bottomSheetDialog.dismiss();
+//            }
+//        });
+//
+//    }
 
 
 
@@ -559,7 +605,14 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         return false;
     }
 
+    public long getPostTime() {
 
+        Date currentDate = new Date();
+        long unixTime = currentDate.getTime() / 1000;
+        return unixTime;
+
+
+    }
 
 //
     }
