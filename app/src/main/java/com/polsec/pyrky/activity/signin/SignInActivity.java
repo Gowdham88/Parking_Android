@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ public class SignInActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     ProgressDialog progressDialog;
     RelativeLayout parentsigninlay;
+    LinearLayout parentLinLay;
     private DatabaseReference mDatabase;
     private AlertDialog dialog;
     TextView ForgotPassTxt;
@@ -72,11 +74,18 @@ public class SignInActivity extends AppCompatActivity {
         ForgotPassTxt = findViewById(R.id.tx_forget_password);
         TextView login = findViewById(R.id.sign_in_button);
         parentsigninlay =findViewById(R.id.signin_layout);
+        parentLinLay=findViewById(R.id.linearLayout);
+        parentLinLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideSoftKeyboard(SignInActivity.this);
+            }
+        });
 
-        parentsigninlay.setOnClickListener(view -> Utils.hideKeyboard(SignInActivity.this));
-
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+//        parentsigninlay.setOnClickListener(view -> Utils.hideKeyboard(SignInActivity.this));
+//
+//        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         login.setOnClickListener(v -> {
             if (validateForm()){
@@ -219,8 +228,11 @@ public class SignInActivity extends AppCompatActivity {
         return valid;
     }
 
-    public void hideKeyboard(View view){
-        InputMethodManager inputMethodManager =(InputMethodManager )getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 }

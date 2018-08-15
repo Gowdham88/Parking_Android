@@ -46,6 +46,8 @@ Toolbar toolbar;
 
         viewPager =findViewById(R.id.viewpager_events);
         tabLayout =findViewById(R.id.simpleTabLayout);
+        tabLayout.setFocusableInTouchMode(false); //Not Working
+        tabLayout.setFocusable(false);
 //        BookingTabAdapter pagerAdapter = new BookingTabAdapter(getFragmentManager(),getActivity());
 //        viewPager.setAdapter(pagerAdapter);
 //        setupTabIcons();

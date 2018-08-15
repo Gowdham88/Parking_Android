@@ -106,7 +106,7 @@ public void onClick(View v) {
         Intent intent = new Intent(context,NearestLocMapsActivity.class);
         intent.putExtra("lat",nearlat1.get(position));
         intent.putExtra("lng",nearlong1.get(position));
-        intent.putExtra("value","carousel");
+        intent.putExtra("values","carousel");
         intent.putExtra("placename",Placename.get(position));
         context.startActivity(intent);
         }

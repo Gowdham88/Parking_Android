@@ -24,6 +24,17 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -58,7 +69,8 @@
             android:name=".activity.signup.SignupScreenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeSignup"
-            android:windowSoftInputMode="adjustResize|adjustNothing|stateHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"
+            />
 
         <service android:name=".firebase.MyFirebaseMessagingService">
             <intent-filter>
@@ -110,7 +122,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.booking.BookingsActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name="com.polsec.pyrky.activity.forgotpassword.ForgotpasswordActivity"
+        <activity android:name=".activity.forgotpassword.ForgotpasswordActivity"
             android:screenOrientation="portrait"/>
 
         <meta-data

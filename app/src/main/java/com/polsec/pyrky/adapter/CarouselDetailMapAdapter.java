@@ -43,13 +43,30 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     ArrayList<String> Placename = new ArrayList<>();
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
-    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename) {
+    private ListAdapterListener mListener;
+
+    public static final String ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button";
+
+
+    public interface ListAdapterListener {
+        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1, String mapvalues, String s2);
+//        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1); // create an interface
+
+
+
+
+
+//
+    }
+    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ListAdapterListener mListener) {
         this.context = context;
         this.nearimg = nearimg;
         this.nearlat1 = nearlat1;
         this.nearlong1 = nearlong1;
         this.distances1 = distances1;
         this.Placename=Placename;
+        this.mListener=mListener;
+
     }
 
     @NonNull
@@ -98,15 +115,15 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 
 //    Toast.makeText(context, (int) latitude, Toast.LENGTH_SHORT).show();
         holder.nearestPlaceAve.setText(Placename.get(position));
-//        holder.nearestPlaceImage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(context,NearestLocMapsActivity.class);
-//                intent.putExtra("lat",nearlat1.get(position));
-//                intent.putExtra("lng",nearlong1.get(position));
-//                context.startActivity(intent);
-//            }
-//        });
+        holder.nearestPlaceImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(context, "click", Toast.LENGTH_SHORT).show();
+                String mapvalues="mapvalues";
+                mListener.onClickimageButton(position,ACTION_LIKE_BUTTON_CLICKED,nearlat1.get(position),nearlong1.get(position),mapvalues,Placename.get(position));
+
+            }
+        });
     }
 
     @Override
