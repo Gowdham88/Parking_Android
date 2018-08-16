@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -123,6 +124,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     int mCarIcon;
      CarouselLayoutManager layoutManager;
     String Pass;
+    LinearLayout LinLay;
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
@@ -159,6 +161,13 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         EmailEdt=view.findViewById(R.id.et_email);
         NameEdt.setText(mName);
         EmailEdt.setText(mEmail);
+        LinLay=view.findViewById(R.id.scrollviewlin);
+        LinLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideSoftKeyboard(getActivity());
+            }
+        });
 
         mAuth = FirebaseAuth.getInstance();
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
@@ -831,7 +840,13 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 //
 
     }
-
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
+    }
 
 
 

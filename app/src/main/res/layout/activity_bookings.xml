@@ -15,7 +15,8 @@
         android:layout_height="1dp"
         android:background="@color/search_boarder_clr" />
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/content_events"
@@ -55,6 +56,7 @@
         <!--app:tabTextColor="@color/booking_txtclr" />-->
 
         <android.support.design.widget.TabLayout
+            android:hapticFeedbackEnabled="false"
             android:id="@+id/simpleTabLayout"
             android:layout_width="match_parent"
             android:layout_height="40dp"

@@ -17,6 +17,10 @@ public class Camera {
     private String ListofObstacles;
     private String cameraImageUrl;
 
+    public Camera() {
+
+    }
+
     public Camera(String cameraLat, String cameraLong, String parkingType, String securityRatings, String listofparkingRules, String cameraLocationName, String videoUrl, String roadWidth,
                   String cameraFacingDirection, String listofcarsPosition, String listofObstacles, String cameraImageUrl) {
         this.cameraLat = cameraLat;

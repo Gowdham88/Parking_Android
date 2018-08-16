@@ -64,9 +64,10 @@ public class ForgotpasswordActivity extends AppCompatActivity {
         cancelbtnrel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
+                startActivity(intent);
                 finish();
+//                onBackPressed();
 
 
             }
@@ -75,9 +76,10 @@ public class ForgotpasswordActivity extends AppCompatActivity {
         backBtnclose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
+                startActivity(intent);
                 finish();
+//           onBackPressed();
 
 
             }

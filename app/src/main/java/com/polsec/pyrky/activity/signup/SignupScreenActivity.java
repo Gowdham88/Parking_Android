@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -133,18 +134,20 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 //            }
 //        });
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         Signuprellay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utils.hideKeyboard(SignupScreenActivity.this);
+
+                hideSoftKeyboard(SignupScreenActivity.this);
+//                Utils.hideKeyboard();
             }
         });
         signupScrlin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utils.hideKeyboard(SignupScreenActivity.this);
+                hideSoftKeyboard(SignupScreenActivity.this);
             }
         });
         SignupBtn = findViewById(R.id.sign_up_button);
@@ -654,6 +657,15 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
             checkFieldsForEmptyValues();
         }
     };
+
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
+    }
 
     }
 
