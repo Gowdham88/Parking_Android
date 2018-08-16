@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.polsec.pyrky.R;
@@ -23,7 +24,7 @@ import java.util.Locale;
  * Created by czsm4 on 09/08/18.
  */
 
-public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetailMapAdapter.ViewHolder> {
+public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetailMapAdapter.ViewHolder>{
 
     private Context context;
     private int images[];
@@ -44,6 +45,8 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
     private ListAdapterListener mListener;
+    private RecyclerView parentRecycler;
+    int postionval;
 
     public static final String ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button";
 
@@ -66,8 +69,14 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
         this.distances1 = distances1;
         this.Placename=Placename;
         this.mListener=mListener;
-
+        notifyDataSetChanged();
     }
+
+//    @Override
+//    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+//        super.onAttachedToRecyclerView(recyclerView);
+//        parentRecycler = recyclerView;
+//    }
 
     @NonNull
     @Override
@@ -86,6 +95,8 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
         Picasso.with(context).load(nearimg.get(position))
                 .fit()
                 .into(holder.nearestPlaceImage);
+
+        postionval =holder.getAdapterPosition();
 //        holder.nearestPlaceAve.setText(mAve[position]);
 //        holder.nearestPlaceCity.setText(mCity[position]);
 
@@ -126,6 +137,8 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
         });
     }
 
+
+
     @Override
     public int getItemCount() {
         return nearlat1.size();
@@ -134,13 +147,17 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView nearestPlaceImage;
         TextView nearestPlaceAve,nearestPlaceCity,nearestPlaceDistance;
+        RelativeLayout RelayLay;
         ViewHolder(View itemView) {
             super(itemView);
             nearestPlaceImage = itemView.findViewById(R.id.nearest_place_image);
             nearestPlaceAve = itemView.findViewById(R.id.nearest_place_ave);
             nearestPlaceCity = itemView.findViewById(R.id.nearest_place_city);
             nearestPlaceDistance = itemView.findViewById(R.id.nearest_place_distance);
+            RelayLay = itemView.findViewById(R.id.container);
         }
     }
+
+
 
 }

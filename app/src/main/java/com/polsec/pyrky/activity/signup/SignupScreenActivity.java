@@ -75,8 +75,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -447,7 +449,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             hideProgressDialog();
-                            Toast.makeText(SignupScreenActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(SignupScreenActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
                             postimageurl =taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
 
                             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -516,6 +518,9 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     }
 
     private void AddDatabase(final FirebaseUser user, final View view){
+
+//        final Map<String, Boolean> likeData1 = new HashMap<>();
+//        likeData1.put("bookind_id", false);
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Users users = new Users(mEtUsername.getText().toString(), mEtEmail.getText().toString(), postimageurl, mCarCategoryId[mCarouselCount]);
