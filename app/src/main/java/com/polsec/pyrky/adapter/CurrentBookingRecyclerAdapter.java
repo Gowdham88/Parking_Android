@@ -52,9 +52,9 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        long time= Long.parseLong(bookingList.get(position).getDateTime());
+        double time= bookingList.get(position).getDateTime();
 
-        long dv = Long.valueOf(time)*1000;// its need to be in milisecond
+        long dv = Long.valueOf(String.valueOf(time))*1000;// its need to be in milisecond
         Date df = new Date(dv);
         Datetime= new SimpleDateFormat("dd MMM,  hh:mma").format(df);
         String str = Datetime.replace("AM", "am").replace("PM","pm");

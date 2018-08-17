@@ -8,8 +8,6 @@
 
     <uses-feature android:name="android.hardware.camera" />
 
-
-
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- GCM connects to Google Services. -->
@@ -23,11 +21,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-
-
     <uses-permission android:name="android.permission.VIBRATE" />
-
 
     <!-- GCM requires a Google account. -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -69,8 +63,7 @@
             android:name=".activity.signup.SignupScreenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeSignup"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            />
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <service android:name=".firebase.MyFirebaseMessagingService">
             <intent-filter>
@@ -85,15 +78,13 @@
 
         <activity
             android:name=".activity.signin.SignInActivity"
-            android:theme="@style/AppThemeSignup"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeSignup" />
         <activity
             android:name=".activity.HomeActivity"
-            android:theme="@style/AppTheme.Launcher"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|adjustNothing">
-
-        </activity>
+            android:theme="@style/AppTheme.Launcher"
+            android:windowSoftInputMode="adjustResize|adjustNothing"></activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -119,20 +110,21 @@
         <activity
             android:name=".activity.NearestLocMapsActivity"
             android:label="@string/title_activity_nearest_loc_maps"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.booking.BookingsActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.forgotpassword.ForgotpasswordActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.booking.BookingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.forgotpassword.ForgotpasswordActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="941d1bd16bc6b7e98066de5acdd5eabab024ed2f" />
 
-        <activity android:name=".activity.ViewImage.ViewImageActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
+        <activity
+            android:name=".activity.ViewImage.ViewImageActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

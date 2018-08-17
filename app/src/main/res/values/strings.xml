@@ -30,4 +30,11 @@
     <string name="enter_your_password">Enter your password</string>
     <string name="enter_your_user_name">Enter your user name</string>
     <string name="resetpass">A reset link has been sent your email</string>
+
+    <string-array name="navigation_drawer_items_array">
+        <item>Home</item>
+        <item>Bookings</item>
+        <item>Profile</item>
+        <item>Logout</item>
+    </string-array>
 </resources>

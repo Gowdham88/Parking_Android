@@ -10,10 +10,13 @@ public class Booking implements Serializable {
     private String DestLat;
     private String DestLong;
     private String DestName;
-    private String DateTime;
+    private double DateTime;
+
     private Boolean bookingStatus;
+
+
     private String documentID;
-    private String parkingSpaceRating;
+    private double parkingSpaceRating;
     private Boolean protectCar;
 
     public Booking() {
@@ -21,10 +24,10 @@ public class Booking implements Serializable {
         DestLat="";
         DestLong="";
         DestName="";
-        DateTime="";
+        DateTime= 0.0;
     }
 
-    public Booking(String Current_User_UID, String DestLat, String DestLong, String DestName, String DateTime, Boolean bookingStatus, String documentID, String parkingSpaceRating, Boolean protectCar) {
+    public Booking(String Current_User_UID, String DestLat, String DestLong, String DestName, double DateTime, Boolean bookingStatus, String documentID, double parkingSpaceRating, Boolean protectCar) {
         this.Current_User_UID = Current_User_UID;
         this.DestLat = DestLat;
         this.DestLong = DestLong;
@@ -73,11 +76,11 @@ public class Booking implements Serializable {
 
 
     @PropertyName("DateTime")
-    public String getDateTime() {
+    public double getDateTime() {
         return DateTime;
     }
     @PropertyName("DateTime")
-    public void setDateTime(String dateTime) {
+    public void setDateTime(double dateTime) {
         DateTime = dateTime;
     }
 
@@ -99,13 +102,6 @@ public class Booking implements Serializable {
     }
 
 
-    public String getParkingSpaceRating() {
-        return parkingSpaceRating;
-    }
-
-    public void setParkingSpaceRating(String parkingSpaceRating) {
-        this.parkingSpaceRating = parkingSpaceRating;
-    }
 
 
     public Boolean getProtectCar() {
@@ -117,6 +113,13 @@ public class Booking implements Serializable {
     }
 
 
+    public double getParkingSpaceRating() {
+        return parkingSpaceRating;
+    }
+
+    public void setParkingSpaceRating(double parkingSpaceRating) {
+        this.parkingSpaceRating = parkingSpaceRating;
+    }
 
 
 
