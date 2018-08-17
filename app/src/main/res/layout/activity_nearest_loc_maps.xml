@@ -49,7 +49,7 @@
             <!--&lt;!&ndash;android:text=""&ndash;&gt;-->
             <!--&lt;!&ndash;android:layout_marginTop="35dp"/>&ndash;&gt;-->
     <!--</FrameLayout>-->
-    <android.support.v7.widget.RecyclerView
+    <com.yarolegovich.discretescrollview.DiscreteScrollView
         android:layout_width="match_parent"
         android:layout_height="140dp"
         android:background="#80000000"

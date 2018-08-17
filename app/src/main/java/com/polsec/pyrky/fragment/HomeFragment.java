@@ -543,7 +543,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     }
                 });
                 builder.show();
-            } else {
+            }
+
+            else {
                 //just request the permission
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
             }
@@ -921,8 +923,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         }
     }
 
+
 //    @Override
-//    public void onPostResume() {
+//    protected void onPostResume() {
 //        super.onPostResume();
 //        if (sentToSettings) {
 //            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
@@ -931,6 +934,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //            }
 //        }
 //    }
+
 
     public void animateMarker(final Marker marker, final Location location) {
         final Handler handler = new Handler();

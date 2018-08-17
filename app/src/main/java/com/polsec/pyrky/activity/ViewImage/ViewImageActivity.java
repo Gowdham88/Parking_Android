@@ -4,29 +4,68 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.azoft.carousellayoutmanager.CarouselLayoutManager;
+import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
+import com.azoft.carousellayoutmanager.CenterScrollListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.activity.HomeActivity;
+import com.polsec.pyrky.activity.NearestLocMapsActivity;
+import com.polsec.pyrky.activity.forgotpassword.ForgotpasswordActivity;
+import com.polsec.pyrky.activity.signin.SignInActivity;
+import com.polsec.pyrky.activity.signup.SignupScreenActivity;
+import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
 import com.polsec.pyrky.pojo.Booking;
+import com.polsec.pyrky.pojo.Camera;
+import com.polsec.pyrky.pojo.Users;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 public class ViewImageActivity extends AppCompatActivity {
     TextView BookBtn;
@@ -35,12 +74,19 @@ public class ViewImageActivity extends AppCompatActivity {
     Context context;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
-    String DestName,lat,longi;
+    String DestName,lat,longi,mUid;
+    List<Users> bookinglist = new ArrayList<Users>();
+     FirebaseFirestore db;
+    List<String> booking_ID = new ArrayList<>();
+    FirebaseAuth mAuth;
+    Map<String, Object> bookingid = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
+        mAuth = FirebaseAuth.getInstance();
+        mUid= PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 //        BackImg = (ImageView) findViewById(R.id.back_image);
 //        BackImg.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -48,6 +94,8 @@ public class ViewImageActivity extends AppCompatActivity {
 //                onBackPressed();
 //            }
 //        });
+
+        db = FirebaseFirestore.getInstance();
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -83,7 +131,67 @@ public class ViewImageActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        final FirebaseUser user = mAuth.getCurrentUser();
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+
+                if (documentSnapshot.exists()){
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                    DocumentReference docRef = db.collection("users").document(mUid);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                    bookingid = document.getData();
+                                    Log.e("bookingid", String.valueOf(bookingid));
+
+
+
+
+
+
+                                } else {
+//                        Log.d(TAG, "No such document");
+
+                                }
+                            } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+
+                            }
+                        }
+                    });
+
+                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Log.w("Error", "Error adding document", e);
+                Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
+
+
 
     private void SaveData(String latitude, String longitude, String destName) {
 
@@ -98,7 +206,7 @@ public class ViewImageActivity extends AppCompatActivity {
 //          locationTxt=Location_Txt.getText().toString();
 //        String photoURL = PreferencesHelper.getPreference(this, PreferencesHelper.PREFERENCE_PHOTOURL);
 
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
         final Map<String, Boolean> likeData = new HashMap<>();
         likeData.put(uid, false);
@@ -126,6 +234,41 @@ public class ViewImageActivity extends AppCompatActivity {
 
                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCUMENTID,documentID);
 
+//                        try {
+
+                            final Map<String, Boolean> likeData1 = new HashMap<>();
+                            likeData1.put(documentID, true);
+
+
+
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                            DocumentReference washingtonRef = db.collection("users").document(uid);
+
+                            washingtonRef
+                                    .update("Booking_ID",likeData1)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error updating document", e);
+                                        }
+                                    });
+
+
+
+//                        }
+//
+//                        catch (NullPointerException e) {
+//
+//                            e.printStackTrace();
+//                        }
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -139,6 +282,65 @@ public class ViewImageActivity extends AppCompatActivity {
             }
         });
         }
+
+    private void popup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        Button ok = (Button)deleteDialogView.findViewById(R.id.ok_button);
+        Button cancel = (Button)deleteDialogView.findViewById(R.id.cancel_button);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Map<String, Object> docstatus = new HashMap<>();
+                docstatus.put("bookingStatus", false);
+
+                db.collection("Bookings").document(documentID).update(docstatus).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+                alertDialog1.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
 
     private boolean isPackageInstalled() {
         try
