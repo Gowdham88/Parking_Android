@@ -21,8 +21,6 @@ public class Users implements Serializable {
 
     private String carCategory;
     private String profileImageURL;
-    public Map<String, Boolean> Booking_ID;
-    private String platform;
 
     public Users() {
 

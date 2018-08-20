@@ -11,8 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -24,7 +31,9 @@ import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by thulirsoft on 7/9/18.
@@ -43,6 +52,14 @@ public class CurrentBookingsFragment extends Fragment {
     List<String> BookingListId = new ArrayList<String>();
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
     public static final String ACTION_SHOW_DEFAULT_ITEM = "action_show_default_item";
+
+    FirebaseFirestore db;
+
+    FirebaseAuth mAuth;
+    String mUid;
+    Map<String, Object> bookingid = new HashMap<>();
+
+    Map<String, Object> bookingid1=new HashMap<>();
     public CurrentBookingsFragment() {
         // Required empty public constructor
     }
@@ -83,6 +100,8 @@ public class CurrentBookingsFragment extends Fragment {
                     }
                 }
         );
+
+
 
         return view;
     }
