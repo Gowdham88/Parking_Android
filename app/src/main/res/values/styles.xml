@@ -1,0 +1,100 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Launcher" parent="AppTheme.NoActionBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowDisablePreview">true</item>
+
+    <!--<item name="android:windowBackground">@drawable/launch_screen</item>-->
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+
+    <style name="AppThemeSignup" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="NavigationTheme" parent="AppTheme">
+        <item name="listPreferredItemHeightLarge">30dp</item><!-- menu item height- vary as u need -->
+    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="TabWidget">
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:color">@color/booking_txtclr</item>
+
+    </style>
+
+    <style name="CustomTabWidgetText"
+        parent="@android:style/TextAppearance.Widget.TabWidget">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!--<style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">-->
+        <!--<item name="tabBackground">@drawable/tab_bg</item>-->
+    <!--</style>-->
+
+    <style name="NunitoBlackLight">
+        <item name="android:fontFamily">fonts/Nunito-Light.ttf</item>
+    </style>
+
+    <style name="Nunitoregular">
+        <item name="android:fontFamily">fonts/Nunito-Regular.ttf</item>
+    </style>
+
+    <style name="Nunitosemibold">
+        <item name="android:fontFamily">fonts/Nunito-SemiBold.ttf</item>
+    </style>
+
+    <style name="ok_button">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:background">@drawable/custom_alert_background</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="Theme.DoNotDim" parent="android:Theme">
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
+    <style name="NavigationViewStyle">
+        <item name="android:listPreferredItemHeightSmall">60dp</item><!-- menu item height-->
+
+    </style>
+    <!--<style name="FontAvenirLight">-->
+        <!--<item name="fontPath">fonts/Avenir-Light.ttf</item>-->
+    <!--</style>-->
+
+    <!--<style name="FontAvenirMedium">-->
+        <!--<item name="fontPath">fonts/Avenir-Medium.ttf</item>-->
+    <!--</style>-->
+
+    <!--<style name="FontAvenirBook">-->
+        <!--<item name="fontPath">fonts/Avenir-Book.ttf</item>-->
+    <!--</style>-->
+</resources>

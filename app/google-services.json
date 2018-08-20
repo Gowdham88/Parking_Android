@@ -1,0 +1,113 @@
+{
+  "project_info": {
+    "project_number": "69649229764",
+    "firebase_url": "https://pyrky-d40df.firebaseio.com",
+    "project_id": "pyrky-d40df",
+    "storage_bucket": "pyrky-d40df.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69649229764:android:4155ce354d2ec708",
+        "android_client_info": {
+          "package_name": "com.polsec.pyrky"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69649229764-1d96fjtnvsp2bbu3mbngf3nvgs9cjms7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.polsec.pyrky",
+            "certificate_hash": "c8120cd6ff053c52864a2c24373906363a0b2f8a"
+          }
+        },
+        {
+          "client_id": "69649229764-hkj0g06ha8e21t3jrda7klk4tu9p02p7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGhEhCv90FaccP1VYU4DXUr-cObLRAqWI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69649229764-hkj0g06ha8e21t3jrda7klk4tu9p02p7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "69649229764-ia102tdhl55t8ethvgon8dsdnuaam0gg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.czsm.Pyrky"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69649229764:android:3898e1c6504e9f43",
+        "android_client_info": {
+          "package_name": "com.pyrky_android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69649229764-q35a31o1p8dcd7gq89mf19oalp3ldbmd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pyrky_android",
+            "certificate_hash": "88c51591a9eb6dc6483fce837d108272318dc6c1"
+          }
+        },
+        {
+          "client_id": "69649229764-hkj0g06ha8e21t3jrda7klk4tu9p02p7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGhEhCv90FaccP1VYU4DXUr-cObLRAqWI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69649229764-hkj0g06ha8e21t3jrda7klk4tu9p02p7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "69649229764-ia102tdhl55t8ethvgon8dsdnuaam0gg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.czsm.Pyrky"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

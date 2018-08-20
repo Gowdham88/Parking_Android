@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/content_main_layout"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.polsec.pyrky.activity.HomeActivity"
+    tools:showIn="@layout/app_bar_main">
+
+    <FrameLayout
+        android:id="@+id/main_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/navigationView">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/destination_title"
+                style="@style/Nunitoregular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Destination"
+                android:textColor="@color/booking_txtclr"
+                android:textSize="14sp" />
+
+            <RelativeLayout
+                android:id="@+id/search_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/destination_title"
+                android:background="@drawable/card_search_layout"
+                android:padding="5dp">
+
+                <android.support.v7.widget.SearchView
+                    android:id="@+id/home_search_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toLeftOf="@id/filter_button"
+                    android:layout_toStartOf="@id/filter_button"
+                    android:background="@android:color/white"
+                    android:imeOptions="actionSearch"
+                    android:text="Search"
+                    app:iconifiedByDefault="true" />
+
+                <Button
+                    android:id="@+id/filter_button"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/ic_ham_menu" />
+                <Button
+                    android:id="@+id/back_button"
+                    android:layout_width="50dp"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/backbtn" />
+
+                <fragment
+                    android:id="@+id/current_location_view"
+                    class="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="173dp"
+                    android:layout_below="@id/home_search_view"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/white" />
+
+                <ExpandableListView
+                    android:id="@+id/expandableListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/home_search_view"
+                    android:background="@android:color/white"
+                    android:divider="@android:color/darker_gray"
+                    android:dividerHeight="0.5dp"
+                    android:elevation="5dp"
+                    android:indicatorRight="?android:attr/expandableListPreferredItemIndicatorRight"
+                    android:layoutDirection="rtl"
+                    android:visibility="gone"
+                    tools:targetApi="lollipop" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/current_location_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/search_layout"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/nearest_places_title"
+                    style="@style/Nunitoregular"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/nearest_parking_places_next_to_my_current_location"
+                    android:textSize="14sp" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/nearest_places_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_below="@id/nearest_places_title" />
+            </LinearLayout>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/current_location_layout"
+                android:layout_centerHorizontal="true"
+                android:text="Search" />
+        </RelativeLayout>
+    </FrameLayout>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:paddingTop="10dp"
+        android:layout_alignParentBottom="true"
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/bottom_navigation"
+        app:itemIconTint="@drawable/bottom_nav_selector"
+    />
+    <!--app:itemIconTint="@drawable/bottom_nav_selector"-->
+    <!--app:itemTextColor="@drawable/bottom_nav_selector"-->
+</RelativeLayout>
