@@ -223,8 +223,8 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
 
 
-        
-//        ab
+
+//        abll
 /*
         for (String key : field){
 
