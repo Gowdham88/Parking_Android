@@ -222,6 +222,9 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
+
+        
+//        ab
 /*
         for (String key : field){
 
