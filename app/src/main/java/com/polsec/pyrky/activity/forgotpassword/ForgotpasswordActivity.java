@@ -4,20 +4,27 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +33,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.activity.HomeActivity;
+import com.polsec.pyrky.activity.booking.BookingsActivity;
 import com.polsec.pyrky.activity.signin.SignInActivity;
+import com.polsec.pyrky.adapter.DrawerItemCustomAdapter;
+import com.polsec.pyrky.fragment.HomeFragment;
+import com.polsec.pyrky.fragment.ProfileFragment;
+import com.polsec.pyrky.pojo.DataModel;
+import com.polsec.pyrky.preferences.PreferencesHelper;
+import com.polsec.pyrky.utils.CircleTransformation;
 import com.polsec.pyrky.utils.Utils;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ForgotpasswordActivity extends AppCompatActivity {
     ImageView backBtnclose;
@@ -215,6 +233,106 @@ public class ForgotpasswordActivity extends AppCompatActivity {
 
         }
     };
+
+//    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+//
+//        @Override
+//        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//            selectItem(position);
+//        }
+//
+//    }
+//
+//    private void selectItem(int position) {
+//
+//        Fragment fragment = null;
+//
+//        switch (position) {
+//            case 0:
+//                loadFragment(new HomeFragment());
+//                toolbarText.setText("Home");
+//                break;
+//            case 1:
+//                Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
+//                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//                startActivity(intent);
+//                break;
+//            case 2:
+//                loadFragment(new ProfileFragment());
+//                toolbarText.setText("Profile");
+//                break;
+//
+//            case 3:
+//                Intent intent1 = new Intent(getApplicationContext(), SignInActivity.class);
+//                intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                intent1.putExtra("EXIT", true);
+////            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//                startActivity(intent1);
+//                PreferencesHelper.signOut(HomeActivity.this);
+//                mAuth.signOut();
+//                HomeActivity.this.finish();
+//                break;
+//
+//            default:
+//                break;
+//        }
+//
+////        loadFragment(new HomeFragment());
+////        toolbarText.setText("Home");
+//
+//        if (fragment != null) {
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//            fragmentManager.beginTransaction().replace(R.id.main_frame_layout, fragment).commit();
+//
+//            mDrawerList.setItemChecked(position, true);
+//            mDrawerList.setSelection(position);
+//            setTitle(mNavigationDrawerItemTitles[position]);
+//            mDrawerLayout.closeDrawer(mDrawerList);
+//
+//        } else {
+//            Log.e("MainActivity", "Error in creating fragment");
+//        }
+//    }
+
+
+//    mTitle = mDrawerTitle = getTitle();
+//    mNavigationDrawerItemTitles= getResources().getStringArray(R.array.navigation_drawer_items_array);
+//    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+//    mDrawerList = (ListView) findViewById(R.id.lst_menu_items);
+
+
+//    setupToolbar();
+//
+//    DataModel[] drawerItem = new DataModel[4];
+//
+//    drawerItem[0] = new DataModel(R.drawable.ic_tab_home, "Home");
+//    drawerItem[1] = new DataModel(R.drawable.ic_bookings_menu, "Bookings");
+//    drawerItem[2] = new DataModel(R.drawable.ic_tab_user, "Profile");
+//    drawerItem[3] = new DataModel(R.drawable.ic_logout, "Logout");
+//    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//    getSupportActionBar().setHomeButtonEnabled(true);
+//
+//    DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(HomeActivity.this,R.layout.list_view_item_row, drawerItem);
+//        mDrawerList.setAdapter(adapter);
+//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+//
+//        mDrawerLayout.setDrawerListener(mDrawerToggle);
+//    setupDrawerToggle();
+//    NavigationView navigationView = findViewById(R.id.nav_view);
+//    //        navigationView.setNavigationItemSelectedListener(this);
+//    TextView txtProfileName = (TextView)findViewById(R.id.user_name);
+//    CircleImageView profileImage = (CircleImageView)findViewById(R.id.user_image);
+//    String profileImageUrl = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC);
+//        this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+//        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+//        Picasso.with(HomeActivity.this)
+//                .load(profileImageUrl)
+//                .resize(avatarSize, avatarSize)
+//                .centerCrop()
+//                .transform(new CircleTransformation())
+//                .into(profileImage);
+//    }
+//        txtProfileName.setText(UsrName);
 
 }
 

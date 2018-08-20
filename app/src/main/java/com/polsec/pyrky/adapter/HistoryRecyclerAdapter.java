@@ -102,9 +102,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         mPosition = position;
-        long time= Long.parseLong(bookingList.get(position).getDateTime());
+        double time= bookingList.get(position).getDateTime();
 
-        long dv = Long.valueOf(time)*1000;// its need to be in milisecond
+        long dv = Long.valueOf(String.valueOf(time))*1000;// its need to be in milisecond
         Date df = new Date(dv);
         Datetime= new SimpleDateFormat("dd MMM,  hh:mma").format(df);
         String strh = Datetime.replace("AM", "am").replace("PM","pm");
@@ -129,10 +129,10 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             holder.city.setText(bookingList.get(position).getDestName());
             holder.dateTime.setText(strh);
 
-            String rate=bookingList.get(position).getParkingSpaceRating();
-            Toast.makeText(context, rate, Toast.LENGTH_SHORT).show();
+            double rate=bookingList.get(position).getParkingSpaceRating();
+//            Toast.makeText(context, rate, Toast.LENGTH_SHORT).show();
 
-            ratingBar.setRating(Float.parseFloat(rate));
+            ratingBar.setRating((float) rate);
             Drawable drawable = ratingBar.getProgressDrawable();
             drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
 //            ratingBar.setRating(Float.parseFloat(rate));
