@@ -31,6 +31,8 @@ public class ExpandableListData {
         carCategory.add("Mid size");
         carCategory.add("Full");
         carCategory.add("Van/Pick-up");
+
+
         expandableListDetail.put("Car Category", carCategory);
         expandableListDetail.put("Security Ratings", securityRatigs);
         expandableListDetail.put("Filter", filters);

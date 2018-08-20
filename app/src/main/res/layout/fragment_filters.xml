@@ -32,6 +32,7 @@
             android:divider="@android:color/darker_gray"
             android:dividerHeight="0.5dp"
             android:elevation="5dp"
+
             android:indicatorEnd="?android:attr/expandableListPreferredItemIndicatorRight"
             tools:targetApi="lollipop" />
     </FrameLayout>

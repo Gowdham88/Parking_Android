@@ -9,14 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.utils.Constants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by thulirsoft on 7/4/18.
@@ -31,6 +36,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
 
     private List<Boolean> setValueForSeletedFilter;
     private String[] keysOfHashmap;
+    private int buttonId = 0;
     private static final int CARCATEGORY = 0;
     private static final int SECURITY = 1;
     private static final int FILTER = 2;
@@ -104,96 +110,139 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String expandedListText = (String) getChild(groupPosition, childPosition);
+
         int childType = getChildType(groupPosition, childPosition);
 
-        LayoutInflater layoutInflater;
+
+        LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);;
         RadioGroup radiogroup;
         View view = convertView;
 
 
 
-        if (convertView == null) {
+        switch (groupPosition){
+            case 0 :
+                convertView = layoutInflater.inflate(R.layout.list_item_filter,null);
+                RadioGroup rgroupFilter = (RadioGroup) convertView.findViewById(R.id.radio_group);
+//                int has_radiogroup = 0;
+//                for (int i = 0; i <3; i++) {
+//                    {
+                        RadioButton rbn = new RadioButton(context);
+//                        has_radiogroup = 1;
+//                        rbn.setId(1000 + i);
+                        rbn.setText(expandedListText);
+//                        if (has_radiogroup == 1){
+//                            rgroupFilter.addView(rbn);
+//                        }
+                        rgroupFilter.addView(rbn);
+                        buttonId++;
+//                    }
+//                }
 
+                //Now lets say we have fixed childViews as Free street parking, Paid street Parking, Paid parking
+                //with positions 0,1,2
+                switch (childPosition){
+                    case 0 :
+//                        Toast.makeText(context, "Free street parking", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1 :
+//                        Toast.makeText(context, "Paid street parking", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 2 :
+//                        Toast.makeText(context, "Paid parking", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                break;
 
-            switch (childType) {
-                case CARCATEGORY:
-                     layoutInflater = (LayoutInflater) this.context
-                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    convertView = layoutInflater.inflate(R.layout.list_item, null);
+            case 1 :
+                convertView = layoutInflater.inflate(R.layout.list_item_filter,null);
+                RadioGroup rgps = (RadioGroup) convertView.findViewById(R.id.radio_group);
 
-//                   CheckBox checkBox1 = convertView.findViewById(R.id.checkbox);
-//                    checkBox1.setText(expandedListText);
-//                   TextView expandedListTextView = convertView
-//                            .findViewById(R.id.expandedListItem);
-//                    expandedListTextView.setText(expandedListText);
+                    RadioButton rbns = new RadioButton(context);
+                    rbns.setText(expandedListText);
+                    rgps.addView(rbns);
 
-//                    radiogroup  = convertView.findViewById(R.id.radioGroup);
-//                    radiogroup.setText(expandedListText);
-//                   TextView expandedListTextView= convertView
-//                            .findViewById(R.id.expandedListItem);
-//                    expandedListTextView.setText(expandedListText);
-//
-//                    //inflate our layout and textview then setTag viewholder if the view is null
-//
-//
-//                    expandedListText = (String) getChild(groupPosition, childPosition - 1);
-//                    //inflate our layout and textview then setTag viewholder if the view is null
-//                    view = LayoutInflater.from(context).inflate(R.layout.navdrawer_list_item, null);
-//                    viewHolder.textView = (TextView) view.findViewById(R.id.expandedListItem);
-//                    viewHolder.textView.setText(expandedListText);
-                    break;
-                case SECURITY:
+                switch (childPosition){
+                    case 0 :
+//                        Toast.makeText(context, "Compact", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1 :
+//                        Toast.makeText(context, "Small", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 2 :
+//                        Toast.makeText(context, "Mid size", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 3 :
+//                        Toast.makeText(context, "Full", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 4 :
+//                        Toast.makeText(context, "Van/Pick-up", Toast.LENGTH_SHORT).show();
+                        break;
+                }
 
+                break;
 
-                      layoutInflater = (LayoutInflater) this.context
-                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    convertView = layoutInflater.inflate(R.layout.list_item_filter, null);
+            case 2 :
+                convertView = layoutInflater.inflate(R.layout.list_item, null);
 
-//                    CheckBox checkBox2 = convertView.findViewById(R.id.checkbox);
-//                    checkBox2.setText(expandedListText);
-//                    TextView expandedListTextView1 = convertView
-//                            .findViewById(R.id.expandedListItem);
-//                 expandedListTextView1.setText(expandedListText);
-                    break;
-                case FILTER:
-                     layoutInflater = (LayoutInflater) this.context
-                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    convertView = layoutInflater.inflate(R.layout.list_item, null);
+                CheckBox checkBox = convertView.findViewById(R.id.checkbox);
+                checkBox.setText(expandedListText);
+                TextView  expandedListTextView = convertView
+                        .findViewById(R.id.expandedListItem);
+                expandedListTextView.setText(expandedListText);
 
-                    CheckBox checkBox3 = convertView.findViewById(R.id.checkbox);
-                    checkBox3.setText(expandedListText);
-                   TextView expandedListTextView3 = convertView
-                            .findViewById(R.id.expandedListItem);
-                    expandedListTextView3.setText(expandedListText);
+                switch (childPosition){
+                    case 0 :
+//                        Toast.makeText(context, "5 Star", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1 :
+//                        Toast.makeText(context, "4 Star", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 2 :
+//                        Toast.makeText(context, "3 Star", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 3 :
+//                        Toast.makeText(context, "2 Star", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 4 :
+//                        Toast.makeText(context, "1 Star", Toast.LENGTH_SHORT).show();
+                        break;
+                }
 
-//                     radiogroup = convertView.findViewById(R.id.radioGroup);
-//                    radiogroup.setT(expandedListText);
-//                    expandedListTextView = convertView
-//                            .findViewById(R.id.expandedListItem);
-//                    expandedListTextView.setText(expandedListText);
-                    break;
+                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        Toast.makeText(buttonView.getContext(), "Selected! - Question number: " + groupPosition + "answer: " + childPosition + "ischecked: " + isChecked, Toast.LENGTH_SHORT).show();
+//                        Constants.SEARCH_ARRAY.clear();
+                        Constants.SEARCH_ARRAY.add((String.valueOf(childPosition+1))+" stars");
 
-                default:
+                    }
+                });
 
-                    break;
-            }
-//             layoutInflater = (LayoutInflater) this.context
-//                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            convertView = layoutInflater.inflate(R.layout.list_item, null);
-//            CheckBox checkBox = convertView.findViewById(R.id.checkbox);
-//                    checkBox.setText(expandedListText);
-//                     expandedListTextView = convertView
-//                            .findViewById(R.id.expandedListItem);
-//                    expandedListTextView.setText(expandedListText);
+                break;
         }
+
+        //Previous success build code
+       /* if (convertView == null) {
+            convertView = layoutInflater.inflate(R.layout.list_item, null);
+        }
+
+        CheckBox checkBox = convertView.findViewById(R.id.checkbox);
+        checkBox.setText(expandedListText);
+        TextView  expandedListTextView = convertView
+                .findViewById(R.id.expandedListItem);
+        expandedListTextView.setText(expandedListText);*/
 
         return convertView;
     }
 
+    private int getRandomNumber(int min,int max) {
+        return (new Random()).nextInt((max - min) + 1) + min;
+    }
 
     @Override
     public boolean hasStableIds() {
-        return true;
+        return false;
     }
 
     public void setData(){

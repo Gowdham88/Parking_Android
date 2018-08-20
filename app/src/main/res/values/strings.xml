@@ -9,6 +9,7 @@
     <string name="forget_password">Forgot Password?</string>
     <string name="dont_have_account">Don\'t have an account? Sign up here</string>
 
+    <string name="directions_base_url">https://maps.googleapis.com/</string>
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <!--

@@ -2,32 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.polsec.pyrky">
 
+    <uses-sdk android:minSdkVersion="14" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- GCM connects to Google Services. -->
-
-
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
-    -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-
-    <!-- GCM requires a Google account. -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:name=".MyApplication"
@@ -37,13 +25,13 @@
         android:roundIcon="@drawable/logoicon_png"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCy2by09ttSxyAhv-9FE5b_ASECaChzU08" />
 
-        <!-- <meta-data -->
-        <!-- android:name="com.google.android.geo.API_KEY" -->
-        <!-- android:value="AIzaSyCsmEae3SidD5e6-jwwPOpPXOfNnPnwCmQ" /> -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -63,7 +51,7 @@
             android:name=".activity.signup.SignupScreenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeSignup"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="adjustResize|adjustNothing|stateHidden" />
 
         <service android:name=".firebase.MyFirebaseMessagingService">
             <intent-filter>
@@ -124,7 +112,13 @@
 
         <activity
             android:name=".activity.ViewImage.ViewImageActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity android:name=".activity.arnavigation.ArNavActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
     </application>
 
 </manifest>

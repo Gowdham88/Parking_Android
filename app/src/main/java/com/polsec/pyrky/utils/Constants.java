@@ -1,5 +1,8 @@
 package com.polsec.pyrky.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by thulirsoft on 7/2/18.
  */
@@ -24,5 +27,13 @@ public class Constants {
     public static String BOOKMARK_LOCATION = "location";
 
     public static String BOOKMARK_ITEM = "item";
+
+    public static List<String> SEARCH_ARRAY = new ArrayList<>();
+
+    public static List<String> SECURITY_RATINGS = new ArrayList<>();
+
+    public static List<String> CAR_CATEGORY = new ArrayList<>();
+
+    public static List<String> PARKING_TYPES = new ArrayList<>();
 
 }

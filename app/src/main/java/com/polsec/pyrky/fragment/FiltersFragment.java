@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.polsec.pyrky.ExpandableListData;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.adapter.ExpandableListAdapter;
+import com.polsec.pyrky.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +35,7 @@ public class FiltersFragment extends Fragment {
     List<String> mExpandableListTitle;
     HashMap<String, List<String>> mExpandableListDetail;
     Boolean isExpandableListEnabled = false;
-RelativeLayout mHomeRelaLay;
+    RelativeLayout mHomeRelaLay;
     Button mEnableButton;
     private List<Boolean> setValueForSeletedFilter;
 
@@ -56,6 +57,7 @@ RelativeLayout mHomeRelaLay;
 
         View view = inflater.inflate(R.layout.fragment_filters, null);
 
+        Constants.SEARCH_ARRAY.clear();
         mEnableButton = view.findViewById(R.id.enable_button);
         mEnableButton.setVisibility(View.GONE);
         mExpandableListView = view.findViewById(R.id.expandableListView);

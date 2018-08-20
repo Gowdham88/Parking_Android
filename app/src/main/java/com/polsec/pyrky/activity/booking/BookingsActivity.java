@@ -9,12 +9,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.adapter.CustomViewPagerAdapter;
 import com.polsec.pyrky.fragment.CurrentBookingsFragment;
 import com.polsec.pyrky.fragment.HistoryFragment;
+import com.polsec.pyrky.utils.Constants;
 
 public class BookingsActivity extends AppCompatActivity implements  TabHost.OnTabChangeListener{
     ViewPager viewPager;
@@ -28,6 +30,9 @@ Toolbar toolbar;
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_bookings);
+
+//        Toast.makeText(this, Constants.SEARCH_ARRAY.get(0), Toast.LENGTH_SHORT).show();
+
 
         BackImg=(ImageView)findViewById(R.id.back_image);
         TitlaTxt=(TextView)findViewById(R.id.extra_title);

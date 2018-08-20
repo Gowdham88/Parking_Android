@@ -3,13 +3,13 @@ package com.polsec.pyrky.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.design.widget.NavigationView;
@@ -18,12 +18,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,12 +28,10 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.polsec.pyrky.activity.booking.BookingsActivity;
 import com.polsec.pyrky.activity.signin.SignInActivity;
-import com.polsec.pyrky.adapter.DrawerItemCustomAdapter;
 import com.polsec.pyrky.fragment.HomeFragment;
 import com.polsec.pyrky.fragment.NotificationFragment;
 import com.polsec.pyrky.fragment.ProfileFragment;
 import com.polsec.pyrky.R;
-import com.polsec.pyrky.pojo.DataModel;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.CircleTransformation;
 import com.squareup.picasso.Picasso;
@@ -63,15 +58,7 @@ public class HomeActivity extends AppCompatActivity
     String UsrName;
     private FirebaseAuth mAuth;
     private int avatarSize;
-    View view;
-
-
-    private String[] mNavigationDrawerItemTitles;
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
-    android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
+    View view,holderView, contentView;
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
@@ -85,10 +72,10 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        actionbar = getSupportActionBar();
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        actionbar = getSupportActionBar();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         mAuth = FirebaseAuth.getInstance();
 //        actionbar.setTitle("Home");
 
@@ -97,61 +84,37 @@ public class HomeActivity extends AppCompatActivity
         view = (View)findViewById(R.id.myview);
         view.setVisibility(View.VISIBLE);
         UsrName=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
-        mTitle = mDrawerTitle = getTitle();
-        mNavigationDrawerItemTitles= getResources().getStringArray(R.array.navigation_drawer_items_array);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.lst_menu_items);
 //
 //        Username=findViewById(R.id.);
 //        Username.setText(UsrName);
-
-
-        LinearLayout coordinatorLayout = findViewById(R.id.home_coordinator);
-        coordinatorLayout = findViewById(R.id.home_coordinator);
+        holderView = findViewById(R.id.holder);
+        contentView = findViewById(R.id.home_coordinator);
         bottomNavigationView = findViewById(R.id.navigationView);
 
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        toolbar.inflateMenu(R.menu.activity_main_drawer);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(false);
+        toggle.setDrawerIndicatorEnabled(false);
+        toggle.setHomeAsUpIndicator(R.drawable.ham_menu);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-//        toggle = new ActionBarDrawerToggle(
-//                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        toolbar.inflateMenu(R.menu.activity_main_drawer);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(false);
-//        toggle.setDrawerIndicatorEnabled(false);
+        toggle.setToolbarNavigationClickListener(v -> {
+//                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                drawer.openDrawer(GravityCompat.START);
+            }
+        });
 
-////        drawer.addDrawerListener(toggle);
-//        toggle.syncState();
-
-//        toggle.setToolbarNavigationClickListener(v -> {
-////                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//            if (drawer.isDrawerOpen(GravityCompat.START)) {
-//                drawer.closeDrawer(GravityCompat.START);
-//            } else {
-//                drawer.openDrawer(GravityCompat.START);
-//            }
-//        });
-
-
-        setupToolbar();
-
-        DataModel[] drawerItem = new DataModel[4];
-
-        drawerItem[0] = new DataModel(R.drawable.ic_tab_home, "Home");
-        drawerItem[1] = new DataModel(R.drawable.ic_bookings_menu, "Bookings");
-        drawerItem[2] = new DataModel(R.drawable.ic_tab_user, "Profile");
-        drawerItem[3] = new DataModel(R.drawable.ic_logout, "Logout");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(HomeActivity.this,R.layout.list_view_item_row, drawerItem);
-        mDrawerList.setAdapter(adapter);
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        setupDrawerToggle();
-        NavigationView navigationView = findViewById(R.id.navigation);
-//        navigationView.setNavigationItemSelectedListener(this);
-        TextView txtProfileName = (TextView)findViewById(R.id.user_name);
-        CircleImageView profileImage = (CircleImageView)findViewById(R.id.user_image);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
+        CircleImageView profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
         String profileImageUrl = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC);
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
@@ -164,98 +127,56 @@ public class HomeActivity extends AppCompatActivity
         }
         txtProfileName.setText(UsrName);
 
-//        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                Fragment fragment = null;
-//
-//                switch (item.getItemId()){
-//                    case R.id.b_nav_home:
-//                        fragment = new HomeFragment();
-////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                        toolbarText.setText("Home");
-//                        break;
-//
-//                    case R.id.b_nav_notification:
-//                        fragment = new NotificationFragment();
-////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                        toolbarText.setText("Notification");
-//                        break;
-//
-//                    case R.id.b_nav_profile:
-//                        fragment = new ProfileFragment();
-////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                        toolbarText.setText("Profile");
-//                        break;
-//                }
-//                return loadFragment(fragment);
-//            }
-//        });
-////        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//        loadFragment(new HomeFragment());
-//        toolbarText.setText("Home");
-    }
+        drawer.setScrimColor(Color.TRANSPARENT);
+        drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+                                     @Override
+                                     public void onDrawerSlide(View drawer, float slideOffset) {
+                                         contentView.setX(navigationView.getWidth() * slideOffset);
+                                         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) contentView.getLayoutParams();
+                                         lp.height = drawer.getHeight() -
+                                                 (int) (drawer.getHeight() * slideOffset * 0.3f);
+//                                         lp.topMargin = (drawer.getHeight() - lp.height) / 2;
+                                         contentView.setLayoutParams(lp);
+                                     }
 
+                                     @Override
+                                     public void onDrawerClosed(View drawerView) {
+                                     }
+                                 }
+        );
 
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment = null;
 
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
-        }
+                switch (item.getItemId()){
+                    case R.id.b_nav_home:
+                        fragment = new HomeFragment();
+//                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                        toolbarText.setText("Home");
+                        break;
 
-    }
+                    case R.id.b_nav_notification:
+                        fragment = new NotificationFragment();
+//                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                        toolbarText.setText("Notification");
+                        break;
 
-    private void selectItem(int position) {
-
-        Fragment fragment = null;
-
-        switch (position) {
-            case 0:
-                loadFragment(new HomeFragment());
+                    case R.id.b_nav_profile:
+                        fragment = new ProfileFragment();
+//                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                        toolbarText.setText("Profile");
+                        break;
+                }
+                return loadFragment(fragment);
+            }
+        });
+//        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        loadFragment(new HomeFragment());
         toolbarText.setText("Home");
-                break;
-            case 1:
-                Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                startActivity(intent);
-                break;
-            case 2:
-                loadFragment(new ProfileFragment());
-                toolbarText.setText("Profile");
-                break;
-
-            case 3:
-                Intent intent1 = new Intent(getApplicationContext(), SignInActivity.class);
-                intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent1.putExtra("EXIT", true);
-//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                startActivity(intent1);
-                PreferencesHelper.signOut(HomeActivity.this);
-                mAuth.signOut();
-                HomeActivity.this.finish();
-                break;
-
-            default:
-                break;
-        }
-
-//        loadFragment(new HomeFragment());
-//        toolbarText.setText("Home");
-
-//        if (fragment != null) {
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//            fragmentManager.beginTransaction().replace(R.id.main_frame_layout, fragment).commit();
-//
-//            mDrawerList.setItemChecked(position, true);
-//            mDrawerList.setSelection(position);
-//            setTitle(mNavigationDrawerItemTitles[position]);
-//            mDrawerLayout.closeDrawer(mDrawerList);
-//
-//        } else {
-//            Log.e("MainActivity", "Error in creating fragment");
-//        }
     }
+
     private boolean loadFragment(Fragment fragment) {
         //switching fragment
         if (fragment != null) {
@@ -305,11 +226,11 @@ public class HomeActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }*/
 
-//    @Override
-//    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-//        super.onPostCreate(savedInstanceState, persistentState);
-//        toggle.syncState();
-//    }
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        toggle.syncState();
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -366,57 +287,21 @@ public class HomeActivity extends AppCompatActivity
             Toast.makeText(context, "Image title", Toast.LENGTH_SHORT).show();
         }
 
-//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//        drawer.closeDrawer(GravityCompat.START);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
 
         return true;
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        isRunning = false;
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        isRunning = true;
-//    }
-
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    protected void onPause() {
+        super.onPause();
+        isRunning = false;
     }
 
     @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getSupportActionBar().setTitle(mTitle);
+    protected void onResume() {
+        super.onResume();
+        isRunning = true;
     }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
-
-    void setupToolbar(){
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-    }
-
-    void setupDrawerToggle(){
-        mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this,mDrawerLayout,toolbar,R.string.app_name, R.string.app_name);
-        //This is necessary to change the icon of the Drawer Toggle upon state change.
-        mDrawerToggle.syncState();
-    }
-
-
 }

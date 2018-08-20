@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.25.4'
     }
 }
 apply plugin: 'com.android.application'
@@ -30,6 +30,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        dexOptions {
+            javaMaxHeapSize "4g"
         }
     }
     compileOptions {
@@ -98,10 +101,20 @@ dependencies {
     implementation 'com.yarolegovich:mp:1.0.9'
     implementation 'com.yarolegovich:discrete-scrollview:1.4.9'
 
+    implementation 'com.google.ar:core:1.4.0'
+    // Provides ArFragment, and other UX resources.
+    implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.4.0'
+    // Alternatively, use ArSceneView without the UX dependency.
+    implementation 'com.google.ar.sceneform:core:1.4.0'
+    implementation 'com.jakewharton:butterknife:8.5.1'
+    compileOnly 'org.glassfish:javax.annotation:10.0-b28'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    api files('libs/beyondar-v0.9.3.jar')
 }
 
 apply plugin: 'com.google.gms.google-services'

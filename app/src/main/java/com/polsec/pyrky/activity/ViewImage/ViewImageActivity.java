@@ -3,12 +3,10 @@ package com.polsec.pyrky.activity.ViewImage;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
@@ -37,10 +35,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.ar.core.ArCoreApk;
-import com.google.ar.core.Session;
-import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
-import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -56,10 +50,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.HomeActivity;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
+
+import com.polsec.pyrky.activity.arnavigation.ArNavActivity;
 import com.polsec.pyrky.activity.forgotpassword.ForgotpasswordActivity;
 import com.polsec.pyrky.activity.signin.SignInActivity;
 import com.polsec.pyrky.activity.signup.SignupScreenActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
+import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.pojo.Users;
@@ -70,19 +67,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static android.content.ContentValues.TAG;
-import static com.google.ar.core.ArCoreApk.InstallStatus.INSTALLED;
-import static com.google.ar.core.ArCoreApk.InstallStatus.INSTALL_REQUESTED;
 
 public class ViewImageActivity extends AppCompatActivity {
     TextView BookBtn;
     ImageView CloseImg;
-    double latitude,longitude;
-    Context context;
-    String documentID;
-    double parkingSpaceRating;
+    double curLat,curLong,latitude,longitude;
+    Context context = this;
+    String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
     String DestName,lat,longi,mUid;
     List<Users> bookinglist = new ArrayList<Users>();
@@ -90,20 +83,7 @@ public class ViewImageActivity extends AppCompatActivity {
     List<String> booking_ID = new ArrayList<>();
     FirebaseAuth mAuth;
     Map<String, Object> bookingid = new HashMap<>();
-    int currentapiVersion;
-    private boolean mUserRequestedInstall = true;
-        Session mSession;
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-        // Check camera permission.
-
-
-        // Make sure ARCore is installed and up to date.
-
-
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
@@ -118,7 +98,14 @@ public class ViewImageActivity extends AppCompatActivity {
 //                onBackPressed();
 //            }
 //        });
-        currentapiVersion= android.os.Build.VERSION.SDK_INT;
+
+
+        TrackGPS trackGps = new TrackGPS(context);
+
+        if (trackGps.canGetLocation()){
+            curLat = trackGps.getLatitude();
+            curLong = trackGps.getLongitude();
+        }
         db = FirebaseFirestore.getInstance();
 
         Bundle extras = getIntent().getExtras();
@@ -144,48 +131,7 @@ public class ViewImageActivity extends AppCompatActivity {
         BookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                try {
-
-                    if (mSession == null) {
-                        switch (ArCoreApk.getInstance().requestInstall(ViewImageActivity.this, mUserRequestedInstall)) {
-                            case INSTALLED:
-                                // Success, create the AR session.
-                                mSession = new Session(ViewImageActivity.this);
-
-                                showBottomSheet(latitude,longitude);
-                                break;
-                            case INSTALL_REQUESTED:
-
-                                showBottomSheet1(latitude,longitude);
-                                // Ensures next invocation of requestInstall() will either return
-                                // INSTALLED or throw an exception.
-                                mUserRequestedInstall = false;
-                                return;
-                        }
-                    }
-                } catch (UnavailableUserDeclinedInstallationException e) {
-                    // Display an appropriate message to the user and return gracefully.
-                    Toast.makeText(ViewImageActivity.this, "TODO: handle exception " + e, Toast.LENGTH_LONG)
-                            .show();
-                    return;
-                } catch (Exception e) {  // Current catch statements.
-
-                    return;  // mSession is still null.
-                }
-
-                if (currentapiVersion > 14) {
-                    Toast.makeText(ViewImageActivity.this, "above", Toast.LENGTH_SHORT).show();
-                    // Do something for 14 and above versions
-
-
-                } else {
-
-                    Toast.makeText(ViewImageActivity.this, "below", Toast.LENGTH_SHORT).show();
-
-                }
-
-
+                showBottomSheet(latitude,longitude);
                 SaveData(lat,longi,DestName);
             }
         });
@@ -265,7 +211,7 @@ public class ViewImageActivity extends AppCompatActivity {
         final String uid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 
 
-        parkingSpaceRating=0;
+        parkingSpaceRating="0";
         protectCar=false;
         bookingStatus=true;
 //          locationTxt=Location_Txt.getText().toString();
@@ -277,7 +223,7 @@ public class ViewImageActivity extends AppCompatActivity {
         likeData.put(uid, false);
         documentID="";
 
-        Booking bookingdata = new Booking(uid,latitude,longitude,destName,getPostTime(),bookingStatus,documentID,parkingSpaceRating,protectCar);
+        Booking bookingdata = new Booking(uid,latitude,longitude,destName,String.valueOf(getPostTime()),bookingStatus,documentID,parkingSpaceRating,protectCar);
 
 
         db.collection("Bookings").add(bookingdata).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -287,7 +233,7 @@ public class ViewImageActivity extends AppCompatActivity {
                 documentID = documentReference.getId();
 //                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
 
-                Booking bookingdata = new Booking(uid,latitude,longitude,destName,getPostTime(),bookingStatus,documentID,parkingSpaceRating,protectCar);
+                Booking bookingdata = new Booking(uid,latitude,longitude,destName,String.valueOf(getPostTime()),bookingStatus,documentID,parkingSpaceRating,protectCar);
                 Map<String, Object> docID = new HashMap<>();
                 docID.put("documentID", documentID);
 
@@ -356,7 +302,6 @@ public class ViewImageActivity extends AppCompatActivity {
         Button ok = (Button)deleteDialogView.findViewById(R.id.ok_button);
         Button cancel = (Button)deleteDialogView.findViewById(R.id.cancel_button);
 
-
         final AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -420,20 +365,13 @@ public class ViewImageActivity extends AppCompatActivity {
         }
     }
 
-
-
-    private void showBottomSheet1(double latitude, double longitude) {
+    private void showBottomSheet(double latitude, double longitude) {
 
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ViewImageActivity.this);
         LayoutInflater factory = LayoutInflater.from(ViewImageActivity.this);
-        View bottomSheetView = factory.inflate(R.layout.mapspyrky_bottomsheet1, null);
+        View bottomSheetView = factory.inflate(R.layout.mapspyrky_bottomsheet, null);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
-
-
-
-        // do something for phones running an SDK before 14
-
 
         TextView map = (TextView) bottomSheetView.findViewById(R.id.maps_title);
         TextView pyrky = (TextView) bottomSheetView.findViewById(R.id.pyrky_title);
@@ -484,78 +422,17 @@ public class ViewImageActivity extends AppCompatActivity {
 //                }
 //                Intent checkinintent = new Intent(getActivity(), CheckScreenActivity.class);
 //                startActivity(checkinintent);
-                bottomSheetDialog.dismiss();
-            }
-        });
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-    }
-    private void showBottomSheet(double latitude, double longitude) {
-
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ViewImageActivity.this);
-        LayoutInflater factory = LayoutInflater.from(ViewImageActivity.this);
-        View bottomSheetView = factory.inflate(R.layout.mapspyrky_bottomsheet, null);
-        bottomSheetDialog.setContentView(bottomSheetView);
-        bottomSheetDialog.show();
-
-
-
-            // do something for phones running an SDK before 14
-
-
-            TextView map = (TextView) bottomSheetView.findViewById(R.id.maps_title);
-        TextView pyrky = (TextView) bottomSheetView.findViewById(R.id.pyrky_title);
-//        GalleryIcon = (ImageView) bottomSheetView.findViewById(R.id.gallery_icon);
-//        CameraIcon = (ImageView) bottomSheetView.findViewById(R.id.camera_image);
-        TextView cancel = (TextView) bottomSheetView.findViewById(R.id.cancel_txt);
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                PackageManager pm = ViewImageActivity.this.getPackageManager();
-                if(isPackageInstalled()){
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                            Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
+                Intent intent = new Intent(ViewImageActivity.this, ArNavActivity.class);
+                try {
+                    intent.putExtra("SRC", "Current Location");
+                    intent.putExtra("DEST", "Some Destination");
+                    intent.putExtra("SRCLATLNG", curLat + "," + curLong);
+                    intent.putExtra("DESTLATLNG", latitude + "," + longitude);
                     startActivity(intent);
-//                    Toast.makeText(ViewImageActivity.this, "true", Toast.LENGTH_SHORT).show();
-                }else{
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                            Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
-                    startActivity(intent);
-//                    Toast.makeText(ViewImageActivity.this, "false", Toast.LENGTH_SHORT).show();
+                }catch (NullPointerException npe){
 
-
+                    Log.d(TAG, "onClick: The IntentExtras are Empty");
                 }
-//
-
-//                Intent postintent = new Intent(getActivity(), PostActivity.class);
-//                startActivity(postintent);
-                bottomSheetDialog.dismiss();
-//
-//                if (hasPermissions()) {
-//                    captureImage();
-//                } else {
-//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
-//                }
-            }
-        });
-
-        pyrky.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                if (hasPermissions()) {
-//                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                    startActivityForResult(i, RC_PICK_IMAGE);
-//                } else {
-//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
-//                }
-//                Intent checkinintent = new Intent(getActivity(), CheckScreenActivity.class);
-//                startActivity(checkinintent);
                 bottomSheetDialog.dismiss();
             }
         });
@@ -568,7 +445,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
     }
-    public double getPostTime() {
+    public long getPostTime() {
 
         Date currentDate = new Date();
         long unixTime = currentDate.getTime() / 1000;
