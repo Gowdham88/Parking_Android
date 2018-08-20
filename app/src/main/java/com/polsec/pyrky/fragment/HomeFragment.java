@@ -113,7 +113,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     HashMap<String, List<String>> mExpandableListDetail;
     Boolean isExpandableListEnabled = false;
 
-
     GoogleMap Mmap;
     SupportMapFragment mapFrag;
     private TrackGPS gps;
