@@ -366,7 +366,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 distances1.add(String.valueOf(distanceval));
                                 Log.e("distance", String.valueOf(distances1));
 
-                                if (distancemtrs1 < 1500) {
+//                                if (distancemtrs1 < 1500) {
                                     caldis1.add(String.valueOf(distancesmtrs1));
                                     Log.e("caldis1", String.valueOf(caldis1));
                                     nearlat1.add(datalist.get(i).getCameraLat());
@@ -399,7 +399,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //
 
 
-                            }
+//                            }
 
                         }
                     }

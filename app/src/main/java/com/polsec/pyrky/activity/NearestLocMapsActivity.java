@@ -275,10 +275,11 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
         }
 */
-        for (String key : field){
-
-            for (String values : keyValue.get(key)) {
-                Query query = db.collection("camera").whereEqualTo(key,values);
+//        for (String key : field){
+//
+//            for (String values : keyValue.get(key)) {
+//                Query query = db.collection("camera").whereEqualTo(key,values);
+        Query query = db.collection("camera");
 
                 query.get()
                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -321,7 +322,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                         distances1.add(String.valueOf(distanceval));
                                         Log.e("distancemap", String.valueOf(distances1));
 
-                                        if (distancemtrs1 < 15000) {
+//                                        if (distancemtrs1 < 15000) {
                                             caldismap.add(String.valueOf(distancesmtrsmap));
                                             Log.e("caldismap", String.valueOf(caldismap));
                                             nearlat1.add(datalist.get(i).getCameraLat());
@@ -384,14 +385,14 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 //
 
 
-                                    }
+//                                    }
 
                                 }
                             }
 
                         });
-            }
-        }
+//            }
+//        }
 //
 //        mGoogleApiClient = new GoogleApiClient.Builder(NearestLocMapsActivity.this)
 //                .addApi(Places.GEO_DATA_API)
@@ -432,7 +433,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
             Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 //            CameraUpdate current = CameraUpdateFactory.newLatLngZoom(sydney,15);
-            Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 5, null);
+            Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 15, null);
 //            Mmap.moveCamera(current);
 
 //            MarkerOptions a = new MarkerOptions()
@@ -444,7 +445,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 //            LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
             Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-            Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 5, null);
+            Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 15, null);
 //            CameraUpdate current = CameraUpdateFactory.newLatLngZoom(sydney,15);
 //            Mmap.moveCamera(current);
 
@@ -480,7 +481,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = adapterPosition;
-        onItemChanged(nearlat1.get(positionInDataSet), nearlong1.get(0), ruls.get(0));
+        onItemChanged(nearlat1.get(positionInDataSet), nearlong1.get(positionInDataSet), ruls.get(0));
 
 
     }
@@ -749,20 +750,121 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             public void onClick(View view) {
 
 
-                PackageManager pm = NearestLocMapsActivity.this.getPackageManager();
-                if(isPackageInstalled()){
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                            Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
-                    startActivity(intent);
+//                PackageManager pm = NearestLocMapsActivity.this.getPackageManager();
+//                if(isPackageInstalled()){
+//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+//                            Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
+//                    startActivity(intent);
+////                    Toast.makeText(NearestLocMapsActivity.this, "true", Toast.LENGTH_SHORT).show();
+//                }else{
+//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+//                            Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
+//                    startActivity(intent);
+////                    Toast.makeText(NearestLocMapsActivity.this, "false", Toast.LENGTH_SHORT).show();
+//
+//
+//                }
+//
+
+                final FirebaseUser user = mAuth.getCurrentUser();
+                DocumentReference docRef = db.collection("users").document(user.getUid());
+                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+
+                        if (documentSnapshot.exists()){
+
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                            DocumentReference docRef = db.collection("users").document(mUid);
+                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        if (document.exists()) {
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                            bookingid = document.getData();
+
+
+                                            bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+
+
+                                            String count = String.valueOf(bookingid1.size());
+                                            Log.e("count", count);
+
+
+//                                    followingcount = 1;
+                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                                System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                                val= (Boolean) entry.getValue();
+                                                String values = String.valueOf(val);
+
+                                                Log.e("values", values);
+//
+
+                                            }
+                                            if (val == true) {
+
+//                                                Toast.makeText(NearestLocMapsActivity.this, values, Toast.LENGTH_SHORT).show();
+                                                String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+                                                popup(valuedoc);
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                            }
+                                            else{
+                                                PackageManager pm = NearestLocMapsActivity.this.getPackageManager();
+                                                if(isPackageInstalled()){
+                                                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                                            Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
+                                                    startActivity(intent);
 //                    Toast.makeText(NearestLocMapsActivity.this, "true", Toast.LENGTH_SHORT).show();
-                }else{
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                            Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
-                    startActivity(intent);
+                                                }else{
+                                                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                                            Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
+                                                    startActivity(intent);
 //                    Toast.makeText(NearestLocMapsActivity.this, "false", Toast.LENGTH_SHORT).show();
 
 
-                }
+                                                }
+
+
+                                            }
+
+
+                                        } else {
+//                        Log.d(TAG, "No such document");
+
+                                        }
+                                    } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+
+                                    }
+                                }
+                            });
+
+//                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+
+
+                        } else {
+
+
+
+                        }
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Log.w("Error", "Error adding document", e);
+                        Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
 //
 
