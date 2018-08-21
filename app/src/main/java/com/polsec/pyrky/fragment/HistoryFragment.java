@@ -13,10 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.adapter.CurrentBookingRecyclerAdapter;
@@ -25,7 +29,11 @@ import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.crashlytics.android.answers.Answers.TAG;
 
 /**
  * Created by thulirsoft on 7/9/18.
@@ -40,8 +48,14 @@ public class HistoryFragment extends Fragment {
     HistoryRecyclerAdapter recyclerAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
     String uid;
+    FirebaseFirestore db;
     List<Booking> BookingList = new ArrayList<Booking>();
     List<String> BookingListId = new ArrayList<String>();
+
+    String mUid;
+    Map<String, Object> bookingid = new HashMap<>();
+
+    Map<String, Object> bookingid1=new HashMap<>();
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
     public static final String ACTION_SHOW_DEFAULT_ITEM = "action_show_default_item";
     public HistoryFragment() {
@@ -54,6 +68,7 @@ public class HistoryFragment extends Fragment {
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
 //        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
         loadPost(ACTION_SHOW_LOADING_ITEM);
+        loadPostval(ACTION_SHOW_LOADING_ITEM);
         recyclerAdapter.notifyDataSetChanged();
     }
 
@@ -71,7 +86,7 @@ public class HistoryFragment extends Fragment {
 
 
         swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
-        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList);
+        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
@@ -87,6 +102,8 @@ public class HistoryFragment extends Fragment {
                     }
                 }
         );
+        db = FirebaseFirestore.getInstance();
+
 
         return view;
     }
@@ -95,12 +112,13 @@ public class HistoryFragment extends Fragment {
 
         recyclerAdapter.notifyDataSetChanged();
         loadPost(ACTION_SHOW_LOADING_ITEM);
+        loadPostval(ACTION_SHOW_LOADING_ITEM);
         swipeRefreshLayout.setRefreshing(false);
     }
 
     private void setupFeed() {
 
-        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList);
+        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
@@ -150,6 +168,52 @@ public class HistoryFragment extends Fragment {
                     }
 
                 });
+    }
+    public void loadPostval(final String type) {
+
+        DocumentReference docRef = db.collection("users").document(uid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        bookingid = document.getData();
+
+
+                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+
+
+                        String count = String.valueOf(bookingid1.size());
+                        Log.e("count", count);
+
+
+//                                    followingcount = 1;
+                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                            System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                            Boolean val = (Boolean) entry.getValue();
+                            String values = String.valueOf(val);
+
+                            Log.e("valuesh", values);
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        setupFeed();
+
+                    } else {
+//                        Log.d(TAG, "No such document");
+
+                    }
+                } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+
+                }
+            }
+        });
+
     }
 
 }

@@ -42,6 +42,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     ArrayList<String> nearlong1 = new ArrayList<>();
     ArrayList<String> distances1 = new ArrayList<>();
     ArrayList<String> Placename = new ArrayList<>();
+    ArrayList<String> ruls = new ArrayList<>();
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
     private ListAdapterListener mListener;
@@ -52,7 +53,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 
 
     public interface ListAdapterListener {
-        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1, String mapvalues, String s2);
+        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1, String mapvalues, String s2, String s3);
 //        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1); // create an interface
 
 
@@ -61,13 +62,14 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 
 //
     }
-    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ListAdapterListener mListener) {
+    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<String> ruls, ListAdapterListener mListener) {
         this.context = context;
         this.nearimg = nearimg;
         this.nearlat1 = nearlat1;
         this.nearlong1 = nearlong1;
         this.distances1 = distances1;
         this.Placename=Placename;
+        this.ruls=ruls;
         this.mListener=mListener;
         notifyDataSetChanged();
     }
@@ -131,7 +133,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
             public void onClick(View v) {
 //                Toast.makeText(context, "click", Toast.LENGTH_SHORT).show();
                 String mapvalues="mapvalues";
-                mListener.onClickimageButton(position,ACTION_LIKE_BUTTON_CLICKED,nearlat1.get(position),nearlong1.get(position),mapvalues,Placename.get(position));
+                mListener.onClickimageButton(position,ACTION_LIKE_BUTTON_CLICKED,nearlat1.get(position),nearlong1.get(position),mapvalues,Placename.get(position),ruls.get(position));
 
             }
         });

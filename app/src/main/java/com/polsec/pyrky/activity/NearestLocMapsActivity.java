@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -21,17 +23,17 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.azoft.carousellayoutmanager.CarouselLayoutManager;
-import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -41,13 +43,18 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
@@ -69,6 +76,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 
 public class NearestLocMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener,
@@ -94,6 +103,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     ArrayList<Double> distancesmtrscurrentmap = new ArrayList<>();
     ArrayList<String> distancescurrentarrmap = new ArrayList<>();
     ArrayList<String> Placename = new ArrayList<>();
+    ArrayList<String> ruls = new ArrayList<>();
     private Boolean isPopUpShowing = false;
     double distanceval;
     GoogleMap Mmap;
@@ -135,9 +145,15 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     String valuelongi;
     String valuestr;
     String PlaceNameval;
-    String parkytype;
+    String parkytype,mUid;
     private InfiniteScrollAdapter infiniteAdapter;
 
+    FirebaseFirestore db;
+    FirebaseAuth mAuth;
+    Map<String, Object> bookingid = new HashMap<>();
+
+    Map<String, Object> bookingid1=new HashMap<>();
+    Boolean val;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +164,9 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         mapFragment.getMapAsync(NearestLocMapsActivity.this);
         mNearestPlaceRecycler = findViewById(R.id.nearest_places_recycler);
         mNearestPlaceRecycler.setVisibility(View.VISIBLE);
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        mUid = PreferencesHelper.getPreference(NearestLocMapsActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 
         BackImg = (ImageView) findViewById(R.id.back_image);
         TitlaTxt = (TextView) findViewById(R.id.extra_title);
@@ -284,6 +303,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                     distances1.clear();
                                     nearimg.clear();
                                     Placename.clear();
+                                    ruls.clear();
                                     for (int i = 0; i < datalist.size(); i++) {
 //
 
@@ -308,9 +328,11 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                             nearlong1.add(datalist.get(i).getCameraLong());
                                             nearimg.add(datalist.get(i).getCameraImageUrl());
                                             Placename.add(datalist.get(i).getCameraLocationName());
+                                            ruls.add(datalist.get(i).getCameraID());
                                             Log.e("nearlatmap", String.valueOf(nearlat1));
                                             Log.e("nearlongmap", String.valueOf(nearlong1));
                                             Log.e("nearimgmap", String.valueOf(nearimg));
+                                            Log.e("rulsmap", String.valueOf(ruls));
 
 ////                            //Carousel View
 //                                    final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
@@ -328,14 +350,14 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
                                             mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
                                             mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
-                                            mNearestrecyclerAdapter = new CarouselDetailMapAdapter(context, nearimg, nearlat1, nearlong1, distances1, Placename, NearestLocMapsActivity.this);
+                                            mNearestrecyclerAdapter = new CarouselDetailMapAdapter(context, nearimg, nearlat1, nearlong1, distances1, Placename,ruls, NearestLocMapsActivity.this);
                                             mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                             mNearestPlaceRecycler.setItemTransformer(new ScaleTransformer.Builder()
                                                     .setMinScale(0.8f)
                                                     .build());
                                             parkytype = datalist.get(i).getParkingType();
 
-                                            onItemChanged(nearlat1.get(0), nearlong1.get(0));
+                                            onItemChanged(nearlat1.get(0), nearlong1.get(0), ruls.get(0));
 
 
 //                                    infiniteAdapter.notifyDataSetChanged();
@@ -382,7 +404,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
 
     @Override
-    public void onClickimageButton(final int position, final String actionLikeButtonClicked, final String s, final String s1, String mapvalues, String s2) {
+    public void onClickimageButton(final int position, final String actionLikeButtonClicked, final String s, final String s1, String mapvalues, String s2, String s3) {
 
 
 //        Toast.makeText(NearestLocMapsActivity.this, "click", Toast.LENGTH_SHORT).show();
@@ -397,7 +419,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
     }
 
-    private void onItemChanged(String item, String s) {
+    private void onItemChanged(String item, String s, String s1) {
         mapLat=item.toString();
         mapLongi=s.toString();
         Log.e("mapLongi",mLongi);
@@ -458,7 +480,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = adapterPosition;
-        onItemChanged(nearlat1.get(positionInDataSet), nearlong1.get(0));
+        onItemChanged(nearlat1.get(positionInDataSet), nearlong1.get(0), ruls.get(0));
 
 
     }
@@ -519,9 +541,14 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             public boolean onMarkerClick(Marker m) {
 
 
-
                 showDialog(m);
                 mNearestPlaceRecycler.setVisibility(View.GONE);
+
+
+
+
+
+
 
                 return false;
 
@@ -536,10 +563,17 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         View promptView = layoutInflater.inflate(R.layout.ruls_layout , null);
         final AlertDialog alertD = new AlertDialog.Builder(this).create();
 
-            TextView ViewTxt,NavigateTxt;
+            TextView ViewTxt,NavigateTxt,RuleTxt1,RuleTxt2,RuleTxt3,RuleTxt4;
 
         ViewTxt=(TextView)promptView.findViewById(R.id.view_txt);
         NavigateTxt=(TextView)promptView.findViewById(R.id.navi_txt);
+        RuleTxt1=(TextView)promptView.findViewById(R.id.rule1_txt);
+        RuleTxt2=(TextView)promptView.findViewById(R.id.rule2_txt);
+        RuleTxt3=(TextView)promptView.findViewById(R.id.rule3_txt);
+        RuleTxt4=(TextView)promptView.findViewById(R.id.rule4_txt);
+
+
+
 
         Geocoder geocoder;
 ////
@@ -636,6 +670,53 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
                         PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCUMENTID,documentID);
 
+                        Map<String, Boolean> likeData1 = new HashMap<>();
+                        likeData1.put( documentID, true);
+
+                        Map<String, Map<String, Boolean>> likeData2 = new HashMap<>();
+                        likeData2.put( "Booking_ID", likeData1);
+
+
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                        db.collection("users").document(uid)
+                                .set(likeData2, SetOptions.merge())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+//                            DocumentReference washingtonRef = db.collection("users").document(uid);
+//
+//                            washingtonRef
+//                                    .update("Booking_ID",likeData1)
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            Log.w(TAG, "Error updating document", e);
+//                                        }
+//                                    });
+
+
+
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error writing document", e);
+                                    }
+                                });
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -682,6 +763,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
 
                 }
+
 //
 
 //                Intent postintent = new Intent(getActivity(), PostActivity.class);
@@ -717,6 +799,165 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             }
         });
     }
+
+    private void popup(String valuedoc) {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
+        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        Button ok = (Button)deleteDialogView.findViewById(R.id.ok_button);
+        Button cancel = (Button)deleteDialogView.findViewById(R.id.cancel_button);
+
+        final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Map<String, Boolean> likeData1 = new HashMap<>();
+                likeData1.put( valuedoc, false);
+
+                Map<String, Map<String, Boolean>> likeData2 = new HashMap<>();
+                likeData2.put( "Booking_ID", likeData1);
+
+
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                db.collection("users").document(mUid)
+                        .set(likeData2, SetOptions.merge())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+
+
+
+                alertDialog1.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                final FirebaseUser user = mAuth.getCurrentUser();
+                DocumentReference docRef = db.collection("users").document(user.getUid());
+                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+
+                        if (documentSnapshot.exists()){
+
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                            DocumentReference docRef = db.collection("users").document(mUid);
+                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        if (document.exists()) {
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                            bookingid = document.getData();
+
+
+                                            bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+
+
+                                            String count = String.valueOf(bookingid1.size());
+                                            Log.e("count", count);
+
+
+//                                    followingcount = 1;
+                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                                System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                                Boolean val = (Boolean) entry.getValue();
+                                                String values = String.valueOf(val);
+
+                                                Log.e("values", values);
+//
+                                                if (val == true) {
+
+
+                                                    popup(valuedoc);
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                                }
+//                                                else{
+//
+//                                                }
+                                            }
+
+
+
+                                        } else {
+//                        Log.d(TAG, "No such document");
+
+                                        }
+                                    } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+
+                                    }
+                                }
+                            });
+
+//                            Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+
+                        } else {
+
+
+
+                        }
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Log.w("Error", "Error adding document", e);
+                        Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+//
+
+//                BookBtn.setVisibility(View.GONE);
+                alertDialog1.dismiss();
+            }
+        });
+
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
 
 
     private boolean isPackageInstalled() {

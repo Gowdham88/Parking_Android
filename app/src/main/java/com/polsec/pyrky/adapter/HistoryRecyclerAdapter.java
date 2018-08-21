@@ -1,15 +1,10 @@
 package com.polsec.pyrky.adapter;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
@@ -27,17 +22,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.polsec.pyrky.R;
-import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,13 +49,22 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     int count = 0;
     String docid,uid,Rating;
     RatingBar ratingBar,ratingbar1;
+    FirebaseFirestore db;
+
+    FirebaseAuth mAuth;
+    String mUid;
+    Map<String, Object> bookingid = new HashMap<>();
+
+    Map<String, Object> bookingid1=new HashMap<>();
+
 
 
     List<Booking> bookingList = new ArrayList<Booking>();
     String Datetime;
-    public HistoryRecyclerAdapter(Context context, List<Booking> bookingList) {
+    public HistoryRecyclerAdapter(Context context, List<Booking> bookingList, Map<String, Object> bookingid1) {
         this.context = context;
         this.bookingList = bookingList;
+        this.bookingid1=bookingid1;
 
     }
     @NonNull
@@ -71,7 +72,8 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_history_booking_list, parent, false);
-
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         uid = PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
         docid=PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_DOCUMENTID);
 //        Toast.makeText(context, docid, Toast.LENGTH_SHORT).show();
@@ -104,11 +106,11 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         mPosition = position;
         double time= bookingList.get(position).getDateTime();
 
-        long dv = Long.valueOf(String.valueOf(time))*1000;// its need to be in milisecond
-        Date df = new Date(dv);
-        Datetime= new SimpleDateFormat("dd MMM,  hh:mma").format(df);
-        String strh = Datetime.replace("AM", "am").replace("PM","pm");
-        Log.e("vv",strh);
+//        long dv = Long.valueOf(String.valueOf(time))*1000;// its need to be in milisecond
+//        Date df = new Date(dv);
+//        Datetime= new SimpleDateFormat("dd MMM,  hh:mma").format(df);
+//        String strh = Datetime.replace("AM", "am").replace("PM","pm");
+//        Log.e("vv",strh);
 //        Dateday= new SimpleDateFormat("").format(df);
 //        Datetime= new SimpleDateFormat("").format(df);
 //        Datemothname=getMonthShortName(Integer.parseInt(Datemonth));
@@ -125,26 +127,81 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
         RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
         Boolean status= Boolean.valueOf(bookingList.get(position).getBookingStatus());
-        if(!status){
-            holder.city.setText(bookingList.get(position).getDestName());
-            holder.dateTime.setText(strh);
 
-            double rate=bookingList.get(position).getParkingSpaceRating();
-//            Toast.makeText(context, rate, Toast.LENGTH_SHORT).show();
+//        if(!status){
+//            holder.city.setText(bookingList.get(position).getDestName());
+//        }
+        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+            System.out.println(entry.getKey() + " = " + entry.getValue());
 
-            ratingBar.setRating((float) rate);
-            Drawable drawable = ratingBar.getProgressDrawable();
-            drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
-//            ratingBar.setRating(Float.parseFloat(rate));
+            Boolean val = (Boolean) entry.getValue();
+            String values = String.valueOf(val);
+
+            Log.e("valuesc", values);
+            if(val){
+                holder.city.setText(bookingList.get(position).getDestName());
+            }
+
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+
+        }
+
+
+//        final FirebaseUser user = mAuth.getCurrentUser();
+//        DocumentReference docRef = db.collection("users").document(user.getUid());
+//        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//
+//
+//                if (documentSnapshot.exists()){
+//
+//                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+//
+//
+////                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+//
+//
+//                } else {
+//
+//
+//
+//                }
+//
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//
+//                Log.w("Error", "Error adding document", e);
+//                Toast.makeText(context,"Login failed", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+
+
+//
+//        if(!status){
+//            holder.city.setText(bookingList.get(position).getDestName());
+////            holder.dateTime.setText(strh);
+//
+//            double rate=bookingList.get(position).getParkingSpaceRating();
+////            Toast.makeText(context, rate, Toast.LENGTH_SHORT).show();
+//
+//            ratingBar.setRating((float) rate);
 //            Drawable drawable = ratingBar.getProgressDrawable();
 //            drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
-
-        }
-        else{
-            holder.itemView.setVisibility(View.GONE);
-            param.height = 0;
-            param.width = 0;
-        }
+////            ratingBar.setRating(Float.parseFloat(rate));
+////            Drawable drawable = ratingBar.getProgressDrawable();
+////            drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
+//
+//        }
+//        else{
+//            holder.itemView.setVisibility(View.GONE);
+//            param.height = 0;
+//            param.width = 0;
+//        }
 //
     }
 
