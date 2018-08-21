@@ -113,7 +113,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     HashMap<String, List<String>> mExpandableListDetail;
     Boolean isExpandableListEnabled = false;
 
-
     GoogleMap Mmap;
     SupportMapFragment mapFrag;
     private TrackGPS gps;
@@ -246,8 +245,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                 BOUNDS_MOUNTAIN_VIEW, null);
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
-
-
 
 
         HomeRelLayout.setOnClickListener(new View.OnClickListener() {
@@ -501,69 +498,73 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //
         //Expandable List and Searchview
         permissionStatus = getActivity().getSharedPreferences("permissionStatus", MODE_PRIVATE);
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)) {
-                //Show Information about why you need the permission
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Need phone Permission");
-                builder.setMessage("This app needs phone permission.");
-                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            } else if (permissionStatus.getBoolean(Manifest.permission.CALL_PHONE, false)) {
-                //Previously Permission Request was cancelled with 'Dont Ask Again',
-                // Redirect to Settings after showing Information about why you need the permission
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Need phone Permission");
-                builder.setMessage("This app needs phone permission.");
-                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        sentToSettings = true;
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
-                        intent.setData(uri);
-                        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
-                        Toast.makeText(getActivity(), "Go to Permissions to Grant phone", Toast.LENGTH_LONG).show();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            }
 
-            else {
-                //just request the permission
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
-            }
-
-            SharedPreferences.Editor editor = permissionStatus.edit();
-            editor.putBoolean(Manifest.permission.CALL_PHONE, true);
-            editor.commit();
-
-
-        } else {
-            //You already have the permission, just go ahead.
-            proceedAfterPermission();
-        }
-
-
+//        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)) {
+//                //Show Information about why you need the permission
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setTitle("Need phone Permission");
+//                builder.setMessage("This app needs phone permission.");
+//                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
+//                    }
+//                });
+//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                });
+//                builder.show();
+//            }
+//
+//
+////            else if (permissionStatus.getBoolean(Manifest.permission.CALL_PHONE, false)) {
+////                //Previously Permission Request was cancelled with 'Dont Ask Again',
+////                // Redirect to Settings after showing Information about why you need the permission
+////                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+////                builder.setTitle("Need phone Permission");
+////                builder.setMessage("This app needs phone permission.");
+////                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+////                    @Override
+////                    public void onClick(DialogInterface dialog, int which) {
+////                        dialog.cancel();
+////                        sentToSettings = true;
+////                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+////                        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+////                        intent.setData(uri);
+////                        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+////                        Toast.makeText(getActivity(), "Go to Permissions to Grant phone", Toast.LENGTH_LONG).show();
+////                    }
+////                });
+////                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+////                    @Override
+////                    public void onClick(DialogInterface dialog, int which) {
+////                        dialog.cancel();
+////                    }
+////                });
+////                builder.show();
+////            }
+//
+//            else {
+//                //just request the permission
+//                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
+//            }
+//
+//            SharedPreferences.Editor editor = permissionStatus.edit();
+//            editor.putBoolean(Manifest.permission.CALL_PHONE, true);
+//            editor.commit();
+//
+//
+//        } else {
+//            //You already have the permission, just go ahead.
+//            proceedAfterPermission();
+//        }
+//
+//
         return view;
     }
 
@@ -617,7 +618,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         Mmap.setMyLocationEnabled(false);
 
 //
-           Mmap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocationicon)));
+        Mmap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocationicon)));
         Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateme,13.5f));
         // map.animateCamera(CameraUpdateFactory.zoomIn());
         Mmap.animateCamera(CameraUpdateFactory.zoomTo(13.5f), 2000, null);
@@ -658,63 +659,63 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     }
 
 
-            public AdapterView.OnItemClickListener mAutocompleteClickListener
-                    = new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public AdapterView.OnItemClickListener mAutocompleteClickListener
+            = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                    final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
-                    Utils.hideKeyboard(getActivity());
-                    String placeId = String.valueOf(item.placeId);
-                    description = java.lang.String.valueOf(item.description);
+            final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
+            Utils.hideKeyboard(getActivity());
+            String placeId = String.valueOf(item.placeId);
+            description = java.lang.String.valueOf(item.description);
 
-                    Log.e(TAG, "Selected: " + item.description);
-                    PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
-                            .getPlaceById(mGoogleApiClient, placeId);
-                    placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-                    Log.e(TAG, "Fetching details for ID: " + item.placeId);
+            Log.e(TAG, "Selected: " + item.description);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+            Log.e(TAG, "Fetching details for ID: " + item.placeId);
 
-                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
-                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                                @Override
-                                public void onResult(PlaceBuffer places) {
-                                    if (places.getStatus().isSuccess()) {
-                                        final Place myPlace = places.get(0);
-                                        LatLng queriedLocation = myPlace.getLatLng();
-                                        Latitude = queriedLocation.latitude;
-                                        Longitude = queriedLocation.longitude;
-                                        Log.e("Latitude is", "" + queriedLocation.latitude);
-                                        Log.e("Longitude is", "" + queriedLocation.longitude);
+            Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
+                    .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                        @Override
+                        public void onResult(PlaceBuffer places) {
+                            if (places.getStatus().isSuccess()) {
+                                final Place myPlace = places.get(0);
+                                LatLng queriedLocation = myPlace.getLatLng();
+                                Latitude = queriedLocation.latitude;
+                                Longitude = queriedLocation.longitude;
+                                Log.e("Latitude is", "" + queriedLocation.latitude);
+                                Log.e("Longitude is", "" + queriedLocation.longitude);
 
 
-                                        distancesmtrs.clear();
-                                        for (int i = 0; i < datalist.size(); i++) {
+                                distancesmtrs.clear();
+                                for (int i = 0; i < datalist.size(); i++) {
 
-                                            Log.e("Latitude", "" + datalist.get(i).getCameraLat());
-                                            Log.e("Longitude", "" + datalist.get(i).getCameraLong());
+                                    Log.e("Latitude", "" + datalist.get(i).getCameraLat());
+                                    Log.e("Longitude", "" + datalist.get(i).getCameraLong());
 
-                                            loc1.setLatitude(Latitude);
-                                            loc1.setLongitude(Longitude);
-                                            loc2.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
-                                            loc2.setLongitude(Double.parseDouble(datalist.get(i).getCameraLong()));
-                                            double distance = 0;
-                                            double distancemtrs = loc1.distanceTo(loc2);
-                                            distancesmtrs.add(distancemtrs);
-                                            Log.e("distancemtrs", String.valueOf(distancesmtrs));
+                                    loc1.setLatitude(Latitude);
+                                    loc1.setLongitude(Longitude);
+                                    loc2.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
+                                    loc2.setLongitude(Double.parseDouble(datalist.get(i).getCameraLong()));
+                                    double distance = 0;
+                                    double distancemtrs = loc1.distanceTo(loc2);
+                                    distancesmtrs.add(distancemtrs);
+                                    Log.e("distancemtrs", String.valueOf(distancesmtrs));
 //                        for(int j =0;j<distancesmtrs.size();j++){
 
-                                            if (distancemtrs < 1500) {
-                                                caldis.add(String.valueOf(distancesmtrs));
-                                                Log.e("caldis", String.valueOf(caldis));
-                                                nearlat.add(datalist.get(i).getCameraLat());
-                                                nearlong.add(datalist.get(i).getCameraLong());
-                                                Log.e("nearlat", String.valueOf(nearlat));
-                                                Log.e("nearlong", String.valueOf(nearlong));
+                                    if (distancemtrs < 1500) {
+                                        caldis.add(String.valueOf(distancesmtrs));
+                                        Log.e("caldis", String.valueOf(caldis));
+                                        nearlat.add(datalist.get(i).getCameraLat());
+                                        nearlong.add(datalist.get(i).getCameraLong());
+                                        Log.e("nearlat", String.valueOf(nearlat));
+                                        Log.e("nearlong", String.valueOf(nearlong));
 //                            }
-                                            }
-                                            distance = loc1.distanceTo(loc2) / 1000;
-                                            Log.e("distance", String.valueOf(distance));
-                                            distances.add(distance);
+                                    }
+                                    distance = loc1.distanceTo(loc2) / 1000;
+                                    Log.e("distance", String.valueOf(distance));
+                                    distances.add(distance);
 //                                          distancedata();
 
 
@@ -724,75 +725,75 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
 //
-                                        }
-
-                                    }
-                                    places.release();
                                 }
-                            });
-                }
-            };
+
+                            }
+                            places.release();
+                        }
+                    });
+        }
+    };
 
 
 
-            @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
-            public void hideKeyboard(View view) {
-                InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
+            = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(PlaceBuffer places) {
+            if (!places.getStatus().isSuccess()) {
+                Log.e(TAG, "Place query did not complete. Error: " +
+                        places.getStatus().toString());
+                return;
             }
-
-
-            private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
-                    = new ResultCallback<PlaceBuffer>() {
-                @Override
-                public void onResult(PlaceBuffer places) {
-                    if (!places.getStatus().isSuccess()) {
-                        Log.e(TAG, "Place query did not complete. Error: " +
-                                places.getStatus().toString());
-                        return;
-                    }
-                    // Selecting the first object buffer.
-                    final Place place = places.get(0);
-                    CharSequence attributions = places.getAttributions();
+            // Selecting the first object buffer.
+            final Place place = places.get(0);
+            CharSequence attributions = places.getAttributions();
 
 //                    mNameView.setText(Html.fromHtml(place.getAddress() + ""));
 
 
-                }
-            };
+        }
+    };
 
-            @Override
-            public void onConnected(@Nullable Bundle bundle) {
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
 
-                mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
-                Log.i(TAG, "Google Places API connected.");
+        mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
+        Log.i(TAG, "Google Places API connected.");
 
-            }
+    }
 
-            @Override
-            public void onConnectionSuspended(int i) {
-                mPlaceArrayAdapter.setGoogleApiClient(null);
-                Log.e(TAG, "Google Places API connection suspended.");
-            }
+    @Override
+    public void onConnectionSuspended(int i) {
+        mPlaceArrayAdapter.setGoogleApiClient(null);
+        Log.e(TAG, "Google Places API connection suspended.");
+    }
 
-            @Override
-            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-                Log.e(TAG, "Google Places API connection failed with error code: "
-                        + connectionResult.getErrorCode());
+        Log.e(TAG, "Google Places API connection failed with error code: "
+                + connectionResult.getErrorCode());
 
-                Toast.makeText(getActivity(),
-                        "Google Places API connection failed with error code:" +
-                                connectionResult.getErrorCode(),
-                        Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(),
+                "Google Places API connection failed with error code:" +
+                        connectionResult.getErrorCode(),
+                Toast.LENGTH_LONG).show();
 
-            }
+    }
 
 
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                return false;
-            }
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
+    }
 
 
     @Override

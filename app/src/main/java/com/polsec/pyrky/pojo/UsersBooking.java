@@ -1,16 +1,12 @@
 package com.polsec.pyrky.pojo;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * Created by thulirsoft on 7/3/18.
+ * Created by czsm4 on 21/08/18.
  */
 
-public class Users implements Serializable {
-
-
+public class UsersBooking {
     private String username;
 
 
@@ -18,22 +14,22 @@ public class Users implements Serializable {
     private String password;
 
 
-
     private String carCategory;
     private String profileImageURL;
+    public Map<String, Boolean> Booking_ID;
 
-    public Users() {
+    public UsersBooking() {
 
     }
 
-    public Users(String username, String email,String profileImageUrl, String carCategory) {
+    public UsersBooking(String username, String email, String profileImageUrl, String carCategory, Map<String, Boolean> Booking_ID) {
         this.username = username;
         this.email = email;
         this.profileImageURL = profileImageUrl;
         this.carCategory = carCategory;
+        this.Booking_ID=Booking_ID;
 
     }
-
 
 
     public String getEmail() {
@@ -51,6 +47,7 @@ public class Users implements Serializable {
     public void setCarCategory(String carCategory) {
         this.carCategory = carCategory;
     }
+
     public String getUsername() {
         return username;
     }
@@ -66,6 +63,4 @@ public class Users implements Serializable {
     public void setProfileImageURL(String profileImageURL) {
         this.profileImageURL = profileImageURL;
     }
-
-
 }

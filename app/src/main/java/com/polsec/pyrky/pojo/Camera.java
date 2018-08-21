@@ -5,6 +5,7 @@ public class Camera {
     private String cameraLat;
     private String cameraLong;
     private String parkingType;
+    private String cameraID;
 
 
     private String securityRatings;
@@ -22,7 +23,7 @@ public class Camera {
     }
 
     public Camera(String cameraLat, String cameraLong, String parkingType, String securityRatings, String listofparkingRules, String cameraLocationName, String videoUrl, String roadWidth,
-                  String cameraFacingDirection, String listofcarsPosition, String listofObstacles, String cameraImageUrl) {
+                  String cameraFacingDirection, String listofcarsPosition, String listofObstacles, String cameraImageUrl, String cameraID) {
         this.cameraLat = cameraLat;
         this.cameraLong = cameraLong;
         this.parkingType = parkingType;
@@ -35,6 +36,7 @@ public class Camera {
         ListofcarsPosition = listofcarsPosition;
         ListofObstacles = listofObstacles;
         this. cameraImageUrl= cameraImageUrl;
+        this.cameraID= cameraID;
     }
 
     public String getCameraLat() {
@@ -133,4 +135,13 @@ public class Camera {
     public void setCameraImageUrl(String cameraImageUrl) {
         this.cameraImageUrl = cameraImageUrl;
     }
+
+    public String getCameraID() {
+        return cameraID;
+    }
+
+    public void setCameraID(String cameraID) {
+        this.cameraID = cameraID;
+    }
+
 }

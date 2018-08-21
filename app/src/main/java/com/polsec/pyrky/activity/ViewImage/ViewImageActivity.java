@@ -9,11 +9,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,41 +22,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.azoft.carousellayoutmanager.CarouselLayoutManager;
-import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
-import com.azoft.carousellayoutmanager.CenterScrollListener;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
-import com.polsec.pyrky.activity.HomeActivity;
-import com.polsec.pyrky.activity.NearestLocMapsActivity;
 
 import com.polsec.pyrky.activity.arnavigation.ArNavActivity;
-import com.polsec.pyrky.activity.forgotpassword.ForgotpasswordActivity;
-import com.polsec.pyrky.activity.signin.SignInActivity;
-import com.polsec.pyrky.activity.signup.SignupScreenActivity;
-import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
 import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
-import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.pojo.Users;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
@@ -84,13 +62,15 @@ public class ViewImageActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     Map<String, Object> bookingid = new HashMap<>();
 
+    Map<String, Object> bookingid1=new HashMap<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
         mAuth = FirebaseAuth.getInstance();
-        mUid= PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+        mUid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 //        BackImg = (ImageView) findViewById(R.id.back_image);
 //        BackImg.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -102,7 +82,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
         TrackGPS trackGps = new TrackGPS(context);
 
-        if (trackGps.canGetLocation()){
+        if (trackGps.canGetLocation()) {
             curLat = trackGps.getLatitude();
             curLong = trackGps.getLongitude();
         }
@@ -111,13 +91,13 @@ public class ViewImageActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             latitude = extras.getDouble("latitude");
-            longitude= extras.getDouble("longitude");
-            DestName= extras.getString("place");
-            lat= String.valueOf(latitude);
-            longi= String.valueOf(longitude);
+            longitude = extras.getDouble("longitude");
+            DestName = extras.getString("place");
+            lat = String.valueOf(latitude);
+            longi = String.valueOf(longitude);
 
             Log.e("lattitudeview", String.valueOf(latitude));
-                Log.e("longitudeview", String.valueOf(longitude));
+            Log.e("longitudeview", String.valueOf(longitude));
             Log.e("place", String.valueOf(DestName));
 
 
@@ -127,21 +107,72 @@ public class ViewImageActivity extends AppCompatActivity {
         }
 
 
-        BookBtn=(TextView)findViewById(R.id.book_btn);
+        BookBtn = (TextView) findViewById(R.id.book_btn);
         BookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showBottomSheet(latitude,longitude);
-                SaveData(lat,longi,DestName);
+
+
+                showBottomSheet(latitude, longitude);
+                SaveData(lat, longi, DestName);
+
+
             }
+
+
+//
+
         });
-        CloseImg=(ImageView)findViewById(R.id.close_iconimg);
+        CloseImg = (ImageView) findViewById(R.id.close_iconimg);
         CloseImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
+
+
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//
+//
+//        DocumentReference docRef = db.collection("users").document(mUid);
+//        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    DocumentSnapshot document = task.getResult();
+//                    if (document.exists()) {
+////                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+//                        bookingid = document.getData();
+//                        String count = String.valueOf(bookingid.size());
+//
+//                        Log.e("uidvalue", mUid);
+//
+//                        for (Map.Entry<String, Object> entry : bookingid.entrySet()) {
+//                            System.out.println(entry.getKey() + " = " + entry.getValue());
+//
+//                            Boolean val = (Boolean) entry.getValue();
+//                            String values = String.valueOf(val);
+////                            Toast.makeText(getActivity(), values, Toast.LENGTH_SHORT).show();
+//                            if (val == true) {
+//
+//
+////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//
+//
+//                    } else {
+////                        Log.d(TAG, "No such document");
+//
+//                    }
+//                } else {
+////                    Log.d(TAG, "get failed with ", task.getException());
+//
+//                }
+//            }
+//        });
+//    }
 
         final FirebaseUser user = mAuth.getCurrentUser();
         DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -164,10 +195,34 @@ public class ViewImageActivity extends AppCompatActivity {
                                 if (document.exists()) {
 //                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                                     bookingid = document.getData();
-                                    Log.e("bookingid", String.valueOf(bookingid));
 
 
+                                    bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
 
+
+                                    String count = String.valueOf(bookingid1.size());
+                                    Log.e("count", count);
+
+
+//                                    followingcount = 1;
+                                    for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                        System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                        Boolean val = (Boolean) entry.getValue();
+                                        String values = String.valueOf(val);
+
+                                        Log.e("values", values);
+//
+                                        if (val == true) {
+
+                                            Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
+                                            String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+                                            popup(valuedoc);
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
 
 
 
@@ -182,7 +237,8 @@ public class ViewImageActivity extends AppCompatActivity {
                         }
                     });
 
-                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+
 
                 } else {
 
@@ -199,8 +255,13 @@ public class ViewImageActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
             }
         });
-
+//
     }
+
+
+//    public  void CheckBookingId(){
+//
+//    }
 
 
 
@@ -211,7 +272,7 @@ public class ViewImageActivity extends AppCompatActivity {
         final String uid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 
 
-        parkingSpaceRating="0";
+        parkingSpaceRating= String.valueOf(0);
         protectCar=false;
         bookingStatus=true;
 //          locationTxt=Location_Txt.getText().toString();
@@ -223,7 +284,7 @@ public class ViewImageActivity extends AppCompatActivity {
         likeData.put(uid, false);
         documentID="";
 
-        Booking bookingdata = new Booking(uid,latitude,longitude,destName,String.valueOf(getPostTime()),bookingStatus,documentID,parkingSpaceRating,protectCar);
+        Booking bookingdata = new Booking(uid,latitude,longitude,destName,getPostTime(),bookingStatus,documentID,Double.parseDouble(parkingSpaceRating),protectCar);
 
 
         db.collection("Bookings").add(bookingdata).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -233,7 +294,7 @@ public class ViewImageActivity extends AppCompatActivity {
                 documentID = documentReference.getId();
 //                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
 
-                Booking bookingdata = new Booking(uid,latitude,longitude,destName,String.valueOf(getPostTime()),bookingStatus,documentID,parkingSpaceRating,protectCar);
+                Booking bookingdata = new Booking(uid,latitude,longitude,destName,getPostTime(),bookingStatus,documentID,Double.parseDouble(parkingSpaceRating),protectCar);
                 Map<String, Object> docID = new HashMap<>();
                 docID.put("documentID", documentID);
 
@@ -247,39 +308,53 @@ public class ViewImageActivity extends AppCompatActivity {
 
 //                        try {
 
-                            final Map<String, Boolean> likeData1 = new HashMap<>();
-                            likeData1.put(documentID, true);
+                         Map<String, Boolean> likeData1 = new HashMap<>();
+                        likeData1.put( documentID, true);
+
+                        Map<String, Map<String, Boolean>> likeData2 = new HashMap<>();
+                        likeData2.put( "Booking_ID", likeData1);
 
 
 
-                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                            DocumentReference washingtonRef = db.collection("users").document(uid);
-
-                            washingtonRef
-                                    .update("Booking_ID",likeData1)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-
-                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error updating document", e);
-                                        }
-                                    });
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
+                        db.collection("users").document(uid)
+                                .set(likeData2, SetOptions.merge())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully written!");
 
-//                        }
+
+//                            DocumentReference washingtonRef = db.collection("users").document(uid);
 //
-//                        catch (NullPointerException e) {
-//
-//                            e.printStackTrace();
-//                        }
+//                            washingtonRef
+//                                    .update("Booking_ID",likeData1)
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            Log.w(TAG, "Error updating document", e);
+//                                        }
+//                                    });
+
+
+
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error writing document", e);
+                                    }
+                                });
+
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -293,9 +368,9 @@ public class ViewImageActivity extends AppCompatActivity {
 
             }
         });
-        }
+    }
 
-    private void popup() {
+    private void popup(String valuedoc) {
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
@@ -308,22 +383,36 @@ public class ViewImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Map<String, Object> docstatus = new HashMap<>();
-                docstatus.put("bookingStatus", false);
+                Map<String, Boolean> likeData1 = new HashMap<>();
+                likeData1.put( valuedoc, false);
 
-                db.collection("Bookings").document(documentID).update(docstatus).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
+                Map<String, Map<String, Boolean>> likeData2 = new HashMap<>();
+                likeData2.put( "Booking_ID", likeData1);
 
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
 
-                    }
-                });
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                db.collection("users").document(mUid)
+                        .set(likeData2, SetOptions.merge())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+
+
+
                 alertDialog1.dismiss();
             }
         });
@@ -331,6 +420,91 @@ public class ViewImageActivity extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+                final FirebaseUser user = mAuth.getCurrentUser();
+                DocumentReference docRef = db.collection("users").document(user.getUid());
+                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+
+                        if (documentSnapshot.exists()){
+
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                            DocumentReference docRef = db.collection("users").document(mUid);
+                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        if (document.exists()) {
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                            bookingid = document.getData();
+
+
+                                            bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+
+
+                                            String count = String.valueOf(bookingid1.size());
+                                            Log.e("count", count);
+
+
+//                                    followingcount = 1;
+                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                                System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                                Boolean val = (Boolean) entry.getValue();
+                                                String values = String.valueOf(val);
+
+                                                Log.e("values", values);
+//
+                                                if (val == true) {
+
+
+                                                    popup(valuedoc);
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                                }
+//                                                else{
+//
+//                                                }
+                                            }
+
+
+
+                                        } else {
+//                        Log.d(TAG, "No such document");
+
+                                        }
+                                    } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+
+                                    }
+                                }
+                            });
+
+//                            Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+
+                        } else {
+
+
+
+                        }
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Log.w("Error", "Error adding document", e);
+                        Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+//
+
+//                BookBtn.setVisibility(View.GONE);
                 alertDialog1.dismiss();
             }
         });
