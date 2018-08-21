@@ -247,8 +247,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         autoCompView.setThreshold(1);
 
 
-
-
         HomeRelLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -500,69 +498,73 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //
         //Expandable List and Searchview
         permissionStatus = getActivity().getSharedPreferences("permissionStatus", MODE_PRIVATE);
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)) {
-                //Show Information about why you need the permission
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Need phone Permission");
-                builder.setMessage("This app needs phone permission.");
-                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            } else if (permissionStatus.getBoolean(Manifest.permission.CALL_PHONE, false)) {
-                //Previously Permission Request was cancelled with 'Dont Ask Again',
-                // Redirect to Settings after showing Information about why you need the permission
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Need phone Permission");
-                builder.setMessage("This app needs phone permission.");
-                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        sentToSettings = true;
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
-                        intent.setData(uri);
-                        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
-                        Toast.makeText(getActivity(), "Go to Permissions to Grant phone", Toast.LENGTH_LONG).show();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            }
 
-            else {
-                //just request the permission
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
-            }
-
-            SharedPreferences.Editor editor = permissionStatus.edit();
-            editor.putBoolean(Manifest.permission.CALL_PHONE, true);
-            editor.commit();
-
-
-        } else {
-            //You already have the permission, just go ahead.
-            proceedAfterPermission();
-        }
-
-
+//        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)) {
+//                //Show Information about why you need the permission
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setTitle("Need phone Permission");
+//                builder.setMessage("This app needs phone permission.");
+//                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
+//                    }
+//                });
+//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                });
+//                builder.show();
+//            }
+//
+//
+////            else if (permissionStatus.getBoolean(Manifest.permission.CALL_PHONE, false)) {
+////                //Previously Permission Request was cancelled with 'Dont Ask Again',
+////                // Redirect to Settings after showing Information about why you need the permission
+////                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+////                builder.setTitle("Need phone Permission");
+////                builder.setMessage("This app needs phone permission.");
+////                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+////                    @Override
+////                    public void onClick(DialogInterface dialog, int which) {
+////                        dialog.cancel();
+////                        sentToSettings = true;
+////                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+////                        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+////                        intent.setData(uri);
+////                        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+////                        Toast.makeText(getActivity(), "Go to Permissions to Grant phone", Toast.LENGTH_LONG).show();
+////                    }
+////                });
+////                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+////                    @Override
+////                    public void onClick(DialogInterface dialog, int which) {
+////                        dialog.cancel();
+////                    }
+////                });
+////                builder.show();
+////            }
+//
+//            else {
+//                //just request the permission
+//                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
+//            }
+//
+//            SharedPreferences.Editor editor = permissionStatus.edit();
+//            editor.putBoolean(Manifest.permission.CALL_PHONE, true);
+//            editor.commit();
+//
+//
+//        } else {
+//            //You already have the permission, just go ahead.
+//            proceedAfterPermission();
+//        }
+//
+//
         return view;
     }
 

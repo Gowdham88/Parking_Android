@@ -188,7 +188,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                 CheckBox checkBox = convertView.findViewById(R.id.checkbox);
                 checkBox.setText(expandedListText);
                 TextView  expandedListTextView = convertView
-                        .findViewById(R.id.expandedListItem);
+                        .findViewById(R.id.expandedListItem1);
                 expandedListTextView.setText(expandedListText);
 
                 switch (childPosition){
