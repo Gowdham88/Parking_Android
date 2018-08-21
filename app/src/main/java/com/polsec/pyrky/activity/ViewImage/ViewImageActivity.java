@@ -261,6 +261,7 @@ public class ViewImageActivity extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+
                                             Log.d(TAG, "DocumentSnapshot successfully updated!");
                                         }
                                     })

@@ -3,6 +3,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/linearlay"
     android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
     android:paddingStart="?android:attr/expandableListPreferredChildPaddingLeft"
     android:gravity="left"
@@ -11,34 +12,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView"
-        android:id="@+id/radio_group"/>
+        android:id="@+id/radio_group">
 
-        <!--<RadioButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text=""-->
-            <!--android:id="@+id/radioButton"-->
-            <!--android:checked="false"-->
-            <!--android:textSize="12dp" />-->
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/radioButton"
+            android:checked="false"
+            android:visibility="gone"
+            android:textSize="12dp" />
 
-        <!--<RadioButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text=""-->
-            <!--android:id="@+id/radioButton2"-->
-            <!--android:checked="false"-->
-            <!--android:textSize="12dp"-->
-            <!--android:layout_weight="0.13" />-->
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:visibility="gone"
+            android:id="@+id/radioButton2"
+            android:checked="false"
+            android:textSize="12dp"
+            android:layout_weight="0.13" />
 
-        <!--<RadioButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text=""-->
-            <!--android:id="@+id/radioButton3"-->
-            <!--android:checked="false"-->
-            <!--android:textSize="12dp"-->
-            <!--android:layout_weight="0.13" />-->
-    <!--</RadioGroup>-->
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:visibility="gone"
+            android:id="@+id/radioButton3"
+            android:checked="false"
+            android:textSize="12dp"
+            android:layout_weight="0.13" />
+    </RadioGroup>
 
     <TextView
         android:id="@+id/expandedListItem"

@@ -252,7 +252,7 @@ public class HomeActivity extends AppCompatActivity
 //            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 //            loadFragment(new BookingsFragment());
                 Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                overridePendingTransition(0, 0);
                 startActivity(intent);
 //            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
