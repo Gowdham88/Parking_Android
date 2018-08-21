@@ -18,11 +18,12 @@
         android:layout_height="1dp"
         android:background="@color/search_boarder_clr" />
 
-    <!--<ScrollView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
+    <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+        android:layout_below="@+id/myview">
     <LinearLayout
-        android:layout_below="@+id/myview"
+
         android:id="@+id/scrollviewlin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -165,7 +166,7 @@
             />
 
     </LinearLayout>
-    <!--</ScrollView>-->
+    </ScrollView>
 </RelativeLayout>
 
 

@@ -124,16 +124,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
             case 0 :
                 convertView = layoutInflater.inflate(R.layout.list_item_filter,null);
                 RadioGroup rgroupFilter = (RadioGroup) convertView.findViewById(R.id.radio_group);
-//                int has_radiogroup = 0;
-//                for (int i = 0; i <3; i++) {
-//                    {
+
                         RadioButton rbn = new RadioButton(context);
-//                        has_radiogroup = 1;
+
 //                        rbn.setId(1000 + i);
                         rbn.setText(expandedListText);
-//                        if (has_radiogroup == 1){
-//                            rgroupFilter.addView(rbn);
-//                        }
                         rgroupFilter.addView(rbn);
                         buttonId++;
 //                    }
@@ -160,25 +155,71 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
 
                     RadioButton rbns = new RadioButton(context);
                     rbns.setText(expandedListText);
+                    rbns.setId(1000+childPosition);
                     rgps.addView(rbns);
 
-                switch (childPosition){
-                    case 0 :
-//                        Toast.makeText(context, "Compact", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 1 :
-//                        Toast.makeText(context, "Small", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 2 :
-//                        Toast.makeText(context, "Mid size", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 3 :
-//                        Toast.makeText(context, "Full", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 4 :
-//                        Toast.makeText(context, "Van/Pick-up", Toast.LENGTH_SHORT).show();
-                        break;
-                }
+                int id1 = context.getResources().getIdentifier(String.valueOf(1000), "id", "com.polsec.pyrky");
+                RadioButton rb1 = rgps.findViewById(id1);
+                int id2 = context.getResources().getIdentifier(String.valueOf(1001), "id", "com.polsec.pyrky");
+                RadioButton rb2 = rgps.findViewById(id2);
+                int id3 = context.getResources().getIdentifier(String.valueOf(1002), "id", "com.polsec.pyrky");
+                RadioButton rb3 = rgps.findViewById(id3);
+                int id4 = context.getResources().getIdentifier(String.valueOf(1003), "id", "com.polsec.pyrky");
+                RadioButton rb4 = rgps.findViewById(id4);
+                int id5 = context.getResources().getIdentifier(String.valueOf(1004), "id", "com.polsec.pyrky");
+                RadioButton rb5 = rgps.findViewById(id5);
+
+                rgps.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int id1 = context.getResources().getIdentifier(String.valueOf(1000), "id", "com.polsec.pyrky");
+                        RadioButton rb1 = view.findViewById(id1);
+                        rb1.setChecked(true);
+                        int id2 = context.getResources().getIdentifier(String.valueOf(1001), "id", "com.polsec.pyrky");
+                        RadioButton rb2 = view.findViewById(id2);
+                        rb2.setChecked(false);
+                    }
+                });
+
+                rgps.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+
+                            switch (checkedId){
+                                case 1000 :
+
+                                    rb1.setChecked(true);
+                                    int id2 = context.getResources().getIdentifier(String.valueOf(1001), "id", "com.polsec.pyrky");
+                                    RadioButton rb2 = rgps.findViewById(id2);
+                                    rb2.setChecked(false);
+                                    int id3 = context.getResources().getIdentifier(String.valueOf(1002), "id", "com.polsec.pyrky");
+                                    RadioButton rb3 = rgps.findViewById(id3);
+                                    rb3.setChecked(false);
+                                    int id4 = context.getResources().getIdentifier(String.valueOf(1003), "id", "com.polsec.pyrky");
+                                    RadioButton rb4 = rgps.findViewById(id4);
+                                    rb4.setChecked(false);
+                                    int id5 = context.getResources().getIdentifier(String.valueOf(1004), "id", "com.polsec.pyrky");
+                                    RadioButton rb5 = rgps.findViewById(id5);
+                                    rb5.setChecked(false);
+
+                        Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 1001 :
+                        Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 1002 :
+                        Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 1003 :
+                        Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 1004 :
+                        Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+
+                        }
+                    });
 
                 break;
 
@@ -186,10 +227,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                 convertView = layoutInflater.inflate(R.layout.list_item, null);
 
                 CheckBox checkBox = convertView.findViewById(R.id.checkbox);
+                checkBox.setId(1000+childPosition);
                 checkBox.setText(expandedListText);
+
                 TextView  expandedListTextView = convertView
                         .findViewById(R.id.expandedListItem1);
                 expandedListTextView.setText(expandedListText);
+
 
                 switch (childPosition){
                     case 0 :

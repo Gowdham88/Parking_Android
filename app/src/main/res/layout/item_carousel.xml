@@ -17,7 +17,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/car_size"
-        android:layout_toRightOf="@id/car_icon"
         android:layout_toEndOf="@id/car_icon"
         android:text="Small"
         android:textStyle="bold"
@@ -25,18 +24,17 @@
         android:layout_marginTop="18dp"
         android:textSize="12sp"
         android:layout_marginBottom="7dp"
-        android:layout_marginStart="100dp" />
+        android:layout_marginStart="50dp" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/car_dimension"
         android:textStyle="bold"
-        android:layout_toRightOf="@id/car_icon"
+        android:layout_toEndOf="@id/car_icon"
         android:layout_below="@id/car_size"
         android:text="[3 to 4.5m]"
-        android:layout_marginLeft="13dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="10dp"
         android:textSize="12sp"
-        android:layout_marginStart="100dp" />
+        android:layout_marginStart="50dp" />
     </RelativeLayout>

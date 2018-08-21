@@ -321,7 +321,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                         distances1.add(String.valueOf(distanceval));
                                         Log.e("distancemap", String.valueOf(distances1));
 
-                                        if (distancemtrs1 < 15000) {
+//                                        if (distancemtrs1 < 15000) {
                                             caldismap.add(String.valueOf(distancesmtrsmap));
                                             Log.e("caldismap", String.valueOf(caldismap));
                                             nearlat1.add(datalist.get(i).getCameraLat());
@@ -379,7 +379,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                             }
 
 
-                                        }
+//                                        }
 
 //
 
