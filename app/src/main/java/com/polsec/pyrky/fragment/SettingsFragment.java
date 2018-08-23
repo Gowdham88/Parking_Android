@@ -314,6 +314,8 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             @Override
             public void onClick(View v) {
 //                saveUserImage(postimageurl);
+
+//                saveUserImage(profileimg);
                 String name = NameEdt.getText().toString().trim();
                 String email = EmailEdt.getText().toString().trim();
 
@@ -625,9 +627,9 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         StorageReference storageRef = storage.getReference();
         if(contentURI != null)
         {
-            final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
+//            final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+//            progressDialog.setTitle("Uploading...");
+//            progressDialog.show();
 
             Uri file = Uri.fromFile(new File(selectedImagePath));
             StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
@@ -642,8 +644,8 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    progressDialog.dismiss();
-                    Toast.makeText(getActivity(), "Uploaded", Toast.LENGTH_SHORT).show();
+//                    progressDialog.dismiss();
+//                    Toast.makeText(getActivity(), "Uploaded", Toast.LENGTH_SHORT).show();
                     postimageurl =taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
 
                     uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -680,7 +682,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    progressDialog.dismiss();
+//                    progressDialog.dismiss();
                     Toast.makeText(getActivity(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     postimageurl = "failed";
                 }
@@ -690,7 +692,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploading "+(int)progress+"%");
+//                            progressDialog.setMessage("Uploading "+(int)progress+"%");
                         }
                     });
 
@@ -715,6 +717,9 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                         PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(carCategory));
                         Toast.makeText(getActivity(), "Updated Successfully",
                                 Toast.LENGTH_SHORT).show();
+
+//                        getActivity().finish();
+//                        startActivity(getActivity().getIntent());
                     }
                 });
 
@@ -748,12 +753,12 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     }
 
     public void saveUserImage(final String postimageurl) {
-        showProgressDialog();
+//        showProgressDialog();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference ref = db.collection("users").document(mUid);
 
-        ref.update("profileImageUrl", postimageurl)
+        ref.update("profileImageURL", postimageurl)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -777,7 +782,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                         }
                         Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
                         PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC, postimageurl);
-                        hideProgressDialog();
+//                        hideProgressDialog();
                     }
 
                 }).addOnFailureListener(new OnFailureListener() {
@@ -785,7 +790,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             public void onFailure(@NonNull Exception e) {
                 Log.w(TAG, "Error updating document", e);
                 Toast.makeText(getActivity(),"Update failed",Toast.LENGTH_SHORT).show();
-                hideProgressDialog();
+//                hideProgressDialog();
 //                dialog.dismiss();
             }
 

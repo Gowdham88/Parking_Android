@@ -204,8 +204,8 @@ public class CurrentBookingsFragment extends Fragment {
                             BookingList.add(comment);
                             BookingListId.add(document.getId());
 
-                            Log.e("dbbd",document.getId());
-                            Log.e("dbbd", String.valueOf(document.getData()));
+//                            Log.e("dbbd",document.getId());
+//                            Log.e("dbbd", String.valueOf(document.getData()));
 
                         }
 

@@ -39,6 +39,7 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
 
     Map<String, Object> bookingid1=new HashMap<>();
     List<UsersBooking> BookinguserList = new ArrayList<UsersBooking>();
+    Boolean val;
 
     List<Booking> bookingList = new ArrayList<Booking>();
     String Datetime,Datemonth,Dateday,Datemothname;
@@ -84,22 +85,29 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
 //        if(status){
 //            holder.city.setText(bookingList.get(position).getDestName());
 //        }
-
+        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
         for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
             System.out.println(entry.getKey() + " = " + entry.getValue());
 
-            Boolean val = (Boolean) entry.getValue();
+             val= (Boolean) entry.getValue();
             String values = String.valueOf(val);
 
-            Log.e("valuesh", String.valueOf(val));
+//            Log.e("valuesh", String.valueOf(val));
+
             if(val){
                 holder.city.setText(bookingList.get(position).getDestName());
             }
-
+//            else {
+////                holder.itemView.setVisibility(View.GONE);
+////                param.height = 0;
+////                param.width = 0;
+//            }
 
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
 
         }
+
+
 
 //        final FirebaseUser user = mAuth.getCurrentUser();
 //        DocumentReference docRef = db.collection("users").document(user.getUid());

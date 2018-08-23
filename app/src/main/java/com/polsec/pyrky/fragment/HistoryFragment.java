@@ -54,7 +54,9 @@ public class HistoryFragment extends Fragment {
     List<String> BookingListId = new ArrayList<String>();
     List<Camera>CameraList = new ArrayList<Camera>();
     List<String> CameraListId = new ArrayList<String>();
-    List<String> Cameraslist = new ArrayList<String>();
+    List<Booking> Booklist = new ArrayList<Booking>();
+    int i;
+
 
 
     String mUid;
@@ -112,13 +114,13 @@ public class HistoryFragment extends Fragment {
                             Log.e("dbbdcameraid",document.getId());
                             Log.e("dbbdcamera", String.valueOf(document.getData()));
 
-                            for(int i=0;i<CameraListId.size();i++){
+                            for(i = 0; i<CameraList.size(); i++){
 
 //                                Cameraslist.clear();
-////        showProgressDialog();
+//        showProgressDialog();
 //                                FirebaseFirestore db = FirebaseFirestore.getInstance();
 //
-//                                Query first = db.collection("Bookings").whereEqualTo(CameraListId);
+//                                Query first = db.collection("Bookings");
 //
 //                                first.get()
 //                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -134,16 +136,22 @@ public class HistoryFragment extends Fragment {
 //                                                for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
 //
 //                                                    Booking comment = document.toObject(Booking.class);
-//                                                    BookingList.add(comment);
-//                                                    BookingListId.add(document.getId());
+//                                                    Booklist.add(comment);
+////                                                    BookingListId.add(document.getId());
 //
-//                                                    Log.e("dbbd",document.getId());
-//                                                    Log.e("dbbd", String.valueOf(document.getData()));
+//                                                    Log.e("dbbd1",document.getId());
+//                                                    Log.e("dbbd2", String.valueOf(document.getData()));
+//
+//                                                    List<String> RatingCount = new ArrayList<String>();
+//                                                    String ratecount= String.valueOf(Booklist.get(i).getParkingSpaceRating());
+//
+//                                                    RatingCount.add(ratecount);
+//                                                    Log.e("ratingcount", String.valueOf(RatingCount));
 //
 //                                                }
 //
 //
-//                                                setupFeed();
+////                                                setupFeed();
 //                                            }
 //
 //                                        });
@@ -229,8 +237,8 @@ public class HistoryFragment extends Fragment {
                             BookingList.add(comment);
                             BookingListId.add(document.getId());
 
-                            Log.e("dbbd",document.getId());
-                            Log.e("dbbd", String.valueOf(document.getData()));
+//                            Log.e("dbbd",document.getId());
+//                            Log.e("dbbd", String.valueOf(document.getData()));
 
                         }
 

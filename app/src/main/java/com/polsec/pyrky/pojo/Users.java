@@ -15,6 +15,8 @@ public class Users implements Serializable {
 
 
     private String email;
+
+
     private String password;
 
 
@@ -26,10 +28,10 @@ public class Users implements Serializable {
 
     }
 
-    public Users(String username, String email,String profileImageUrl, String carCategory) {
+    public Users(String username, String email,String profileImageURL, String carCategory) {
         this.username = username;
         this.email = email;
-        this.profileImageURL = profileImageUrl;
+        this.profileImageURL = profileImageURL;
         this.carCategory = carCategory;
 
     }
@@ -66,6 +68,7 @@ public class Users implements Serializable {
     public void setProfileImageURL(String profileImageURL) {
         this.profileImageURL = profileImageURL;
     }
+
 
 
 }

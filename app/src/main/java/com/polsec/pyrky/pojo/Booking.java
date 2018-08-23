@@ -11,6 +11,7 @@ public class Booking implements Serializable {
     private String DestLong;
     private String DestName;
     private double DateTime;
+    private String cameraId;
 
     private Boolean bookingStatus;
 
@@ -27,7 +28,7 @@ public class Booking implements Serializable {
         DateTime= 0.0;
     }
 
-    public Booking(String Current_User_UID, String DestLat, String DestLong, String DestName, double DateTime, Boolean bookingStatus, String documentID, double parkingSpaceRating, Boolean protectCar) {
+    public Booking(String Current_User_UID, String DestLat, String DestLong, String DestName, double DateTime, Boolean bookingStatus, String cameraId, String documentID, double parkingSpaceRating, Boolean protectCar) {
         this.Current_User_UID = Current_User_UID;
         this.DestLat = DestLat;
         this.DestLong = DestLong;
@@ -37,6 +38,7 @@ public class Booking implements Serializable {
         this.documentID=documentID;
         this.parkingSpaceRating = parkingSpaceRating;
         this.protectCar = protectCar;
+        this.cameraId=cameraId;
     }
     @PropertyName("Current_User_UID")
     public String getCurrent_User_UID() {
@@ -122,5 +124,12 @@ public class Booking implements Serializable {
     }
 
 
+    public String getCameraId() {
+        return cameraId;
+    }
+
+    public void setCameraId(String cameraId) {
+        this.cameraId = cameraId;
+    }
 
 }

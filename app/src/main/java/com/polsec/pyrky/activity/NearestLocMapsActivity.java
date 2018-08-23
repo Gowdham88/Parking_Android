@@ -28,6 +28,7 @@ import android.view.animation.CycleInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -138,7 +139,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     TextView TitlaTxt;
     String mLat,mLongi,PlaceName;
     String Nameval="home";
-    String Nameval1="carousel",mapLat,mapLongi;
+    String Nameval1="carousel",mapLat,mapLongi,cameraid;
     String Mlat,Mlongi;
 
     String valuelat;
@@ -154,6 +155,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
     Map<String, Object> bookingid1=new HashMap<>();
     Boolean val;
+    RelativeLayout BackImgRelay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,7 +169,13 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         mUid = PreferencesHelper.getPreference(NearestLocMapsActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-
+        BackImgRelay=(RelativeLayout)findViewById(R.id.back_lay);
+        BackImgRelay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         BackImg = (ImageView) findViewById(R.id.back_image);
         TitlaTxt = (TextView) findViewById(R.id.extra_title);
         TitlaTxt.setText("Map");
@@ -421,10 +429,12 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     }
 
     private void onItemChanged(String item, String s, String s1) {
-        mapLat=item.toString();
-        mapLongi=s.toString();
-        Log.e("mapLongi",mLongi);
-        Log.e("mapLat",mLat);
+        mapLat=item.toString().trim();
+        mapLongi=s.toString().trim();
+        cameraid=s1.toString();
+        Log.e("mapLongi",mapLat);
+        Log.e("mapLat",mapLongi);
+        Log.e("cameraid",cameraid);
 
         LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
 
@@ -435,7 +445,26 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 //            CameraUpdate current = CameraUpdateFactory.newLatLngZoom(sydney,15);
             Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 15, null);
 //            Mmap.moveCamera(current);
+            Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker m) {
 
+
+                    showDialog(m,cameraid);
+                    mNearestPlaceRecycler.setVisibility(View.GONE);
+
+
+
+
+
+
+
+                    return false;
+
+                }
+
+            });
+            mNearestPlaceRecycler.setVisibility(View.VISIBLE);
 //            MarkerOptions a = new MarkerOptions()
 //                    .position(new LatLng(50,6));
 //            Marker m = Mmap.addMarker(a);
@@ -449,8 +478,26 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 //            CameraUpdate current = CameraUpdateFactory.newLatLngZoom(sydney,15);
 //            Mmap.moveCamera(current);
 
+            Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker m) {
 
 
+                    showDialog(m,cameraid);
+                    mNearestPlaceRecycler.setVisibility(View.GONE);
+
+
+
+
+
+
+
+                    return false;
+
+                }
+
+            });
+            mNearestPlaceRecycler.setVisibility(View.VISIBLE);
 
 
         }
@@ -481,7 +528,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = adapterPosition;
-        onItemChanged(nearlat1.get(positionInDataSet), nearlong1.get(positionInDataSet), ruls.get(0));
+        onItemChanged(nearlat1.get(positionInDataSet), nearlong1.get(positionInDataSet), ruls.get(positionInDataSet));
 
 
     }
@@ -492,7 +539,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     public void onLocationChanged(Location location) {
         mLocation = location;
         mNearestPlaceRecycler.setVisibility(View.VISIBLE);
-        LatLng latLng = new LatLng(Double.parseDouble(mLat), Double.parseDouble(mLongi));
+        LatLng latLng = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mLongi));
         Mmap.clear();
 
 //            Mmap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
@@ -531,35 +578,36 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 //        Mmap.getUiSettings().setMyLocationButtonEnabled(false);
         //
 
-        LatLng placeLocation = new LatLng(Double.parseDouble(mLat), Double.parseDouble(mLongi)); //Make them global
-        Marker placeMarker = Mmap.addMarker(new MarkerOptions().position(placeLocation));
-        Mmap.moveCamera(CameraUpdateFactory.newLatLng(placeLocation));
-        Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 10, null);
+//        LatLng placeLocation = new LatLng(Double.parseDouble(mapLat.trim()), Double.parseDouble(mLongi.trim())); //Make them global
+//        Marker placeMarker = Mmap.addMarker(new MarkerOptions().position(placeLocation));
+//        Mmap.moveCamera(CameraUpdateFactory.newLatLng(placeLocation));
+//        Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 10, null);
 
         mNearestPlaceRecycler.setVisibility(View.VISIBLE);
-        Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker m) {
 
-
-                showDialog(m);
-                mNearestPlaceRecycler.setVisibility(View.GONE);
-
-
-
-
-
-
-
-                return false;
-
-            }
-
-    });
+//        Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(Marker m) {
+//
+//
+//                showDialog(m,cameraid);
+//                mNearestPlaceRecycler.setVisibility(View.GONE);
+//
+//
+//
+//
+//
+//
+//
+//                return false;
+//
+//            }
+//
+//    });
 
     }
 
-    public void showDialog(Marker m){
+    public void showDialog(Marker m, String cameraid){
         LayoutInflater layoutInflater = LayoutInflater.from(NearestLocMapsActivity.this);
         View promptView = layoutInflater.inflate(R.layout.ruls_layout , null);
         final AlertDialog alertD = new AlertDialog.Builder(this).create();
@@ -602,10 +650,12 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 intent.putExtra("latitude",m.getPosition().latitude);
                 intent.putExtra("longitude",m.getPosition().longitude);
                 intent.putExtra("place",yourplace);
+                intent.putExtra("cameraid",cameraid);
 
                 Log.e("lattitude", String.valueOf(m.getPosition().latitude));
                 Log.e("longitude", String.valueOf(m.getPosition().longitude));
                 Log.e("yourplace",yourplace);
+                Log.e("cameraid",cameraid);
                 startActivity(intent);
                 alertD.cancel();
                 mNearestPlaceRecycler.setVisibility(View.VISIBLE);
@@ -649,7 +699,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         likeData.put(uid, false);
         documentID="";
 
-        Booking bookingdata = new Booking(uid,latitude,longitude,yourplace,getPostTime(),bookingStatus,documentID,parkingSpaceRating,protectCar);
+        Booking bookingdata = new Booking(uid,latitude,longitude,yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
 
 
         db.collection("Bookings").add(bookingdata).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -659,7 +709,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 documentID = documentReference.getId();
 //                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
 
-                Booking bookingdata = new Booking(uid,latitude,longitude,yourplace,getPostTime(),bookingStatus,documentID,parkingSpaceRating,protectCar);
+                Booking bookingdata = new Booking(uid,latitude,longitude,yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
                 Map<String, Object> docID = new HashMap<>();
                 docID.put("documentID", documentID);
 

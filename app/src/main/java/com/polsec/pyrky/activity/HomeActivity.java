@@ -18,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -32,6 +33,7 @@ import com.polsec.pyrky.fragment.HomeFragment;
 import com.polsec.pyrky.fragment.NotificationFragment;
 import com.polsec.pyrky.fragment.ProfileFragment;
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.fragment.SettingsFragment;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.CircleTransformation;
 import com.squareup.picasso.Picasso;
@@ -59,11 +61,15 @@ public class HomeActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private int avatarSize;
     View view,holderView, contentView;
+    String profileImageUrl;
+    CircleImageView profileImage;
+    String Nameval="settings";
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
 //        ((MyApplication )getApplication()).getNetComponent().inject(this);
 //    }
+
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -87,7 +93,26 @@ public class HomeActivity extends AppCompatActivity
 //
 //        Username=findViewById(R.id.);
 //        Username.setText(UsrName);
+//        startActivity(getIntent());
+//        Intent chatIntent = getIntent();
+//        if(chatIntent!=null){
+//            String Value=chatIntent.getStringExtra("name");
+//
+//            if(Nameval.equals(Value)){
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+//                transaction.replace(R.id.main_frame_layout, new SettingsFragment());
+//                transaction.addToBackStack(null);
+//                transaction.commit();
+//            }
+//
+//            }
+//            else {
+//
+//            }
+
         holderView = findViewById(R.id.holder);
+
         contentView = findViewById(R.id.home_coordinator);
         bottomNavigationView = findViewById(R.id.navigationView);
 
@@ -114,8 +139,8 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
-        CircleImageView profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
-        String profileImageUrl = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC);
+        profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
+        profileImageUrl= PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC);
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
             Picasso.with(HomeActivity.this)
@@ -249,10 +274,10 @@ public class HomeActivity extends AppCompatActivity
 //            loadFragment(new ());
             toolbarText.setText("Home");
         } else if (id == R.id.nav_booking) {
-//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//
 //            loadFragment(new BookingsFragment());
                 Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
-                overridePendingTransition(0, 0);
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 startActivity(intent);
 //            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -303,5 +328,10 @@ public class HomeActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         isRunning = true;
+
+
     }
+
+
+
 }

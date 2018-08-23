@@ -46,7 +46,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     private int[] currentRating;
     private int mPosition;
     private Boolean isPopUpShowing = false;
- String currenRating;
+ double currenRating;
     int count = 0;
     String docid,uid,Rating;
     RatingBar ratingBar,ratingbar1;
@@ -140,10 +140,12 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             Boolean val = (Boolean) entry.getValue();
             String values = String.valueOf(val);
 
-            Log.e("valuesc", String.valueOf(val));
+//            Log.e("valuesc", String.valueOf(val));
             if(!val){
                 holder.city.setText(bookingList.get(position).getDestName());
             }
+
+
 
 
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
@@ -226,7 +228,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                currenRating = String.valueOf(v);
+                currenRating = Double.parseDouble(String.valueOf(v));
 
 
 
@@ -243,7 +245,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             public void onClick(View view) {
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
                 Map<String, Object> rating = new HashMap<>();
-                rating.put("parkingSpaceRating", currenRating);
+                rating.put("parkingSpaceRating", currenRating );
                 Toast.makeText(context, "New default rating: " + currenRating, Toast.LENGTH_SHORT).show();
                 db.collection("Bookings").document(docid).update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

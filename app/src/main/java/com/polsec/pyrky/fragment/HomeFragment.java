@@ -138,6 +138,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     Location loc2 = new Location("");
 
     String placeId, description;
+    public static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
 
     SharedPreferences sharedPreferences;
@@ -810,49 +811,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mGoogleApiClient.disconnect();
     }
     public boolean checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
 
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-//                ActivityCompat.requestPermissions(getActivity(),
-//                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                                        MY_PERMISSIONS_REQUEST_LOCATION);
-
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-//                new AlertDialog.Builder(getActivity())
-//                        .setTitle("Hi")
-//                        .setMessage("Hello")
-//                        .setPositiveButton("Ho",new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                //Prompt the user once explanation has been shown
-//                                ActivityCompat.requestPermissions(getActivity(),
-//                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                                        MY_PERMISSIONS_REQUEST_LOCATION);
-//                            }
-//                        })
-//                        .create()
-//                        .show();
-
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-
-
-
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
             }
-
         }
         return false;
     }
