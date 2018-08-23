@@ -7,17 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -27,8 +23,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +35,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -57,7 +52,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -78,15 +72,12 @@ import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.HomeActivity;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
 import com.polsec.pyrky.adapter.CarouselNearestAdapter;
-import com.polsec.pyrky.adapter.ExpandableListAdapter;
 import com.polsec.pyrky.adapter.PlaceArrayAdapter;
-import com.polsec.pyrky.map.PlacesPOJO;
 import com.polsec.pyrky.pojo.UserLocationData;
 import com.polsec.pyrky.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -100,42 +91,34 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks {
 
-    //Search View
-    SearchView mSearchView;
     //Nearest Place recycler
     RecyclerView mNearestPlaceRecycler;
     CarouselNearestAdapter mNearestrecyclerAdapter;
 
-    //Expandable List View
-    ExpandableListView mExpandableListView;
-    ExpandableListAdapter mExpandableListAdapter;
-    List<String> mExpandableListTitle;
-    HashMap<String, List<String>> mExpandableListDetail;
+    //Filter
     Boolean isExpandableListEnabled = false;
+    Button mFilterButton;
 
-    GoogleMap Mmap;
-    SupportMapFragment mapFrag;
-    private TrackGPS gps;
-    double Strlat, Strlong;
+    //Google Map
+    GoogleMap mMap;
+    SupportMapFragment mMapFragment;
+    private TrackGPS mCurrentGpsLoc;
+    Location mLocation;
     LatLng laln;
     String address1;
-    Location mLocation;
+    double mCurLocLat, mCurLocLong;
     double latitu, longitu;
-    List<UserLocationData> datalist = new ArrayList<UserLocationData>();
-
+    double latt, longi;
+    List<UserLocationData> mNearestLocationList = new ArrayList<UserLocationData>();
 
     TextView mSearchButton;
     RelativeLayout HomeRelativeLay;
 
-    private ArrayList<String> permissions = new ArrayList<>();
-
-    Button filterButton;
-    List<PlacesPOJO.CustomA> results;
     AutoCompleteTextView autoCompView;
 
-    double latt, longi;
-    Location loc1 = new Location("");
-    Location loc2 = new Location("");
+
+    Location mCurrentLoc = new Location("");
+    Location mNearestLocations = new Location("");
 
     String placeId, description;
     public static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -172,21 +155,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
     ArrayList<String> distances1 = new ArrayList<>();
-    ArrayList<Double> distancesmtrs1 = new ArrayList<>();
+    ArrayList<Double> mLocationDistances = new ArrayList<>();
     ArrayList<String> caldis1 = new ArrayList<>();
-    ArrayList<String> nearlat1 = new ArrayList<>();
-    ArrayList<String> nearlong1 = new ArrayList<>();
-    ArrayList<String> nearimg = new ArrayList<>();
+    ArrayList<String> mCameraLat = new ArrayList<>();
+    ArrayList<String> mCameraLong = new ArrayList<>();
+    ArrayList<String> mCameraImageUrl = new ArrayList<>();
     ArrayList<Double> distancesmtrscurrent = new ArrayList<>();
     ArrayList<String> distancescurrentarr = new ArrayList<>();
-    ArrayList<String> Placename = new ArrayList<>();
-    List<Address> addresses = null;
+    ArrayList<String> mCameraLocName = new ArrayList<>();
+    List<Address> mCurLocAddress = null;
     double distanceval;
-    RelativeLayout HomeRelLayout, HomeRelLayout1, HomeFragrellay;
+    RelativeLayout HomeRelLayout, mParentLayout, HomeFragrellay;
     LinearLayout NearLinLay;
     Marker marker;
     MarkerOptions makeroptions;
-
+    CarouselLayoutManager carouselLayoutManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -233,14 +216,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         Utils.hideKeyboard(getActivity());
 
         mSearchButton = view.findViewById(R.id.search_btn);
-        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFrag.getMapAsync(this);
-        mExpandableListView = (ExpandableListView) view.findViewById(R.id.expandableListView);
+        mNearestPlaceRecycler = view.findViewById(R.id.nearest_places_recycler);
+        mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mMapFragment.getMapAsync(this);
         HomeRelLayout = (RelativeLayout) view.findViewById(R.id.home_lay);
-        HomeRelLayout1 = (RelativeLayout) view.findViewById(R.id.home_lay1);
-        NearLinLay = (LinearLayout) view.findViewById(R.id.current_location_layout);
+        mParentLayout = (RelativeLayout) view.findViewById(R.id.parent_layout);
+        NearLinLay = (LinearLayout) view.findViewById(R.id.nearest_locations_layout);
         HomeFragrellay = (RelativeLayout) view.findViewById(R.id.parfrag_lay);
         autoCompView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
+
+        //Auto Complete textview
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
         mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,
                 BOUNDS_MOUNTAIN_VIEW, null);
@@ -252,24 +237,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             @Override
             public void onClick(View view) {
                 isExpandableListEnabled = false;
-                mExpandableListView.setVisibility(View.GONE);
                 Utils.hideKeyboard(getActivity());
             }
         });
-        HomeRelLayout1.setOnClickListener(new View.OnClickListener() {
+
+        mParentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 isExpandableListEnabled = false;
-                mExpandableListView.setVisibility(View.GONE);
                 Utils.hideKeyboard(getActivity());
             }
         });
+
         NearLinLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Utils.hideKeyboard(getActivity());
             }
         });
+
         HomeFragrellay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -277,30 +263,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         });
 
-        gps = new TrackGPS(getActivity());
+
+        //Getting Current Location from independent class
+        mCurrentGpsLoc = new TrackGPS(getActivity());
         try {
-            if (gps.canGetLocation()) {
-                Double lat = gps.getLatitude();
-                Double lng = gps.getLongitude();
-                Strlat = laln.latitude;
-                Strlong = laln.longitude;
+            if (mCurrentGpsLoc.canGetLocation()) {
+                Double lat = mCurrentGpsLoc.getLatitude();
+                Double lng = mCurrentGpsLoc.getLongitude();
+                mCurLocLat = laln.latitude;
+                mCurLocLong = laln.longitude;
 
 
                 try {
                     Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
-                    addresses = geo.getFromLocation(lat, lng, 1);
-                    if (addresses.isEmpty()) {
+                    mCurLocAddress = geo.getFromLocation(lat, lng, 1);
+                    if (mCurLocAddress.isEmpty()) {
                     } else {
-                        if (addresses.size() > 0) {
-                            String address = addresses.get(0).getAddressLine(0);
-                            latt = addresses.get(0).getLatitude();
-                            longi = addresses.get(0).getLongitude();
+                        if (mCurLocAddress.size() > 0) {
+                            String address = mCurLocAddress.get(0).getAddressLine(0);
+                            latt = mCurLocAddress.get(0).getLatitude();
+                            longi = mCurLocAddress.get(0).getLongitude();
                             // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                            String city = addresses.get(0).getLocality();
-                            String state = addresses.get(0).getAdminArea();
-                            String country = addresses.get(0).getCountryName();
-                            String postalCode = addresses.get(0).getPostalCode();
-                            String knownName = addresses.get(0).getFeatureName();
+                            String city = mCurLocAddress.get(0).getLocality();
+                            String state = mCurLocAddress.get(0).getAdminArea();
+                            String country = mCurLocAddress.get(0).getCountryName();
+                            String postalCode = mCurLocAddress.get(0).getPostalCode();
+                            String knownName = mCurLocAddress.get(0).getFeatureName();
                             address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
                             Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
                             Log.e("address1", address1);
@@ -319,7 +307,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
             } else {
-                gps.showSettingsAlert();
+                mCurrentGpsLoc.showSettingsAlert();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -338,74 +326,96 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
 
                             UserLocationData comment = document.toObject(UserLocationData.class);
-                            datalist.add(comment);
+                            mNearestLocationList.add(comment);
                             Log.e("dbbd", String.valueOf(document.getData()));
 //
-                            distancesmtrscurrent.clear();
-                            distancescurrentarr.clear();
+//                            distancesmtrscurrent.clear();
+//                            distancescurrentarr.clear();
                             caldis1.clear();
-                            nearlat1.clear();
-                            nearlong1.clear();
-                            distancesmtrs1.clear();
+                            mCameraLat.clear();
+                            mCameraLong.clear();
+                            mLocationDistances.clear();
                             distances1.clear();
-                            nearimg.clear();
-                            Placename.clear();
-                            for (int i = 0; i < datalist.size(); i++) {
-//
+                            mCameraImageUrl.clear();
+                            mCameraLocName.clear();
 
-                                loc1.setLatitude(gps.getLatitude());
-                                loc1.setLongitude(gps.getLongitude());
-                                loc2.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
-                                loc2.setLongitude(Double.parseDouble(datalist.get(i).getCameraLong()));
 
-                                double distancemtrs1 = loc1.distanceTo(loc2);
-                                distancesmtrs1.add(distancemtrs1);
-                                Log.e("distancemtrs1", String.valueOf(distancesmtrs1));
-//                        for(int j =0;j<distancesmtrs.size();j++){
+
+                            for (int i = 0; i < mNearestLocationList.size(); i++) {
 //
-                                distanceval = loc1.distanceTo(loc2) / 1000;
+                                mCurrentLoc.setLatitude(mCurrentGpsLoc.getLatitude());
+                                mCurrentLoc.setLongitude(mCurrentGpsLoc.getLongitude());
+
+                                mNearestLocations.setLatitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()));
+                                mNearestLocations.setLongitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
+
+                                double locationDistance = mCurrentLoc.distanceTo(mNearestLocations);
+                                mLocationDistances.add(locationDistance);
+
+                                Log.e("distancemtrs1", String.valueOf(mLocationDistances));
+
+                                distanceval = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
                                 distances1.add(String.valueOf(distanceval));
                                 Log.e("distance", String.valueOf(distances1));
 
-//                                if (distancemtrs1 < 1500) {
-                                    caldis1.add(String.valueOf(distancesmtrs1));
+                                if (locationDistance < 15000) {
+                                    caldis1.add(String.valueOf(mLocationDistances));
                                     Log.e("caldis1", String.valueOf(caldis1));
-                                    nearlat1.add(datalist.get(i).getCameraLat());
-                                    nearlong1.add(datalist.get(i).getCameraLong());
-                                    nearimg.add(datalist.get(i).getCameraImageUrl());
-                                    Placename.add(datalist.get(i).getCameraLocationName());
-                                    Log.e("nearlat1", String.valueOf(nearlat1));
-                                    Log.e("nearlong1", String.valueOf(nearlong1));
-                                    Log.e("nearimg", String.valueOf(nearimg));
+                                    mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
+                                    mCameraLong.add(mNearestLocationList.get(i).getCameraLong());
+                                    mCameraImageUrl.add(mNearestLocationList.get(i).getCameraImageUrl());
+                                    mCameraLocName.add(mNearestLocationList.get(i).getCameraLocationName());
+                                    Log.e("mCameraLat", String.valueOf(mCameraLat));
+                                    Log.e("mCameraLong", String.valueOf(mCameraLong));
+                                    Log.e("mCameraImageUrl", String.valueOf(mCameraImageUrl));
 
-                                    final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
+                                    carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
                                     carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
                                     carouselLayoutManager.setMaxVisibleItems(1);
 
                                     mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
                                     mNearestPlaceRecycler.setHasFixedSize(true);
-//        mNearestrecyclerAdapter = new NearestRecyclerAdapter(getActivity(),datalist,nearlat1,nearlong1,distances1);
-                                    mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), nearimg, nearlat1, nearlong1, distances1, Placename);
+                                    mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName);
                                     mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                     mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
                                     mNearestrecyclerAdapter.notifyDataSetChanged();
 
-                                    LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
-                                    Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-                                    Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                                    LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
+                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
 
                                 }
 
-//
-
-
-//                            }
-
+                            }
                         }
+                        Double lat = mCurrentGpsLoc.getLatitude();
+                        Double lng = mCurrentGpsLoc.getLongitude();
+                        LatLng locateMe = new LatLng(lat, lng);
+
+
+                        float zoomLevel = 14.0f;
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateMe,zoomLevel));
+                        mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f), 2000, null);
+                        mNearestPlaceRecycler.scrollToPosition(4);
                     }
 
                 });
+        if (mCameraLat!=null){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mNearestPlaceRecycler.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                    @Override
+                    public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+
+                        int scrollPosition = carouselLayoutManager.getCenterItemPosition();
+                        double lat = Double.parseDouble(mCameraLat.get(scrollPosition));
+                        double lng = Double.parseDouble(mCameraLong.get(scrollPosition));
+                        LatLng latLng = new LatLng(lat,lng);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    }
+                });
+            }
+        }
 
 
         mSearchButton.setOnClickListener(new View.OnClickListener() {
@@ -434,11 +444,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         });
 
 
-        filterButton = (Button) view.findViewById(R.id.filter_button);
+        mFilterButton = (Button) view.findViewById(R.id.filter_button);
 
-        filterButton.setVisibility(View.VISIBLE);
+        mFilterButton.setVisibility(View.VISIBLE);
 
-        filterButton.setOnClickListener(new View.OnClickListener() {
+        mFilterButton.setOnClickListener(new View.OnClickListener() {
             FragmentTransaction transaction;
 
             @Override
@@ -460,29 +470,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         });
 
-        mExpandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            int previousGroup = -1;
-
-            @Override
-            public void onGroupExpand(int groupPosition) {
-
-                if (groupPosition != previousGroup) {
-                    mExpandableListView.collapseGroup(previousGroup);
-                    previousGroup = groupPosition;
-                }
-
-                Toast.makeText(getActivity(),
-                        mExpandableListTitle.get(groupPosition) + " List Expanded.",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-//
-//                //Carousel
-
-//                mSearchView = view.findViewById(R.id.home_search_view);
-
         //NearestPlace Recycler
-        mNearestPlaceRecycler = view.findViewById(R.id.nearest_places_recycler);
+
         HomeRelativeLay = view.findViewById(R.id.home_lay);
         HomeRelativeLay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -497,75 +486,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         });
 //
-        //Expandable List and Searchview
         permissionStatus = getActivity().getSharedPreferences("permissionStatus", MODE_PRIVATE);
 
-//        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)) {
-//                //Show Information about why you need the permission
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setTitle("Need phone Permission");
-//                builder.setMessage("This app needs phone permission.");
-//                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.cancel();
-//                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
-//                    }
-//                });
-//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.cancel();
-//                    }
-//                });
-//                builder.show();
-//            }
-//
-//
-////            else if (permissionStatus.getBoolean(Manifest.permission.CALL_PHONE, false)) {
-////                //Previously Permission Request was cancelled with 'Dont Ask Again',
-////                // Redirect to Settings after showing Information about why you need the permission
-////                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-////                builder.setTitle("Need phone Permission");
-////                builder.setMessage("This app needs phone permission.");
-////                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-////                    @Override
-////                    public void onClick(DialogInterface dialog, int which) {
-////                        dialog.cancel();
-////                        sentToSettings = true;
-////                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-////                        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
-////                        intent.setData(uri);
-////                        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
-////                        Toast.makeText(getActivity(), "Go to Permissions to Grant phone", Toast.LENGTH_LONG).show();
-////                    }
-////                });
-////                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-////                    @Override
-////                    public void onClick(DialogInterface dialog, int which) {
-////                        dialog.cancel();
-////                    }
-////                });
-////                builder.show();
-////            }
-//
-//            else {
-//                //just request the permission
-//                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
-//            }
-//
-//            SharedPreferences.Editor editor = permissionStatus.edit();
-//            editor.putBoolean(Manifest.permission.CALL_PHONE, true);
-//            editor.commit();
-//
-//
-//        } else {
-//            //You already have the permission, just go ahead.
-//            proceedAfterPermission();
-//        }
-//
-//
         return view;
     }
 
@@ -577,12 +499,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     public void onLocationChanged(Location location) {
         mLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        Mmap.clear();
-        //    Mmap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_markf)));
-        Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln, 13.5f));
-//        Mmap.animateCamera(CameraUpdateFactory.zoomTo(13.5f), 2000, null);
-        Mmap.setMaxZoomPreference(13.5f);
-        Mmap.setMinZoomPreference(6.5f);
+        mMap.clear();
+        //    mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_markf)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln, 12.0f));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
+        mMap.setMaxZoomPreference(13.5f);
+        mMap.setMinZoomPreference(6.5f);
         // Helper method for smooth
         // animation
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -595,41 +517,42 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Mmap.setMyLocationEnabled(true);
-        Mmap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
 //
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Mmap=googleMap;
-        Mmap.clear();
-        Double lat = gps.getLatitude();
-        Double lng = gps.getLongitude();
+        mMap =googleMap;
+        mMap.clear();
+        Double lat = mCurrentGpsLoc.getLatitude();
+        Double lng = mCurrentGpsLoc.getLongitude();
         LatLng locateme = new LatLng(lat, lng);
-        Mmap.getUiSettings().isZoomControlsEnabled();
 
-        Mmap.getUiSettings().setMyLocationButtonEnabled(false);
+//        mMap.getUiSettings().isZoomControlsEnabled();
+//        mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
         }
-        Mmap.setMyLocationEnabled(false);
 
+        mMap.setMyLocationEnabled(false);
 //
-        Mmap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocationicon)));
-        Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateme,13.5f));
-        // map.animateCamera(CameraUpdateFactory.zoomIn());
-        Mmap.animateCamera(CameraUpdateFactory.zoomTo(13.5f), 2000, null);
-        Mmap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+        mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocationicon)));
+        float zoomLevel = 12.0f;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
+
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
 
-                if(gps.canGetLocation()) {
-                    Double lat = gps.getLatitude();
-                    Double lng = gps.getLongitude();
+                if(mCurrentGpsLoc.canGetLocation()) {
+                    Double lat = mCurrentGpsLoc.getLatitude();
+                    Double lng = mCurrentGpsLoc.getLongitude();
                     LatLng locateme = new LatLng(lat, lng);
                     handlenewlocation(locateme);
 
@@ -646,12 +569,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     public void handlenewlocation(final LatLng laln)
     {
-        Mmap.clear();
+        mMap.clear();
 
-        //  Mmap.addMarker(new MarkerOptions().position(laln).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_pin2)));
-        Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,13.5f));
+        //  mMap.addMarker(new MarkerOptions().position(laln).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_pin2)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,13.5f));
+
         // map.animateCamera(CameraUpdateFactory.zoomIn());
-//        Mmap.animateCamera(CameraUpdateFactory.zoomTo(13.5f), 2000, null);
+//        mMap.animateCamera(CameraUpdateFactory.zoomTo(13.5f), 2000, null);
         latitu=laln.latitude;
         longitu=laln.longitude;
 
@@ -659,9 +583,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     }
 
+    public void markCurrentLocation(){
 
-    public AdapterView.OnItemClickListener mAutocompleteClickListener
-            = new AdapterView.OnItemClickListener() {
+
+    }
+    public AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -690,17 +616,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
                                 distancesmtrs.clear();
-                                for (int i = 0; i < datalist.size(); i++) {
+                                for (int i = 0; i < mNearestLocationList.size(); i++) {
 
-                                    Log.e("Latitude", "" + datalist.get(i).getCameraLat());
-                                    Log.e("Longitude", "" + datalist.get(i).getCameraLong());
+                                    Log.e("Latitude", "" + mNearestLocationList.get(i).getCameraLat());
+                                    Log.e("Longitude", "" + mNearestLocationList.get(i).getCameraLong());
 
-                                    loc1.setLatitude(Latitude);
-                                    loc1.setLongitude(Longitude);
-                                    loc2.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
-                                    loc2.setLongitude(Double.parseDouble(datalist.get(i).getCameraLong()));
+                                    mCurrentLoc.setLatitude(Latitude);
+                                    mCurrentLoc.setLongitude(Longitude);
+                                    mNearestLocations.setLatitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()));
+                                    mNearestLocations.setLongitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
                                     double distance = 0;
-                                    double distancemtrs = loc1.distanceTo(loc2);
+                                    double distancemtrs = mCurrentLoc.distanceTo(mNearestLocations);
                                     distancesmtrs.add(distancemtrs);
                                     Log.e("distancemtrs", String.valueOf(distancesmtrs));
 //                        for(int j =0;j<distancesmtrs.size();j++){
@@ -708,13 +634,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                     if (distancemtrs < 1500) {
                                         caldis.add(String.valueOf(distancesmtrs));
                                         Log.e("caldis", String.valueOf(caldis));
-                                        nearlat.add(datalist.get(i).getCameraLat());
-                                        nearlong.add(datalist.get(i).getCameraLong());
+                                        nearlat.add(mNearestLocationList.get(i).getCameraLat());
+                                        nearlong.add(mNearestLocationList.get(i).getCameraLong());
                                         Log.e("nearlat", String.valueOf(nearlat));
                                         Log.e("nearlong", String.valueOf(nearlong));
 //                            }
                                     }
-                                    distance = loc1.distanceTo(loc2) / 1000;
+                                    distance = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
                                     Log.e("distance", String.valueOf(distance));
                                     distances.add(distance);
 //                                          distancedata();
@@ -722,7 +648,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 //                                            caldis.add(distance);
 //                                            Log.e("caldis", String.valueOf(caldis));
-//                                            distance(Latitude,Longitude,Double.parseDouble(datalist.get(i).getCameraLat()),Double.parseDouble(datalist.get(i).getCameraLong()));
+//                                            distance(Latitude,Longitude,Double.parseDouble(mNearestLocationList.get(i).getCameraLat()),Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
 
 
 //
@@ -903,19 +829,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         }
     }
-
-
-//    @Override
-//    protected void onPostResume() {
-//        super.onPostResume();
-//        if (sentToSettings) {
-//            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-//                //Got Permission
-//                proceedAfterPermission();
-//            }
-//        }
-//    }
-
 
     public void animateMarker(final Marker marker, final Location location) {
         final Handler handler = new Handler();

@@ -107,6 +107,7 @@ public void onClick(View v) {
         intent.putExtra("lat",nearlat1.get(position));
         intent.putExtra("lng",nearlong1.get(position));
         intent.putExtra("values","carousel");
+        intent.putExtra("listposition",holder.getAdapterPosition());
         intent.putExtra("placename",Placename.get(position));
         context.startActivity(intent);
         }

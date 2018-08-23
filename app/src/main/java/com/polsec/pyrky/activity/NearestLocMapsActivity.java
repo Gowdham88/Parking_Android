@@ -90,6 +90,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     CarouselDetailMapAdapter mNearestrecyclerAdapter;
 //    RecyclerView mNearestPlaceRecycler;
     DiscreteScrollView mNearestPlaceRecycler;
+    int mListPosition = 0;
 
 
     Location loc1 = new Location("");
@@ -116,36 +117,20 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     String lat,longi;
     private static BitmapDescriptor markerIconBitmapDescriptor;
 
-
-
-    private static final int GOOGLE_API_CLIENT_ID = 0;
-
-    Location mLastLocation;
-    Marker myLocatMarker;
-
-    SupportMapFragment mapFrag;
     private TrackGPS gps;
     String Strlat, Strlong, latvalue;
     LatLng laln;
-    String address1;
     Location mLocation;
     List<Address> addresses;
     String lattitude, longitude, address, city, state, country, postalCode, knownName;
     double latitud, longitud, latitu, longitu;
     List<Camera> datalist = new ArrayList<Camera>();
-    Marker marker;
-    String maplat, maplongitude;
     ImageView BackImg;
     TextView TitlaTxt;
     String mLat,mLongi,PlaceName;
     String Nameval="home";
     String Nameval1="carousel",mapLat,mapLongi,cameraid;
-    String Mlat,Mlongi;
 
-    String valuelat;
-    String valuelongi;
-    String valuestr;
-    String PlaceNameval;
     String parkytype,mUid;
     private InfiniteScrollAdapter infiniteAdapter;
 
@@ -192,17 +177,18 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             String Value1=chatIntent.getStringExtra("values");
 
             if(Nameval.equals(Value)){
-                mLat = chatIntent.getStringExtra("latitude").toString().trim();
-                mLongi = chatIntent.getStringExtra("longitude").toString().trim();
-                PlaceName= chatIntent.getStringExtra("place").toString().trim();
+                mLat = chatIntent.getStringExtra("latitude").trim();
+                mLongi = chatIntent.getStringExtra("longitude").trim();
+                PlaceName= chatIntent.getStringExtra("place").trim();
                 Log.e("hlattitude", String.valueOf(mLat));
                 Log.e("hlongitude", String.valueOf(mLongi));
                 Log.e("hplace", String.valueOf(PlaceName));
             }
             else if(Nameval1.equals(Value1)){
-                mLat = chatIntent.getStringExtra("lat").toString().trim();
-                mLongi = chatIntent.getStringExtra("lng").toString().trim();
-                PlaceName= chatIntent.getStringExtra("placename").toString().trim();
+                mLat = chatIntent.getStringExtra("lat").trim();
+                mLongi = chatIntent.getStringExtra("lng").trim();
+                mListPosition = chatIntent.getIntExtra("listposition",0);
+                PlaceName= chatIntent.getStringExtra("placename").trim();
 
                 Log.e("lattitude", String.valueOf(mLat));
                 Log.e("longitude", String.valueOf(mLongi));
@@ -283,11 +269,11 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
         }
 */
-//        for (String key : field){
-//
-//            for (String values : keyValue.get(key)) {
-//                Query query = db.collection("camera").whereEqualTo(key,values);
-        Query query = db.collection("camera");
+        for (String key : field){
+
+            for (String values : keyValue.get(key)) {
+                Query query = db.collection("camera").whereEqualTo(key,values);
+//        Query query = db.collection("camera");
 
                 query.get()
                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -324,13 +310,12 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                         double distancemtrs1 = loc1.distanceTo(loc2);
                                         distancesmtrsmap.add(distancemtrs1);
                                         Log.e("distancemtrsmap", String.valueOf(distancesmtrsmap));
-//                        for(int j =0;j<distancesmtrs.size();j++){
-//
+
                                         distanceval = loc1.distanceTo(loc2) / 1000;
                                         distances1.add(String.valueOf(distanceval));
                                         Log.e("distancemap", String.valueOf(distances1));
 
-//                                        if (distancemtrs1 < 15000) {
+                                        if (distancemtrs1 < 15000) {
                                             caldismap.add(String.valueOf(distancesmtrsmap));
                                             Log.e("caldismap", String.valueOf(caldismap));
                                             nearlat1.add(datalist.get(i).getCameraLat());
@@ -359,8 +344,9 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
                                             mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
                                             mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
-                                            mNearestrecyclerAdapter = new CarouselDetailMapAdapter(context, nearimg, nearlat1, nearlong1, distances1, Placename,ruls, NearestLocMapsActivity.this);
+                                            mNearestrecyclerAdapter = new CarouselDetailMapAdapter(context, nearimg, nearlat1, nearlong1, distances1, Placename, ruls, NearestLocMapsActivity.this);
                                             mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
+                                            mNearestPlaceRecycler.scrollToPosition(mListPosition);
                                             mNearestPlaceRecycler.setItemTransformer(new ScaleTransformer.Builder()
                                                     .setMinScale(0.8f)
                                                     .build());
@@ -369,15 +355,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                             onItemChanged(nearlat1.get(0), nearlong1.get(0), ruls.get(0));
 
 
-//                                    infiniteAdapter.notifyDataSetChanged();
-//                                    runOnUiThread(new Runnable() {
-//                                        public void run() {
-//                                            infiniteAdapter.notifyDataSetChanged();
-//                                        }
-//                                    });
-
-
-                                            if (datalist.get(i).getParkingType() == "Free street parking") {
+                                           /* if (datalist.get(i).getParkingType() == "Free street parking") {
                                                 LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
                                                 Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
                                                 Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
@@ -386,21 +364,20 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                                 Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
                                                 Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
                                             }
+*/
 
-
-//                                        }
-
+                                        }
 //
 
-
-//                                    }
+                                    }
+                                    }
 
                                 }
-                            }
+                            });
 
-                        });
-//            }
-//        }
+                        }
+            }
+        }
 //
 //        mGoogleApiClient = new GoogleApiClient.Builder(NearestLocMapsActivity.this)
 //                .addApi(Places.GEO_DATA_API)
@@ -409,7 +386,6 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 //                .build();
 //
 
-        }
 
 
     @Override
@@ -438,26 +414,16 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
         LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
 
-        if(parkytype=="Free street parking"){
+        if(parkytype.equals("Free street parking")){
 
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
             Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//            CameraUpdate current = CameraUpdateFactory.newLatLngZoom(sydney,15);
             Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 15, null);
-//            Mmap.moveCamera(current);
             Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker m) {
-
-
                     showDialog(m,cameraid);
                     mNearestPlaceRecycler.setVisibility(View.GONE);
-
-
-
-
-
-
 
                     return false;
 
@@ -481,16 +447,8 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker m) {
-
-
                     showDialog(m,cameraid);
                     mNearestPlaceRecycler.setVisibility(View.GONE);
-
-
-
-
-
-
 
                     return false;
 
@@ -549,10 +507,6 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         Mmap.setMinZoomPreference(6.5f);
         Mmap.getUiSettings().setMyLocationButtonEnabled(false);
 
-
-
-
-
     }
 
     @Override
@@ -584,26 +538,6 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 //        Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 10, null);
 
         mNearestPlaceRecycler.setVisibility(View.VISIBLE);
-
-//        Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(Marker m) {
-//
-//
-//                showDialog(m,cameraid);
-//                mNearestPlaceRecycler.setVisibility(View.GONE);
-//
-//
-//
-//
-//
-//
-//
-//                return false;
-//
-//            }
-//
-//    });
 
     }
 
@@ -916,31 +850,15 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                     }
                 });
 
-//
-
-//                Intent postintent = new Intent(getActivity(), PostActivity.class);
-//                startActivity(postintent);
                 bottomSheetDialog.dismiss();
-//
-//                if (hasPermissions()) {
-//                    captureImage();
-//                } else {
-//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
-//                }
+
             }
         });
 
         pyrky.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (hasPermissions()) {
-//                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                    startActivityForResult(i, RC_PICK_IMAGE);
-//                } else {
-//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
-//                }
-//                Intent checkinintent = new Intent(getActivity(), CheckScreenActivity.class);
-//                startActivity(checkinintent);
+
                 bottomSheetDialog.dismiss();
             }
         });
@@ -1084,9 +1002,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                         Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
                     }
                 });
-//
 
-//                BookBtn.setVisibility(View.GONE);
                 alertDialog1.dismiss();
             }
         });
@@ -1123,53 +1039,6 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             return false;
         }
     }
-
-//    private void ShowRulesAlert() {
-//
-//        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NearestLocMapsActivity.this);
-//        LayoutInflater factory = LayoutInflater.from(NearestLocMapsActivity.this);
-//        View bottomSheetView = factory.inflate(R.layout.rules_layout, null);
-//        bottomSheetDialog.setContentView(bottomSheetView);
-//        bottomSheetDialog.show();
-//        RelativeLayout ViewLay=(RelativeLayout)bottomSheetDialog.findViewById(R.id.view_lay);
-//        RelativeLayout NaviLay=(RelativeLayout)bottomSheetDialog.findViewById(R.id.navi_lay);
-//
-//        TextView ViewLTxt=(TextView)bottomSheetDialog.findViewById(R.id.view_txt);
-//        TextView NaviTxt=(TextView)bottomSheetDialog.findViewById(R.id.navi_txt);
-//
-//
-//        ViewLTxt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                bottomSheetDialog.dismiss();
-//
-//            }
-//        });
-//
-//        NaviTxt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                bottomSheetDialog.dismiss();
-//            }
-//        });
-//        ViewLay.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                bottomSheetDialog.dismiss();
-//            }
-//        });
-//        NaviLay.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                bottomSheetDialog.dismiss();
-//            }
-//        });
-//
-//    }
-
-
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {

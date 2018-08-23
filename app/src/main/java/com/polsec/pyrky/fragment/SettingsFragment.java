@@ -90,7 +90,7 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
  * Created by thulirsoft on 7/21/18.
  */
 
-public class SettingsFragment extends Fragment  implements EasyPermissions.PermissionCallbacks,AdapterView.OnItemSelectedListener{
+public class SettingsFragment extends Fragment  implements EasyPermissions.PermissionCallbacks{
 
     EditText NameEdt,EmailEdt;
     ImageView ProfileImg;
@@ -183,7 +183,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
         layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
         layoutManager.setMaxVisibleItems(1);;
-//        layoutManager.scrollToPosition(mCarIcon);
+
 //        layoutManager.addOnItemSelectionListener(new CarouselLayoutManager.OnCenterItemSelectionListener() {
 //            @Override
 //            public void onCenterItemChanged(int adapterPosition) {
@@ -205,66 +205,12 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    mCarouselCount = layoutManager.getCenterItemPosition();
+                    mCarIcon = layoutManager.getCenterItemPosition();
                 }
             });
         }
-        recyclerView.scrollToPosition(mCarouselCount);
-//        if(mCarIcon==0){
-//            layoutManager.scrollToPosition(0);
-//
-//        }
-//        else if(mCarIcon==1){
-//            layoutManager.scrollToPosition(1);
-//        }
-//         else if(mCarIcon==2){
-//            layoutManager.scrollToPosition(2);
-//        }
-//         else if(mCarIcon==3){
-//            layoutManager.scrollToPosition(3);
-//        }
-//         else{
-//            layoutManager.scrollToPosition(4);
-//        }
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-//                    Toast.makeText(getActivity(), "pos", Toast.LENGTH_SHORT).show();
-//                    //Dragging
-//                } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-//                    Toast.makeText(getActivity(), "possi", Toast.LENGTH_SHORT).show();
-//
-////                 /*
-////                    Here load the Image to image view with picaso
-////                 */
-////                    Picasso.with(itemView.getContext())
-////                            .load(url)
-////                            .into(yourImageView, new Callback() {
-////                                @Override
-////                                public void onSuccess() {
-////
-////                                }
-////
-////                                @Override
-////                                public void onError() {
-////
-////                                }
-////                            });
-//                }
-//            }
-//
-//
-//        @Override
-//        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//            super.onScrolled(recyclerView, dx, dy);
-//
-////            int firstVisibleItem = recylerViewLayoutManager.findFirstVisibleItemPosition();
-//               /* Log.e ("VisibleItem", String.valueOf(firstVisibleItem));*/
-//
-//        }
-//    });
+        recyclerView.scrollToPosition(mCarIcon);
+
         ProfileImg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -783,37 +729,6 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             dialog.dismiss();
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-        switch(mCarIcon){
-            case 0:
-
-                Toast.makeText(getActivity(), "Position=" + i, Toast.LENGTH_LONG).show();
-                break;
-            case 1:
-                //view.setBackgroundResource(ids[1]);
-
-                Toast.makeText(getActivity(), "Position=" + i, Toast.LENGTH_LONG).show();
-                break;
-            case 2:
-
-                Toast.makeText(getActivity(), "Position=" + i, Toast.LENGTH_LONG).show();
-                break;
-            case 3:
-
-                Toast.makeText(getActivity(), "Position=" + i, Toast.LENGTH_LONG).show();
-                break;
-            case 4:
-
-                Toast.makeText(getActivity(), "Position=" + i, Toast.LENGTH_LONG).show();
-                break;
-
-
-        }
-//
-
-    }
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager =
                 (InputMethodManager) activity.getSystemService(
@@ -822,10 +737,4 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 activity.getCurrentFocus().getWindowToken(), 0);
     }
 
-
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
 }

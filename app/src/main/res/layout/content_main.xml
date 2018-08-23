@@ -107,7 +107,7 @@
             </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/current_location_layout"
+                android:id="@+id/nearest_locations_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/search_layout"
@@ -135,7 +135,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/current_location_layout"
+                android:layout_below="@id/nearest_locations_layout"
                 android:layout_centerHorizontal="true"
                 android:text="Search" />
         </RelativeLayout>
