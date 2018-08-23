@@ -39,6 +39,7 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
 
     Map<String, Object> bookingid1=new HashMap<>();
     List<UsersBooking> BookinguserList = new ArrayList<UsersBooking>();
+    Boolean val;
 
     List<Booking> bookingList = new ArrayList<Booking>();
     String Datetime,Datemonth,Dateday,Datemothname;
@@ -67,7 +68,7 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         mUid = PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-        double time= bookingList.get(position).getDateTime();
+//        double time= bookingList.get(position).getDateTime();
 
 //        double dv = Long.valueOf(String.valueOf(time))*1000;// its need to be in milisecond
 //        Date df = new Date(Long.valueOf(String.valueOf(dv)));
@@ -79,27 +80,34 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
 
 //        Log.e("vv",str);
 
-        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
-        Boolean status= Boolean.valueOf(bookingList.get(position).getBookingStatus());
+//        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
+//        Boolean status= Boolean.valueOf(bookingList.get(position).getBookingStatus());
 //        if(status){
 //            holder.city.setText(bookingList.get(position).getDestName());
 //        }
-
+        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
         for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
             System.out.println(entry.getKey() + " = " + entry.getValue());
 
-            Boolean val = (Boolean) entry.getValue();
+             val= (Boolean) entry.getValue();
             String values = String.valueOf(val);
 
-            Log.e("valuesh", values);
+//            Log.e("valuesh", String.valueOf(val));
+
             if(val){
                 holder.city.setText(bookingList.get(position).getDestName());
             }
-
+//            else {
+////                holder.itemView.setVisibility(View.GONE);
+////                param.height = 0;
+////                param.width = 0;
+//            }
 
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
 
         }
+
+
 
 //        final FirebaseUser user = mAuth.getCurrentUser();
 //        DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -133,63 +141,6 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
 //            }
 //        });
 
-        DocumentReference docRef = db.collection("users").document(mUid);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        bookingid = document.getData();
-
-
-                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
-
-
-                        String count = String.valueOf(bookingid1.size());
-                        Log.e("count", count);
-
-
-//                                    followingcount = 1;
-                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                            System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                            Boolean val = (Boolean) entry.getValue();
-                            String values = String.valueOf(val);
-
-                            Log.e("valuesc", values);
-//
-                            if (val) {
-
-                                    holder.city.setText(bookingList.get(position).getDestName());
-//                                                holder.dateTime.setText(str);
-
-
-                            }
-                            else{
-
-                                holder.itemView.setVisibility(View.GONE);
-                                param.height = 0;
-                                param.width = 0;
-                            }
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-
-                        }
-
-
-
-                    } else {
-//                        Log.d(TAG, "No such document");
-
-                    }
-                } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
-
-                }
-            }
-        });
 
 //
     }
@@ -197,7 +148,7 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
 
     @Override
     public int getItemCount() {
-        return BookinguserList.size();
+        return bookingList.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

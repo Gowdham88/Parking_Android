@@ -55,7 +55,7 @@ public class ViewImageActivity extends AppCompatActivity {
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
-    String DestName,lat,longi,mUid;
+    String DestName,lat,longi,mUid,CameraId,cameraid;
     List<Users> bookinglist = new ArrayList<Users>();
      FirebaseFirestore db;
     List<String> booking_ID = new ArrayList<>();
@@ -93,8 +93,10 @@ public class ViewImageActivity extends AppCompatActivity {
             latitude = extras.getDouble("latitude");
             longitude = extras.getDouble("longitude");
             DestName = extras.getString("place");
+            CameraId = extras.getString("cameraid");
             lat = String.valueOf(latitude);
             longi = String.valueOf(longitude);
+            cameraid=String.valueOf(CameraId);
 
             Log.e("lattitudeview", String.valueOf(latitude));
             Log.e("longitudeview", String.valueOf(longitude));
@@ -200,8 +202,8 @@ public class ViewImageActivity extends AppCompatActivity {
                                     bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
 
 
-                                    String count = String.valueOf(bookingid1.size());
-                                    Log.e("count", count);
+//                                    String count = String.valueOf(bookingid1.size());
+//                                    Log.e("count", count);
 
 
 //                                    followingcount = 1;
@@ -255,7 +257,7 @@ public class ViewImageActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
             }
         });
-//
+
     }
 
 
@@ -272,7 +274,7 @@ public class ViewImageActivity extends AppCompatActivity {
         final String uid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 
 
-        parkingSpaceRating= String.valueOf(0);
+        parkingSpaceRating= String.valueOf(0.0);
         protectCar=false;
         bookingStatus=true;
 //          locationTxt=Location_Txt.getText().toString();
@@ -284,7 +286,7 @@ public class ViewImageActivity extends AppCompatActivity {
         likeData.put(uid, false);
         documentID="";
 
-        Booking bookingdata = new Booking(uid,latitude,longitude,destName,getPostTime(),bookingStatus,documentID,Double.parseDouble(parkingSpaceRating),protectCar);
+        Booking bookingdata = new Booking(uid,latitude,longitude,destName,getPostTime(),bookingStatus,cameraid,documentID,Double.parseDouble(parkingSpaceRating),protectCar);
 
 
         db.collection("Bookings").add(bookingdata).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -294,7 +296,7 @@ public class ViewImageActivity extends AppCompatActivity {
                 documentID = documentReference.getId();
 //                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
 
-                Booking bookingdata = new Booking(uid,latitude,longitude,destName,getPostTime(),bookingStatus,documentID,Double.parseDouble(parkingSpaceRating),protectCar);
+                Booking bookingdata = new Booking(uid,latitude,longitude,destName,getPostTime(),bookingStatus,cameraid,documentID,Double.parseDouble(parkingSpaceRating),protectCar);
                 Map<String, Object> docID = new HashMap<>();
                 docID.put("documentID", documentID);
 
@@ -517,7 +519,7 @@ public class ViewImageActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        alertDialog1.show();
+
 //        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(alertDialog1.getWindow().getAttributes());
@@ -526,6 +528,7 @@ public class ViewImageActivity extends AppCompatActivity {
         lp.gravity = Gravity.CENTER;
 //        lp.windowAnimations = R.style.DialogAnimation;
         alertDialog1.getWindow().setAttributes(lp);
+        alertDialog1.show();
     }
 
     private boolean isPackageInstalled() {

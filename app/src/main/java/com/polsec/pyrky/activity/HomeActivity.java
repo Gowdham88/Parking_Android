@@ -18,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -32,6 +33,7 @@ import com.polsec.pyrky.fragment.HomeFragment;
 import com.polsec.pyrky.fragment.NotificationFragment;
 import com.polsec.pyrky.fragment.ProfileFragment;
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.fragment.SettingsFragment;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.CircleTransformation;
 import com.squareup.picasso.Picasso;
@@ -52,16 +54,22 @@ public class HomeActivity extends AppCompatActivity
     Toolbar toolbar;
     ActionBar actionbar;
     ActionBarDrawerToggle toggle;
-    TextView toolbarText;
+    TextView textview;
+    TextView toolbarText,Username;
+    RelativeLayout.LayoutParams layoutparams;
     String UsrName;
     private FirebaseAuth mAuth;
     private int avatarSize;
     View view,holderView, contentView;
+    String profileImageUrl;
+    CircleImageView profileImage;
+    String Nameval="settings";
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
 //        ((MyApplication )getApplication()).getNetComponent().inject(this);
 //    }
+
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -75,14 +83,36 @@ public class HomeActivity extends AppCompatActivity
         actionbar = getSupportActionBar();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mAuth = FirebaseAuth.getInstance();
+//        actionbar.setTitle("Home");
 
         toolbarText = findViewById(R.id.toolbar_text);
         setSupportActionBar(toolbar);
         view = (View)findViewById(R.id.myview);
         view.setVisibility(View.VISIBLE);
         UsrName=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
+//
+//        Username=findViewById(R.id.);
+//        Username.setText(UsrName);
+//        startActivity(getIntent());
+//        Intent chatIntent = getIntent();
+//        if(chatIntent!=null){
+//            String Value=chatIntent.getStringExtra("name");
+//
+//            if(Nameval.equals(Value)){
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+//                transaction.replace(R.id.main_frame_layout, new SettingsFragment());
+//                transaction.addToBackStack(null);
+//                transaction.commit();
+//            }
+//
+//            }
+//            else {
+//
+//            }
 
         holderView = findViewById(R.id.holder);
+
         contentView = findViewById(R.id.home_coordinator);
         bottomNavigationView = findViewById(R.id.navigationView);
 
@@ -98,7 +128,7 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
 
         toggle.setToolbarNavigationClickListener(v -> {
-
+//                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
@@ -109,8 +139,8 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
-        CircleImageView profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
-        String profileImageUrl = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC);
+        profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
+        profileImageUrl= PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC);
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
             Picasso.with(HomeActivity.this)
@@ -194,6 +224,33 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
+   /* @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }*/
+
+   /* @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (toggle.onOptionsItemSelected(item)){
+            return true;
+        }
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Toast.makeText(context, "Settings", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }*/
+
     @Override
     public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onPostCreate(savedInstanceState, persistentState);
@@ -213,20 +270,30 @@ public class HomeActivity extends AppCompatActivity
             transaction.replace(R.id.main_frame_layout, new HomeFragment());
             transaction.addToBackStack(null);
             transaction.commit();
+//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            loadFragment(new ());
             toolbarText.setText("Home");
         } else if (id == R.id.nav_booking) {
-
+//
+//            loadFragment(new BookingsFragment());
                 Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
-                overridePendingTransition(0, 0);
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 startActivity(intent);
-
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+//            transaction.replace(R.id.main_frame_layout, new BookingsFragment());
+//            transaction.addToBackStack(null);
+//            transaction.commit();
+//            toolbarText.setText("Booking");
         } else if (id == R.id.nav_profile) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
             transaction.replace(R.id.main_frame_layout, new ProfileFragment());
             transaction.addToBackStack(null);
             transaction.commit();
-
+//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            loadFragment(new ProfileFragment());
+            toolbarText.setText("Profile");
         } else if (id == R.id.nav_logout) {
 
 
@@ -261,5 +328,10 @@ public class HomeActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         isRunning = true;
+
+
     }
+
+
+
 }

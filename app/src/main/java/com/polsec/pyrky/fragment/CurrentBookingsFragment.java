@@ -73,9 +73,9 @@ public class CurrentBookingsFragment extends Fragment {
         super.onResume();
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
 //        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
-        loadPost(ACTION_SHOW_LOADING_ITEM);
-        loadPostvalcurrent(ACTION_SHOW_LOADING_ITEM);
-        recyclerAdapter.notifyDataSetChanged();
+//        loadPost(ACTION_SHOW_LOADING_ITEM);
+//
+//        recyclerAdapter.notifyDataSetChanged();
     }
     @Nullable
     @Override
@@ -84,9 +84,50 @@ public class CurrentBookingsFragment extends Fragment {
         uid = PreferencesHelper.getPreference(getContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 //        loadPost(ACTION_SHOW_LOADING_ITEM);
         db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(uid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        bookingid = document.getData();
 
 
-        swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
+                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+
+
+                        String count = String.valueOf(bookingid1.size());
+                        Log.e("count", count);
+
+
+//                                    followingcount = 1;
+//                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+//                            System.out.println(entry.getKey() + " = " + entry.getValue());
+//
+//                            Boolean val = (Boolean) entry.getValue();
+//                            String values = String.valueOf(val);
+//
+//                            Log.e("valuesc", values);
+////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+//
+//                        }
+
+
+
+                    } else {
+//                        Log.d(TAG, "No such document");
+
+                    }
+                } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+
+                }
+            }
+        });
+
+//        swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
 
         mRecyclerView = view.findViewById(R.id.current_booking_recycler);
         recyclerAdapter= new CurrentBookingRecyclerAdapter(getActivity(),BookingList,bookingid1);
@@ -95,16 +136,16 @@ public class CurrentBookingsFragment extends Fragment {
         mRecyclerView.setAdapter(recyclerAdapter);
         mRecyclerView.setHasFixedSize(true);
         recyclerAdapter.notifyDataSetChanged();
-        swipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-//                        feedAdapter.notifyDataSetChanged();
-
-                        doYourUpdate();
-                    }
-                }
-        );
+//        swipeRefreshLayout.setOnRefreshListener(
+//                new SwipeRefreshLayout.OnRefreshListener() {
+//                    @Override
+//                    public void onRefresh() {
+////                        feedAdapter.notifyDataSetChanged();
+//
+    doYourUpdate();
+//                    }
+//                }
+//        );
 
 
 
@@ -115,8 +156,8 @@ public class CurrentBookingsFragment extends Fragment {
 
         recyclerAdapter.notifyDataSetChanged();
         loadPost(ACTION_SHOW_LOADING_ITEM);
-        loadPostvalcurrent(ACTION_SHOW_LOADING_ITEM);
-        swipeRefreshLayout.setRefreshing(false);
+
+//        swipeRefreshLayout.setRefreshing(false);
     }
 
     private void setupFeed() {
@@ -163,8 +204,8 @@ public class CurrentBookingsFragment extends Fragment {
                             BookingList.add(comment);
                             BookingListId.add(document.getId());
 
-                            Log.e("dbbd",document.getId());
-                            Log.e("dbbd", String.valueOf(document.getData()));
+//                            Log.e("dbbd",document.getId());
+//                            Log.e("dbbd", String.valueOf(document.getData()));
 
                         }
 
@@ -175,52 +216,6 @@ public class CurrentBookingsFragment extends Fragment {
                 });
     }
 
-    public void loadPostvalcurrent(final String type) {
-
-        DocumentReference docRef = db.collection("users").document(uid);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        bookingid = document.getData();
-
-
-                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
-
-
-                        String count = String.valueOf(bookingid1.size());
-                        Log.e("count", count);
-
-
-//                                    followingcount = 1;
-                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                            System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                            Boolean val = (Boolean) entry.getValue();
-                            String values = String.valueOf(val);
-
-                            Log.e("valuesc", values);
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-
-                        }
-
-                        setupFeed();
-
-                    } else {
-//                        Log.d(TAG, "No such document");
-
-                    }
-                } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
-
-                }
-            }
-        });
-
-    }
 
 
 }

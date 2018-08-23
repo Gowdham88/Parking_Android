@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ public class BookingsActivity extends AppCompatActivity implements  TabHost.OnTa
 Toolbar toolbar;
     ImageView BackImg;
     TextView  TitlaTxt;
+    RelativeLayout BackImgRelay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,13 @@ Toolbar toolbar;
         BackImg=(ImageView)findViewById(R.id.back_image);
         TitlaTxt=(TextView)findViewById(R.id.extra_title);
         TitlaTxt.setText("Bookings");
+        BackImgRelay=(RelativeLayout)findViewById(R.id.back_lay);
+        BackImgRelay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
