@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.pojo.Booking;
+import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
 import java.text.DecimalFormat;
@@ -56,15 +57,16 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     Map<String, Object> bookingid = new HashMap<>();
 
     Map<String, Object> bookingid1=new HashMap<>();
-
+    List<Camera>CameraList = new ArrayList<Camera>();
 
 
     List<Booking> bookingList = new ArrayList<Booking>();
     String Datetime;
-    public HistoryRecyclerAdapter(Context context, List<Booking> bookingList, Map<String, Object> bookingid1) {
+    public HistoryRecyclerAdapter(Context context, List<Booking> bookingList, Map<String, Object> bookingid1, List<Camera> cameraList) {
         this.context = context;
         this.bookingList = bookingList;
         this.bookingid1=bookingid1;
+        this.CameraList=CameraList;
 
     }
     @NonNull
@@ -104,7 +106,8 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         mPosition = position;
-        double time= bookingList.get(position).getDateTime();
+
+//        double time= bookingList.get(position).getDateTime();
 
 //        long dv = Long.valueOf(String.valueOf(time))*1000;// its need to be in milisecond
 //        Date df = new Date(dv);
@@ -125,8 +128,8 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             });
 
 
-        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
-        Boolean status= Boolean.valueOf(bookingList.get(position).getBookingStatus());
+//        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
+//        Boolean status= Boolean.valueOf(bookingList.get(position).getBookingStatus());
 
 //        if(!status){
 //            holder.city.setText(bookingList.get(position).getDestName());
@@ -137,8 +140,8 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             Boolean val = (Boolean) entry.getValue();
             String values = String.valueOf(val);
 
-            Log.e("valuesc", values);
-            if(val){
+            Log.e("valuesc", String.valueOf(val));
+            if(!val){
                 holder.city.setText(bookingList.get(position).getDestName());
             }
 

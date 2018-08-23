@@ -26,6 +26,7 @@ import com.polsec.pyrky.R;
 import com.polsec.pyrky.adapter.CurrentBookingRecyclerAdapter;
 import com.polsec.pyrky.adapter.HistoryRecyclerAdapter;
 import com.polsec.pyrky.pojo.Booking;
+import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
 import java.util.ArrayList;
@@ -51,6 +52,10 @@ public class HistoryFragment extends Fragment {
     FirebaseFirestore db;
     List<Booking> BookingList = new ArrayList<Booking>();
     List<String> BookingListId = new ArrayList<String>();
+    List<Camera>CameraList = new ArrayList<Camera>();
+    List<String> CameraListId = new ArrayList<String>();
+    List<String> Cameraslist = new ArrayList<String>();
+
 
     String mUid;
     Map<String, Object> bookingid = new HashMap<>();
@@ -78,15 +83,81 @@ public class HistoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_history, null);
 
         mRecyclerView = view.findViewById(R.id.history_recycler);
-
+        db = FirebaseFirestore.getInstance();
 
         uid = PreferencesHelper.getPreference(getContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 //        loadPost(ACTION_SHOW_LOADING_ITEM);
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        Query first = db.collection("camera");
+
+        first.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+
+                        if (documentSnapshots.getDocuments().size() < 1) {
+
+                            return;
+
+                        }
+
+                        for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
+
+                            Camera camera = document.toObject(Camera.class);
+                            CameraList.add(camera);
+                            CameraListId.add(document.getId());
+
+                            Log.e("dbbdcameraid",document.getId());
+                            Log.e("dbbdcamera", String.valueOf(document.getData()));
+
+                            for(int i=0;i<CameraListId.size();i++){
+
+//                                Cameraslist.clear();
+////        showProgressDialog();
+//                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+//
+//                                Query first = db.collection("Bookings").whereEqualTo(CameraListId);
+//
+//                                first.get()
+//                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                                            @Override
+//                                            public void onSuccess(QuerySnapshot documentSnapshots) {
+//
+//                                                if (documentSnapshots.getDocuments().size() < 1) {
+//
+//                                                    return;
+//
+//                                                }
+//
+//                                                for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
+//
+//                                                    Booking comment = document.toObject(Booking.class);
+//                                                    BookingList.add(comment);
+//                                                    BookingListId.add(document.getId());
+//
+//                                                    Log.e("dbbd",document.getId());
+//                                                    Log.e("dbbd", String.valueOf(document.getData()));
+//
+//                                                }
+//
+//
+//                                                setupFeed();
+//                                            }
+//
+//                                        });
+
+                            }
+
+                        }
+
+                    }
+
+                });
 
         swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
-        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1);
+        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1,CameraList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
@@ -118,7 +189,7 @@ public class HistoryFragment extends Fragment {
 
     private void setupFeed() {
 
-        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1);
+        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1,CameraList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
