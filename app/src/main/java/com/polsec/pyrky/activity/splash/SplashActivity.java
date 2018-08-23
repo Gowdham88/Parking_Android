@@ -33,22 +33,12 @@ public class SplashActivity extends AppCompatActivity {
                 /* Create an Intent that will start the Menu-Activity. */
                 boolean isLoggedIn = PreferencesHelper.getPreferenceBoolean(SplashActivity.this, PreferencesHelper.PREFERENCE_ISLOGGEDIN);
                 if (isLoggedIn) {
-//                    boolean isDashboard = PreferencesHelper.getPreferenceBoolean(SplashActivity.this, PreferencesHelper.PREFERENCE_DASHBOARD);
-//                    if(isDashboard){
+
                     Intent mainIntent = new Intent(SplashActivity.this,HomeActivity.class);
                     mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(mainIntent);
                     SplashActivity.this.finish();
 
-////                    }
-////                    else{
-////                        Intent inservice=new Intent(SplashActivity.this,ServiceProviderActivity.class);
-////                        inservice.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-////                        startActivity(inservice);
-////                        finish();
-////                    }
-//
-//
                 } else {
                     Intent in = new Intent(SplashActivity.this, SignInActivity.class);
                     in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

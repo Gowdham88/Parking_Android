@@ -43,10 +43,8 @@ public class SignInActivity extends AppCompatActivity {
     Context mContext = this;
     EditText mEmail,mPassword;
     private FirebaseAuth mAuth;
-    ProgressDialog progressDialog;
     RelativeLayout parentsigninlay;
     LinearLayout parentLinLay;
-    private DatabaseReference mDatabase;
     private AlertDialog dialog;
     TextView ForgotPassTxt;
     @Override
@@ -81,8 +79,6 @@ public class SignInActivity extends AppCompatActivity {
                 hideSoftKeyboard(SignInActivity.this);
             }
         });
-
-//        parentsigninlay.setOnClickListener(view -> Utils.hideKeyboard(SignInActivity.this));
 //
 //        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 //        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -178,7 +174,6 @@ public class SignInActivity extends AppCompatActivity {
 
     public void showProgressDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignInActivity.this);
-        //View view = getLayoutInflater().inflate(R.layout.progress);
         alertDialog.setView(R.layout.progress);
         dialog = alertDialog.create();
         dialog.show();

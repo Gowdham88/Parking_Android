@@ -100,8 +100,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks {
 
-    //Search View
-    SearchView mSearchView;
     //Nearest Place recycler
     RecyclerView mNearestPlaceRecycler;
     CarouselNearestAdapter mNearestrecyclerAdapter;
@@ -113,6 +111,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     HashMap<String, List<String>> mExpandableListDetail;
     Boolean isExpandableListEnabled = false;
 
+    //Google Map
     GoogleMap Mmap;
     SupportMapFragment mapFrag;
     private TrackGPS gps;
@@ -234,34 +233,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mSearchButton = view.findViewById(R.id.search_btn);
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-        mExpandableListView = (ExpandableListView) view.findViewById(R.id.expandableListView);
-        HomeRelLayout = (RelativeLayout) view.findViewById(R.id.home_lay);
-        HomeRelLayout1 = (RelativeLayout) view.findViewById(R.id.home_lay1);
-        NearLinLay = (LinearLayout) view.findViewById(R.id.current_location_layout);
-        HomeFragrellay = (RelativeLayout) view.findViewById(R.id.parfrag_lay);
-        autoCompView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
+        mExpandableListView = view.findViewById(R.id.expandableListView);
+        HomeRelLayout = view.findViewById(R.id.home_lay);
+        HomeRelLayout1 = view.findViewById(R.id.home_lay1);
+        NearLinLay = view.findViewById(R.id.current_location_layout);
+        HomeFragrellay = view.findViewById(R.id.parfrag_lay);
+        autoCompView = view.findViewById(R.id.autoCompleteTextView);
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
         mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,
                 BOUNDS_MOUNTAIN_VIEW, null);
         autoCompView.setAdapter(mPlaceArrayAdapter);
+//        autoCompView.setDropDownBackgroundDrawable(
+//                getActivity().getResources().getDrawable(R.drawable.autocomplete_dropdown));
+
         autoCompView.setThreshold(1);
 
 
-        HomeRelLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isExpandableListEnabled = false;
-                mExpandableListView.setVisibility(View.GONE);
-                Utils.hideKeyboard(getActivity());
-            }
+        HomeRelLayout.setOnClickListener(view1 -> {
+            isExpandableListEnabled = false;
+            mExpandableListView.setVisibility(View.GONE);
+            Utils.hideKeyboard(getActivity());
         });
-        HomeRelLayout1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isExpandableListEnabled = false;
-                mExpandableListView.setVisibility(View.GONE);
-                Utils.hideKeyboard(getActivity());
-            }
+        HomeRelLayout1.setOnClickListener(view12 -> {
+            isExpandableListEnabled = false;
+            mExpandableListView.setVisibility(View.GONE);
+            Utils.hideKeyboard(getActivity());
         });
         NearLinLay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -360,8 +356,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 double distancemtrs1 = loc1.distanceTo(loc2);
                                 distancesmtrs1.add(distancemtrs1);
                                 Log.e("distancemtrs1", String.valueOf(distancesmtrs1));
-//                        for(int j =0;j<distancesmtrs.size();j++){
-//
+
                                 distanceval = loc1.distanceTo(loc2) / 1000;
                                 distances1.add(String.valueOf(distanceval));
                                 Log.e("distance", String.valueOf(distances1));
@@ -395,9 +390,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
                                 }
-
-//
-
 
                             }
 
@@ -459,6 +451,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         });
 
+
+
         mExpandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int previousGroup = -1;
 
@@ -499,72 +493,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         //Expandable List and Searchview
         permissionStatus = getActivity().getSharedPreferences("permissionStatus", MODE_PRIVATE);
 
-//        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)) {
-//                //Show Information about why you need the permission
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setTitle("Need phone Permission");
-//                builder.setMessage("This app needs phone permission.");
-//                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.cancel();
-//                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
-//                    }
-//                });
-//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.cancel();
-//                    }
-//                });
-//                builder.show();
-//            }
-//
-//
-////            else if (permissionStatus.getBoolean(Manifest.permission.CALL_PHONE, false)) {
-////                //Previously Permission Request was cancelled with 'Dont Ask Again',
-////                // Redirect to Settings after showing Information about why you need the permission
-////                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-////                builder.setTitle("Need phone Permission");
-////                builder.setMessage("This app needs phone permission.");
-////                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-////                    @Override
-////                    public void onClick(DialogInterface dialog, int which) {
-////                        dialog.cancel();
-////                        sentToSettings = true;
-////                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-////                        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
-////                        intent.setData(uri);
-////                        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
-////                        Toast.makeText(getActivity(), "Go to Permissions to Grant phone", Toast.LENGTH_LONG).show();
-////                    }
-////                });
-////                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-////                    @Override
-////                    public void onClick(DialogInterface dialog, int which) {
-////                        dialog.cancel();
-////                    }
-////                });
-////                builder.show();
-////            }
-//
-//            else {
-//                //just request the permission
-//                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
-//            }
-//
-//            SharedPreferences.Editor editor = permissionStatus.edit();
-//            editor.putBoolean(Manifest.permission.CALL_PHONE, true);
-//            editor.commit();
-//
-//
-//        } else {
-//            //You already have the permission, just go ahead.
-//            proceedAfterPermission();
-//        }
-//
-//
         return view;
     }
 
@@ -577,11 +505,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         Mmap.clear();
-        //    Mmap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_markf)));
         Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln, 13.5f));
-//        Mmap.animateCamera(CameraUpdateFactory.zoomTo(13.5f), 2000, null);
-        Mmap.setMaxZoomPreference(13.5f);
-        Mmap.setMinZoomPreference(6.5f);
+
         // Helper method for smooth
         // animation
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -646,16 +571,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     public void handlenewlocation(final LatLng laln)
     {
         Mmap.clear();
-
-        //  Mmap.addMarker(new MarkerOptions().position(laln).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_pin2)));
         Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,13.5f));
-        // map.animateCamera(CameraUpdateFactory.zoomIn());
-//        Mmap.animateCamera(CameraUpdateFactory.zoomTo(13.5f), 2000, null);
         latitu=laln.latitude;
         longitu=laln.longitude;
-
-
-
     }
 
 
@@ -927,18 +845,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         }
     }
-
-
-//    @Override
-//    protected void onPostResume() {
-//        super.onPostResume();
-//        if (sentToSettings) {
-//            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-//                //Got Permission
-//                proceedAfterPermission();
-//            }
-//        }
-//    }
 
 
     public void animateMarker(final Marker marker, final Location location) {

@@ -91,15 +91,14 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
  */
 
 public class SettingsFragment extends Fragment  implements EasyPermissions.PermissionCallbacks,AdapterView.OnItemSelectedListener{
-    Toolbar toolbar;
-    TextView toolbarText;
+
     EditText NameEdt,EmailEdt;
     ImageView ProfileImg;
     TextView Camera,Gallery,cancel,save;
     CircleImageView mProfileImage;
     private android.support.v7.app.AlertDialog dialog;
     LinearLayout cancelLay;
-    int mCarouselCount,mCarouselCountpos;
+    int mCarouselCount;
     String mEmail,mName,mProfilepic,mUid,userName;
     String[] mCarCategory = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
     String[] mCarCategoryId = {"0", "1", "2", "3", "4" };
@@ -112,7 +111,6 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     final private int RC_PICK_IMAGE = 1;
     final private int RC_CAPTURE_IMAGE = 2;
     private Uri fileUri;
-    Uri imageUri;
     String postimageurl = "";
     Uri contentURI;
     boolean isPhotoValid = false;
@@ -173,35 +171,6 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
         Pass =PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_LOGGED_INPASS);
 
-
-
-//        if(mCarIcon==0){
-//            carIcon.setImageResource(R.drawable.compactcar_icon);
-//            carSize.setText("Compact");
-//            carDimension.setText("[3.5 - 4.5m]");
-//        }
-//        else if(mCarIcon==1){
-//            carIcon.setImageResource(R.drawable.smallcar_icon);
-//            carSize.setText("Small");
-//            carDimension.setText("[2.5 - 3.5m]");
-//        }
-//        else if(mCarIcon==2){
-//            carIcon.setImageResource(R.drawable.midsizecar_icon);
-//            carSize.setText("Mid size");
-//            carDimension.setText("[4 - 5m]");
-//        }
-//        else if(mCarIcon==3){
-//            carIcon.setImageResource(R.drawable.fullcar_icon);
-//            carSize.setText("Full");
-//            carDimension.setText("[5 - 5.5m]");
-//        }
-//        else {
-//            carIcon.setImageResource(R.drawable.vanpickupcar_icon);
-//            carSize.setText("Van/Pick-up");
-//            carDimension.setText("[5.5 - 6.5m]");
-//        }
-
-//        Log.e("mProfilepic", mProfilepic);
         if (mProfilepic != null && !mProfilepic.isEmpty()) {
             Picasso.with(getActivity())
                     .load(mProfilepic)

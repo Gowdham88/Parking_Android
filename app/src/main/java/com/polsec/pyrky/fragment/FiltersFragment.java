@@ -57,7 +57,7 @@ public class FiltersFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_filters, null);
 
-        Constants.SEARCH_ARRAY.clear();
+        Constants.SECURITY_RATINGS.clear();
         mEnableButton = view.findViewById(R.id.enable_button);
         mEnableButton.setVisibility(View.GONE);
         mExpandableListView = view.findViewById(R.id.expandableListView);
@@ -69,7 +69,7 @@ public class FiltersFragment extends Fragment {
                 mHomeRelaLay.setVisibility(View.GONE);
             }
         });
-        mExpandableListDetail = ExpandableListData.getData();
+       mExpandableListDetail = ExpandableListData.getData();
         mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
         Collections.reverse(mExpandableListTitle);
         mExpandableListAdapter = new ExpandableListAdapter(getActivity(), mExpandableListTitle, mExpandableListDetail);

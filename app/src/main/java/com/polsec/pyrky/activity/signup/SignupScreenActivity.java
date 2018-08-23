@@ -124,26 +124,15 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         mEtUsername = findViewById(R.id.et_user_name);
         mEtPassword = findViewById(R.id.et_password);
         AccntTxt = findViewById(R.id.already_have_account);
-//        imageUpload = findViewById(R.id.image_upload);
         Signuprellay = findViewById(R.id.signup_parent_layout);
         signupScrlin = findViewById(R.id.scrollviewlin);
-
-//        imageUpload.setVisibility(View.GONE);
-//        imageUpload.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                uploadImage(v);
-//            }
-//        });
-
-//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         Signuprellay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 hideSoftKeyboard(SignupScreenActivity.this);
-//                Utils.hideKeyboard();
+
             }
         });
         signupScrlin.setOnClickListener(new View.OnClickListener() {
