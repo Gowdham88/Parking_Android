@@ -1,15 +1,17 @@
 package com.polsec.pyrky.pojo;
 
+import java.util.List;
+
 public class Camera {
 
     private String cameraLat;
     private String cameraLong;
-    private String parkingType;
+    private String parkingTypes;
     private String cameraID;
 
-
-    private String securityRatings;
-    private String ListofparkingRules;
+    private String carCategory;
+    private String SecurityRatings;
+    private List<ParkingRules> parkingRules;
     private String cameraLocationName;
     private String videoUrl;
     private String roadWidth;
@@ -22,20 +24,20 @@ public class Camera {
 
     }
 
-    public Camera(String cameraLat, String cameraLong, String parkingType, String securityRatings, String listofparkingRules, String cameraLocationName, String videoUrl, String roadWidth,
+    public Camera(String cameraLat, String cameraLong, String parkingType, String securityRatings, List<ParkingRules> parkingRules, String cameraLocationName, String videoUrl, String roadWidth,
                   String cameraFacingDirection, String listofcarsPosition, String listofObstacles, String cameraImageUrl, String cameraID) {
         this.cameraLat = cameraLat;
         this.cameraLong = cameraLong;
-        this.parkingType = parkingType;
-        this.securityRatings = securityRatings;
-        ListofparkingRules = listofparkingRules;
+        this.parkingTypes = parkingType;
+        this.SecurityRatings = securityRatings;
+        this.parkingRules = parkingRules;
         this.cameraLocationName = cameraLocationName;
         this.videoUrl = videoUrl;
         this.roadWidth = roadWidth;
         this.cameraFacingDirection = cameraFacingDirection;
         ListofcarsPosition = listofcarsPosition;
         ListofObstacles = listofObstacles;
-        this. cameraImageUrl= cameraImageUrl;
+        this.cameraImageUrl= cameraImageUrl;
         this.cameraID= cameraID;
     }
 
@@ -56,27 +58,35 @@ public class Camera {
     }
 
     public String getParkingType() {
-        return parkingType;
+        return parkingTypes;
     }
 
     public void setParkingType(String parkingType) {
-        this.parkingType = parkingType;
+        this.parkingTypes = parkingType;
+    }
+
+    public String getCameraID() {
+        return cameraID;
+    }
+
+    public void setCameraID(String cameraID) {
+        this.cameraID = cameraID;
     }
 
     public String getSecurityRatings() {
-        return securityRatings;
+        return SecurityRatings;
     }
 
     public void setSecurityRatings(String securityRatings) {
-        this.securityRatings = securityRatings;
+        this.SecurityRatings = securityRatings;
     }
 
-    public String getListofparkingRules() {
-        return ListofparkingRules;
+    public List<ParkingRules> getListofparkingRules() {
+        return parkingRules;
     }
 
-    public void setListofparkingRules(String listofparkingRules) {
-        ListofparkingRules = listofparkingRules;
+    public void setListofparkingRules(List<ParkingRules> listofparkingRules) {
+        parkingRules = listofparkingRules;
     }
 
     public String getCameraLocationName() {
@@ -127,7 +137,6 @@ public class Camera {
         ListofObstacles = listofObstacles;
     }
 
-
     public String getCameraImageUrl() {
         return cameraImageUrl;
     }
@@ -135,13 +144,4 @@ public class Camera {
     public void setCameraImageUrl(String cameraImageUrl) {
         this.cameraImageUrl = cameraImageUrl;
     }
-
-    public String getCameraID() {
-        return cameraID;
-    }
-
-    public void setCameraID(String cameraID) {
-        this.cameraID = cameraID;
-    }
-
 }

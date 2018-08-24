@@ -41,6 +41,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
     private static final int SECURITY = 1;
     private static final int FILTER = 2;
 
+
+
     public ExpandableListAdapter(Context context, List<String> expandableListTitle,
                                        HashMap<String, List<String>> expandableListDetail) {
         this.context = context;
@@ -133,7 +135,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                 rgps.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                        Constants.PARKING_TYPES.clear();
+
                         switch (checkedId){
                             case 1000 :
                                 Constants.PARKING_TYPES.add("Free street parking");
@@ -180,7 +182,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
 
                         @Override
                         public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                            Constants.CAR_CATEGORY.clear();
 
                             switch (checkedId){
                                 case 1000 :
@@ -227,7 +228,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         Toast.makeText(buttonView.getContext(), "Selected! - Question number: " + groupPosition + "answer: " + childPosition + "ischecked: " + isChecked, Toast.LENGTH_SHORT).show();
-                        Constants.SECURITY_RATINGS.clear();
+
                         Constants.SECURITY_RATINGS.add((String.valueOf(childPosition+1))+" stars");
 
                     }

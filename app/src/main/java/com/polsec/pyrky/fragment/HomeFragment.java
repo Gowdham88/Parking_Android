@@ -183,7 +183,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         ((HomeActivity) getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
 
-
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Places.GEO_DATA_API)
                 .enableAutoManage(getActivity(), 0, this)
@@ -358,7 +357,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 distances1.add(String.valueOf(distanceval));
                                 Log.e("distance", String.valueOf(distances1));
 
-                                if (locationDistance < 15000) {
+                                if (locationDistance < 1500) {
                                     caldis1.add(String.valueOf(mLocationDistances));
                                     Log.e("caldis1", String.valueOf(caldis1));
                                     mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
@@ -397,7 +396,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         float zoomLevel = 14.0f;
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateMe,zoomLevel));
                         mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f), 2000, null);
-                        mNearestPlaceRecycler.scrollToPosition(4);
+
                     }
 
                 });
@@ -422,15 +421,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             @Override
             public void onClick(View v) {
 
-                if (autoCompView.getText().toString().equals(null) || autoCompView.getText().toString().isEmpty() || description.equals(null)) {
+                if (autoCompView.getText().toString().isEmpty() || description == null) {
                     Toast.makeText(getActivity(), "Please enter the search location", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), getFirstWord(description), Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
                     intent.putExtra("placeid", placeId);
-                    intent.putExtra("latitude", String.valueOf(Latitude).toString().trim());
-                    intent.putExtra("longitude", String.valueOf(Longitude).toString().trim());
+                    intent.putExtra("latitude", String.valueOf(Latitude).trim());
+                    intent.putExtra("longitude", String.valueOf(Longitude).trim());
                     intent.putExtra("value", "home");
                     intent.putExtra("place", description);
                     Log.e("strLatitude", String.valueOf(Latitude));

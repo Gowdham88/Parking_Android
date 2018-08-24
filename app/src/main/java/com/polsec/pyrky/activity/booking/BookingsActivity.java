@@ -10,20 +10,18 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.adapter.CustomViewPagerAdapter;
 import com.polsec.pyrky.fragment.CurrentBookingsFragment;
 import com.polsec.pyrky.fragment.HistoryFragment;
-import com.polsec.pyrky.utils.Constants;
 
 public class BookingsActivity extends AppCompatActivity implements  TabHost.OnTabChangeListener{
     ViewPager viewPager;
     TabLayout tabLayout;
 Toolbar toolbar;
-    ImageView BackImg;
+    ImageView mBackIcon;
     TextView  TitlaTxt;
     RelativeLayout BackImgRelay;
 
@@ -36,17 +34,11 @@ Toolbar toolbar;
 //        Toast.makeText(this, Constants.SEARCH_ARRAY.get(0), Toast.LENGTH_SHORT).show();
 
 
-        BackImg=(ImageView)findViewById(R.id.back_image);
+        mBackIcon =(ImageView)findViewById(R.id.back_icon);
         TitlaTxt=(TextView)findViewById(R.id.extra_title);
         TitlaTxt.setText("Bookings");
-        BackImgRelay=(RelativeLayout)findViewById(R.id.back_lay);
-        BackImgRelay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
-        BackImg.setOnClickListener(new View.OnClickListener() {
+
+        mBackIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
