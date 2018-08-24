@@ -117,13 +117,8 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     Boolean protectCar,bookingStatus;
     String lat,longi;
 
-    private TrackGPS gps;
-    String Strlat, Strlong, latvalue;
     LatLng laln;
     Location mLocation;
-    List<Address> addresses;
-    String lattitude, longitude, address, city, state, country, postalCode, knownName;
-    double latitud, longitud, latitu, longitu;
     List<Camera> datalist = new ArrayList<Camera>();
     ImageView mBackIcon;
     TextView TitlaTxt;
@@ -200,13 +195,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 Log.e("plc", String.valueOf(PlaceName));
             }
             else{
-//                mLat = valuelat;
-//                mLongi = valuelongi;
-//                PlaceName= PlaceNameval;
-//
-//                Log.e("maplattitude", String.valueOf(mLat));
-//                Log.e("maplongitude", String.valueOf(mLongi));
-//                Log.e("mapplc", String.valueOf(PlaceName));
+
             }
 
 
@@ -235,15 +224,9 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         if (Constants.SECURITY_RATINGS.size()>0){
             sRatings.addAll(Constants.SECURITY_RATINGS);
         }
-
-
             keyValue.put(field[0],sRatings);
             keyValue.put(field[1],parkingTypes);
             keyValue.put(field[2],carCategory);
-
-
-
-
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -292,12 +275,6 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             }
             }
         }
-//
-//        mGoogleApiClient = new GoogleApiClient.Builder(NearestLocMapsActivity.this)
-//                .addApi(Places.GEO_DATA_API)
-//                .enableAutoManage(NearestLocMapsActivity.this, GOOGLE_API_CLIENT_ID, NearestLocMapsActivity.this)
-//                .addConnectionCallbacks(NearestLocMapsActivity.this)
-//                .build();
 
 
     private void loadCameraLocation(Query query){
@@ -437,9 +414,6 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
             Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
             Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 15, null);
-//            CameraUpdate current = CameraUpdateFactory.newLatLngZoom(sydney,15);
-//            Mmap.moveCamera(current);
-
             Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker m) {
@@ -517,9 +491,6 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         }
 
         //Edit the following as per you needs
-//        Mmap.setTrafficEnabled(true);
-//        Mmap.setIndoorEnabled(true);
-//        Mmap.setBuildingsEnabled(true);
         Mmap.getUiSettings().setZoomControlsEnabled(true);
         Mmap.getUiSettings().setRotateGesturesEnabled(false);
 //        Mmap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -539,17 +510,20 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         View promptView = layoutInflater.inflate(R.layout.ruls_layout , null);
         final AlertDialog alertD = new AlertDialog.Builder(this).create();
 
-            TextView ViewTxt,NavigateTxt,RuleTxt1,RuleTxt2,RuleTxt3,RuleTxt4;
+            TextView ViewTxt,NavigateTxt,rule1,rule2,rule3,rule4;
 
-        ViewTxt=(TextView)promptView.findViewById(R.id.view_txt);
-        NavigateTxt=(TextView)promptView.findViewById(R.id.navi_txt);
-        RuleTxt1=(TextView)promptView.findViewById(R.id.rule1_txt);
-        RuleTxt2=(TextView)promptView.findViewById(R.id.rule2_txt);
-        RuleTxt3=(TextView)promptView.findViewById(R.id.rule3_txt);
-        RuleTxt4=(TextView)promptView.findViewById(R.id.rule4_txt);
+        ViewTxt=promptView.findViewById(R.id.view_txt);
+        NavigateTxt=promptView.findViewById(R.id.navi_txt);
 
+        rule1=promptView.findViewById(R.id.rule1_txt);
+        rule2=promptView.findViewById(R.id.rule2_txt);
+        rule3=promptView.findViewById(R.id.rule3_txt);
+        rule4=promptView.findViewById(R.id.rule4_txt);
 
-
+        rule1.setText(listofparkingRules.get(0).getmRule());
+        rule2.setText(listofparkingRules.get(0).getmTiming());
+        rule3.setText(listofparkingRules.get(0).getmCharges());
+        rule4.setText(listofparkingRules.get(0).getmMessage());
 
         Geocoder geocoder;
 ////
