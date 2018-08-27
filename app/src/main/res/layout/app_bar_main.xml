@@ -4,12 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:id="@+id/holder"
     tools:context="com.polsec.pyrky.activity.HomeActivity">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:id="@+id/home_coordinator">
     <android.support.design.widget.AppBarLayout
@@ -56,7 +56,9 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/search_boarder_clr" />
+
     <include layout="@layout/content_main" />
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -66,7 +68,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:visibility="gone"
         app:srcCompat="@android:drawable/ic_dialog_email" />
-    </LinearLayout>
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigationView"
         android:layout_width="match_parent"

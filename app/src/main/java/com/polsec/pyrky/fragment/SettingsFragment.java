@@ -231,7 +231,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 String name = NameEdt.getText().toString().trim();
                 String email = EmailEdt.getText().toString().trim();
 
-                updateData(email,mCarCategoryId[mCarouselCount],name);
+                updateData(email,mCarCategoryId[mCarIcon],name);
 
 
 

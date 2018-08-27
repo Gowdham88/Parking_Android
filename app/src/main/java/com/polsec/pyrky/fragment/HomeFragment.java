@@ -338,8 +338,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             mCameraImageUrl.clear();
                             mCameraLocName.clear();
 
-
-
                             for (int i = 0; i < mNearestLocationList.size(); i++) {
 //
                                 mCurrentLoc.setLatitude(mCurrentGpsLoc.getLatitude());
@@ -357,7 +355,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 distances1.add(String.valueOf(distanceval));
                                 Log.e("distance", String.valueOf(distances1));
 
-                                if (locationDistance < 1500) {
+                                if (locationDistance < 15000) {
                                     caldis1.add(String.valueOf(mLocationDistances));
                                     Log.e("caldis1", String.valueOf(caldis1));
                                     mCameraLat.add(mNearestLocationList.get(i).getCameraLat());

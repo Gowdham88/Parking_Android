@@ -361,17 +361,21 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
 
                                     onItemChanged(mCameraLat.get(0), mCameraLong.get(0), mCameraId.get(0),camera.getListofparkingRules());
-
-
-                                            if (datalist.get(i).getParkingType().equals("Free street parking")) {
-                                                LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
-                                                Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-                                                Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                                            } else {
-                                                LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
-                                                Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
-                                                Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                                            }
+//
+//                if((!datalist.equals(null))||(!datalist.isEmpty())){
+//
+//                    if (datalist.get(i).getParkingType().equals("Free street parking")) {
+//                        LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
+//                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+//                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//                    } else {
+//                        LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
+//                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
+//                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//                    }
+//
+//                }
+//
 
                                 }
 //
@@ -519,11 +523,14 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         rule2=promptView.findViewById(R.id.rule2_txt);
         rule3=promptView.findViewById(R.id.rule3_txt);
         rule4=promptView.findViewById(R.id.rule4_txt);
+//        if((!listofparkingRules.equals(null)) || (!listofparkingRules.isEmpty())){
+//            rule1.setText(listofparkingRules.get(0).getmRule());
+//            rule2.setText(listofparkingRules.get(0).getmTiming());
+//            rule3.setText(listofparkingRules.get(0).getmCharges());
+//            rule4.setText(listofparkingRules.get(0).getmMessage());
+//        }
 
-        rule1.setText(listofparkingRules.get(0).getmRule());
-        rule2.setText(listofparkingRules.get(0).getmTiming());
-        rule3.setText(listofparkingRules.get(0).getmCharges());
-        rule4.setText(listofparkingRules.get(0).getmMessage());
+
 
         Geocoder geocoder;
 ////

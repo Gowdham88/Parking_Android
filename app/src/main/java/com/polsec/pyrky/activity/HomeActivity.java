@@ -21,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -60,7 +61,7 @@ public class HomeActivity extends AppCompatActivity
     String UsrName;
     private FirebaseAuth mAuth;
     private int avatarSize;
-    View view,holderView, contentView;
+    View view,holderView, contentView,contentView1;
     String profileImageUrl;
     CircleImageView profileImage;
     String Nameval="settings";
@@ -157,11 +158,14 @@ public class HomeActivity extends AppCompatActivity
                                      @Override
                                      public void onDrawerSlide(View drawer, float slideOffset) {
                                          contentView.setX(navigationView.getWidth() * slideOffset);
+
                                          RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) contentView.getLayoutParams();
                                          lp.height = drawer.getHeight() -
                                                  (int) (drawer.getHeight() * slideOffset * 0.3f);
+
 //                                         lp.topMargin = (drawer.getHeight() - lp.height) / 2;
                                          contentView.setLayoutParams(lp);
+
                                      }
 
                                      @Override
@@ -264,9 +268,10 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+            bottomNavigationView.setSelectedItemId(R.id.b_nav_home);
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+            transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left);
             transaction.replace(R.id.main_frame_layout, new HomeFragment());
             transaction.addToBackStack(null);
             transaction.commit();
@@ -286,14 +291,51 @@ public class HomeActivity extends AppCompatActivity
 //            transaction.commit();
 //            toolbarText.setText("Booking");
         } else if (id == R.id.nav_profile) {
+
+//            if(id==R.id.b_nav_profile){
+
+//            }
+            bottomNavigationView.setSelectedItemId(R.id.b_nav_profile);
+
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
             transaction.replace(R.id.main_frame_layout, new ProfileFragment());
             transaction.addToBackStack(null);
             transaction.commit();
+            toolbarText.setText("Profile");
+//
+
+//            bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+//                @Override
+//                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                    Fragment fragment = null;
+//
+//                    switch (item.getItemId()){
+//                        case R.id.b_nav_home:
+//                            fragment = new HomeFragment();
+////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//                            toolbarText.setText("Home");
+//                            break;
+//
+//                        case R.id.b_nav_notification:
+//                            fragment = new NotificationFragment();
+////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//                            toolbarText.setText("Notification");
+//                            break;
+//
+//                        case R.id.b_nav_profile:
+//                            fragment = new ProfileFragment();
+////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//                            toolbarText.setText("Profile");
+//                            break;
+//                    }
+//                    return loadFragment(fragment);
+//                }
+//            });
+//        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 //            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 //            loadFragment(new ProfileFragment());
-            toolbarText.setText("Profile");
+//            toolbarText.setText("Profile");
         } else if (id == R.id.nav_logout) {
 
 
