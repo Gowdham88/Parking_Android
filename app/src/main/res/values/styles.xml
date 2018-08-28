@@ -31,6 +31,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+
     <style name="NavigationTheme" parent="AppTheme">
         <item name="listPreferredItemHeightLarge">30dp</item><!-- menu item height- vary as u need -->
     </style>
@@ -51,9 +52,9 @@
         <item name="android:textSize">12sp</item>
     </style>
 
-    <!--<style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">-->
-        <!--<item name="tabBackground">@drawable/tab_bg</item>-->
-    <!--</style>-->
+    <style name="MyCustomTabLayout" parent="Base.Widget.Design.TabLayout">
+        <item name="android:selectableItemBackground">@drawable/tab_bg</item>
+    </style>
 
     <style name="NunitoBlackLight">
         <item name="android:fontFamily">fonts/Nunito-Light.ttf</item>

@@ -355,7 +355,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 distances1.add(String.valueOf(distanceval));
                                 Log.e("distance", String.valueOf(distances1));
 
-                                if (locationDistance < 15000) {
+//                                if (locationDistance < 15000) {
                                     caldis1.add(String.valueOf(mLocationDistances));
                                     Log.e("caldis1", String.valueOf(caldis1));
                                     mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
@@ -382,7 +382,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                     mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
 
-                                }
+//                                }
 
                             }
                         }
@@ -628,7 +628,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                     Log.e("distancemtrs", String.valueOf(distancesmtrs));
 //                        for(int j =0;j<distancesmtrs.size();j++){
 
-                                    if (distancemtrs < 1500) {
+//                                    if (distancemtrs < 1500) {
                                         caldis.add(String.valueOf(distancesmtrs));
                                         Log.e("caldis", String.valueOf(caldis));
                                         nearlat.add(mNearestLocationList.get(i).getCameraLat());
@@ -636,7 +636,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                         Log.e("nearlat", String.valueOf(nearlat));
                                         Log.e("nearlong", String.valueOf(nearlong));
 //                            }
-                                    }
+//                                    }
                                     distance = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
                                     Log.e("distance", String.valueOf(distance));
                                     distances.add(distance);

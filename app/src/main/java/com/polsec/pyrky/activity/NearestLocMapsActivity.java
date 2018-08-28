@@ -2,6 +2,7 @@ package com.polsec.pyrky.activity;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -59,7 +60,6 @@ import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
-import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.pojo.ParkingRules;
@@ -290,7 +290,13 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                         for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
 
                             camera = document.toObject(Camera.class);
+
+//                            HashMap<String,ParkingRules> parkingRules = document.get("parkingRules");
+//                            Toast.makeText(context,parkingRules.getRule() , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, (CharSequence) camera.getParkingRules().get("0"), Toast.LENGTH_SHORT).show();
                             datalist.add(camera);
+//                            datalist.add(document.toObject(Camera.class));
+
                             Log.e("dbbd", String.valueOf(document.getData()));
 //
 
@@ -308,6 +314,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                             for (int i = 0; i < datalist.size(); i++) {
                                 mCurrentLoc.setLatitude(Double.parseDouble(mLat));
                                 mCurrentLoc.setLongitude(Double.parseDouble(mLongi));
+
                                 mNearestLocations.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
                                 mNearestLocations.setLongitude(Double.parseDouble(datalist.get(i).getCameraLong()));
 
@@ -320,7 +327,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                 mAccurateDistancesString.add(String.valueOf(mAccurateDistance));
                                 Log.e("distancemap", String.valueOf(mAccurateDistancesString));
 
-                                if (locationDistance < 15000) {
+//                                if (locationDistance < 15000) {
                                     mCalculateDistances.add(String.valueOf(mLocationDistances));
                                     Log.e("mCalculateDistances", String.valueOf(mCalculateDistances));
                                     mCameraLat.add(datalist.get(i).getCameraLat());
@@ -360,24 +367,24 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
 
 
-                                    onItemChanged(mCameraLat.get(0), mCameraLong.get(0), mCameraId.get(0),camera.getListofparkingRules());
-//
-//                if((!datalist.equals(null))||(!datalist.isEmpty())){
-//
-//                    if (datalist.get(i).getParkingType().equals("Free street parking")) {
-//                        LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
-//                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-//                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//                    } else {
-//                        LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
-//                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
-//                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//                    }
-//
-//                }
-//
+                                    onItemChanged(mCameraLat.get(0), mCameraLong.get(0), mCameraId.get(0));
 
-                                }
+                if((!datalist.equals(null))||(!datalist.isEmpty())){
+
+                    if (datalist.get(i).getParkingTypes().equals("Free street parking")) {
+                        LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
+                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                    } else {
+                        LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
+                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
+                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                    }
+
+                }
+
+
+//                                }
 //
 
                             }
@@ -404,10 +411,10 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
     }
 
-    private void onItemChanged(String item, String s, String s1, List<ParkingRules> listofparkingRules) {
-        mapLat = item.toString().trim();
-        mapLongi = s.toString().trim();
-        cameraid = s1.toString();
+    private void onItemChanged(String lat, String lng, String cameraId) {
+        mapLat = lat.trim();
+        mapLongi = lng.trim();
+        cameraid = cameraId;
         Log.e("mapLongi",mapLat);
         Log.e("mapLat",mapLongi);
         Log.e("cameraid",cameraid);
@@ -415,14 +422,18 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
 
 //            LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
+//        if (parkingType.equals("Free street parking")){
+//            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+//        }else{
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
+//        }
             Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
             Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 15, null);
             Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker m) {
-                    showDialog(m,cameraid,listofparkingRules);
-                    mNearestPlaceRecycler.setVisibility(View.GONE);
+                    showDialog(m,cameraid,datalist.get(mNearestPlaceRecycler.getCurrentItem()).getParkingRules(),datalist.get(mNearestPlaceRecycler.getCurrentItem()).getCameraImageUrl());
+                    mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
 
                     return false;
 
@@ -457,7 +468,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = adapterPosition;
-        onItemChanged(mCameraLat.get(positionInDataSet), mCameraLong.get(positionInDataSet), mCameraId.get(positionInDataSet), camera.getListofparkingRules());
+        onItemChanged(mCameraLat.get(positionInDataSet), mCameraLong.get(positionInDataSet), mCameraId.get(positionInDataSet));
 
 
     }
@@ -509,7 +520,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
     }
 
-    public void showDialog(Marker m, String cameraid, List<ParkingRules> listofparkingRules){
+    public void showDialog(Marker m, String cameraid, HashMap<String,Object> listofparkingRules, String cameraImageUrl){
         LayoutInflater layoutInflater = LayoutInflater.from(NearestLocMapsActivity.this);
         View promptView = layoutInflater.inflate(R.layout.ruls_layout , null);
         final AlertDialog alertD = new AlertDialog.Builder(this).create();
@@ -519,16 +530,17 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         ViewTxt=promptView.findViewById(R.id.view_txt);
         NavigateTxt=promptView.findViewById(R.id.navi_txt);
 
-        rule1=promptView.findViewById(R.id.rule1_txt);
-        rule2=promptView.findViewById(R.id.rule2_txt);
-        rule3=promptView.findViewById(R.id.rule3_txt);
-        rule4=promptView.findViewById(R.id.rule4_txt);
-//        if((!listofparkingRules.equals(null)) || (!listofparkingRules.isEmpty())){
-//            rule1.setText(listofparkingRules.get(0).getmRule());
-//            rule2.setText(listofparkingRules.get(0).getmTiming());
-//            rule3.setText(listofparkingRules.get(0).getmCharges());
-//            rule4.setText(listofparkingRules.get(0).getmMessage());
-//        }
+        rule1 = promptView.findViewById(R.id.rule1_txt);
+        rule2 = promptView.findViewById(R.id.rule2_txt);
+        rule3 =promptView.findViewById(R.id.rule3_txt);
+        rule4 =promptView.findViewById(R.id.rule4_txt);
+
+        if((!listofparkingRules.equals(null)) || (!listofparkingRules.isEmpty())){
+            rule1.setText((CharSequence) listofparkingRules.get("0"));
+            rule2.setText((CharSequence) listofparkingRules.get("1"));
+            rule3.setText((CharSequence) listofparkingRules.get("2"));
+            rule4.setText((CharSequence) listofparkingRules.get("3"));
+        }
 
 
 
@@ -559,6 +571,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 intent.putExtra("longitude",m.getPosition().longitude);
                 intent.putExtra("place",yourplace);
                 intent.putExtra("cameraid",cameraid);
+                intent.putExtra("cameraImageUrl",cameraImageUrl);
 
                 Log.e("lattitude", String.valueOf(m.getPosition().latitude));
                 Log.e("longitude", String.valueOf(m.getPosition().longitude));
@@ -586,6 +599,13 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         alertD.getWindow().setGravity(Gravity.NO_GRAVITY);
 
         alertD.show();
+
+        alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                mNearestPlaceRecycler.setVisibility(View.VISIBLE);
+            }
+        });
 
     }
 
@@ -704,23 +724,6 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         TextView pyrky = (TextView) bottomSheetView.findViewById(R.id.pyrky_title);
         TextView cancel = (TextView) bottomSheetView.findViewById(R.id.cancel_txt);
         map.setOnClickListener(view -> {
-
-
-//                PackageManager pm = NearestLocMapsActivity.this.getPackageManager();
-//                if(isPackageInstalled()){
-//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-//                            Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
-//                    startActivity(intent);
-////                    Toast.makeText(NearestLocMapsActivity.this, "true", Toast.LENGTH_SHORT).show();
-//                }else{
-//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-//                            Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
-//                    startActivity(intent);
-////                    Toast.makeText(NearestLocMapsActivity.this, "false", Toast.LENGTH_SHORT).show();
-//
-//
-//                }
-//
 
             final FirebaseUser user = mAuth.getCurrentUser();
             DocumentReference docRef = db.collection("users").document(user.getUid());

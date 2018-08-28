@@ -1,48 +1,54 @@
 package com.polsec.pyrky.pojo;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class ParkingRules {
+    @SerializedName("0")
+    private String rule;
+    @SerializedName("1")
+    private String timing;
+    @SerializedName("2")
+    private String charges;
+    @SerializedName("3")
+    private String message;
 
-    private String mRule;
-    private String mTiming;
-    private String mCharges;
-    private String mMessage;
-
-    public ParkingRules(String mRule, String mTiming, String mCharges, String mMessage) {
-        this.mRule = mRule;
-        this.mTiming = mTiming;
-        this.mCharges = mCharges;
-        this.mMessage = mMessage;
+    public ParkingRules(String rule, String timing, String charges, String message) {
+        this.rule = rule;
+        this.timing = timing;
+        this.charges = charges;
+        this.message = message;
     }
 
-    public String getmRule() {
-        return mRule;
+    public String getRule() {
+        return rule;
     }
 
-    public void setmRule(String mRule) {
-        this.mRule = mRule;
+    public void setRule(String rule) {
+        this.rule = rule;
     }
 
-    public String getmTiming() {
-        return mTiming;
+    public String getTiming() {
+        return timing;
     }
 
-    public void setmTiming(String mTiming) {
-        this.mTiming = mTiming;
+    public void setTiming(String timing) {
+        this.timing = timing;
     }
 
-    public String getmCharges() {
-        return mCharges;
+    public String getCharges() {
+        return charges;
     }
 
-    public void setmCharges(String mCharges) {
-        this.mCharges = mCharges;
+    public void setCharges(String charges) {
+        this.charges = charges;
     }
 
-    public String getmMessage() {
-        return mMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setmMessage(String mMessage) {
-        this.mMessage = mMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

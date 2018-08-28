@@ -1,5 +1,9 @@
 package com.polsec.pyrky.pojo;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.HashMap;
 import java.util.List;
 
 public class Camera {
@@ -11,7 +15,7 @@ public class Camera {
 
     private String carCategory;
     private String SecurityRatings;
-    private List<ParkingRules> parkingRules;
+    private HashMap<String,Object> parkingRules;
     private String cameraLocationName;
     private String videoUrl;
     private String roadWidth;
@@ -24,7 +28,7 @@ public class Camera {
 
     }
 
-    public Camera(String cameraLat, String cameraLong, String parkingType, String securityRatings, List<ParkingRules> parkingRules, String cameraLocationName, String videoUrl, String roadWidth,
+    public Camera(String cameraLat, String cameraLong, String parkingType, String securityRatings, HashMap<String,Object> parkingRules, String cameraLocationName, String videoUrl, String roadWidth,
                   String cameraFacingDirection, String listofcarsPosition, String listofObstacles, String cameraImageUrl, String cameraID) {
         this.cameraLat = cameraLat;
         this.cameraLong = cameraLong;
@@ -57,12 +61,12 @@ public class Camera {
         this.cameraLong = cameraLong;
     }
 
-    public String getParkingType() {
+    public String getParkingTypes() {
         return parkingTypes;
     }
 
-    public void setParkingType(String parkingType) {
-        this.parkingTypes = parkingType;
+    public void setParkingTypes(String parkingTypes) {
+        this.parkingTypes = parkingTypes;
     }
 
     public String getCameraID() {
@@ -73,20 +77,28 @@ public class Camera {
         this.cameraID = cameraID;
     }
 
+    public String getCarCategory() {
+        return carCategory;
+    }
+
+    public void setCarCategory(String carCategory) {
+        this.carCategory = carCategory;
+    }
+
     public String getSecurityRatings() {
         return SecurityRatings;
     }
 
     public void setSecurityRatings(String securityRatings) {
-        this.SecurityRatings = securityRatings;
+        SecurityRatings = securityRatings;
     }
 
-    public List<ParkingRules> getListofparkingRules() {
+    public HashMap<String,Object> getParkingRules() {
         return parkingRules;
     }
 
-    public void setListofparkingRules(List<ParkingRules> listofparkingRules) {
-        parkingRules = listofparkingRules;
+    public void setParkingRules(HashMap<String,Object> parkingRules) {
+        this.parkingRules = parkingRules;
     }
 
     public String getCameraLocationName() {
