@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -132,6 +134,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     private boolean sentToSettings = false;
     private SharedPreferences permissionStatus;
 
+    private android.support.v7.app.AlertDialog dialog;
+
 //            @Override
 //            public void onAttach(Context context) {
 //                ((MyApplication)context.getApplicationContext()).getNetComponent().inject(this);
@@ -213,6 +217,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, null);
         Utils.hideKeyboard(getActivity());
+        showProgressDialog();
 
         mSearchButton = view.findViewById(R.id.search_btn);
         mNearestPlaceRecycler = view.findViewById(R.id.nearest_places_recycler);
@@ -394,6 +399,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         float zoomLevel = 14.0f;
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateMe,zoomLevel));
                         mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f), 2000, null);
+                      hideProgressDialog();
 
                     }
 
@@ -870,5 +876,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             return text; // Text is the first word itself.
         }
     }
+
+    public void showProgressDialog() {
+
+
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        //View view = getLayoutInflater().inflate(R.layout.progress);
+        alertDialog.setView(R.layout.progress);
+        dialog = alertDialog.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+    }
+
+    public void hideProgressDialog(){
+        if(dialog!=null)
+            dialog.dismiss();
+    }
+
 
 }

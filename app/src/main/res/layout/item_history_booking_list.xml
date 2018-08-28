@@ -42,23 +42,22 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/view_car_text"
         android:max="5"
-        android:isIndicator="true"
+        android:isIndicator="false"
         android:numStars="5"
         android:text="" />
 
-        <RatingBar
+        <TextView
             android:id="@+id/history_ratingsanother"
-            style="@style/Widget.AppCompat.RatingBar.Small"
+            style="@style/NunitoBlackLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/view_car_text"
-            android:max="5"
-            android:theme="@style/RatingBar"
-            android:isIndicator="false"
             android:numStars="5"
+            android:textSize="12dp"
+            android:textColor="@color/booking_txtclr"
             android:visibility="gone"
-            android:text="" />
+            android:text="Rate the space" />
     </RelativeLayout>
     <TextView
         style="@style/NunitoBlackLight"

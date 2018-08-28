@@ -190,6 +190,7 @@ public class HomeActivity extends AppCompatActivity
                         fragment = new NotificationFragment();
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Notification");
+
                         break;
 
                     case R.id.b_nav_profile:
@@ -272,9 +273,9 @@ public class HomeActivity extends AppCompatActivity
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left);
-            transaction.replace(R.id.main_frame_layout, new HomeFragment());
-            transaction.addToBackStack(null);
-            transaction.commit();
+            transaction.replace(R.id.main_frame_layout, new HomeFragment()).commit();
+//            transaction.addToBackStack(null);
+//            transaction.commit();
 //            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 //            loadFragment(new ());
             toolbarText.setText("Home");
@@ -299,9 +300,9 @@ public class HomeActivity extends AppCompatActivity
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-            transaction.replace(R.id.main_frame_layout, new ProfileFragment());
-            transaction.addToBackStack(null);
-            transaction.commit();
+            transaction.replace(R.id.main_frame_layout, new ProfileFragment()).commit();
+//            transaction.addToBackStack(null);
+//            transaction.commit();
             toolbarText.setText("Profile");
 //
 
