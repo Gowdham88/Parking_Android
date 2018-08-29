@@ -892,7 +892,7 @@ hideProgressDialog();
                             }
                         });
 
-
+                PopUpprotectcar(documentID);
 
                 alertDialog1.dismiss();
             }
@@ -923,6 +923,99 @@ hideProgressDialog();
         lp.gravity = Gravity.CENTER;
 //        lp.windowAnimations = R.style.DialogAnimation;
         alertDialog1.getWindow().setAttributes(lp);
+    }
+
+    private void PopUpprotectcar(String documentID) {
+
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
+        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        Button ok = deleteDialogView.findViewById(R.id.ok_button);
+        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
+//        final MediaPlayer mp = MediaPlayer.create(this, R.raw.soho);
+
+        final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+//                mp.start();
+                final Map<String, Object> protectdata = new HashMap<>();
+                protectdata.put("protectCar", true);
+
+
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                db.collection("Bookings").document(documentID)
+                        .update(protectdata)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+//                            DocumentReference washingtonRef = db.collection("users").document(uid);
+//
+//                            washingtonRef
+//                                    .update("Booking_ID",likeData1)
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            Log.w(TAG, "Error updating document", e);
+//                                        }
+//                                    });
+
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+                alertDialog1.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                alertDialog1.dismiss();
+            }
+        });
+
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+        alertDialog1.show();
     }
 
     private void makeAlreadyBookedAlert(Boolean bookingRequest,double latitude, double longitude, String yourPlace){
