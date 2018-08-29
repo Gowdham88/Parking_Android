@@ -23,6 +23,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
     android:topRightRadius="100dp"
     android:bottomLeftRadius="100dp"
     android:topLeftRadius="100dp"/>
-<solid android:color="@color/search_boarder_clr"/>
+<solid android:color="@color/border_color"/>
 
 </shape>
