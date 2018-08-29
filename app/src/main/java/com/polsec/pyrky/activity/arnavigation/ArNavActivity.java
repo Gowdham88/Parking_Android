@@ -274,7 +274,6 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     public void onLocationChanged(Location location) {
         if(world!=null) {
             world.setGeoPosition(location.getLatitude(), location.getLongitude());
-
         }
     }
 

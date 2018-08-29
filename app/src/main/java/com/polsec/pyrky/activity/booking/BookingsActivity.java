@@ -91,13 +91,6 @@ Toolbar toolbar;
 //
 //
 
-
-
-
-
-
-
-
     private void setupViewPager(ViewPager viewPager) {
         CustomViewPagerAdapter adapter = new CustomViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(new CurrentBookingsFragment(), "Current Bookings");
@@ -106,7 +99,6 @@ Toolbar toolbar;
     }
 
     private void setupTabLayout() {
-
         TextView tabOne = (TextView) LayoutInflater.from(BookingsActivity.this).inflate(R.layout.custom_tab, null);
         tabOne.setText("Current Bookings");
         tabLayout.getTabAt(0).setCustomView(tabOne);

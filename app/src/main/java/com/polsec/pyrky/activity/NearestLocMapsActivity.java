@@ -62,7 +62,6 @@ import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
-import com.polsec.pyrky.pojo.ParkingRules;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.Constants;
 import com.yarolegovich.discretescrollview.DSVOrientation;
@@ -138,6 +137,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     RelativeLayout BackImgRelay;
     private GoogleApiClient mGoogleApiClient;
     private android.support.v7.app.AlertDialog dialog;
+    Boolean isBookedAny = false;
     @Override
     protected void onResume() {
         super.onResume();
@@ -147,6 +147,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 .enableAutoManage((FragmentActivity) context, 0, this)
                 .addConnectionCallbacks(this)
                 .build();
+        mNearestPlaceRecycler.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -193,7 +194,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 PlaceName= chatIntent.getStringExtra("placename").trim();
 
                 Log.e("lattitude", String.valueOf(mLat));
-                Log.e("longitude", String.valueOf(mLongi));
+                 Log.e("longitude", String.valueOf(mLongi));
                 Log.e("plc", String.valueOf(PlaceName));
             }
             else{
@@ -292,12 +293,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                         for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
 
                             camera = document.toObject(Camera.class);
-
-//                            HashMap<String,ParkingRules> parkingRules = document.get("parkingRules");
-//                            Toast.makeText(context,parkingRules.getRule() , Toast.LENGTH_SHORT).show();
-//                            Toast.makeText(context, (CharSequence) camera.getParkingRules().get("0"), Toast.LENGTH_SHORT).show();
                             datalist.add(camera);
-//                            datalist.add(document.toObject(Camera.class));
 
                             Log.e("dbbd", String.valueOf(document.getData()));
 //
@@ -369,7 +365,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
 
 
-                                    onItemChanged(mCameraLat.get(0), mCameraLong.get(0), mCameraId.get(0));
+                                    onItemChanged(mCameraLat.get(0), mCameraLong.get(0), mCameraId.get(0),datalist.get(i).getParkingTypes());
 
                 if((!datalist.equals(null))||(!datalist.isEmpty())){
 
@@ -413,7 +409,7 @@ hideProgressDialog();
 
     }
 
-    private void onItemChanged(String lat, String lng, String cameraId) {
+    private void onItemChanged(String lat, String lng, String cameraId, String parkingType) {
         mapLat = lat.trim();
         mapLongi = lng.trim();
         cameraid = cameraId;
@@ -424,11 +420,11 @@ hideProgressDialog();
         LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
 
 //            LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
-//        if (parkingType.equals("Free street parking")){
-//            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-//        }else{
+             if (parkingType.equals("Free street parking")){
+              Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+            }else{
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
-//        }
+              }
             Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
             Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 15, null);
             Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -470,7 +466,7 @@ hideProgressDialog();
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = adapterPosition;
-        onItemChanged(mCameraLat.get(positionInDataSet), mCameraLong.get(positionInDataSet), mCameraId.get(positionInDataSet));
+        onItemChanged(mCameraLat.get(positionInDataSet), mCameraLong.get(positionInDataSet), mCameraId.get(positionInDataSet),datalist.get(positionInDataSet).getParkingTypes());
 
 
     }
@@ -587,11 +583,12 @@ hideProgressDialog();
         NavigateTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showBottomSheet(m.getPosition().latitude,m.getPosition().longitude);
+
+                showBottomSheet(m.getPosition().latitude,m.getPosition().longitude,yourplace);
                 lat= String.valueOf(m.getPosition().latitude);
                 longi= String.valueOf(m.getPosition().longitude);
 
-                SaveData(lat,longi,yourplace);
+//                SaveData(lat,longi,yourplace);
                 alertD.cancel();
                 mNearestPlaceRecycler.setVisibility(View.VISIBLE);
             }
@@ -713,119 +710,122 @@ hideProgressDialog();
     }
 //
 
-    private void showBottomSheet(double latitude, double longitude) {
+    private void showBottomSheet(double latitude, double longitude, String yourPlace) {
 
 
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NearestLocMapsActivity.this);
         LayoutInflater factory = LayoutInflater.from(NearestLocMapsActivity.this);
-        View bottomSheetView = factory.inflate(R.layout.mapspyrky_bottomsheet, null);
+        View bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
 
-        TextView map = (TextView) bottomSheetView.findViewById(R.id.maps_title);
-        TextView pyrky = (TextView) bottomSheetView.findViewById(R.id.pyrky_title);
-        TextView cancel = (TextView) bottomSheetView.findViewById(R.id.cancel_txt);
+        TextView map = bottomSheetView.findViewById(R.id.maps_title);
+        TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
+        TextView cancel = bottomSheetView.findViewById(R.id.cancel_txt);
+
+
         map.setOnClickListener(view -> {
 
-            final FirebaseUser user = mAuth.getCurrentUser();
-            DocumentReference docRef = db.collection("users").document(user.getUid());
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-
-                    if (documentSnapshot.exists()){
-
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
-                        DocumentReference docRef = db.collection("users").document(mUid);
-                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                        bookingid = document.getData();
-
-
-                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
-
-
-                                        String count = String.valueOf(bookingid1.size());
-                                        Log.e("count", count);
-
-
-//                                    followingcount = 1;
-                                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                                            System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                                            val= (Boolean) entry.getValue();
-                                            String values = String.valueOf(val);
-
-                                            Log.e("values", values);
+            makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+//            final FirebaseUser user = mAuth.getCurrentUser();
+//            DocumentReference docRef = db.collection("users").document(user.getUid());
+//            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                @Override
+//                public void onSuccess(DocumentSnapshot documentSnapshot) {
 //
-
-                                        }
-                                        if (val == true) {
-
-//                                                Toast.makeText(NearestLocMapsActivity.this, values, Toast.LENGTH_SHORT).show();
-                                            String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-
-                                            popup(valuedoc);
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-                                        }
-                                        else{
-                                            PackageManager pm = NearestLocMapsActivity.this.getPackageManager();
-                                            if(isPackageInstalled()){
-                                                Intent intent = new Intent(Intent.ACTION_VIEW,
-                                                        Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
-                                                startActivity(intent);
-//                    Toast.makeText(NearestLocMapsActivity.this, "true", Toast.LENGTH_SHORT).show();
-                                            }else{
-                                                Intent intent = new Intent(Intent.ACTION_VIEW,
-                                                        Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
-                                                startActivity(intent);
-//                    Toast.makeText(NearestLocMapsActivity.this, "false", Toast.LENGTH_SHORT).show();
-
-
-                                            }
-
-
-                                        }
-
-
-                                    } else {
-//                        Log.d(TAG, "No such document");
-
-                                    }
-                                } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
-
-                                }
-                            }
-                        });
-
-//                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
-
-
-                    } else {
-
-
-
-                    }
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-
-                    Log.w("Error", "Error adding document", e);
-                    Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
-                }
-            });
+//
+//                    if (documentSnapshot.exists()){
+//
+//                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//
+//
+//                        DocumentReference docRef = db.collection("users").document(mUid);
+//                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                                if (task.isSuccessful()) {
+//                                    DocumentSnapshot document = task.getResult();
+//                                    if (document.exists()) {
+////                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+//                                        bookingid = document.getData();
+//
+//
+//                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+//
+//
+//                                        String count = String.valueOf(bookingid1.size());
+//                                        Log.e("count", count);
+//
+//
+////                                    followingcount = 1;
+//                                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+//                                            System.out.println(entry.getKey() + " = " + entry.getValue());
+//
+//                                            val= (Boolean) entry.getValue();
+//                                            String values = String.valueOf(val);
+//
+//                                            Log.e("values", values);
+////
+//
+//                                        }
+//                                        if (val == true) {
+//
+////                                                Toast.makeText(NearestLocMapsActivity.this, values, Toast.LENGTH_SHORT).show();
+//                                            String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+//
+//                                            popup(valuedoc);
+//
+////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+//                                        }
+//                                        else{
+//                                            PackageManager pm = NearestLocMapsActivity.this.getPackageManager();
+//                                            if(isPackageInstalled()){
+//                                                Intent intent = new Intent(Intent.ACTION_VIEW,
+//                                                        Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
+//                                                startActivity(intent);
+////                    Toast.makeText(NearestLocMapsActivity.this, "true", Toast.LENGTH_SHORT).show();
+//                                            }else{
+//                                                Intent intent = new Intent(Intent.ACTION_VIEW,
+//                                                        Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
+//                                                startActivity(intent);
+////                    Toast.makeText(NearestLocMapsActivity.this, "false", Toast.LENGTH_SHORT).show();
+//
+//
+//                                            }
+//
+//
+//                                        }
+//
+//
+//                                    } else {
+////                        Log.d(TAG, "No such document");
+//
+//                                    }
+//                                } else {
+////                    Log.d(TAG, "get failed with ", task.getException());
+//
+//                                }
+//                            }
+//                        });
+//
+////                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+//
+//
+//                    } else {
+//
+//
+//
+//                    }
+//
+//                }
+//            }).addOnFailureListener(new OnFailureListener() {
+//                @Override
+//                public void onFailure(@NonNull Exception e) {
+//
+//                    Log.w("Error", "Error adding document", e);
+//                    Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
+//                }
+//            });
 
             bottomSheetDialog.dismiss();
 
@@ -846,13 +846,13 @@ hideProgressDialog();
         });
     }
 
-    private void popup(String valuedoc) {
+    private void popup(String valuedoc,String key,Boolean bookingRequest,double latitude, double longitude, String yourPlace) {
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(this);
         alertDialog.setView(deleteDialogView);
-        Button ok = (Button)deleteDialogView.findViewById(R.id.ok_button);
-        Button cancel = (Button)deleteDialogView.findViewById(R.id.cancel_button);
+        Button ok = deleteDialogView.findViewById(R.id.ok_button);
+        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
 
         final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {
@@ -860,7 +860,7 @@ hideProgressDialog();
             public void onClick(View view) {
 
                 Map<String, Boolean> likeData1 = new HashMap<>();
-                likeData1.put( valuedoc, false);
+                likeData1.put( key, false);
 
                 Map<String, Map<String, Boolean>> likeData2 = new HashMap<>();
                 likeData2.put( "Booking_ID", likeData1);
@@ -876,7 +876,12 @@ hideProgressDialog();
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-
+                                isBookedAny = false;
+                                if (bookingRequest){
+                                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+                                }else{
+                                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
+                                }
 
                             }
                         })
@@ -896,88 +901,6 @@ hideProgressDialog();
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-//                final FirebaseUser user = mAuth.getCurrentUser();
-//                DocumentReference docRef = db.collection("users").document(user.getUid());
-//                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-//
-//
-//                        if (documentSnapshot.exists()){
-//
-//                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-//
-//
-//                            DocumentReference docRef = db.collection("users").document(mUid);
-//                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                    if (task.isSuccessful()) {
-//                                        DocumentSnapshot document = task.getResult();
-//                                        if (document.exists()) {
-////                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-//                                            bookingid = document.getData();
-//
-//
-//                                            bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
-//
-//
-//                                            String count = String.valueOf(bookingid1.size());
-//                                            Log.e("count", count);
-//
-//
-////                                    followingcount = 1;
-//                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-//                                                System.out.println(entry.getKey() + " = " + entry.getValue());
-//
-//                                                Boolean val = (Boolean) entry.getValue();
-//                                                String values = String.valueOf(val);
-//
-//                                                Log.e("values", values);
-////
-//                                                if (val == true) {
-//
-//
-//                                                    popup(valuedoc);
-////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-//                                                }
-////                                                else{
-////
-////                                                }
-//                                            }
-//
-//
-//
-//                                        } else {
-////                        Log.d(TAG, "No such document");
-//
-//                                        }
-//                                    } else {
-////                    Log.d(TAG, "get failed with ", task.getException());
-//
-//                                    }
-//                                }
-//                            });
-//
-////                            Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
-//
-//                        } else {
-//
-//
-//
-//                        }
-//
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//
-//                        Log.w("Error", "Error adding document", e);
-//                        Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
 
                 alertDialog1.dismiss();
             }
@@ -1002,6 +925,114 @@ hideProgressDialog();
         alertDialog1.getWindow().setAttributes(lp);
     }
 
+    private void makeAlreadyBookedAlert(Boolean bookingRequest,double latitude, double longitude, String yourPlace){
+        final FirebaseUser user = mAuth.getCurrentUser();
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    DocumentReference docRef = db.collection("users").document(mUid);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                    bookingid = document.getData();
+
+                                    bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+
+                                    for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
+                                        Boolean value = (Boolean) bookingEntry.getValue();
+                                        if (value){
+                                            isBookedAny = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (isBookedAny){
+                                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                            System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                            Boolean val = (Boolean) entry.getValue();
+                                            String values = String.valueOf(val);
+
+                                            Log.e("values", values);
+//
+                                            if (val) {
+
+                                                Toast.makeText(NearestLocMapsActivity.this, values, Toast.LENGTH_SHORT).show();
+                                                String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+                                                popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace);
+                                                break;
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                            }else{
+                                                Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }else{
+                                        if (bookingRequest){
+                                            bookAndNavigate(latitude,longitude,yourPlace);
+                                        }
+
+                                    }
+
+                                } else {
+//                        Log.d(TAG, "No such document");
+
+                                }
+                            } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+
+                            }
+                        }
+                    });
+
+//                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+
+
+                } else {
+
+
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Log.w("Error", "Error adding document", e);
+                Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void bookAndNavigate(double latitude, double longitude, String yourPlace){
+//        showBottomSheet(latitude, longitude,yourPlace);
+        SaveData(lat, longi, yourPlace);
+        PackageManager pm = NearestLocMapsActivity.this.getPackageManager();
+        if(isPackageInstalled()){
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                    Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
+            startActivity(intent);
+//                    Toast.makeText(ViewImageActivity.this, "true", Toast.LENGTH_SHORT).show();
+        }else{
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                    Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
+            startActivity(intent);
+//                    Toast.makeText(ViewImageActivity.this, "false", Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
 
     private boolean isPackageInstalled() {
@@ -1048,6 +1079,7 @@ hideProgressDialog();
 
 
     }
+
 
     @Override
     public void onPause() {

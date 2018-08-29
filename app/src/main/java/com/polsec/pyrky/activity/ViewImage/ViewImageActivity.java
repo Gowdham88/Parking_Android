@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +27,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -65,7 +67,7 @@ public class ViewImageActivity extends AppCompatActivity {
     Map<String, Object> bookingid = new HashMap<>();
 
     Map<String, Object> bookingid1=new HashMap<>();
-
+    Boolean arEnabledDevice;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
@@ -83,6 +85,7 @@ public class ViewImageActivity extends AppCompatActivity {
 //            }
 //        });
 
+        checkWhetherArEnabled();
 
         TrackGPS trackGps = new TrackGPS(context);
 
@@ -111,23 +114,20 @@ public class ViewImageActivity extends AppCompatActivity {
         }
 
 
-        makeAlreadyBookedAlert();
+//        makeAlreadyBookedAlert(false);
 
         Picasso.with(context).load(cameraImageUrl).into(cameraImage);
-        BookBtn = (TextView) findViewById(R.id.book_btn);
+        BookBtn = findViewById(R.id.book_btn);
         BookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    makeAlreadyBookedAlert();
-                    showBottomSheet(latitude, longitude);
-                    SaveData(lat, longi, DestName);
+                    makeAlreadyBookedAlert(true);
+//                    showBottomSheet(latitude, longitude);
+//                    SaveData(lat, longi, DestName);
             }
 
-
-//
-
         });
-        CloseImg = (ImageView) findViewById(R.id.close_iconimg);
+        CloseImg = findViewById(R.id.close_iconimg);
         CloseImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,54 +136,8 @@ public class ViewImageActivity extends AppCompatActivity {
         });
     }
 
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//
-//
-//        DocumentReference docRef = db.collection("users").document(mUid);
-//        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    DocumentSnapshot document = task.getResult();
-//                    if (document.exists()) {
-////                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-//                        bookingid = document.getData();
-//                        String count = String.valueOf(bookingid.size());
-//
-//                        Log.e("uidvalue", mUid);
-//
-//                        for (Map.Entry<String, Object> entry : bookingid.entrySet()) {
-//                            System.out.println(entry.getKey() + " = " + entry.getValue());
-//
-//                            Boolean val = (Boolean) entry.getValue();
-//                            String values = String.valueOf(val);
-////                            Toast.makeText(getActivity(), values, Toast.LENGTH_SHORT).show();
-//                            if (val == true) {
-//
-//
-////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//
-//
-//                    } else {
-////                        Log.d(TAG, "No such document");
-//
-//                    }
-//                } else {
-////                    Log.d(TAG, "get failed with ", task.getException());
-//
-//                }
-//            }
-//        });
-//    }
 
-
-//    public  void CheckBookingId(){
-//
-//    }
-
-    private void makeAlreadyBookedAlert(){
+    private void makeAlreadyBookedAlert(Boolean bookingRequest){
             final FirebaseUser user = mAuth.getCurrentUser();
             DocumentReference docRef = db.collection("users").document(user.getUid());
             docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -205,35 +159,42 @@ public class ViewImageActivity extends AppCompatActivity {
 
                                         bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
 
-
-//                                    String count = String.valueOf(bookingid1.size());
-//                                    Log.e("count", count);
-
-
-//                                    followingcount = 1;
-                                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                                            System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                                            Boolean val = (Boolean) entry.getValue();
-                                            String values = String.valueOf(val);
-
-                                            Log.e("values", values);
-//
-                                            if (val) {
+                                        for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
+                                            Boolean value = (Boolean) bookingEntry.getValue();
+                                            if (value){
                                                 isBookedAny = true;
-                                                Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
-                                                String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-
-                                                popup(valuedoc,entry.getKey());
                                                 break;
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-                                            }else{
-                                                Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
                                             }
                                         }
 
+                                        if (isBookedAny){
+                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                                System.out.println(entry.getKey() + " = " + entry.getValue());
 
+                                                Boolean val = (Boolean) entry.getValue();
+                                                String values = String.valueOf(val);
+
+                                                Log.e("values", values);
+//
+                                                if (val) {
+
+                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
+                                                    String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+                                                    popup(valuedoc,entry.getKey(),bookingRequest);
+                                                    break;
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                                }else{
+                                                    Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }else{
+                                            if (bookingRequest){
+                                                bookAndNavigate();
+                                            }
+
+                                        }
 
                                     } else {
 //                        Log.d(TAG, "No such document");
@@ -265,6 +226,11 @@ public class ViewImageActivity extends AppCompatActivity {
                 }
             });
 
+        }
+
+        private void bookAndNavigate(){
+            showBottomSheet(latitude, longitude);
+            SaveData(lat, longi, DestName);
         }
 
     private void SaveData(String latitude, String longitude, String destName) {
@@ -365,20 +331,18 @@ public class ViewImageActivity extends AppCompatActivity {
 
                     }
                 });
-//
-
 
             }
         });
     }
 
-    private void popup(String valuedoc,String key) {
+    private void popup(String valuedoc,String key,Boolean bookingRequest) {
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setView(deleteDialogView);
-        Button ok = (Button)deleteDialogView.findViewById(R.id.ok_button);
-        Button cancel = (Button)deleteDialogView.findViewById(R.id.cancel_button);
+        Button ok = deleteDialogView.findViewById(R.id.ok_button);
+        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
 
         final AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {
@@ -399,7 +363,13 @@ public class ViewImageActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                                makeAlreadyBookedAlert();
+                                isBookedAny = false;
+                                if (bookingRequest){
+                                    makeAlreadyBookedAlert(true);
+                                }else{
+                                    makeAlreadyBookedAlert(false);
+                                }
+
 
                             }
                         })
@@ -418,90 +388,6 @@ public class ViewImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-
-//                final FirebaseUser user = mAuth.getCurrentUser();
-//                DocumentReference docRef = db.collection("users").document(user.getUid());
-//                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-//
-//
-//                        if (documentSnapshot.exists()){
-//
-//                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-//
-//
-//                            DocumentReference docRef = db.collection("users").document(mUid);
-//                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                    if (task.isSuccessful()) {
-//                                        DocumentSnapshot document = task.getResult();
-//                                        if (document.exists()) {
-////                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-//                                            bookingid = document.getData();
-//
-//
-//                                            bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
-//
-//
-//                                            String count = String.valueOf(bookingid1.size());
-//                                            Log.e("count", count);
-//
-//
-////                                    followingcount = 1;
-//                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-//                                                System.out.println(entry.getKey() + " = " + entry.getValue());
-//
-//                                                Boolean val = (Boolean) entry.getValue();
-//                                                String values = String.valueOf(val);
-//
-//                                                Log.e("values", values);
-////
-//                                                if (val) {
-//
-//
-//                                                    popup(valuedoc,entry.getKey());
-////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-//                                                }
-////                                                else{
-////
-////                                                }
-//                                            }
-//
-//
-//
-//                                        } else {
-////                        Log.d(TAG, "No such document");
-//
-//                                        }
-//                                    } else {
-////                    Log.d(TAG, "get failed with ", task.getException());
-//
-//                                    }
-//                                }
-//                            });
-//
-////                            Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
-//
-//                        } else {
-//
-//
-//
-//                        }
-//
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//
-//                        Log.w("Error", "Error adding document", e);
-//                        Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-////
-
-//                BookBtn.setVisibility(View.GONE);
                 alertDialog1.dismiss();
             }
         });
@@ -539,18 +425,25 @@ public class ViewImageActivity extends AppCompatActivity {
     }
 
     private void showBottomSheet(double latitude, double longitude) {
-
+        View bottomSheetView;
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ViewImageActivity.this);
         LayoutInflater factory = LayoutInflater.from(ViewImageActivity.this);
-        View bottomSheetView = factory.inflate(R.layout.mapspyrky_bottomsheet, null);
+        bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
+        TextView map = bottomSheetView.findViewById(R.id.maps_title);
+        TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
+        if (arEnabledDevice){
+
+        }else {
+            pyrky.setVisibility(View.GONE);
+        }
+
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
 
-        TextView map = (TextView) bottomSheetView.findViewById(R.id.maps_title);
-        TextView pyrky = (TextView) bottomSheetView.findViewById(R.id.pyrky_title);
+
 //        GalleryIcon = (ImageView) bottomSheetView.findViewById(R.id.gallery_icon);
 //        CameraIcon = (ImageView) bottomSheetView.findViewById(R.id.camera_image);
-        TextView cancel = (TextView) bottomSheetView.findViewById(R.id.cancel_txt);
+        TextView cancel = bottomSheetView.findViewById(R.id.cancel_txt);
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -570,23 +463,15 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
                 }
-//
 
-//                Intent postintent = new Intent(getActivity(), PostActivity.class);
-//                startActivity(postintent);
                 bottomSheetDialog.dismiss();
-//
-//                if (hasPermissions()) {
-//                    captureImage();
-//                } else {
-//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
-//                }
+
             }
         });
 
-        pyrky.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            pyrky.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 //                if (hasPermissions()) {
 //                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 //                    startActivityForResult(i, RC_PICK_IMAGE);
@@ -595,20 +480,21 @@ public class ViewImageActivity extends AppCompatActivity {
 //                }
 //                Intent checkinintent = new Intent(getActivity(), CheckScreenActivity.class);
 //                startActivity(checkinintent);
-                Intent intent = new Intent(ViewImageActivity.this, ArNavActivity.class);
-                try {
-                    intent.putExtra("SRC", "Current Location");
-                    intent.putExtra("DEST", "Some Destination");
-                    intent.putExtra("SRCLATLNG", curLat + "," + curLong);
-                    intent.putExtra("DESTLATLNG", latitude + "," + longitude);
-                    startActivity(intent);
-                }catch (NullPointerException npe){
+                    Intent intent = new Intent(ViewImageActivity.this, ArNavActivity.class);
+                    try {
+                        intent.putExtra("SRC", "Current Location");
+                        intent.putExtra("DEST", "Some Destination");
+                        intent.putExtra("SRCLATLNG", curLat + "," + curLong);
+                        intent.putExtra("DESTLATLNG", latitude + "," + longitude);
+                        startActivity(intent);
+                    }catch (NullPointerException npe){
 
-                    Log.d(TAG, "onClick: The IntentExtras are Empty");
+                        Log.d(TAG, "onClick: The IntentExtras are Empty");
+                    }
+                    bottomSheetDialog.dismiss();
                 }
-                bottomSheetDialog.dismiss();
-            }
-        });
+            });
+
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -617,6 +503,25 @@ public class ViewImageActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    void checkWhetherArEnabled() {
+        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
+        if (availability.isTransient()) {
+            // Re-query at 5Hz while compatibility is checked in the background.
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkWhetherArEnabled();
+                }
+            }, 300);
+        }
+        if (availability.isSupported()) {
+           arEnabledDevice = true;
+            // indicator on the button.
+        } else { // Unsupported or unknown.
+            arEnabledDevice = false;
+        }
     }
     public long getPostTime() {
 
