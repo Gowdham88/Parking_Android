@@ -10,7 +10,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -28,9 +27,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
+import com.polsec.pyrky.pojo.Reports;
+import com.polsec.pyrky.pojo.ratingval;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
 import java.text.DecimalFormat;
@@ -151,7 +153,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         ratingBar.setRating((int) bookingList.get(position).getParkingSpaceRating());
         ratingBar.setIsIndicator(true);
 
-        ratingBar.setRating((float) bookingList.get(position).getParkingSpaceRating());
+//        ratingBar.setRating((float) bookingList.get(position).getParkingSpaceRating());
             Drawable drawable = ratingBar.getProgressDrawable();
             drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
 
@@ -272,7 +274,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
                 ratingBar.setRating((int) currenRating);
 
-                ratingBar.setVisibility(View.VISIBLE);
+//                ratingBar.setVisibility(View.VISIBLE);
 //                ratingbar1.setRating(Float.parseFloat(currenRating));
                 Toast.makeText(context, "New default rating: " + v, Toast.LENGTH_SHORT).show();
             }
@@ -305,15 +307,33 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                     }
                 });
 
+
+//                Map<String, Object> reportval = new HashMap<>();
+//                reportval.put("ratings", currenRating );
+//                reportval.put("User_ID", uid );
+
+                ArrayList<ratingval> vehList = new ArrayList<>();
+                ratingval vehiclePojoObject=new ratingval();
+                vehiclePojoObject.setUser_ID(uid);
+                vehiclePojoObject.setRatings(String.valueOf(currenRating));
+
+                vehList.add(vehiclePojoObject);
+
+
                 Map<String, Object> reportval = new HashMap<>();
-                reportval.put("ratings", currenRating );
-                reportval.put("User_ID", uid );
+                reportval.put("Ratings", reportval );
                 reportval.put("cameraId", cameraid );
+//
+
+                Reports reports=new Reports(vehList,cameraid);
 
                 db.collection("Reports").document(latlongi).set(reportval).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(context, "Rating updated", Toast.LENGTH_SHORT).show();
+
+
+
+//                        Toast.makeText(context, "Rating updated", Toast.LENGTH_SHORT).show();
 //                        ratingBar.setVisibility(View.GONE);
 //                  ratingbar1.setRating(Float.parseFloat(currenRating));
 
@@ -324,6 +344,39 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
                     }
                 });
+
+//                db.collection("Reports").document(latlongi).set(reports).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Toast.makeText(context, "Rating updated", Toast.LENGTH_SHORT).show();
+////                        ratingBar.setVisibility(View.GONE);
+////                  ratingbar1.setRating(Float.parseFloat(currenRating));
+//
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//
+//                    }
+//                });
+//
+//
+
+
+                db.collection("Reports").document(latlongi)
+                        .set(reportval, SetOptions.merge())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+//                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+//                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
 
                 dialog.dismiss();
 //
