@@ -32,12 +32,12 @@
 
 
         <TextView
-            style="@style/NunitoBlackLight"
             android:id="@+id/maps_title"
+            style="@style/NunitoBlackLight"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="5dp"
             android:gravity="center"
             android:text="Maps"
             android:textAppearance="?android:attr/textAppearanceLarge"

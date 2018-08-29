@@ -272,7 +272,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
                 ratingBar.setRating((int) currenRating);
 
-//                ratingBar.setVisibility(View.GONE);
+                ratingBar.setVisibility(View.VISIBLE);
 //                ratingbar1.setRating(Float.parseFloat(currenRating));
                 Toast.makeText(context, "New default rating: " + v, Toast.LENGTH_SHORT).show();
             }
