@@ -615,6 +615,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
 
     private void updateData(final String email, String carCategory,String userName) {
+        showProgressDialog();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
 //        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
@@ -625,6 +626,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        hideProgressDialog();
                         PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_EMAIL,email);
                         PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(carCategory));
                         Toast.makeText(getActivity(), "Updated Successfully",

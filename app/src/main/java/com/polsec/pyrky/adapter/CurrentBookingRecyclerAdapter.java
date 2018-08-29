@@ -20,7 +20,10 @@ import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.UsersBooking;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,82 +71,58 @@ public class CurrentBookingRecyclerAdapter extends RecyclerView.Adapter<CurrentB
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         mUid = PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-//        double time= bookingList.get(position).getDateTime();
+        double time= Double.parseDouble(String.valueOf(bookingList.get(position).getDateTime()));
+        int vali= (int) time;
 
-//        double dv = Long.valueOf(String.valueOf(time))*1000;// its need to be in milisecond
-//        Date df = new Date(Long.valueOf(String.valueOf(dv)));
-//        Datetime= new SimpleDateFormat("dd MMM,  hh:mma").format(df);
-//        String str = Datetime.replace("AM", "am").replace("PM","pm");
-//        Dateday= new SimpleDateFormat("").format(df);
-//        Datetime= new SimpleDateFormat("").format(df);
-//        Datemothname=getMonthShortName(Integer.parseInt(Datemonth));
+        long dv = Long.valueOf(String.valueOf(vali))*1000;// its need to be in milisecond
+        Date df = new Date(Long.valueOf((long) dv));
+        Datetime= new SimpleDateFormat("dd MMM,  hh:mma").format(df);
+        String str = Datetime.replace("AM", "am").replace("PM","pm");
 
-//        Log.e("vv",str);
 
-//        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
-//        Boolean status= Boolean.valueOf(bookingList.get(position).getBookingStatus());
-//        if(status){
-//            holder.city.setText(bookingList.get(position).getDestName());
-//        }
+//        Log.e("vv", String.valueOf(str));
+        holder.dateTime.setText(str);
+
+
         RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
-        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-            System.out.println(entry.getKey() + " = " + entry.getValue());
 
-             val= (Boolean) entry.getValue();
-            String values = String.valueOf(val);
+        if(bookingid1.containsKey(bookingList.get(position).getDocumentID())){
+            Boolean value=(Boolean) bookingid1.get(bookingList.get(position).getDocumentID());
 
-//            Log.e("valuesh", String.valueOf(val));
-
-            if(val){
+            if(value){
                 holder.city.setText(bookingList.get(position).getDestName());
             }
-//            else {
-////                holder.itemView.setVisibility(View.GONE);
-////                param.height = 0;
-////                param.width = 0;
-//            }
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-
+            else {
+                holder.itemView.setVisibility(View.GONE);
+                param.height = 0;
+                param.width = 0;
+            }
         }
-
-
-
-//        final FirebaseUser user = mAuth.getCurrentUser();
-//        DocumentReference docRef = db.collection("users").document(user.getUid());
-//        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//
-//
-//                if (documentSnapshot.exists()){
-//
-//                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-//
-//
-//
-////                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
-//
-//
-//                } else {
-//
-//
-//
-//                }
-//
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//
-//                Log.w("Error", "Error adding document", e);
-//                Toast.makeText(context,"Login failed", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-
 //
     }
+
+    public static String getMonthShortName(int monthNumber)
+    {
+        String monthName="";
+
+        if(monthNumber>=0 && monthNumber<12)
+            try
+            {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.MONTH, monthNumber);
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM");
+                simpleDateFormat.setCalendar(calendar);
+                monthName = simpleDateFormat.format(calendar.getTime());
+            }
+            catch (Exception e)
+            {
+                if(e!=null)
+                    e.printStackTrace();
+            }
+        return monthName;
+    }
+
 
 
     @Override

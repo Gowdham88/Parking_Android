@@ -89,88 +89,7 @@ public class HistoryFragment extends Fragment {
 
         uid = PreferencesHelper.getPreference(getContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 //        loadPost(ACTION_SHOW_LOADING_ITEM);
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        Query first = db.collection("camera");
-
-        first.get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot documentSnapshots) {
-
-                        if (documentSnapshots.getDocuments().size() < 1) {
-
-                            return;
-
-                        }
-
-                        for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
-
-                            Camera camera = document.toObject(Camera.class);
-                            CameraList.add(camera);
-                            CameraListId.add(document.getId());
-
-                            Log.e("dbbdcameraid",document.getId());
-                            Log.e("dbbdcamera", String.valueOf(document.getData()));
-
-                            for(i = 0; i<CameraList.size(); i++){
-
-//                                Cameraslist.clear();
-//        showProgressDialog();
-//                                FirebaseFirestore db = FirebaseFirestore.getInstance();
-//
-//                                Query first = db.collection("Bookings");
-//
-//                                first.get()
-//                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//                                            @Override
-//                                            public void onSuccess(QuerySnapshot documentSnapshots) {
-//
-//                                                if (documentSnapshots.getDocuments().size() < 1) {
-//
-//                                                    return;
-//
-//                                                }
-//
-//                                                for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
-//
-//                                                    Booking comment = document.toObject(Booking.class);
-//                                                    Booklist.add(comment);
-////                                                    BookingListId.add(document.getId());
-//
-//                                                    Log.e("dbbd1",document.getId());
-//                                                    Log.e("dbbd2", String.valueOf(document.getData()));
-//
-//                                                    List<String> RatingCount = new ArrayList<String>();
-//                                                    String ratecount= String.valueOf(Booklist.get(i).getParkingSpaceRating());
-//
-//                                                    RatingCount.add(ratecount);
-//                                                    Log.e("ratingcount", String.valueOf(RatingCount));
-//
-//                                                }
-//
-//
-////                                                setupFeed();
-//                                            }
-//
-//                                        });
-
-                            }
-
-                        }
-
-                    }
-
-                });
-
         swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
-        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1,CameraList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(recyclerAdapter);
-        mRecyclerView.setHasFixedSize(true);
-        recyclerAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -181,8 +100,12 @@ public class HistoryFragment extends Fragment {
                     }
                 }
         );
-        db = FirebaseFirestore.getInstance();
-
+        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1,CameraList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(recyclerAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        recyclerAdapter.notifyDataSetChanged();
 
         return view;
     }
@@ -241,9 +164,11 @@ public class HistoryFragment extends Fragment {
 //                            Log.e("dbbd", String.valueOf(document.getData()));
 
                         }
+//                        loadPostval(ACTION_SHOW_LOADING_ITEM);
 
 
                         setupFeed();
+                        recyclerAdapter.notifyDataSetChanged();
                     }
 
                 });
@@ -276,11 +201,14 @@ public class HistoryFragment extends Fragment {
                             String values = String.valueOf(val);
 
                             Log.e("valuesh", values);
+                            setupFeed();
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
 
                         }
 
-                        setupFeed();
+
+//                        recyclerAdapter.notifyDataSetChanged();
+
 
                     } else {
 //                        Log.d(TAG, "No such document");
