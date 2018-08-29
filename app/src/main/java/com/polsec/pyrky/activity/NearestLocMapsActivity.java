@@ -137,6 +137,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     Boolean val;
     RelativeLayout BackImgRelay;
     private GoogleApiClient mGoogleApiClient;
+    private android.support.v7.app.AlertDialog dialog;
     @Override
     protected void onResume() {
         super.onResume();
@@ -155,6 +156,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(NearestLocMapsActivity.this);
+        showProgressDialog();
         mNearestPlaceRecycler = findViewById(R.id.nearest_places_recycler);
         mNearestPlaceRecycler.setVisibility(View.VISIBLE);
         mAuth = FirebaseAuth.getInstance();
@@ -293,7 +295,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
 //                            HashMap<String,ParkingRules> parkingRules = document.get("parkingRules");
 //                            Toast.makeText(context,parkingRules.getRule() , Toast.LENGTH_SHORT).show();
-                            Toast.makeText(context, (CharSequence) camera.getParkingRules().get("0"), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(context, (CharSequence) camera.getParkingRules().get("0"), Toast.LENGTH_SHORT).show();
                             datalist.add(camera);
 //                            datalist.add(document.toObject(Camera.class));
 
@@ -383,7 +385,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
                 }
 
-
+hideProgressDialog();
 //                                }
 //
 
@@ -896,86 +898,86 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             public void onClick(View view) {
 
 
-                final FirebaseUser user = mAuth.getCurrentUser();
-                DocumentReference docRef = db.collection("users").document(user.getUid());
-                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-
-                        if (documentSnapshot.exists()){
-
-                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
-                            DocumentReference docRef = db.collection("users").document(mUid);
-                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        DocumentSnapshot document = task.getResult();
-                                        if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                            bookingid = document.getData();
-
-
-                                            bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
-
-
-                                            String count = String.valueOf(bookingid1.size());
-                                            Log.e("count", count);
-
-
-//                                    followingcount = 1;
-                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                                                System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                                                Boolean val = (Boolean) entry.getValue();
-                                                String values = String.valueOf(val);
-
-                                                Log.e("values", values);
+//                final FirebaseUser user = mAuth.getCurrentUser();
+//                DocumentReference docRef = db.collection("users").document(user.getUid());
+//                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
 //
-                                                if (val == true) {
-
-
-                                                    popup(valuedoc);
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-                                                }
-//                                                else{
 //
+//                        if (documentSnapshot.exists()){
+//
+//                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+//
+//
+//                            DocumentReference docRef = db.collection("users").document(mUid);
+//                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                                    if (task.isSuccessful()) {
+//                                        DocumentSnapshot document = task.getResult();
+//                                        if (document.exists()) {
+////                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+//                                            bookingid = document.getData();
+//
+//
+//                                            bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+//
+//
+//                                            String count = String.valueOf(bookingid1.size());
+//                                            Log.e("count", count);
+//
+//
+////                                    followingcount = 1;
+//                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+//                                                System.out.println(entry.getKey() + " = " + entry.getValue());
+//
+//                                                Boolean val = (Boolean) entry.getValue();
+//                                                String values = String.valueOf(val);
+//
+//                                                Log.e("values", values);
+////
+//                                                if (val == true) {
+//
+//
+//                                                    popup(valuedoc);
+////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
 //                                                }
-                                            }
-
-
-
-                                        } else {
-//                        Log.d(TAG, "No such document");
-
-                                        }
-                                    } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
-
-                                    }
-                                }
-                            });
-
-//                            Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
-
-                        } else {
-
-
-
-                        }
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                        Log.w("Error", "Error adding document", e);
-                        Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
+////                                                else{
+////
+////                                                }
+//                                            }
+//
+//
+//
+//                                        } else {
+////                        Log.d(TAG, "No such document");
+//
+//                                        }
+//                                    } else {
+////                    Log.d(TAG, "get failed with ", task.getException());
+//
+//                                    }
+//                                }
+//                            });
+//
+////                            Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+//
+//                        } else {
+//
+//
+//
+//                        }
+//
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//
+//                        Log.w("Error", "Error adding document", e);
+//                        Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 
                 alertDialog1.dismiss();
             }
@@ -1059,6 +1061,22 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         super.onDestroy();
         mGoogleApiClient.stopAutoManage((FragmentActivity) context);
         mGoogleApiClient.disconnect();
+    }
+    public void showProgressDialog() {
+
+
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(NearestLocMapsActivity.this);
+        //View view = getLayoutInflater().inflate(R.layout.progress);
+        alertDialog.setView(R.layout.progress);
+        dialog = alertDialog.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+    }
+
+    public void hideProgressDialog(){
+        if(dialog!=null)
+            dialog.dismiss();
     }
 
 

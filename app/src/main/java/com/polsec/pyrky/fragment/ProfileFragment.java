@@ -83,7 +83,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     public void onResume() {
         super.onResume();
         ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
-//        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
