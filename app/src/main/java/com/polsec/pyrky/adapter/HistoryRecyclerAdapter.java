@@ -1,9 +1,13 @@
 package com.polsec.pyrky.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,7 +34,9 @@ import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +52,11 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     private int[] currentRating;
     private int mPosition;
     private Boolean isPopUpShowing = false;
- double currenRating;
+ int currenRating;
     int count = 0;
-    String docid,uid,Rating;
-    RatingBar ratingBar,ratingbar1;
+    String docid,uid,Rating,cameraid,lat,longi;
+    RatingBar ratingBar;
+           TextView ratingbar1,viewCar;
     FirebaseFirestore db;
 
     FirebaseAuth mAuth;
@@ -89,7 +96,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView city,dateTime,viewCar;
+        TextView city,dateTime;
         RelativeLayout Rating_lay;
 
         ViewHolder(View itemView) {
@@ -103,55 +110,88 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         mPosition = position;
 
-//        double time= bookingList.get(position).getDateTime();
+        double time= Double.parseDouble(String.valueOf(bookingList.get(position).getDateTime()));
+        int vali= (int) time;
 
-//        long dv = Long.valueOf(String.valueOf(time))*1000;// its need to be in milisecond
-//        Date df = new Date(dv);
-//        Datetime= new SimpleDateFormat("dd MMM,  hh:mma").format(df);
-//        String strh = Datetime.replace("AM", "am").replace("PM","pm");
-//        Log.e("vv",strh);
-//        Dateday= new SimpleDateFormat("").format(df);
-//        Datetime= new SimpleDateFormat("").format(df);
-//        Datemothname=getMonthShortName(Integer.parseInt(Datemonth));
+        long dv = Long.valueOf(String.valueOf(vali))*1000;// its need to be in milisecond
+        Date df = new Date(Long.valueOf((long) dv));
+        Datetime= new SimpleDateFormat("dd MMM,  hh:mma").format(df);
+        String str = Datetime.replace("AM", "am").replace("PM","pm");
 
-         ratingBar.setOnTouchListener(new View.OnTouchListener() {
+
+//        Log.e("vv", String.valueOf(str));
+        holder.dateTime.setText(str);
+
+
+        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
+
+        if(bookingid1.containsKey(bookingList.get(position).getDocumentID())){
+            Boolean value=(Boolean) bookingid1.get(bookingList.get(position).getDocumentID());
+
+            if(!value){
+                holder.city.setText(bookingList.get(position).getDestName());
+            }
+            else {
+                holder.itemView.setVisibility(View.GONE);
+                param.height = 0;
+                param.width = 0;
+            }
+        }
+//        }
+
+        cameraid=bookingList.get(position).getCameraId();
+        lat=bookingList.get(position).getDestLat();
+        longi=bookingList.get(position).getDestLong();
+        String latlong=lat+","+longi;
+        ratingBar.setRating((int) bookingList.get(position).getParkingSpaceRating());
+        ratingBar.setIsIndicator(true);
+
+        ratingBar.setRating((float) bookingList.get(position).getParkingSpaceRating());
+            Drawable drawable = ratingBar.getProgressDrawable();
+            drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
+
+//        String ratval= String.valueOf(bookingList.get(position).getParkingSpaceRating());
+
+        if(bookingList.get(position).getParkingSpaceRating()<=0){
+            ratingBar.setVisibility(View.GONE);
+            viewCar.setVisibility(View.GONE);
+            ratingbar1.setVisibility(View.VISIBLE);
+            ratingbar1.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
 
-                    showDialog();
+                    showDialog(uid,cameraid,latlong);
+
+
+//                showDialog(cameraid,uid,latlong);
                     return false;
                 }
             });
 
+        }
+        else{
 
-//        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
-//        Boolean status= Boolean.valueOf(bookingList.get(position).getBookingStatus());
-
-//        if(!status){
-//            holder.city.setText(bookingList.get(position).getDestName());
-//        }
-        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-            System.out.println(entry.getKey() + " = " + entry.getValue());
-
-            Boolean val = (Boolean) entry.getValue();
-            String values = String.valueOf(val);
-
-//            Log.e("valuesc", String.valueOf(val));
-            if(!val){
-                holder.city.setText(bookingList.get(position).getDestName());
-            }
-
-
-
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-
+            ratingBar.setVisibility(View.VISIBLE);
+            ratingbar1.setVisibility(View.GONE);
+            viewCar.setVisibility(View.VISIBLE);
         }
 
+//        ratingBar.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//
+//
+//
+//
+////                showDialog(cameraid,uid,latlong);
+//                return false;
+//            }
+//        });
 
 //        final FirebaseUser user = mAuth.getCurrentUser();
 //        DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -210,7 +250,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 //
     }
 
-    private void showDialog() {
+    private void showDialog(String uid,String cameraid,String latlongi) {
 
         Dialog dialog = new Dialog(context);
         LayoutInflater factory = LayoutInflater.from(context);
@@ -228,9 +268,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                currenRating = Double.parseDouble(String.valueOf(v));
+                currenRating = (int) v;
 
-
+                ratingBar.setRating((int) currenRating);
 
 //                ratingBar.setVisibility(View.GONE);
 //                ratingbar1.setRating(Float.parseFloat(currenRating));
@@ -248,6 +288,29 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 rating.put("parkingSpaceRating", currenRating );
                 Toast.makeText(context, "New default rating: " + currenRating, Toast.LENGTH_SHORT).show();
                 db.collection("Bookings").document(docid).update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+
+
+//                        Toast.makeText(context, "Rating updated", Toast.LENGTH_SHORT).show();
+//                        ratingBar.setVisibility(View.GONE);
+//                  ratingbar1.setRating(Float.parseFloat(currenRating));
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+
+                Map<String, Object> reportval = new HashMap<>();
+                reportval.put("ratings", currenRating );
+                reportval.put("User_ID", uid );
+                reportval.put("cameraId", cameraid );
+
+                db.collection("Reports").document(latlongi).set(reportval).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(context, "Rating updated", Toast.LENGTH_SHORT).show();
