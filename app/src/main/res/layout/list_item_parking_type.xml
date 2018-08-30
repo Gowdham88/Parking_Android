@@ -13,7 +13,24 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView"
         android:id="@+id/radio_group">
-
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rb1"
+            android:text="Free street parking"
+            />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rb2"
+            android:text="Paid street parking"
+            />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rb3"
+            android:text="Paid parking"
+            />
     </RadioGroup>
 
     <TextView

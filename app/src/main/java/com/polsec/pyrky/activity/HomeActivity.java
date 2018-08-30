@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.polsec.pyrky.activity.booking.BookingsActivity;
 import com.polsec.pyrky.activity.signin.SignInActivity;
@@ -37,6 +39,7 @@ import com.polsec.pyrky.R;
 import com.polsec.pyrky.fragment.SettingsFragment;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.CircleTransformation;
+import com.polsec.pyrky.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -78,6 +81,8 @@ public class HomeActivity extends AppCompatActivity
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        checkWhetherArEnabled();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -139,8 +144,8 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
-        profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
+        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.user_name);
+        profileImage = navigationView.getHeaderView(0).findViewById(R.id.user_image);
         profileImageUrl= PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC);
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
@@ -372,7 +377,25 @@ public class HomeActivity extends AppCompatActivity
         super.onResume();
         isRunning = true;
 
+    }
 
+    void checkWhetherArEnabled() {
+        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
+        if (availability.isTransient()) {
+            // Re-query at 5Hz while compatibility is checked in the background.
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkWhetherArEnabled();
+                }
+            }, 300);
+        }
+        if (availability.isSupported()) {
+            Constants.IS_AR_ENABLED = true;
+            // indicator on the button.
+        } else { // Unsupported or unknown.
+            Constants.IS_AR_ENABLED = false;
+        }
     }
 
 

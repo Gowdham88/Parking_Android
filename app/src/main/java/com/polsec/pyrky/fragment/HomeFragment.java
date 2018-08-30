@@ -199,6 +199,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     == PackageManager.PERMISSION_GRANTED) {
 
                 //Request location updates:
+//                getCurrentLocation();
+//                loadCameraLocations();
 
             }
         }
@@ -267,143 +269,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         });
 
+        getCurrentLocation();
+        loadCameraLocations();
 
-        //Getting Current Location from independent class
-        mCurrentGpsLoc = new TrackGPS(getActivity());
-        try {
-            if (mCurrentGpsLoc.canGetLocation()) {
-                Double lat = mCurrentGpsLoc.getLatitude();
-                Double lng = mCurrentGpsLoc.getLongitude();
-                mCurLocLat = laln.latitude;
-                mCurLocLong = laln.longitude;
-
-
-                try {
-                    Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
-                    mCurLocAddress = geo.getFromLocation(lat, lng, 1);
-                    if (mCurLocAddress.isEmpty()) {
-                    } else {
-                        if (mCurLocAddress.size() > 0) {
-                            String address = mCurLocAddress.get(0).getAddressLine(0);
-                            latt = mCurLocAddress.get(0).getLatitude();
-                            longi = mCurLocAddress.get(0).getLongitude();
-                            // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                            String city = mCurLocAddress.get(0).getLocality();
-                            String state = mCurLocAddress.get(0).getAdminArea();
-                            String country = mCurLocAddress.get(0).getCountryName();
-                            String postalCode = mCurLocAddress.get(0).getPostalCode();
-                            String knownName = mCurLocAddress.get(0).getFeatureName();
-                            address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
-                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
-                            Log.e("address1", address1);
-
-
-                            Log.e("lattd", String.valueOf(latt));
-                            Log.e("latgd", String.valueOf(longi));
-
-
-                        }
-
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-            } else {
-                mCurrentGpsLoc.showSettingsAlert();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Query first = db.collection("camera");
-        first.get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot documentSnapshots) {
-                        if (documentSnapshots.getDocuments().size() < 1) {
-                            return;
-                        }
-
-                        for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-
-                            UserLocationData comment = document.toObject(UserLocationData.class);
-                            mNearestLocationList.add(comment);
-                            Log.e("dbbd", String.valueOf(document.getData()));
-//
-//                            distancesmtrscurrent.clear();
-//                            distancescurrentarr.clear();
-                            caldis1.clear();
-                            mCameraLat.clear();
-                            mCameraLong.clear();
-                            mLocationDistances.clear();
-                            distances1.clear();
-                            mCameraImageUrl.clear();
-                            mCameraLocName.clear();
-
-                            for (int i = 0; i < mNearestLocationList.size(); i++) {
-//
-                                mCurrentLoc.setLatitude(mCurrentGpsLoc.getLatitude());
-                                mCurrentLoc.setLongitude(mCurrentGpsLoc.getLongitude());
-
-                                mNearestLocations.setLatitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()));
-                                mNearestLocations.setLongitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
-
-                                double locationDistance = mCurrentLoc.distanceTo(mNearestLocations);
-                                mLocationDistances.add(locationDistance);
-
-                                Log.e("distancemtrs1", String.valueOf(mLocationDistances));
-
-                                distanceval = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
-                                distances1.add(String.valueOf(distanceval));
-                                Log.e("distance", String.valueOf(distances1));
-
-//                                if (locationDistance < 15000) {
-                                    caldis1.add(String.valueOf(mLocationDistances));
-                                    Log.e("caldis1", String.valueOf(caldis1));
-                                    mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
-                                    mCameraLong.add(mNearestLocationList.get(i).getCameraLong());
-                                    mCameraImageUrl.add(mNearestLocationList.get(i).getCameraImageUrl());
-                                    mCameraLocName.add(mNearestLocationList.get(i).getCameraLocationName());
-                                    Log.e("mCameraLat", String.valueOf(mCameraLat));
-                                    Log.e("mCameraLong", String.valueOf(mCameraLong));
-                                    Log.e("mCameraImageUrl", String.valueOf(mCameraImageUrl));
-
-                                    carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
-                                    carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-                                    carouselLayoutManager.setMaxVisibleItems(1);
-
-                                    mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
-                                    mNearestPlaceRecycler.setHasFixedSize(true);
-                                    mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName);
-                                    mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
-                                    mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
-                                    mNearestrecyclerAdapter.notifyDataSetChanged();
-
-                                    LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
-                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-
-//                                }
-
-                            }
-                        }
-                        Double lat = mCurrentGpsLoc.getLatitude();
-                        Double lng = mCurrentGpsLoc.getLongitude();
-                        LatLng locateMe = new LatLng(lat, lng);
-
-
-                        float zoomLevel = 14.0f;
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateMe,zoomLevel));
-                        mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f), 2000, null);
-                      hideProgressDialog();
-
-                    }
-
-                });
         if (mCameraLat!=null){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 mNearestPlaceRecycler.setOnScrollChangeListener(new View.OnScrollChangeListener() {
@@ -414,7 +282,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         double lat = Double.parseDouble(mCameraLat.get(scrollPosition));
                         double lng = Double.parseDouble(mCameraLong.get(scrollPosition));
                         LatLng latLng = new LatLng(lat,lng);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
                     }
                 });
             }
@@ -468,8 +337,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
                     getChildFragmentManager().popBackStack();
                 }
-
-
             }
         });
 
@@ -494,6 +361,147 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         return view;
     }
 
+    private void getCurrentLocation(){
+        //Getting Current Location from independent class
+        mCurrentGpsLoc = new TrackGPS(getActivity());
+        try {
+            if (mCurrentGpsLoc.canGetLocation()) {
+                Double lat = mCurrentGpsLoc.getLatitude();
+                Double lng = mCurrentGpsLoc.getLongitude();
+                mCurLocLat = laln.latitude;
+                mCurLocLong = laln.longitude;
+
+
+                try {
+                    Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
+                    mCurLocAddress = geo.getFromLocation(lat, lng, 1);
+                    if (mCurLocAddress.isEmpty()) {
+                    } else {
+                        if (mCurLocAddress.size() > 0) {
+                            String address = mCurLocAddress.get(0).getAddressLine(0);
+                            latt = mCurLocAddress.get(0).getLatitude();
+                            longi = mCurLocAddress.get(0).getLongitude();
+                            // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                            String city = mCurLocAddress.get(0).getLocality();
+                            String state = mCurLocAddress.get(0).getAdminArea();
+                            String country = mCurLocAddress.get(0).getCountryName();
+                            String postalCode = mCurLocAddress.get(0).getPostalCode();
+                            String knownName = mCurLocAddress.get(0).getFeatureName();
+                            address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
+                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
+                            Log.e("address1", address1);
+
+
+                            Log.e("lattd", String.valueOf(latt));
+                            Log.e("latgd", String.valueOf(longi));
+
+
+                        }
+
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                mCurrentGpsLoc.showSettingsAlert();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void loadCameraLocations(){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query first = db.collection("camera");
+        first.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        if (documentSnapshots.getDocuments().size() < 1) {
+                            return;
+                        }
+
+                        for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+
+                            UserLocationData comment = document.toObject(UserLocationData.class);
+                            mNearestLocationList.add(comment);
+                            Log.e("dbbd", String.valueOf(document.getData()));
+//
+//                            distancesmtrscurrent.clear();
+//                            distancescurrentarr.clear();
+                            caldis1.clear();
+                            mCameraLat.clear();
+                            mCameraLong.clear();
+                            mLocationDistances.clear();
+                            distances1.clear();
+                            mCameraImageUrl.clear();
+                            mCameraLocName.clear();
+
+                            for (int i = 0; i < mNearestLocationList.size(); i++) {
+//
+                                mCurrentLoc.setLatitude(mCurrentGpsLoc.getLatitude());
+                                mCurrentLoc.setLongitude(mCurrentGpsLoc.getLongitude());
+
+                                mNearestLocations.setLatitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()));
+                                mNearestLocations.setLongitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
+
+                                double locationDistance = mCurrentLoc.distanceTo(mNearestLocations);
+                                mLocationDistances.add(locationDistance);
+
+                                Log.e("distancemtrs1", String.valueOf(mLocationDistances));
+
+                                distanceval = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
+                                distances1.add(String.valueOf(distanceval));
+                                Log.e("distance", String.valueOf(distances1));
+
+//                                if (locationDistance < 15000) {
+                                caldis1.add(String.valueOf(mLocationDistances));
+                                Log.e("caldis1", String.valueOf(caldis1));
+                                mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
+                                mCameraLong.add(mNearestLocationList.get(i).getCameraLong());
+                                mCameraImageUrl.add(mNearestLocationList.get(i).getCameraImageUrl());
+                                mCameraLocName.add(mNearestLocationList.get(i).getCameraLocationName());
+                                Log.e("mCameraLat", String.valueOf(mCameraLat));
+                                Log.e("mCameraLong", String.valueOf(mCameraLong));
+                                Log.e("mCameraImageUrl", String.valueOf(mCameraImageUrl));
+
+                                carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
+                                carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
+                                carouselLayoutManager.setMaxVisibleItems(1);
+
+                                mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
+                                mNearestPlaceRecycler.setHasFixedSize(true);
+                                mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName);
+                                mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
+                                mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
+                                mNearestrecyclerAdapter.notifyDataSetChanged();
+
+                                LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
+                                mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+//                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
+//                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+
+//                                }
+
+                            }
+                        }
+//                        Double lat = mCurrentGpsLoc.getLatitude();
+//                        Double lng = mCurrentGpsLoc.getLongitude();
+//                        LatLng locateMe = new LatLng(lat, lng);
+//
+//
+//                        float zoomLevel = 14.0f;
+//
+//                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateMe,14));
+                        hideProgressDialog();
+
+                    }
+
+                });
+    }
     private void proceedAfterPermission() {
 
     }
@@ -503,11 +511,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.clear();
-        //    mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_markf)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln, 12.0f));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
-        mMap.setMaxZoomPreference(13.5f);
-        mMap.setMinZoomPreference(6.5f);
+//        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
+
         // Helper method for smooth
         // animation
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -534,9 +539,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         Double lng = mCurrentGpsLoc.getLongitude();
         LatLng locateme = new LatLng(lat, lng);
 
-//        mMap.getUiSettings().isZoomControlsEnabled();
-//        mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
@@ -545,10 +547,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mMap.setMyLocationEnabled(false);
 //
         mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocationicon)));
-        float zoomLevel = 12.0f;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
-
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
+        float zoomLevel = 14;
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
@@ -574,11 +574,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     {
         mMap.clear();
 
-        //  mMap.addMarker(new MarkerOptions().position(laln).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_pin2)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,13.5f));
 
-        // map.animateCamera(CameraUpdateFactory.zoomIn());
-//        mMap.animateCamera(CameraUpdateFactory.zoomTo(13.5f), 2000, null);
         latitu=laln.latitude;
         longitu=laln.longitude;
 
@@ -819,41 +816,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                 proceedAfterPermission();
             }
         }
-    }
-
-    public void animateMarker(final Marker marker, final Location location) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        final LatLng startLatLng = marker.getPosition();
-        final double startRotation = marker.getRotation();
-        final long duration = 500;
-
-        final Interpolator interpolator = new LinearInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-
-                double lng = t * location.getLongitude() + (1 - t)
-                        * startLatLng.longitude;
-                double lat = t * location.getLatitude() + (1 - t)
-                        * startLatLng.latitude;
-
-                float rotation = (float) (t * location.getBearing() + (1 - t)
-                        * startRotation);
-
-                marker.setPosition(new LatLng(lat, lng));
-                marker.setRotation(rotation);
-
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
-                }
-            }
-        });
     }
 
     private String getFirstWord(String text) {
