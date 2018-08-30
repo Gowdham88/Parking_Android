@@ -28,7 +28,7 @@ public class Constants {
 
     public static String BOOKMARK_ITEM = "item";
 
-    public static List<String> SEARCH_ARRAY = new ArrayList<>();
+    public static Boolean IS_AR_ENABLED;
 
     public static List<String> SECURITY_RATINGS = new ArrayList<>();
 

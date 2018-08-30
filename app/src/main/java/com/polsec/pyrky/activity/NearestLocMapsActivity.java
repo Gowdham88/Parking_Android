@@ -723,6 +723,12 @@ hideProgressDialog();
         TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
         TextView cancel = bottomSheetView.findViewById(R.id.cancel_txt);
 
+        if (Constants.IS_AR_ENABLED){
+
+        }else {
+            pyrky.setVisibility(View.GONE);
+        }
+
 
         map.setOnClickListener(view -> {
 

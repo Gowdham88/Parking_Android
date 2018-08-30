@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.polsec.pyrky.activity.booking.BookingsActivity;
 import com.polsec.pyrky.activity.signin.SignInActivity;
@@ -37,6 +39,7 @@ import com.polsec.pyrky.R;
 import com.polsec.pyrky.fragment.SettingsFragment;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.CircleTransformation;
+import com.polsec.pyrky.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -111,7 +114,7 @@ public class HomeActivity extends AppCompatActivity
 //            else {
 //
 //            }
-
+        checkWhetherArEnabled();
         holderView = findViewById(R.id.holder);
 
         contentView = findViewById(R.id.home_coordinator);
@@ -373,6 +376,25 @@ public class HomeActivity extends AppCompatActivity
         isRunning = true;
 
 
+    }
+
+    void checkWhetherArEnabled() {
+        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
+        if (availability.isTransient()) {
+            // Re-query at 5Hz while compatibility is checked in the background.
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkWhetherArEnabled();
+                }
+            }, 300);
+        }
+        if (availability.isSupported()) {
+            Constants.IS_AR_ENABLED = true;
+            // indicator on the button.
+        } else { // Unsupported or unknown.
+            Constants.IS_AR_ENABLED = false;
+        }
     }
 
 
