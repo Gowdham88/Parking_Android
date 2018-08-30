@@ -67,7 +67,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
     Map<String, Object> bookingid1=new HashMap<>();
     List<Camera>CameraList = new ArrayList<Camera>();
-
+    ArrayList<ratingval> vehList = new ArrayList<>();
 
     List<Booking> bookingList = new ArrayList<Booking>();
     String Datetime;
@@ -263,16 +263,16 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         Window window = dialog.getWindow();
         window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
-        TextView Camera = (TextView) dialog.findViewById(R.id.ok_txt);
+        TextView Oktaxt = (TextView) dialog.findViewById(R.id.ok_txt);
         RatingBar ratingbar = (RatingBar) dialog.findViewById(R.id.rtbHighscr);
-        TextView Gallery = (TextView) dialog.findViewById(R.id.cancel_txt);
+        TextView canceltxt = (TextView) dialog.findViewById(R.id.cancel_txt);
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
         ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                 currenRating = (int) v;
 
-                ratingBar.setRating((int) currenRating);
+//                ratingBar.setRating((int) currenRating);
 
 //                ratingBar.setVisibility(View.VISIBLE);
 //                ratingbar1.setRating(Float.parseFloat(currenRating));
@@ -282,7 +282,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
 //        GalleryIcon = (ImageView) bottomSheetView.findViewById(R.id.gallery_icon);
 //        CameraIcon = (ImageView) bottomSheetView.findViewById(R.id.camera_image);
-        Camera.setOnClickListener(new View.OnClickListener() {
+        Oktaxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -312,22 +312,22 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 //                reportval.put("ratings", currenRating );
 //                reportval.put("User_ID", uid );
 
-                ArrayList<ratingval> vehList = new ArrayList<>();
+
                 ratingval vehiclePojoObject=new ratingval();
                 vehiclePojoObject.setUser_ID(uid);
                 vehiclePojoObject.setRatings(String.valueOf(currenRating));
 
                 vehList.add(vehiclePojoObject);
 
-
-                Map<String, Object> reportval = new HashMap<>();
-                reportval.put("Ratings", reportval );
-                reportval.put("cameraId", cameraid );
 //
-
+//                Map<String, Object> reportval = new HashMap<>();
+//                reportval.put("Ratings", reportval );
+//                reportval.put("cameraId", cameraid );
+////
+//
                 Reports reports=new Reports(vehList,cameraid);
 
-                db.collection("Reports").document(latlongi).set(reportval).addOnSuccessListener(new OnSuccessListener<Void>() {
+                db.collection("Reports").document(latlongi).set(reports).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
 
@@ -363,20 +363,20 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 //
 
 
-                db.collection("Reports").document(latlongi)
-                        .set(reportval, SetOptions.merge())
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-//                                Log.d(TAG, "DocumentSnapshot successfully written!");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-//                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+//                db.collection("Reports").document(latlongi)
+//                        .set(reportval, SetOptions.merge())
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+////                                Log.d(TAG, "DocumentSnapshot successfully written!");
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+////                                Log.w(TAG, "Error writing document", e);
+//                            }
+//                        });
 
                 dialog.dismiss();
 //
@@ -388,7 +388,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             }
         });
 
-        Gallery.setOnClickListener(new View.OnClickListener() {
+        canceltxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                if (hasPermissions()) {

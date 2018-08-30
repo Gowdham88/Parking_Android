@@ -138,96 +138,6 @@ public class ViewImageActivity extends AppCompatActivity {
     }
 
 
-    private void makeAlreadyBookedAlert(Boolean bookingRequest){
-            final FirebaseUser user = mAuth.getCurrentUser();
-            DocumentReference docRef = db.collection("users").document(user.getUid());
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists()){
-
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                        DocumentReference docRef = db.collection("users").document(mUid);
-                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                        bookingid = document.getData();
-
-                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
-
-                                        for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
-                                            Boolean value = (Boolean) bookingEntry.getValue();
-                                            if (value){
-                                                isBookedAny = true;
-                                                break;
-                                            }
-                                        }
-
-                                        if (isBookedAny){
-                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                                                System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                                                Boolean val = (Boolean) entry.getValue();
-                                                String values = String.valueOf(val);
-
-                                                Log.e("values", values);
-//
-                                                if (val) {
-
-                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
-                                                    String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-
-                                                    popup(valuedoc,entry.getKey(),bookingRequest);
-                                                    break;
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-                                                }else{
-                                                    Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        }else{
-                                            if (bookingRequest){
-                                                bookAndNavigate();
-                                            }
-
-                                        }
-
-                                    } else {
-//                        Log.d(TAG, "No such document");
-
-                                    }
-                                } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
-
-                                }
-                            }
-                        });
-
-//                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
-
-
-                    } else {
-
-
-
-                    }
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-
-                    Log.w("Error", "Error adding document", e);
-                    Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        }
 
         private void bookAndNavigate(){
             showBottomSheet(latitude, longitude);
@@ -336,6 +246,96 @@ public class ViewImageActivity extends AppCompatActivity {
             }
         });
     }
+    private void makeAlreadyBookedAlert(Boolean bookingRequest){
+        final FirebaseUser user = mAuth.getCurrentUser();
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    DocumentReference docRef = db.collection("users").document(mUid);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                    bookingid = document.getData();
+
+                                    bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+
+                                    for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
+                                        Boolean value = (Boolean) bookingEntry.getValue();
+                                        if (value){
+                                            isBookedAny = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (isBookedAny){
+                                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                            System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                            Boolean val = (Boolean) entry.getValue();
+                                            String values = String.valueOf(val);
+
+                                            Log.e("values", values);
+//
+                                            if (val) {
+
+                                                Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
+                                                String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+                                                popup(valuedoc,entry.getKey(),bookingRequest);
+                                                break;
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                            }else{
+                                                Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }else{
+                                        if (bookingRequest){
+                                            bookAndNavigate();
+                                        }
+
+                                    }
+
+                                } else {
+//                        Log.d(TAG, "No such document");
+
+                                }
+                            } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+
+                            }
+                        }
+                    });
+
+//                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+
+
+                } else {
+
+
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Log.w("Error", "Error adding document", e);
+                Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
 
     private void popup(String valuedoc,String key,Boolean bookingRequest) {
         LayoutInflater factory = LayoutInflater.from(this);
@@ -380,9 +380,12 @@ public class ViewImageActivity extends AppCompatActivity {
                                 Log.w(TAG, "Error writing document", e);
                             }
                         });
+        if(!documentID.equals(null) || !documentID.isEmpty()){
+            PopUpprotectcar(documentID);
+            Log.e("documentID",documentID);
 
+        }
 
-                PopUpprotectcar(documentID);
 
                 alertDialog1.dismiss();
             }
