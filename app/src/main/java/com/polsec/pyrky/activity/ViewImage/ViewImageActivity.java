@@ -59,7 +59,7 @@ public class ViewImageActivity extends AppCompatActivity {
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
-    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid;
+    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,docid;
     Boolean isBookedAny = false;
     List<Users> bookinglist = new ArrayList<Users>();
      FirebaseFirestore db;
@@ -76,7 +76,7 @@ public class ViewImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image);
         mAuth = FirebaseAuth.getInstance();
         mUid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-
+        docid=PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_DOCUMENTID);
         ImageView cameraImage = findViewById(R.id.camera_image);
 //        BackImg = (ImageView) findViewById(R.id.back_image);
 //        BackImg.setOnClickListener(new View.OnClickListener() {
@@ -380,11 +380,33 @@ public class ViewImageActivity extends AppCompatActivity {
                                 Log.w(TAG, "Error writing document", e);
                             }
                         });
-        if(!documentID.equals(null) || !documentID.isEmpty()){
-            PopUpprotectcar(documentID);
-            Log.e("documentID",documentID);
 
-        }
+
+
+                Map<String, Object> likeupdate = new HashMap<>();
+                likeupdate.put( "bookingStatus", false);
+
+                db.collection("Bookings").document(docid)
+                        .update(likeupdate)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+//        if(!documentID.equals(null) || !documentID.isEmpty()){
+//            PopUpprotectcar(documentID);
+//            Log.e("documentID",documentID);
+
+//        }
 
 
                 alertDialog1.dismiss();

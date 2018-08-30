@@ -89,6 +89,7 @@ public class HistoryFragment extends Fragment {
 
         uid = PreferencesHelper.getPreference(getContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 //        loadPost(ACTION_SHOW_LOADING_ITEM);
+        loadPostval(ACTION_SHOW_LOADING_ITEM);
         swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
@@ -100,7 +101,7 @@ public class HistoryFragment extends Fragment {
                     }
                 }
         );
-        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1,CameraList);
+        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1,CameraList,recyclerAdapter,mRecyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
@@ -120,7 +121,7 @@ public class HistoryFragment extends Fragment {
 
     private void setupFeed() {
 
-        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1,CameraList);
+        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1,CameraList,recyclerAdapter,mRecyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
@@ -201,22 +202,22 @@ public class HistoryFragment extends Fragment {
                             String values = String.valueOf(val);
 
                             Log.e("valuesh", values);
-                            setupFeed();
+
+//                            recyclerAdapter.notifyDataSetChanged();
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
 
                         }
-
+                        setupFeed();
 
 //                        recyclerAdapter.notifyDataSetChanged();
 
 
                     } else {
-//                        Log.d(TAG, "No such document");
-
+//
                     }
                 } else {
 //                    Log.d(TAG, "get failed with ", task.getException());
-
+//
                 }
             }
         });

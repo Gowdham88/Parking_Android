@@ -27,7 +27,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
@@ -56,7 +55,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     private Boolean isPopUpShowing = false;
  int currenRating;
     int count = 0;
-    String docid,uid,Rating,cameraid,lat,longi;
+    String docid,uid,Rating,cameraid,lat,longi,bookingidval;
     RatingBar ratingBar;
            TextView ratingbar1,viewCar;
     FirebaseFirestore db;
@@ -71,11 +70,16 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
     List<Booking> bookingList = new ArrayList<Booking>();
     String Datetime;
-    public HistoryRecyclerAdapter(Context context, List<Booking> bookingList, Map<String, Object> bookingid1, List<Camera> cameraList) {
+
+    HistoryRecyclerAdapter recyclerAdapter;
+    RecyclerView mRecyclerView;
+    public HistoryRecyclerAdapter(Context context, List<Booking> bookingList, Map<String, Object> bookingid1, List<Camera> cameraList, HistoryRecyclerAdapter recyclerAdapter, RecyclerView mRecyclerView) {
         this.context = context;
         this.bookingList = bookingList;
         this.bookingid1=bookingid1;
         this.CameraList=CameraList;
+        this.recyclerAdapter=recyclerAdapter;
+        this.mRecyclerView=mRecyclerView;
 
     }
     @NonNull
@@ -131,6 +135,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
 
         RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
+        bookingidval=bookingList.get(position).getDocumentID();
 
         if(bookingid1.containsKey(bookingList.get(position).getDocumentID())){
             Boolean value=(Boolean) bookingid1.get(bookingList.get(position).getDocumentID());
@@ -153,9 +158,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         ratingBar.setRating((int) bookingList.get(position).getParkingSpaceRating());
         ratingBar.setIsIndicator(true);
 
-//        ratingBar.setRating((float) bookingList.get(position).getParkingSpaceRating());
-            Drawable drawable = ratingBar.getProgressDrawable();
-            drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
+        ratingBar.setRating((float) bookingList.get(position).getParkingSpaceRating());
+        Drawable drawable = ratingBar.getProgressDrawable();
+        drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
 
 //        String ratval= String.valueOf(bookingList.get(position).getParkingSpaceRating());
 
@@ -167,7 +172,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
 
-                    showDialog(uid,cameraid,latlong);
+                    String current = bookingList.get(position).getDocumentID();
+
+                    showDialog(uid,cameraid,latlong,current);
 
 
 //                showDialog(cameraid,uid,latlong);
@@ -183,76 +190,10 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             viewCar.setVisibility(View.VISIBLE);
         }
 
-//        ratingBar.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//
-//
-//
-//
-////                showDialog(cameraid,uid,latlong);
-//                return false;
-//            }
-//        });
-
-//        final FirebaseUser user = mAuth.getCurrentUser();
-//        DocumentReference docRef = db.collection("users").document(user.getUid());
-//        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//
-//
-//                if (documentSnapshot.exists()){
-//
-//                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-//
-//
-////                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
-//
-//
-//                } else {
-//
-//
-//
-//                }
-//
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//
-//                Log.w("Error", "Error adding document", e);
-//                Toast.makeText(context,"Login failed", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-
-
-//
-//        if(!status){
-//            holder.city.setText(bookingList.get(position).getDestName());
-////            holder.dateTime.setText(strh);
-//
-//            double rate=bookingList.get(position).getParkingSpaceRating();
-////            Toast.makeText(context, rate, Toast.LENGTH_SHORT).show();
-//
-//            ratingBar.setRating((float) rate);
-//            Drawable drawable = ratingBar.getProgressDrawable();
-//            drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
-////            ratingBar.setRating(Float.parseFloat(rate));
-////            Drawable drawable = ratingBar.getProgressDrawable();
-////            drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
-//
-//        }
-//        else{
-//            holder.itemView.setVisibility(View.GONE);
-//            param.height = 0;
-//            param.width = 0;
-//        }
 //
     }
 
-    private void showDialog(String uid,String cameraid,String latlongi) {
+    private void showDialog(String uid, String cameraid, String latlongi,String current) {
 
         Dialog dialog = new Dialog(context);
         LayoutInflater factory = LayoutInflater.from(context);
@@ -267,12 +208,13 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         RatingBar ratingbar = (RatingBar) dialog.findViewById(R.id.rtbHighscr);
         TextView canceltxt = (TextView) dialog.findViewById(R.id.cancel_txt);
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
-        ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener
+                () {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                 currenRating = (int) v;
 
-//                ratingBar.setRating((int) currenRating);
+                ratingBar.setRating((int) currenRating);
 
 //                ratingBar.setVisibility(View.VISIBLE);
 //                ratingbar1.setRating(Float.parseFloat(currenRating));
@@ -289,15 +231,13 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 Map<String, Object> rating = new HashMap<>();
                 rating.put("parkingSpaceRating", currenRating );
                 Toast.makeText(context, "New default rating: " + currenRating, Toast.LENGTH_SHORT).show();
-                db.collection("Bookings").document(docid).update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+
+                db.collection("Bookings").document(current).update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        mRecyclerView.invalidate();
 
-
-
-//                        Toast.makeText(context, "Rating updated", Toast.LENGTH_SHORT).show();
-//                        ratingBar.setVisibility(View.GONE);
-//                  ratingbar1.setRating(Float.parseFloat(currenRating));
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -308,21 +248,12 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 });
 
 
-//                Map<String, Object> reportval = new HashMap<>();
-//                reportval.put("ratings", currenRating );
-//                reportval.put("User_ID", uid );
-
-
                 ratingval vehiclePojoObject=new ratingval();
                 vehiclePojoObject.setUser_ID(uid);
                 vehiclePojoObject.setRatings(String.valueOf(currenRating));
 
                 vehList.add(vehiclePojoObject);
 
-//
-//                Map<String, Object> reportval = new HashMap<>();
-//                reportval.put("Ratings", reportval );
-//                reportval.put("cameraId", cameraid );
 ////
 //
                 Reports reports=new Reports(vehList,cameraid);
@@ -332,11 +263,6 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                     public void onSuccess(Void aVoid) {
 
 
-
-//                        Toast.makeText(context, "Rating updated", Toast.LENGTH_SHORT).show();
-//                        ratingBar.setVisibility(View.GONE);
-//                  ratingbar1.setRating(Float.parseFloat(currenRating));
-
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -345,69 +271,21 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                     }
                 });
 
-//                db.collection("Reports").document(latlongi).set(reports).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        Toast.makeText(context, "Rating updated", Toast.LENGTH_SHORT).show();
-////                        ratingBar.setVisibility(View.GONE);
-////                  ratingbar1.setRating(Float.parseFloat(currenRating));
-//
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//
-//                    }
-//                });
-//
-//
-
-
-//                db.collection("Reports").document(latlongi)
-//                        .set(reportval, SetOptions.merge())
-//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-////                                Log.d(TAG, "DocumentSnapshot successfully written!");
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-////                                Log.w(TAG, "Error writing document", e);
-//                            }
-//                        });
 
                 dialog.dismiss();
-//
-//                if (hasPermissions()) {
-//                    captureImage();
-//                } else {
-//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_CAMERA, CAMERA);
-//                }
+
             }
         });
 
         canceltxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (hasPermissions()) {
-//                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                    startActivityForResult(i, RC_PICK_IMAGE);
-//                } else {
-//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
-//                }
+
 
                 dialog.dismiss();
             }
         });
 
-//        cancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                bottomSheetDialog.dismiss();
-//            }
-//        });
 
 
     }

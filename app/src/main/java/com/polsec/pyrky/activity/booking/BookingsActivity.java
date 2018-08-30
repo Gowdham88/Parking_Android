@@ -60,6 +60,9 @@ Toolbar toolbar;
         tabLayout.setupWithViewPager(viewPager);
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.setFocusableInTouchMode(false); //Not Working
+        tabLayout.setFocusable(false);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         setupTabLayout();
         viewPager.setCurrentItem(0);

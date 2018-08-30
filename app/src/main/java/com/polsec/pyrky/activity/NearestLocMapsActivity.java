@@ -125,7 +125,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     String Nameval="home";
     String Nameval1="carousel",mapLat,mapLongi,cameraid;
     Camera camera;
-    String parkytype,mUid;
+    String parkytype,mUid,docid;
     private InfiniteScrollAdapter infiniteAdapter;
 
     FirebaseFirestore db;
@@ -163,6 +163,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         mUid = PreferencesHelper.getPreference(NearestLocMapsActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+        docid=PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_DOCUMENTID);
 
         mBackIcon = (ImageView) findViewById(R.id.back_icon);
         TitlaTxt = (TextView) findViewById(R.id.extra_title);
@@ -892,7 +893,28 @@ hideProgressDialog();
                             }
                         });
 
-                PopUpprotectcar(documentID);
+
+                Map<String, Object> likeupdate = new HashMap<>();
+                likeupdate.put( "bookingStatus", false);
+
+                db.collection("Bookings").document(docid)
+                        .update(likeupdate)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+
+//                PopUpprotectcar(documentID);
 
                 alertDialog1.dismiss();
             }
