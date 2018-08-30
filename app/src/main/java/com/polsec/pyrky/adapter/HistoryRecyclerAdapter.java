@@ -174,7 +174,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
                     String current = bookingList.get(position).getDocumentID();
 
-                    showDialog(uid,cameraid,latlong,current);
+                    showDialog(uid,cameraid,latlong,current,position);
 
 
 //                showDialog(cameraid,uid,latlong);
@@ -193,7 +193,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 //
     }
 
-    private void showDialog(String uid, String cameraid, String latlongi,String current) {
+    private void showDialog(String uid, String cameraid, String latlongi, String current, int position) {
 
         Dialog dialog = new Dialog(context);
         LayoutInflater factory = LayoutInflater.from(context);
@@ -208,16 +208,13 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         RatingBar ratingbar = (RatingBar) dialog.findViewById(R.id.rtbHighscr);
         TextView canceltxt = (TextView) dialog.findViewById(R.id.cancel_txt);
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
-        ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener
-                () {
+        ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                 currenRating = (int) v;
 
                 ratingBar.setRating((int) currenRating);
 
-//                ratingBar.setVisibility(View.VISIBLE);
-//                ratingbar1.setRating(Float.parseFloat(currenRating));
                 Toast.makeText(context, "New default rating: " + v, Toast.LENGTH_SHORT).show();
             }
         });
@@ -236,9 +233,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 db.collection("Bookings").document(current).update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        mRecyclerView.invalidate();
-
-
+                        bookingList.get(position).getParkingSpaceRating();
+                        bookingList.get(position).setParkingSpaceRating(currenRating);
+                        swapItems(bookingList);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -254,9 +251,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
                 vehList.add(vehiclePojoObject);
 
-////
-//
-                Reports reports=new Reports(vehList,cameraid);
+              Reports reports=new Reports(vehList,cameraid);
 
                 db.collection("Reports").document(latlongi).set(reports).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -271,7 +266,6 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                     }
                 });
 
-
                 dialog.dismiss();
 
             }
@@ -285,8 +279,6 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 dialog.dismiss();
             }
         });
-
-
 
     }
 
@@ -348,6 +340,10 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     }
 //
 
+    public void swapItems(List<Booking> bookingList){
+        this.bookingList = bookingList;
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getItemCount() {

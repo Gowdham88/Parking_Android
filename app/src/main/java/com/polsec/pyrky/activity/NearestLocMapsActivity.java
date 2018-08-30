@@ -436,7 +436,6 @@ hideProgressDialog();
                 public boolean onMarkerClick(Marker m) {
                     showDialog(m,cameraid,datalist.get(mNearestPlaceRecycler.getCurrentItem()).getParkingRules(),datalist.get(mNearestPlaceRecycler.getCurrentItem()).getCameraImageUrl());
                     mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
-
                     return false;
 
                 }
@@ -510,13 +509,6 @@ hideProgressDialog();
         //Edit the following as per you needs
         Mmap.getUiSettings().setZoomControlsEnabled(true);
         Mmap.getUiSettings().setRotateGesturesEnabled(false);
-//        Mmap.getUiSettings().setMyLocationButtonEnabled(false);
-        //
-
-//        LatLng placeLocation = new LatLng(Double.parseDouble(mapLat.trim()), Double.parseDouble(mLongi.trim())); //Make them global
-//        Marker placeMarker = Mmap.addMarker(new MarkerOptions().position(placeLocation));
-//        Mmap.moveCamera(CameraUpdateFactory.newLatLng(placeLocation));
-//        Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 10, null);
 
         mNearestPlaceRecycler.setVisibility(View.VISIBLE);
 
@@ -669,26 +661,6 @@ hideProgressDialog();
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-//                            DocumentReference washingtonRef = db.collection("users").document(uid);
-//
-//                            washingtonRef
-//                                    .update("Booking_ID",likeData1)
-//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                        @Override
-//                                        public void onSuccess(Void aVoid) {
-//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-//                                        }
-//                                    })
-//                                    .addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Log.w(TAG, "Error updating document", e);
-//                                        }
-//                                    });
-
-
 
                                     }
                                 })

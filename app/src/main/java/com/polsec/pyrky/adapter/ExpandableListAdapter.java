@@ -78,17 +78,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
     public long getChildId(int groupPosition, int childPosition) {
         return childPosition;
     }
-//    @Override
-//    public int getChildType (int groupPosition, int childPosition) {
-//        switch(childPosition) {
-//            case 0:
-//                return CARCATEGORY;
-//            case 1:
-//                return SECURITY;
-//            default:
-//                return FILTER;
-//        }
-//    }
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
@@ -110,14 +99,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String expandedListText = (String) getChild(groupPosition, childPosition);
 
-        int childType = getChildType(groupPosition, childPosition);
-
-
         LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);;
-        RadioGroup radiogroup;
-        View view = convertView;
-
-
 
         switch (groupPosition){
             case 0 :
@@ -150,32 +132,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                         }
                     }
                 });
-//                RadioButton rbns = new RadioButton(context);
-//                rbns.setText(expandedListText);
-//                rbns.setId(1000+childPosition);
-//                rgps.addView(rbns);
-
-//                rgps.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//                    @Override
-//                    public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-//
-//                        switch (checkedId){
-//                            case 1000 :
-//                                Constants.PARKING_TYPES.add("Free street parking");
-//                                Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
-//                                break;
-//                            case 1001 :
-//                                Constants.PARKING_TYPES.add("Paid street parking");
-//                                Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
-//                                break;
-//                            case 1002 :
-//                                Constants.PARKING_TYPES.add("Paid parking");
-//                                Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
-//                                break;
-//                        }
-//
-//                    }
-//                });
 
                 break;
 
@@ -224,53 +180,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                         }
                     }
                 });
-//                    RadioButton rbn = new RadioButton(context);
-//                    rbn.setText(expandedListText);
-//                    rbn.setId(1000+childPosition);
-//                    rgp.addView(rbn);
-//
-//                int id11 = context.getResources().getIdentifier(String.valueOf(1000), "id", "com.polsec.pyrky");
-//                RadioButton rb11 = rgp.findViewById(id11);
-//                int id22 = context.getResources().getIdentifier(String.valueOf(1001), "id", "com.polsec.pyrky");
-//                RadioButton rb22 = rgp.findViewById(id22);
-//                int id33 = context.getResources().getIdentifier(String.valueOf(1002), "id", "com.polsec.pyrky");
-//                RadioButton rb33 = rgp.findViewById(id33);
-//                int id44 = context.getResources().getIdentifier(String.valueOf(1003), "id", "com.polsec.pyrky");
-//                RadioButton rb44 = rgp.findViewById(id44);
-//                int id55 = context.getResources().getIdentifier(String.valueOf(1004), "id", "com.polsec.pyrky");
-//                RadioButton rb55 = rgp.findViewById(id55);
-//
-//                rgp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//
-//                        @Override
-//                        public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-//
-//                            switch (checkedId){
-//                                case 1000 :
-//                                    Constants.CAR_CATEGORY.add("Compact");
-//
-////                                    Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
-//                                    break;
-//                                case 1001 :
-//                                    Constants.CAR_CATEGORY.add("Small");
-////                                    Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
-//                                    break;
-//                                case 1002 :
-//                                    Constants.CAR_CATEGORY.add("Mid size");
-////                                    Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
-//                                    break;
-//                                case 1003 :
-//                                    Constants.CAR_CATEGORY.add("Full");
-////                                    Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
-//                                    break;
-//                                case 1004 :
-//                                    Constants.CAR_CATEGORY.add("Van/Pick-up");
-////                                    Toast.makeText(context, checkedId+"", Toast.LENGTH_SHORT).show();
-//                                    break;
-//                            }
-//
-//                        }
-//                    });
 
                 break;
 

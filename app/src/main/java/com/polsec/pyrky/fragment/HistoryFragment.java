@@ -106,7 +106,6 @@ public class HistoryFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
         mRecyclerView.setHasFixedSize(true);
-        recyclerAdapter.notifyDataSetChanged();
 
         return view;
     }
@@ -125,14 +124,6 @@ public class HistoryFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
-
-//        mAdapter.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
-//            }
-//        });
-//        mAdapter.setItemAnimator(new FeedItemAnimator());
 
     }
     public void loadPost(final String type) {
