@@ -726,19 +726,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     }
 
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mGoogleApiClient.stopAutoManage(getActivity());
-        mGoogleApiClient.disconnect();
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mGoogleApiClient.stopAutoManage(getActivity());
-        mGoogleApiClient.disconnect();
-    }
     public boolean checkLocationPermission() {
 
         if (ActivityCompat.checkSelfPermission(getActivity(),
@@ -892,6 +880,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     public void hideProgressDialog(){
         if(dialog!=null)
             dialog.dismiss();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mGoogleApiClient.stopAutoManage(getActivity());
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mGoogleApiClient.stopAutoManage(getActivity());
+        mGoogleApiClient.disconnect();
     }
 
 
