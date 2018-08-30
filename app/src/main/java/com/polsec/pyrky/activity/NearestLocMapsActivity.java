@@ -374,10 +374,12 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                         LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
                         Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
                         Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
                     } else {
                         LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
                         Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
                         Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
                     }
 
                 }
@@ -426,8 +428,9 @@ hideProgressDialog();
             }else{
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
               }
-            Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-            Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 15, null);
+//            Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+             Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,14 ));
+//            Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
             Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker m) {
@@ -483,7 +486,7 @@ hideProgressDialog();
 
 //            Mmap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
         Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,15.5f));
-        Mmap.animateCamera(CameraUpdateFactory.zoomTo(15.5f), 2000, null);
+        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
         Mmap.setMaxZoomPreference(20.5f);
         Mmap.setMinZoomPreference(6.5f);
         Mmap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -728,105 +731,6 @@ hideProgressDialog();
         map.setOnClickListener(view -> {
 
             makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
-//            final FirebaseUser user = mAuth.getCurrentUser();
-//            DocumentReference docRef = db.collection("users").document(user.getUid());
-//            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                @Override
-//                public void onSuccess(DocumentSnapshot documentSnapshot) {
-//
-//
-//                    if (documentSnapshot.exists()){
-//
-//                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//
-//
-//                        DocumentReference docRef = db.collection("users").document(mUid);
-//                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                if (task.isSuccessful()) {
-//                                    DocumentSnapshot document = task.getResult();
-//                                    if (document.exists()) {
-////                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-//                                        bookingid = document.getData();
-//
-//
-//                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
-//
-//
-//                                        String count = String.valueOf(bookingid1.size());
-//                                        Log.e("count", count);
-//
-//
-////                                    followingcount = 1;
-//                                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-//                                            System.out.println(entry.getKey() + " = " + entry.getValue());
-//
-//                                            val= (Boolean) entry.getValue();
-//                                            String values = String.valueOf(val);
-//
-//                                            Log.e("values", values);
-////
-//
-//                                        }
-//                                        if (val == true) {
-//
-////                                                Toast.makeText(NearestLocMapsActivity.this, values, Toast.LENGTH_SHORT).show();
-//                                            String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-//
-//                                            popup(valuedoc);
-//
-////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-//                                        }
-//                                        else{
-//                                            PackageManager pm = NearestLocMapsActivity.this.getPackageManager();
-//                                            if(isPackageInstalled()){
-//                                                Intent intent = new Intent(Intent.ACTION_VIEW,
-//                                                        Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
-//                                                startActivity(intent);
-////                    Toast.makeText(NearestLocMapsActivity.this, "true", Toast.LENGTH_SHORT).show();
-//                                            }else{
-//                                                Intent intent = new Intent(Intent.ACTION_VIEW,
-//                                                        Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
-//                                                startActivity(intent);
-////                    Toast.makeText(NearestLocMapsActivity.this, "false", Toast.LENGTH_SHORT).show();
-//
-//
-//                                            }
-//
-//
-//                                        }
-//
-//
-//                                    } else {
-////                        Log.d(TAG, "No such document");
-//
-//                                    }
-//                                } else {
-////                    Log.d(TAG, "get failed with ", task.getException());
-//
-//                                }
-//                            }
-//                        });
-//
-////                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
-//
-//
-//                    } else {
-//
-//
-//
-//                    }
-//
-//                }
-//            }).addOnFailureListener(new OnFailureListener() {
-//                @Override
-//                public void onFailure(@NonNull Exception e) {
-//
-//                    Log.w("Error", "Error adding document", e);
-//                    Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
-//                }
-//            });
 
             bottomSheetDialog.dismiss();
 
