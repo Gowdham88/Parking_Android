@@ -45,15 +45,17 @@ import com.polsec.pyrky.utils.CircleTransformation;
 import com.polsec.pyrky.utils.Utils;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ForgotpasswordActivity extends AppCompatActivity {
     ImageView backBtnclose;
     RelativeLayout cancelbtnrel;
     EditText mEmail;
-    Button resetBtn,resetbutton1;
+    TextView resetBtn,resetbutton1;
     RelativeLayout LinLay;
-    TextView txt_error;
+    TextView Txt_error;
     private AlertDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +64,12 @@ public class ForgotpasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forgotpassword);
         mEmail =(EditText)findViewById(R.id.email_edit);
         cancelbtnrel=(RelativeLayout)findViewById(R.id.btncancel);
-        resetBtn=(Button)findViewById(R.id.sinin_edt);
-//        txt_error = (TextView)findViewById(R.id.txt_error);
+        resetBtn=(TextView)findViewById(R.id.sinin_edt);
+        Txt_error = (TextView)findViewById(R.id.tx_error);
         LinLay=(RelativeLayout)findViewById(R.id.const_lay);
         backBtnclose=(ImageView)findViewById(R.id.close_img);
 //
+        Txt_error.setVisibility(View.GONE);
         mEmail.addTextChangedListener(mTextWatcher);
         mEmail.setInputType(mEmail.getInputType()
                 | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
@@ -95,6 +98,7 @@ public class ForgotpasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
+                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
                 startActivity(intent);
                 finish();
 //           onBackPressed();
@@ -107,13 +111,15 @@ public class ForgotpasswordActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Utils.hideKeyboard(ForgotpasswordActivity.this);
                 String emailAddress = mEmail.getText().toString();
-                if (validateForm()) {
+//                if (validateForm()) {
                     if (emailAddress.isEmpty() || !emailAddress.contains("@") || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
-
+                        Txt_error.setVisibility(View.VISIBLE);
 //                    showerror("invalid email address");
-                        Toast.makeText(ForgotpasswordActivity.this, "inavalid email", Toast.LENGTH_SHORT).show();
+//                        showalert();
+//                        Toast.makeText(ForgotpasswordActivity.this, "inavalid email", Toast.LENGTH_SHORT).show();
 
                     } else {
+                        Txt_error.setVisibility(View.GONE);
                         showProgressDialog();
                         FirebaseAuth auth = FirebaseAuth.getInstance();
 
@@ -135,12 +141,15 @@ public class ForgotpasswordActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
-                    }
+//                    }
                 }
             }
 
         });
 
+    }
+
+    private void showalert() {
     }
 
     public void showProgressDialog() {
@@ -225,10 +234,12 @@ public class ForgotpasswordActivity extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
+            Txt_error.setVisibility(View.GONE);
             // check Fields For Empty Values
 
         }
