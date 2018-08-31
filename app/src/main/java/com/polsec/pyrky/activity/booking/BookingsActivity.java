@@ -33,10 +33,12 @@ Toolbar toolbar;
 
 //        Toast.makeText(this, Constants.SEARCH_ARRAY.get(0), Toast.LENGTH_SHORT).show();
 
-
+        RelativeLayout parentLayout = findViewById(R.id.parent_layout);
         mBackIcon =(ImageView)findViewById(R.id.back_icon);
         TitlaTxt=(TextView)findViewById(R.id.extra_title);
         TitlaTxt.setText("Bookings");
+
+
 
         mBackIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +54,7 @@ Toolbar toolbar;
 
         viewPager =findViewById(R.id.viewpager_events);
         tabLayout =findViewById(R.id.simpleTabLayout);
+
         tabLayout.setFocusableInTouchMode(false); //Not Working
         tabLayout.setFocusable(false);
 //        BookingTabAdapter pagerAdapter = new BookingTabAdapter(getFragmentManager(),getActivity());
@@ -64,6 +67,7 @@ Toolbar toolbar;
         tabLayout.setFocusableInTouchMode(false); //Not Working
         tabLayout.setFocusable(false);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
+
         setupTabLayout();
         viewPager.setCurrentItem(0);
     }
