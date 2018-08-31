@@ -84,7 +84,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.nearest_places_item, parent, false);
+                .inflate(R.layout.nearest_loc_layout, parent, false);
 
         return new ViewHolder(view);
     }
