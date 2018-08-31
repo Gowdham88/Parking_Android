@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -60,6 +62,7 @@ import com.google.firebase.storage.UploadTask;
 import com.polsec.pyrky.BuildConfig;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.HomeActivity;
+import com.polsec.pyrky.activity.forgotpassword.ForgotpasswordActivity;
 import com.polsec.pyrky.activity.signin.SignInActivity;
 import com.polsec.pyrky.adapter.CarouselSignupAdapter;
 import com.polsec.pyrky.pojo.Users;
@@ -380,39 +383,80 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
     private void createAccount(final String email, final String password, final String username, final View view) {
 
-        if (!validateForm()) {
-            return;
+        if(TextUtils.isEmpty(email) && TextUtils.isEmpty(password) && TextUtils.isEmpty(username)) {
+
+            alertpopup();
+//                Toast.makeText(this, "E-mail or Password or Username should not be empty", Toast.LENGTH_SHORT).show();
+//                valid = false;
         }
-        showProgressDialog();
-        // [START create_user_with_email]
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(SignupScreenActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            user.getIdToken(true)
-                                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                                        public void onComplete(@NonNull Task<GetTokenResult> task) {
-                                            if (task.isSuccessful()) {
-                                                final FirebaseUser user = mAuth.getCurrentUser();
-                                                Log.e("user", String.valueOf(user));
-                                                hideProgressDialog();
-                                                uploadImage(view);
+        else if((email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()))
+        {
+
+            alertEmailpopup();
+//            Toast.makeText(this, "Enter valid e-mail address", Toast.LENGTH_SHORT).show();
+
+        }
+        else if (TextUtils.isEmpty(password) || password.length()<6) {
+
+            alertPasswordpopup();
+//            Toast.makeText(this, "Password should have minimum 6 characters", Toast.LENGTH_SHORT).show();
+
+        }
+
+        else if (username.isEmpty() || username.equals(null)) {
+            alertusernamepopup();
+//            Toast.makeText(this, "Enter username.", Toast.LENGTH_SHORT).show();
+
+        }
+        else if (!isPhotoValid) {
+
+            alertimagepopup();
+//            Toast.makeText(this, "Profile image should not be empty"
+//                    , Toast.LENGTH_SHORT).show();
+
+        }
+
+        else {
+//                Toast.makeText(this, "Enter email address.", Toast.LENGTH_SHORT).show();
+//                valid = false;
+
+            showProgressDialog();
+            // [START create_user_with_email]
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(SignupScreenActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                user.getIdToken(true)
+                                        .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                                            public void onComplete(@NonNull Task<GetTokenResult> task) {
+                                                if (task.isSuccessful()) {
+                                                    final FirebaseUser user = mAuth.getCurrentUser();
+                                                    Log.e("user", String.valueOf(user));
+                                                    hideProgressDialog();
+                                                    uploadImage(view);
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
 
 
-                        }else{
-                            Toast.makeText(getApplicationContext(), "Registration failed! " + "\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                            hideProgressDialog();
+                            } else {
+
+                                athenticaationpopup(task.getException().getMessage());
+//                                Toast.makeText(getApplicationContext(), "Authentication Error:"+ task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                hideProgressDialog();
+                            }
                         }
-                    }
 
-                });
+                    });
+
+        }
 
     }
+
+
+
 
     public void uploadImage(final View view) {
 
@@ -594,35 +638,44 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
         } else {
 
-            if(TextUtils.isEmpty(email) && TextUtils.isEmpty(password) && TextUtils.isEmpty(username)) {
-                Toast.makeText(this, "E-mail or Password or Username should not be empty", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
-            else if((email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()))
-            {
-                Toast.makeText(this, "Enter valid e-mail address", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }else if (username.isEmpty()&&username.equals(null)) {
-                Toast.makeText(this, "Enter username.", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
-            else if (TextUtils.isEmpty(password) || password.length()<6) {
-                Toast.makeText(this, "Password should have minimum 6 characters", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
-          else if (!isPhotoValid) {
-                Toast.makeText(this, "Profile image should not be empty"
-                        , Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
 
-            else {
-                Toast.makeText(this, "Enter email address.", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
         }
 
         return valid;
+    }
+
+    private void alertpopup() {
+
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.empty_alrt, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
     }
 
 
@@ -636,6 +689,172 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         }
 
     }
+    private void alertEmailpopup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.email_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
+    private void alertPasswordpopup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.password_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+    private void alertusernamepopup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.username_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+    private void alertimagepopup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.image_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
+    private void athenticaationpopup(String message) {
+
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.authentication_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView AthuntTxt=(TextView)deleteDialogView.findViewById(R.id.txt_authent);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+        AthuntTxt.setText("Authentication Error:"+message);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
 
     private TextWatcher mTextWatcher = new TextWatcher() {
         @Override
