@@ -18,7 +18,7 @@
      -->
     <string name="default_notification_channel_name" translatable="true">News</string>
     <string name="auth_token" />
-    <string name="nearest_parking_places_next_to_my_current_location">Nearest Parking Places next to my current Location</string>
+    <string name="nearest_parking_places_next_to_my_current_location">Nearest Parking Places Next to My Current Location</string>
     <string name="title_activity_main">SampleDrawerActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
