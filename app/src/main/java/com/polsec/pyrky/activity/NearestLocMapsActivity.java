@@ -692,12 +692,18 @@ hideProgressDialog();
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NearestLocMapsActivity.this);
         LayoutInflater factory = LayoutInflater.from(NearestLocMapsActivity.this);
         View bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
-        bottomSheetDialog.setContentView(bottomSheetView);
-        bottomSheetDialog.show();
-
         TextView map = bottomSheetView.findViewById(R.id.maps_title);
         TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
         TextView cancel = bottomSheetView.findViewById(R.id.cancel_txt);
+
+        if (Constants.IS_AR_ENABLED){
+
+        }else{
+           pyrky.setVisibility(View.GONE);
+        }
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+
 
 
         map.setOnClickListener(view -> {
@@ -773,7 +779,7 @@ hideProgressDialog();
                 Map<String, Object> likeupdate = new HashMap<>();
                 likeupdate.put( "bookingStatus", false);
 
-                db.collection("Bookings").document(docid)
+                db.collection("Bookings").document(mUid)
                         .update(likeupdate)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override

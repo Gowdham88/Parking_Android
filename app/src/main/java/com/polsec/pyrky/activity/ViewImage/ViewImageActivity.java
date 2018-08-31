@@ -378,7 +378,7 @@ public class ViewImageActivity extends AppCompatActivity {
                 Map<String, Object> likeupdate = new HashMap<>();
                 likeupdate.put( "bookingStatus", false);
 
-                db.collection("Bookings").document(docid)
+                db.collection("Bookings").document(mUid)
                         .update(likeupdate)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
