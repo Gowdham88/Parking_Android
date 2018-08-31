@@ -310,17 +310,33 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                  else {
                     Toast.makeText(getActivity(), getFirstWord(description), Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
-                    intent.putExtra("placeid", placeId);
-                    intent.putExtra("latitude", String.valueOf(Latitude).trim());
-                    intent.putExtra("longitude", String.valueOf(Longitude).trim());
-                    intent.putExtra("value", "home");
-                    intent.putExtra("place", description);
-                    Log.e("strLatitude", String.valueOf(Latitude));
-                    Log.e("strLongitude", String.valueOf(Longitude));
-                    intent.putStringArrayListExtra("placesarray", caldis);
-                    getActivity().startActivity(intent);
-                    autoCompView.setText("");
+                    NearestLocMapsActivity newFragment = new NearestLocMapsActivity();
+                    Bundle args = new Bundle();
+                    args.putString("placeid", placeId);
+                    args.putString("latitude", String.valueOf(Latitude).trim());
+                    args.putString("longitude", String.valueOf(Longitude).trim());
+                    args.putString("value", "home");
+                    args.putString("place", description);
+//                    Log.e("strLatitude", String.valueOf(Latitude));
+//                    Log.e("strLongitude", String.valueOf(Longitude));
+                    args.putStringArrayList("placesarray", caldis);
+
+                    newFragment.setArguments(args);
+
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                    // Replace whatever is in the fragment_container view with this fragment,
+                    // and add the transaction to the back stack so the user can navigate back
+                    transaction.replace(R.id.main_frame_layout, newFragment);
+                    transaction.addToBackStack(null);
+
+                    // Commit the transaction
+                    transaction.commit();
+
+//                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
+//
+//                    getActivity().startActivity(intent);
+//                    autoCompView.setText("");
                 }
 
             }

@@ -4,7 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +18,8 @@ import android.widget.TextView;
 
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
+import com.polsec.pyrky.fragment.NotificationVideoFragment;
+import com.polsec.pyrky.fragment.ProfileFragment;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -45,6 +51,7 @@ private int avatarSize;
     ArrayList<String> Placename = new ArrayList<>();
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
+    String value="carousel";
 public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename) {
         this.context = context;
         this.nearimg = nearimg;
@@ -103,13 +110,41 @@ final double  longitude = Double.parseDouble(nearlong1.get(position));
         holder.nearestPlaceImage.setOnClickListener(new View.OnClickListener() {
 @Override
 public void onClick(View v) {
-        Intent intent = new Intent(context,NearestLocMapsActivity.class);
-        intent.putExtra("lat",nearlat1.get(position));
-        intent.putExtra("lng",nearlong1.get(position));
-        intent.putExtra("values","carousel");
-        intent.putExtra("listposition",holder.getAdapterPosition());
-        intent.putExtra("placename",Placename.get(position));
-        context.startActivity(intent);
+
+//    NearestLocMapsActivity newFragment = new NearestLocMapsActivity();
+//    Bundle args1 = new Bundle();
+//    args1.putString("lat",nearlat1.get(position));
+//    args1.putString("lng",nearlong1.get(position));
+//    args1.putString("values","carousel");
+//    args1.putInt("listposition",holder.getAdapterPosition());
+//    args1.putString("placename",Placename.get(position));
+//
+//    newFragment.setArguments(args1);
+//
+//    FragmentManager manager=context.getFragmentManager();
+//    FragmentTransaction transaction=manager.beginTransaction();
+//    transaction.replace(R.id.dumper,fragmentB).commit();
+//
+//    // Commit the transaction
+//    transaction.commit();
+//        Intent intent = new Intent(context,NearestLocMapsActivity.class);
+//
+//        context.startActivity(intent);
+
+
+//    Bundle args1 = new Bundle();
+//    args1.putString("lat",nearlat1.get(position));
+//    args1.putString("lng",nearlong1.get(position));
+//    args1.putString("values","carousel");
+//    args1.putInt("listposition",holder.getAdapterPosition());
+//    args1.putString("placename",Placename.get(position));
+//    //set Fragmentclass Arguments
+//    ProfileFragment fragobj = new ProfileFragment();
+//    fragobj.setArguments(args1);
+
+    FragmentTransaction transaction =  ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
+    transaction.replace(R.id.main_frame_layout, NearestLocMapsActivity.newInstance(nearlat1.get(position),nearlong1.get(position),value,holder.getAdapterPosition(),Placename.get(position)));
+    transaction.addToBackStack(null).commit();
         }
         });
         }
