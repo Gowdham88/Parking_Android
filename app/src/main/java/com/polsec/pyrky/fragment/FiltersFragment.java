@@ -57,9 +57,9 @@ public class FiltersFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_filters, null);
 
-        Constants.CAR_CATEGORY.clear();
-        Constants.PARKING_TYPES.clear();
-        Constants.SECURITY_RATINGS.clear();
+//        Constants.CAR_CATEGORY.clear();
+//        Constants.PARKING_TYPES.clear();
+//        Constants.SECURITY_RATINGS.clear();
 
         mEnableButton = view.findViewById(R.id.enable_button);
         mEnableButton.setVisibility(View.GONE);
@@ -107,6 +107,7 @@ public class FiltersFragment extends Fragment {
 
                 if(groupPosition != previousGroup){
                     mExpandableListView.collapseGroup(previousGroup);
+
                 previousGroup = groupPosition;
             }
              Toast.makeText(getActivity(),

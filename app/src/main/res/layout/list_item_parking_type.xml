@@ -6,7 +6,6 @@
     android:id="@+id/linearlay"
     android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
     android:paddingStart="?android:attr/expandableListPreferredChildPaddingLeft"
-    android:gravity="left"
     android:layoutDirection="ltr">
     <RadioGroup
         android:layout_width="wrap_content"
@@ -17,19 +16,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/rb1"
-            android:text="Free street parking"
+            android:button="@drawable/custom_radio_box"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:text="  Free street parking"
+            android:textSize="15sp"
             />
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/rb2"
-            android:text="Paid street parking"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:button="@drawable/custom_radio_box"
+            android:text="  Paid street parking"
+            android:textSize="15sp"
             />
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/rb3"
-            android:text="Paid parking"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:button="@drawable/custom_radio_box"
+            android:text="  Paid parking"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
             />
     </RadioGroup>
 

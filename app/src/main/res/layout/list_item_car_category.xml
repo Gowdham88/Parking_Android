@@ -11,37 +11,61 @@
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView"
+        android:orientation="vertical"
+        android:layout_gravity="start"
         android:id="@+id/radio_group">
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/rb1"
-            android:text="Compact"
+            android:button="@drawable/custom_radio_box"
+            android:text="  Compact"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:textSize="15sp"
             />
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/rb2"
-            android:text="Small"
+            android:button="@drawable/custom_radio_box"
+            android:text="  Small"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:textSize="15sp"
+            android:layout_marginStart="5dp"
             />
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/rb3"
-            android:text="Mid size"
+            android:button="@drawable/custom_radio_box"
+            android:text="  Mid size"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:textSize="15sp"
+            android:layout_marginStart="2dp"
             />
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/rb4"
-            android:text="Full"
+            android:button="@drawable/custom_radio_box"
+            android:text="  Full"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:textSize="15sp"
+            android:layout_marginStart="8dp"
             />
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/rb5"
-            android:text="Van/Pick-up"
+            android:button="@drawable/custom_radio_box"
+            android:text="  Van/Pick-up"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:textSize="15sp"
             />
     </RadioGroup>
 
