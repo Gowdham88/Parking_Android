@@ -545,11 +545,11 @@ public class ViewImageActivity extends AppCompatActivity {
         bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
         TextView map = bottomSheetView.findViewById(R.id.maps_title);
         TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
-        if (Constants.IS_AR_ENABLED){
-
-        }else {
-            pyrky.setVisibility(View.GONE);
-        }
+//        if (Constants.IS_AR_ENABLED){
+//
+//        }else {
+//            pyrky.setVisibility(View.GONE);
+//        }
 
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
