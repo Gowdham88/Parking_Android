@@ -897,12 +897,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mGoogleApiClient.disconnect();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mGoogleApiClient.stopAutoManage(getActivity());
-        mGoogleApiClient.disconnect();
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        mGoogleApiClient.stopAutoManage(getActivity());
+//        mGoogleApiClient.disconnect();
+//    }
     private void athenticaationpopup(String message) {
 
         LayoutInflater factory = LayoutInflater.from(getActivity());

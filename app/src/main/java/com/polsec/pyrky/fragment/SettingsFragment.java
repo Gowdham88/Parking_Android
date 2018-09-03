@@ -170,12 +170,14 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         Pass =PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_LOGGED_INPASS);
 
         if (mProfilepic != null && !mProfilepic.isEmpty()) {
+            showProgressDialog();
             Picasso.with(getActivity())
                     .load(mProfilepic)
                     .resize(avatarSize, avatarSize)
 //                    .centerCrop()
 //                    .transform(new CircleTransformation())
                     .into(mProfileImage);
+            hideProgressDialog();
         }
 
         layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
@@ -681,6 +683,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
                         if(!postimageurl.equals(null)&&!postimageurl.isEmpty()){
+                            showProgressDialog();
                             Picasso.with(getActivity())
                                     .load(postimageurl)
                                     .resize(avatarSize, avatarSize)
@@ -697,6 +700,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                                     .centerCrop()
                                     .transform(new CircleTransformation())
                                     .into(profileImage);
+                            hideProgressDialog();
 
                         }
                         else{
