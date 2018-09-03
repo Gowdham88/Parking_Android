@@ -255,47 +255,54 @@ public class ViewImageActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                    bookingid = document.getData();
 
-                                    bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+                                    if(document.contains("Booking_ID")){
+                                        bookingid = document.getData();
 
-                                    for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
-                                        Boolean value = (Boolean) bookingEntry.getValue();
-                                        if (value){
-                                            isBookedAny = true;
-                                            break;
-                                        }
-                                    }
+                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
 
-                                    if (isBookedAny){
-                                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                                            System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                                            Boolean val = (Boolean) entry.getValue();
-                                            String values = String.valueOf(val);
-
-                                            Log.e("values", values);
-//
-                                            if (val) {
-
-                                                Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
-                                                String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-
-                                                popup(valuedoc,entry.getKey(),bookingRequest);
+                                        for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
+                                            Boolean value = (Boolean) bookingEntry.getValue();
+                                            if (value){
+                                                isBookedAny = true;
                                                 break;
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-                                            }else{
-                                                Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
                                             }
                                         }
-                                    }else{
-                                        if (bookingRequest){
-                                            bookAndNavigate();
-                                        }
 
+                                        if (isBookedAny){
+                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                                System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                                Boolean val = (Boolean) entry.getValue();
+                                                String values = String.valueOf(val);
+
+                                                Log.e("values", values);
+//
+                                                if (val) {
+
+                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
+                                                    String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+                                                    popup(valuedoc,entry.getKey(),bookingRequest);
+                                                    break;
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                                }else{
+                                                    Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }else{
+                                            if (bookingRequest){
+                                                bookAndNavigate();
+                                            }
+
+                                        }
                                     }
+                                    else {
+                                        bookAndNavigate();
+                                    }
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+
 
                                 } else {
 //                        Log.d(TAG, "No such document");

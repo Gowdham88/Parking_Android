@@ -12,6 +12,7 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowDisablePreview">true</item>
 
+
     <!--<item name="android:windowBackground">@drawable/launch_screen</item>-->
         <item name="android:windowFullscreen">true</item>
     </style>
@@ -20,6 +21,7 @@
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDisablePreview">true</item>
+
     </style>
 
     <style name="AppThemeSignup" parent="Theme.AppCompat.Light.DarkActionBar">

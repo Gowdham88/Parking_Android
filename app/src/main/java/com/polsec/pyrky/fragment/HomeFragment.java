@@ -28,9 +28,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
@@ -186,6 +188,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         super.onResume();
         ((HomeActivity) getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+//        mNearestrecyclerAdapter.notifyDataSetChanged();
+
+
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Places.GEO_DATA_API)
@@ -271,18 +276,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
         getCurrentLocation();
         loadCameraLocations();
+        mNearestLocationList.clear();
+
+//
 
         if (mCameraLat!=null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 mNearestPlaceRecycler.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                     @Override
                     public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+//                        mNearestrecyclerAdapter.notifyDataSetChanged();
 
                         int scrollPosition = carouselLayoutManager.getCenterItemPosition();
                         double lat = Double.parseDouble(mCameraLat.get(scrollPosition));
                         double lng = Double.parseDouble(mCameraLong.get(scrollPosition));
                         LatLng latLng = new LatLng(lat,lng);
-//                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        //                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
                     }
                 });
@@ -290,26 +299,49 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         }
 
 
+
         mSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (autoCompView.getText().toString().isEmpty() || description == null) {
-                    Toast.makeText(getActivity(), "Please enter the search location", Toast.LENGTH_SHORT).show();
-                } else {
+
+                    String str="Please enter the search location";
+                    athenticaationpopup(str);
+
+
+
+                }
+                 else {
                     Toast.makeText(getActivity(), getFirstWord(description), Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
-                    intent.putExtra("placeid", placeId);
-                    intent.putExtra("latitude", String.valueOf(Latitude).trim());
-                    intent.putExtra("longitude", String.valueOf(Longitude).trim());
-                    intent.putExtra("value", "home");
-                    intent.putExtra("place", description);
-                    Log.e("strLatitude", String.valueOf(Latitude));
-                    Log.e("strLongitude", String.valueOf(Longitude));
-                    intent.putStringArrayListExtra("placesarray", caldis);
-                    getActivity().startActivity(intent);
-                    autoCompView.setText("");
+                    NearestLocMapsActivity newFragment = new NearestLocMapsActivity();
+                    Bundle args = new Bundle();
+                    args.putString("placeid", placeId);
+                    args.putString("latitude", String.valueOf(Latitude).trim());
+                    args.putString("longitude", String.valueOf(Longitude).trim());
+                    args.putString("value", "home");
+                    args.putString("place", description);
+//                    Log.e("strLatitude", String.valueOf(Latitude));
+//                    Log.e("strLongitude", String.valueOf(Longitude));
+                    args.putStringArrayList("placesarray", caldis);
+
+                    newFragment.setArguments(args);
+
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                    // Replace whatever is in the fragment_container view with this fragment,
+                    // and add the transaction to the back stack so the user can navigate back
+                    transaction.replace(R.id.main_frame_layout, newFragment);
+                    transaction.addToBackStack(null);
+
+                    // Commit the transaction
+                    transaction.commit();
+
+//                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
+//
+//                    getActivity().startActivity(intent);
+//                    autoCompView.setText("");
                 }
 
             }
@@ -390,10 +422,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
                             Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
                             Log.e("address1", address1);
-
+                            LatLng sydney = new LatLng(latt, longi);
+                            mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,14));
 
                             Log.e("lattd", String.valueOf(latt));
                             Log.e("latgd", String.valueOf(longi));
+
 
 
                         }
@@ -456,7 +491,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 distances1.add(String.valueOf(distanceval));
                                 Log.e("distance", String.valueOf(distances1));
 
-//                                if (locationDistance < 15000) {
+
+
+                                if (locationDistance < 1500) {
                                 caldis1.add(String.valueOf(mLocationDistances));
                                 Log.e("caldis1", String.valueOf(caldis1));
                                 mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
@@ -475,18 +512,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 mNearestPlaceRecycler.setHasFixedSize(true);
                                 mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName);
                                 mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
-                                mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
                                 mNearestrecyclerAdapter.notifyDataSetChanged();
+                                mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
+//
+
 
                                 LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
                                 mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
 //                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
 //                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
+                                }
 
-//                                }
+
 
                             }
+
+
                         }
 //                        Double lat = mCurrentGpsLoc.getLatitude();
 //                        Double lng = mCurrentGpsLoc.getLongitude();
@@ -501,6 +543,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     }
 
                 });
+
+
     }
     private void proceedAfterPermission() {
 
@@ -631,7 +675,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                     Log.e("distancemtrs", String.valueOf(distancesmtrs));
 //                        for(int j =0;j<distancesmtrs.size();j++){
 
-//                                    if (distancemtrs < 1500) {
+                                    if (distancemtrs < 1500) {
                                         caldis.add(String.valueOf(distancesmtrs));
                                         Log.e("caldis", String.valueOf(caldis));
                                         nearlat.add(mNearestLocationList.get(i).getCameraLat());
@@ -640,9 +684,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                         Log.e("nearlong", String.valueOf(nearlong));
 //                            }
 //                                    }
-                                    distance = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
-                                    Log.e("distance", String.valueOf(distance));
-                                    distances.add(distance);
+                                        distance = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
+                                        Log.e("distance", String.valueOf(distance));
+                                        distances.add(distance);
+
 //                                          distancedata();
 
 
@@ -652,6 +697,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
 //
+                                    }
                                 }
 
                             }
@@ -857,6 +903,42 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mGoogleApiClient.stopAutoManage(getActivity());
         mGoogleApiClient.disconnect();
     }
+    private void athenticaationpopup(String message) {
+
+        LayoutInflater factory = LayoutInflater.from(getActivity());
+        final View deleteDialogView = factory.inflate(R.layout.authentication_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setView(deleteDialogView);
+        TextView AthuntTxt=(TextView)deleteDialogView.findViewById(R.id.txt_authent);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+        AthuntTxt.setText(message);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)  {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
 
 
 }

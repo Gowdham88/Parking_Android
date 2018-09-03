@@ -14,6 +14,7 @@
         <!--<item name="android:windowBackground">@drawable/launch_screen</item>-->
         <item name="android:statusBarColor">@color/colorAccent</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="AppThemeSignup" parent="Theme.AppCompat.Light.DarkActionBar">
