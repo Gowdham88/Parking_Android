@@ -89,6 +89,8 @@
         <item name="android:listPreferredItemHeightSmall">60dp</item><!-- menu item height-->
 
     </style>
+
+
     <!--<style name="FontAvenirLight">-->
         <!--<item name="fontPath">fonts/Avenir-Light.ttf</item>-->
     <!--</style>-->

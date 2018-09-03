@@ -110,23 +110,39 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                 RadioButton rb2 = convertView.findViewById(R.id.rb2);
                 RadioButton rb3 = convertView.findViewById(R.id.rb3);
 
+
+                if (Constants.PARKING_TYPES.size() > 0){
+                    String checkedItem = Constants.PARKING_TYPES.get(0);
+
+                    switch (checkedItem) {
+                        case "Free street parking":
+                            rb1.setChecked(true);
+                            break;
+                        case "Paid street parking":
+                            rb2.setChecked(true);
+                            break;
+                        case "Paid parking":
+                            rb3.setChecked(true);
+                            break;
+                    }
+                }
                 rgps.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
                         switch (checkedId){
                             case R.id.rb1:
                                 Constants.PARKING_TYPES.clear();
-                                Constants.PARKING_TYPES.add(String.valueOf(rb1.getText()));
+                                Constants.PARKING_TYPES.add("Free street parking");
                                 Toast.makeText(context, rb1.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb2:
                                 Constants.PARKING_TYPES.clear();
-                                Constants.PARKING_TYPES.add(String.valueOf(rb2.getText()));
+                                Constants.PARKING_TYPES.add("Paid street parking");
                                 Toast.makeText(context, rb2.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb3:
                                 Constants.PARKING_TYPES.clear();
-                                Constants.PARKING_TYPES.add(String.valueOf(rb3.getText()));
+                                Constants.PARKING_TYPES.add("Paid parking");
                                 Toast.makeText(context, rb3.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                         }
@@ -145,8 +161,30 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                 RadioButton rab1 = convertView.findViewById(R.id.rb1);
                 RadioButton rab2 = convertView.findViewById(R.id.rb2);
                 RadioButton rab3 = convertView.findViewById(R.id.rb3);
-                RadioButton rab4 = convertView.findViewById(R.id.rb3);
-                RadioButton rab5 = convertView.findViewById(R.id.rb3);
+                RadioButton rab4 = convertView.findViewById(R.id.rb4);
+                RadioButton rab5 = convertView.findViewById(R.id.rb5);
+
+                if (Constants.CAR_CATEGORY.size() > 0){
+                    String checkedItem = Constants.CAR_CATEGORY.get(0);
+
+                    switch (checkedItem) {
+                        case "Compact":
+                            rab1.setChecked(true);
+                            break;
+                        case "Small":
+                            rab2.setChecked(true);
+                            break;
+                        case "Mid size":
+                            rab3.setChecked(true);
+                            break;
+                        case "Full":
+                            rab4.setChecked(true);
+                            break;
+                        case "Van/Pick-up":
+                            rab5.setChecked(true);
+                            break;
+                    }
+                }
 
                 rgp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
@@ -154,27 +192,27 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                         switch (checkedId){
                             case R.id.rb1:
                                 Constants.CAR_CATEGORY.clear();
-                                Constants.CAR_CATEGORY.add(String.valueOf(rab1.getText()));
+                                Constants.CAR_CATEGORY.add("Compact");
                                 Toast.makeText(context, rab1.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb2:
                                 Constants.CAR_CATEGORY.clear();
-                                Constants.CAR_CATEGORY.add(String.valueOf(rab2.getText()));
+                                Constants.CAR_CATEGORY.add("Small");
                                 Toast.makeText(context, rab2.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb3:
                                 Constants.CAR_CATEGORY.clear();
-                                Constants.CAR_CATEGORY.add(String.valueOf(rab3.getText()));
+                                Constants.CAR_CATEGORY.add("Mid size");
                                 Toast.makeText(context, rab3.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb4:
                                 Constants.CAR_CATEGORY.clear();
-                                Constants.CAR_CATEGORY.add(String.valueOf(rab4.getText()));
+                                Constants.CAR_CATEGORY.add("Full");
                                 Toast.makeText(context, rab4.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb5:
                                 Constants.CAR_CATEGORY.clear();
-                                Constants.CAR_CATEGORY.add(String.valueOf(rab5.getText()));
+                                Constants.CAR_CATEGORY.add("Van/Pick-up");
                                 Toast.makeText(context, rab5.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                         }
@@ -186,24 +224,102 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
             case 2 :
                 convertView = layoutInflater.inflate(R.layout.list_item_security_ratings, null);
 
-                CheckBox checkBox = convertView.findViewById(R.id.checkbox);
-                checkBox.setId(1000+childPosition);
-                checkBox.setText(expandedListText);
+                CheckBox checkBox1 = convertView.findViewById(R.id.checkbox1);
+                CheckBox checkBox2 = convertView.findViewById(R.id.checkbox2);
+                CheckBox checkBox3 = convertView.findViewById(R.id.checkbox3);
+                CheckBox checkBox4 = convertView.findViewById(R.id.checkbox4);
+                CheckBox checkBox5 = convertView.findViewById(R.id.checkbox5);
 
-                TextView  expandedListTextView = convertView
-                        .findViewById(R.id.expandedListItem1);
-                expandedListTextView.setText(expandedListText);
+                if (Constants.SECURITY_RATINGS.size()>0){
+                    for (String checkedbox : Constants.SECURITY_RATINGS){
+                        switch (checkedbox){
+                            case "5 stars":
+                                checkBox1.setChecked(true);
+                                break;
+                            case "4 stars":
+                                checkBox2.setChecked(true);
+                                break;
+                            case "3 stars":
+                                checkBox3.setChecked(true);
+                                break;
+                            case "2 stars":
+                                checkBox4.setChecked(true);
+                                break;
+                            case "1 star":
+                                checkBox5.setChecked(true);
+                                break;
+                        }
+                    }
+                }
 
 
-                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                checkBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        Toast.makeText(buttonView.getContext(), "Selected! - Question number: " + groupPosition + "answer: " + childPosition + "ischecked: " + isChecked, Toast.LENGTH_SHORT).show();
-
-                        Constants.SECURITY_RATINGS.add((String.valueOf(childPosition+1))+" stars");
-
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if (isChecked){
+                            Constants.SECURITY_RATINGS.add("5 stars");
+                        }else {
+                            Constants.SECURITY_RATINGS.remove("5 stars");
+                        }
                     }
                 });
+                checkBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if (isChecked){
+                            Constants.SECURITY_RATINGS.add("4 stars");
+                        }else {
+                            Constants.SECURITY_RATINGS.remove("4 stars");
+                        }
+                    }
+                });
+                checkBox3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if (isChecked){
+                            Constants.SECURITY_RATINGS.add("3 stars");
+                        }else {
+                            Constants.SECURITY_RATINGS.remove("3 stars");
+                        }
+                    }
+                });
+                checkBox4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if (isChecked){
+                            Constants.SECURITY_RATINGS.add("2 stars");
+                        }else {
+                            Constants.SECURITY_RATINGS.remove("2 stars");
+                        }
+                    }
+                });
+                checkBox5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if (isChecked){
+                            Constants.SECURITY_RATINGS.add("1 star");
+                        }else {
+                            Constants.SECURITY_RATINGS.remove("1 star");
+                        }
+                    }
+                });
+//                checkBox.setId(1000+childPosition);
+//                checkBox.setText(expandedListText);
+//
+//                TextView  expandedListTextView = convertView
+//                        .findViewById(R.id.expandedListItem1);
+//                expandedListTextView.setText(expandedListText);
+//
+//
+//                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                        Toast.makeText(buttonView.getContext(), "Selected! - Question number: " + groupPosition + "answer: " + childPosition + "ischecked: " + isChecked, Toast.LENGTH_SHORT).show();
+//
+//                        Constants.SECURITY_RATINGS.add((String.valueOf(childPosition+1))+" stars");
+//
+//                    }
+//                });
 
                 break;
         }

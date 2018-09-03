@@ -2,9 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/parent_layout"
-    >
+    android:layout_height="match_parent">
 
     <include
         android:id="@+id/toolbar"
@@ -40,11 +38,8 @@
             app:tabPaddingStart="0dp"
             app:tabPaddingEnd="0dp"
             app:tabMode="fixed"
-            app:tabBackground="@drawable/tab_selector_ripple"
-            android:stateListAnimator="@null"
-            android:layoutAnimation="@null"
             app:tabIndicatorHeight="0dp"
-            app:tabTextColor="@color/booking_txtclr"/>
+            app:tabTextColor="@color/booking_txtclr" />
 
         <android.support.v4.view.ViewPager
             android:layout_width="match_parent"

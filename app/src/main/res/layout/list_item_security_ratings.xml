@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/linearLayout"
@@ -11,9 +11,55 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/checkbox"
+        android:id="@+id/checkbox1"
+        android:text="  5 star"
+        android:button="@drawable/customcheckbox"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
         android:focusable="true"
          />
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkbox2"
+        android:button="@drawable/customcheckbox"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:text="  4 star"
+        android:focusable="true"
+        />
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkbox3"
+        android:button="@drawable/customcheckbox"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:text="  3 star"
+        android:focusable="true"
+        />
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkbox4"
+        android:button="@drawable/customcheckbox"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:text="  2 star"
+        android:focusable="true"
+    />
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkbox5"
+        android:button="@drawable/customcheckbox"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:text="  1 star"
+        android:focusable="true"
+    />
+
+
     <TextView
         android:id="@+id/expandedListItem1"
         android:layout_width="fill_parent"

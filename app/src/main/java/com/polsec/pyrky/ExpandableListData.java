@@ -19,11 +19,11 @@ public class ExpandableListData {
 //        filters.add("Paid parking");
 
         List<String> securityRatigs = new ArrayList<String>();
-        securityRatigs.add("5 Star");
-        securityRatigs.add("4 Star");
-        securityRatigs.add("3 Star");
-        securityRatigs.add("2 Star");
-        securityRatigs.add("1 Star");
+        securityRatigs.add("  5 Star");
+//        securityRatigs.add("  4 Star");
+//        securityRatigs.add("  3 Star");
+//        securityRatigs.add("  2 Star");
+//        securityRatigs.add("  1 Star");
 
         List<String> carCategory = new ArrayList<String>();
         carCategory.add("Compact");

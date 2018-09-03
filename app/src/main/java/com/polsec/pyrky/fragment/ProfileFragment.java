@@ -111,9 +111,10 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
         email.setText(mEmail);
         nameEdt.setText(mName);
-        carIcon.setImageResource(mIcons[mCarIcon]);
-        carSize.setText(mCarCategory[mCarIcon]);
-        carDimension.setText(mCarRange[mCarIcon]);
+//        carIcon.setImageResource(mIcons[mCarIcon]);
+//        carSize.setText(mCarCategory[mCarIcon]);
+//        carDimension.setText(mCarRange[mCarIcon]);
+        carIcon.setBackground(null);
 
         Log.e("mProfilepic", mProfilepic);
         if (mProfilepic != null && !mProfilepic.isEmpty()) {
@@ -124,6 +125,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                     .transform(new CircleTransformation())
                     .into(mProfileImage);
         }
+
 
 
        if(mCarIcon==0){
