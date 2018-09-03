@@ -53,7 +53,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     String[] mCarRange = {"[3.5 - 4.5m]", "[2.5 - 3.5m]", "[4 - 5m]", "[5 - 5.5m]", "[5.5 - 6.5m]"};
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     TextView email,carSize,carDimension;
-    CircleImageView mProfileImage;
+ ImageView mProfileImage;
     private final int PICK_IMAGE_REQUEST = 71;
     private Uri filePath;
     ActionBar actionBar;

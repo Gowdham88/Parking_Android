@@ -84,6 +84,7 @@ public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 //        S val= Integer.parseInt(distances1.get(position));
         holder.nearestPlaceDistance.setText(distances1.get(position));
 
+
 final double latitude = Double.parseDouble(nearlat1.get(position));
 final double  longitude = Double.parseDouble(nearlong1.get(position));
 

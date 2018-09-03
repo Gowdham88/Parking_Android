@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -63,6 +64,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
+import com.polsec.pyrky.fragment.HomeFragment;
 import com.polsec.pyrky.fragment.ProfileFragment;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
@@ -163,7 +165,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
 //        mGoogleApiClient = new GoogleApiClient.Builder(context)
 //                .addApi(Places.GEO_DATA_API)
-//                .enableAutoManage((FragmentActivity) getActivity(), 0, NearestLocMapsActivity.this)
+//                .enableAutoManage((FragmentActivity) getActivity(), 1, NearestLocMapsActivity.this)
 //                .addConnectionCallbacks(NearestLocMapsActivity.this)
 //                .build();
 
@@ -195,6 +197,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         mBackIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                refreshActivity();
                 getActivity().onBackPressed();
             }
         });
@@ -217,7 +220,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             else if(Nameval1.equals(Value1)){
                 mLat = bundle.getString("latt").trim();
                 mLongi = bundle.getString("longg").trim();
-                mListPosition = bundle.getInt("adapterPosition",0);
+                mListPosition = bundle.getInt("adapterPosition");
                 PlaceName= bundle.getString("place").trim();
 
                 Log.e("lattitude", String.valueOf(mLat));
@@ -307,6 +310,18 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         return view;
         }
 
+    private void refreshActivity() {
+
+        HomeFragment newFragment = new HomeFragment();
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.main_frame_layout, newFragment).commit();
+
+    }
+
 
     private void loadCameraLocation(Query query){
 
@@ -353,7 +368,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                 mAccurateDistancesString.add(String.valueOf(mAccurateDistance));
                                 Log.e("distancemap", String.valueOf(mAccurateDistancesString));
 
-//                                if (locationDistance < 15000) {
+                                if (locationDistance < 1500) {
                                     mCalculateDistances.add(String.valueOf(mLocationDistances));
                                     Log.e("mCalculateDistances", String.valueOf(mCalculateDistances));
                                     mCameraLat.add(datalist.get(i).getCameraLat());
@@ -386,6 +401,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                     mNearestrecyclerAdapter = new CarouselDetailMapAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, mAccurateDistancesString, mCameraLocName, mCameraId);
                                     mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                     mNearestPlaceRecycler.scrollToPosition(mListPosition);
+                                    mNearestrecyclerAdapter.notifyDataSetChanged();
                                     mNearestPlaceRecycler.setItemTransformer(new ScaleTransformer.Builder()
                                             .setMinScale(0.8f)
                                             .build());
@@ -412,7 +428,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 }
 
 hideProgressDialog();
-//                                }
+                                }
 //
 
                             }
@@ -567,7 +583,7 @@ hideProgressDialog();
 
         Geocoder geocoder;
 ////
-        geocoder = new Geocoder(context, Locale.getDefault());
+        geocoder = new Geocoder(getActivity(), Locale.getDefault());
         try {
             yourAddresses= geocoder.getFromLocation(Double.parseDouble(String.valueOf(m.getPosition().latitude)),Double.parseDouble(String.valueOf(m.getPosition().longitude)) , 1);
         } catch (IOException e) {

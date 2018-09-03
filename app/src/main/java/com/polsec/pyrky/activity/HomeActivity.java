@@ -22,12 +22,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.polsec.pyrky.activity.booking.BookingsActivity;
@@ -68,12 +71,12 @@ public class HomeActivity extends AppCompatActivity
     String profileImageUrl;
     CircleImageView profileImage;
     String Nameval="settings";
+    boolean isDrawerLocked;
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
 //        ((MyApplication )getApplication()).getNetComponent().inject(this);
 //    }
-
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -158,7 +161,7 @@ public class HomeActivity extends AppCompatActivity
         }
         txtProfileName.setText(UsrName);
 
-        drawer.setScrimColor(Color.TRANSPARENT);
+//        drawer.setScrimColor(Color.TRANSPARENT);
         drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
                                      @Override
                                      public void onDrawerSlide(View drawer, float slideOffset) {
@@ -179,6 +182,34 @@ public class HomeActivity extends AppCompatActivity
                                  }
         );
 
+        try {
+            //int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+                // Do something for lollipop and above versions
+
+                Window window = getWindow();
+
+                // clear FLAG_TRANSLUCENT_STATUS flag:
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+                // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+                // finally change the color to any color with transparency
+
+//                window.setStatusBarColor(getResources().getColor(R.color.transparent2));
+            }
+
+        } catch (Exception e) {
+
+            Crashlytics.logException(e);
+
+        }
+
+//        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
+//        drawer.setScrimColor(getResources().getColor(android.R.color.transparent));
+//         isDrawerLocked= true;
+//        drawer.setScrimColor(getResources().getColor(android.R.color.transparent));
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -376,7 +407,14 @@ public class HomeActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         isRunning = true;
-
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            Picasso.with(HomeActivity.this)
+                    .load(profileImageUrl)
+                    .resize(avatarSize, avatarSize)
+                    .centerCrop()
+                    .transform(new CircleTransformation())
+                    .into(profileImage);
+        }
     }
 
     void checkWhetherArEnabled() {
