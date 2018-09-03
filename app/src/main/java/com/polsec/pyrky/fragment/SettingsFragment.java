@@ -689,14 +689,14 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                                     .into(ProfileImg);
 
                             NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
-                            CircleImageView profileImages = navigationView.getHeaderView(0).findViewById(R.id.user_image);
+                            CircleImageView profileImage = navigationView.getHeaderView(0).findViewById(R.id.user_image);
 
                             Picasso.with(getActivity())
                                     .load(postimageurl)
                                     .resize(avatarSize, avatarSize)
                                     .centerCrop()
                                     .transform(new CircleTransformation())
-                                    .into(profileImages);
+                                    .into(profileImage);
 
                         }
                         else{
