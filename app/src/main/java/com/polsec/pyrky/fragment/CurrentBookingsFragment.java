@@ -251,7 +251,7 @@ public class CurrentBookingsFragment extends Fragment {
                         }
 
                         setupFeed();
-                        recyclerAdapter.notifyDataSetChanged();
+//                        recyclerAdapter.notifyDataSetChanged();
 
 
                     } else {
