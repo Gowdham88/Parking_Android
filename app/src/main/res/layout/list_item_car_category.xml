@@ -4,64 +4,138 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/linearlay"
-    android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
-    android:paddingStart="?android:attr/expandableListPreferredChildPaddingLeft"
+    android:background="@color/border_color"
     android:layoutDirection="ltr">
     <RadioGroup
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="-10dp"
         android:id="@+id/radio_group">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/table1">
         <RadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rb1"
             android:button="@drawable/custom_radio_box"
-            android:text="  Compact"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
+            android:scaleX="0.3"
+            android:scaleY="0.3"
             android:textSize="18sp"
+            android:layout_column="1"
+            android:layout_marginStart="3dp"
             />
+            <TextView
+                android:id="@+id/cb1_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Compact"
+                android:layout_column="2"
+                android:layout_marginStart="8dp"
+                />
+        </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/table2">
         <RadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rb2"
             android:button="@drawable/custom_radio_box"
-            android:text="  Small"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
+            android:scaleX="0.3"
+            android:scaleY="0.3"
             android:textSize="18sp"
+            android:layout_column="1"
+            android:layout_marginStart="3dp"
             />
+                <TextView
+                    android:id="@+id/cb2_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Small"
+                    android:layout_column="2"
+                    android:layout_marginStart="8dp"
+                    />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/table3">
         <RadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rb3"
             android:button="@drawable/custom_radio_box"
-            android:text="  Mid size"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
+            android:scaleX="0.3"
+            android:scaleY="0.3"
             android:textSize="18sp"
+            android:layout_column="1"
+            android:layout_marginStart="3dp"
             />
+                <TextView
+                    android:id="@+id/cb3_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mid size"
+                    android:layout_column="2"
+                    android:layout_marginStart="8dp"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/table4">
         <RadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rb4"
             android:button="@drawable/custom_radio_box"
-            android:text="  Full"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
+            android:scaleX="0.3"
+            android:scaleY="0.3"
             android:textSize="18sp"
+            android:layout_column="1"
+            android:layout_marginStart="3dp"
             />
-        <RadioButton
+                <TextView
+                    android:id="@+id/cb4_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Full"
+                    android:layout_column="2"
+                    android:layout_marginStart="8dp"
+                    />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/table5">
+            <RadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rb5"
             android:button="@drawable/custom_radio_box"
-            android:text="  Van/Pick-up"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
+            android:scaleX="0.3"
+            android:scaleY="0.3"
             android:textSize="18sp"
+                android:layout_marginStart="3dp"
+                android:layout_column="1"
             />
+                <TextView
+                    android:id="@+id/cb5_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Van/Pick-up"
+                    android:layout_column="2"
+                    android:layout_marginStart="8dp"
+                    />
+            </TableRow>
+       </TableLayout>
     </RadioGroup>
 
     <TextView

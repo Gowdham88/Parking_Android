@@ -32,9 +32,8 @@ public class ExpandableListData {
 //        carCategory.add("Full");
 //        carCategory.add("Van/Pick-up");
 
-
-        expandableListDetail.put("Car Category", carCategory);
         expandableListDetail.put("Security Ratings", securityRatigs);
+        expandableListDetail.put("Car Category", carCategory);
         expandableListDetail.put("Filter", filters);
 
 

@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -110,7 +111,52 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                 RadioButton rb2 = convertView.findViewById(R.id.rb2);
                 RadioButton rb3 = convertView.findViewById(R.id.rb3);
 
+                TableRow tablRow1 = convertView.findViewById(R.id.table1);
+                TableRow tablRow2 = convertView.findViewById(R.id.table2);
+                TableRow tablRow3 = convertView.findViewById(R.id.table3);
 
+                tablRow1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rb1.isChecked()){
+                            Constants.PARKING_TYPES.add("Free street parking");
+                            rb1.setChecked(true);
+                            rb2.setChecked(false);
+                            rb3.setChecked(false);
+                        }else {
+                            Constants.PARKING_TYPES.remove("Free street parking");
+                            rb1.setChecked(false);
+                        }
+                    }
+                });
+                tablRow2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rb2.isChecked()){
+                            Constants.PARKING_TYPES.add("Paid street parking");
+                            rb1.setChecked(false);
+                            rb2.setChecked(true);
+                            rb3.setChecked(false);
+                        }else {
+                            Constants.PARKING_TYPES.remove("Paid street parking");
+                            rb2.setChecked(false);
+                        }
+                    }
+                });
+                tablRow3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rb3.isChecked()){
+                            Constants.PARKING_TYPES.add("Paid parking");
+                            rb1.setChecked(false);
+                            rb2.setChecked(false);
+                            rb3.setChecked(true);
+                        }else {
+                            Constants.PARKING_TYPES.remove("Paid parking");
+                            rb3.setChecked(false);
+                        }
+                    }
+                });
                 if (Constants.PARKING_TYPES.size() > 0){
                     String checkedItem = Constants.PARKING_TYPES.get(0);
 
@@ -150,13 +196,164 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                 });
 
                 break;
-
-
             case 1 :
+                convertView = layoutInflater.inflate(R.layout.list_item_security_ratings, null);
+
+                CheckBox checkBox1 = convertView.findViewById(R.id.checkbox1);
+                CheckBox checkBox2 = convertView.findViewById(R.id.checkbox2);
+                CheckBox checkBox3 = convertView.findViewById(R.id.checkbox3);
+                CheckBox checkBox4 = convertView.findViewById(R.id.checkbox4);
+                CheckBox checkBox5 = convertView.findViewById(R.id.checkbox5);
+
+                TableRow tableRow1 = convertView.findViewById(R.id.table1);
+                TableRow tableRow2 = convertView.findViewById(R.id.table2);
+                TableRow tableRow3 = convertView.findViewById(R.id.table3);
+                TableRow tableRow4 = convertView.findViewById(R.id.table4);
+                TableRow tableRow5 = convertView.findViewById(R.id.table5);
+
+                tableRow1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!checkBox1.isChecked()){
+                            Constants.SECURITY_RATINGS.add("5 stars");
+                            checkBox1.setChecked(true);
+                        }else {
+                            Constants.SECURITY_RATINGS.remove("5 stars");
+                            checkBox1.setChecked(false);
+                        }
+                    }
+                });
+                tableRow2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!checkBox2.isChecked()){
+                            Constants.SECURITY_RATINGS.add("4 stars");
+                            checkBox2.setChecked(true);
+                        }else {
+                            Constants.SECURITY_RATINGS.remove("4 stars");
+                            checkBox2.setChecked(false);
+                        }
+
+                    }
+                });
+                tableRow3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!checkBox3.isChecked()){
+                            Constants.SECURITY_RATINGS.add("3 stars");
+                            checkBox3.setChecked(true);
+                        }else {
+                            Constants.SECURITY_RATINGS.remove("3 stars");
+                            checkBox3.setChecked(false);
+                        }
+                    }
+                });
+                tableRow4.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!checkBox4.isChecked()){
+                            Constants.SECURITY_RATINGS.add("2 stars");
+                            checkBox4.setChecked(true);
+                        }else {
+                            Constants.SECURITY_RATINGS.remove("2 stars");
+                            checkBox4.setChecked(false);
+                        }
+                    }
+                });
+                tableRow5.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!checkBox5.isChecked()){
+                            Constants.SECURITY_RATINGS.add("1 star");
+                            checkBox5.setChecked(true);
+                        }else {
+                            Constants.SECURITY_RATINGS.remove("1 star");
+                            checkBox5.setChecked(false);
+                        }
+                    }
+                });
+
+                if (Constants.SECURITY_RATINGS.size()>0){
+                    for (String checkedbox : Constants.SECURITY_RATINGS){
+                        switch (checkedbox){
+                            case "5 stars":
+                                checkBox1.setChecked(true);
+                                break;
+                            case "4 stars":
+                                checkBox2.setChecked(true);
+                                break;
+                            case "3 stars":
+                                checkBox3.setChecked(true);
+                                break;
+                            case "2 stars":
+                                checkBox4.setChecked(true);
+                                break;
+                            case "1 star":
+                                checkBox5.setChecked(true);
+                                break;
+                        }
+                    }
+                }
+
+//
+//                checkBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+//                        if (isChecked){
+//                            Constants.SECURITY_RATINGS.add("5 stars");
+//                        }else {
+//                            Constants.SECURITY_RATINGS.remove("5 stars");
+//                        }
+//                    }
+//                });
+//                checkBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+//                        if (isChecked){
+//                            Constants.SECURITY_RATINGS.add("4 stars");
+//                        }else {
+//                            Constants.SECURITY_RATINGS.remove("4 stars");
+//                        }
+//                    }
+//                });
+//                checkBox3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+//                        if (isChecked){
+//                            Constants.SECURITY_RATINGS.add("3 stars");
+//                        }else {
+//                            Constants.SECURITY_RATINGS.remove("3 stars");
+//                        }
+//                    }
+//                });
+//                checkBox4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+//                        if (isChecked){
+//                            Constants.SECURITY_RATINGS.add("2 stars");
+//                        }else {
+//                            Constants.SECURITY_RATINGS.remove("2 stars");
+//                        }
+//                    }
+//                });
+//                checkBox5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+//                        if (isChecked){
+//                            Constants.SECURITY_RATINGS.add("1 star");
+//                        }else {
+//                            Constants.SECURITY_RATINGS.remove("1 star");
+//                        }
+//                    }
+//                });
+                break;
+
+
+
+            case 2 :
                 convertView = layoutInflater.inflate(R.layout.list_item_car_category,null);
 
                 RadioGroup rgp = (RadioGroup) convertView.findViewById(R.id.radio_group);
-
 
                 RadioButton rab1 = convertView.findViewById(R.id.rb1);
                 RadioButton rab2 = convertView.findViewById(R.id.rb2);
@@ -164,6 +361,98 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                 RadioButton rab4 = convertView.findViewById(R.id.rb4);
                 RadioButton rab5 = convertView.findViewById(R.id.rb5);
 
+                TableRow tablesRow1 = convertView.findViewById(R.id.table1);
+                TableRow tablesRow2 = convertView.findViewById(R.id.table2);
+                TableRow tablesRow3 = convertView.findViewById(R.id.table3);
+                TableRow tablesRow4 = convertView.findViewById(R.id.table4);
+                TableRow tablesRow5 = convertView.findViewById(R.id.table5);
+
+                tablesRow1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rab1.isChecked()){
+                            Constants.CAR_CATEGORY.clear();
+                            Constants.CAR_CATEGORY.add("Compact");
+                            rab1.setChecked(true);
+                            rab2.setChecked(false);
+                            rab3.setChecked(false);
+                            rab4.setChecked(false);
+                            rab5.setChecked(false);
+                        }else {
+                            Constants.CAR_CATEGORY.remove("Compact");
+                            rab1.setChecked(false);
+                        }
+                    }
+                });
+
+                tablesRow2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rab1.isChecked()){
+                            Constants.CAR_CATEGORY.clear();
+                            Constants.CAR_CATEGORY.add("Small");
+                            rab1.setChecked(false);
+                            rab2.setChecked(true);
+                            rab3.setChecked(false);
+                            rab4.setChecked(false);
+                            rab5.setChecked(false);
+                        }else {
+                            Constants.CAR_CATEGORY.remove("Small");
+                            rab2.setChecked(false);
+                        }
+                    }
+                });
+                tablesRow3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rab3.isChecked()){
+                            Constants.CAR_CATEGORY.clear();
+                            Constants.CAR_CATEGORY.add("Mid size");
+                            rab1.setChecked(false);
+                            rab2.setChecked(false);
+                            rab3.setChecked(true);
+                            rab4.setChecked(false);
+                            rab5.setChecked(false);
+                        }else {
+                            Constants.CAR_CATEGORY.remove("Mid size");
+                            rab3.setChecked(false);
+                        }
+                    }
+                });
+                tablesRow4.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rab4.isChecked()){
+                            Constants.CAR_CATEGORY.clear();
+                            Constants.CAR_CATEGORY.add("Full");
+                            rab1.setChecked(false);
+                            rab2.setChecked(false);
+                            rab3.setChecked(false);
+                            rab4.setChecked(true);
+                            rab5.setChecked(false);
+                        }else {
+                            Constants.CAR_CATEGORY.remove("Full");
+                            rab4.setChecked(false);
+                        }
+                    }
+                });
+                tablesRow5.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rab5.isChecked()){
+                            Constants.CAR_CATEGORY.clear();
+                            Constants.CAR_CATEGORY.add("Van/Pick-up");
+                            rab1.setChecked(false);
+                            rab2.setChecked(false);
+                            rab3.setChecked(false);
+                            rab4.setChecked(false);
+                            rab5.setChecked(true);
+                        }else {
+                            Constants.CAR_CATEGORY.remove("Van/Pick-up");
+                            rab5.setChecked(false);
+                        }
+                    }
+                });
                 if (Constants.CAR_CATEGORY.size() > 0){
                     String checkedItem = Constants.CAR_CATEGORY.get(0);
 
@@ -221,119 +510,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
 
                 break;
 
-            case 2 :
-                convertView = layoutInflater.inflate(R.layout.list_item_security_ratings, null);
-
-                CheckBox checkBox1 = convertView.findViewById(R.id.checkbox1);
-                CheckBox checkBox2 = convertView.findViewById(R.id.checkbox2);
-                CheckBox checkBox3 = convertView.findViewById(R.id.checkbox3);
-                CheckBox checkBox4 = convertView.findViewById(R.id.checkbox4);
-                CheckBox checkBox5 = convertView.findViewById(R.id.checkbox5);
-
-                if (Constants.SECURITY_RATINGS.size()>0){
-                    for (String checkedbox : Constants.SECURITY_RATINGS){
-                        switch (checkedbox){
-                            case "5 stars":
-                                checkBox1.setChecked(true);
-                                break;
-                            case "4 stars":
-                                checkBox2.setChecked(true);
-                                break;
-                            case "3 stars":
-                                checkBox3.setChecked(true);
-                                break;
-                            case "2 stars":
-                                checkBox4.setChecked(true);
-                                break;
-                            case "1 star":
-                                checkBox5.setChecked(true);
-                                break;
-                        }
-                    }
-                }
-
-
-                checkBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                        if (isChecked){
-                            Constants.SECURITY_RATINGS.add("5 stars");
-                        }else {
-                            Constants.SECURITY_RATINGS.remove("5 stars");
-                        }
-                    }
-                });
-                checkBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                        if (isChecked){
-                            Constants.SECURITY_RATINGS.add("4 stars");
-                        }else {
-                            Constants.SECURITY_RATINGS.remove("4 stars");
-                        }
-                    }
-                });
-                checkBox3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                        if (isChecked){
-                            Constants.SECURITY_RATINGS.add("3 stars");
-                        }else {
-                            Constants.SECURITY_RATINGS.remove("3 stars");
-                        }
-                    }
-                });
-                checkBox4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                        if (isChecked){
-                            Constants.SECURITY_RATINGS.add("2 stars");
-                        }else {
-                            Constants.SECURITY_RATINGS.remove("2 stars");
-                        }
-                    }
-                });
-                checkBox5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                        if (isChecked){
-                            Constants.SECURITY_RATINGS.add("1 star");
-                        }else {
-                            Constants.SECURITY_RATINGS.remove("1 star");
-                        }
-                    }
-                });
-//                checkBox.setId(1000+childPosition);
-//                checkBox.setText(expandedListText);
-//
-//                TextView  expandedListTextView = convertView
-//                        .findViewById(R.id.expandedListItem1);
-//                expandedListTextView.setText(expandedListText);
-//
-//
-//                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                    @Override
-//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                        Toast.makeText(buttonView.getContext(), "Selected! - Question number: " + groupPosition + "answer: " + childPosition + "ischecked: " + isChecked, Toast.LENGTH_SHORT).show();
-//
-//                        Constants.SECURITY_RATINGS.add((String.valueOf(childPosition+1))+" stars");
-//
-//                    }
-//                });
-
-                break;
         }
-
-        //Previous success build code
-       /* if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_item_security_ratings, null);
-        }
-
-        CheckBox checkBox = convertView.findViewById(R.id.checkbox);
-        checkBox.setText(expandedListText);
-        TextView  expandedListTextView = convertView
-                .findViewById(R.id.expandedListItem);
-        expandedListTextView.setText(expandedListText);*/
 
         return convertView;
     }

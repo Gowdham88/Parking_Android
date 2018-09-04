@@ -96,7 +96,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     //Nearest Place recycler
     RecyclerView mNearestPlaceRecycler;
     CarouselNearestAdapter mNearestrecyclerAdapter;
-
+    Boolean isCarouselSwiped = false;
     //Filter
     Boolean isExpandableListEnabled = false;
     Button mFilterButton;
@@ -283,7 +283,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         double lng = Double.parseDouble(mCameraLong.get(scrollPosition));
                         LatLng latLng = new LatLng(lat,lng);
 //                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+                        if (scrollPosition == 0){
+
+                            if (isCarouselSwiped){
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+                            }else{
+
+                            }
+
+//                            Toast.makeText(getActivity(), "Same count", Toast.LENGTH_SHORT).show();
+                        }else{
+                            isCarouselSwiped = true;
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+                        }
+
                     }
                 });
             }
@@ -456,7 +469,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 distances1.add(String.valueOf(distanceval));
                                 Log.e("distance", String.valueOf(distances1));
 
-//                                if (locationDistance < 15000) {
+//                                if (locationDistance < 1500) {
                                 caldis1.add(String.valueOf(mLocationDistances));
                                 Log.e("caldis1", String.valueOf(caldis1));
                                 mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
@@ -479,23 +492,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 mNearestrecyclerAdapter.notifyDataSetChanged();
 
                                 LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
-                                mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-//                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
-//                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-
-//                                }
+                                if (mNearestLocationList.get(i).getParkingTypes().equals("Free street parking")){
+                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+                                }else {
+                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
+                                }
+                                }
 
                             }
-                        }
-//                        Double lat = mCurrentGpsLoc.getLatitude();
-//                        Double lng = mCurrentGpsLoc.getLongitude();
-//                        LatLng locateMe = new LatLng(lat, lng);
-//
-//
-//                        float zoomLevel = 14.0f;
-//
-//                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateMe,14));
+//                        }
+
                         hideProgressDialog();
 
                     }
@@ -511,7 +517,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.clear();
-//        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
 
         // Helper method for smooth
         // animation

@@ -4,62 +4,138 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/linearLayout"
-    android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
-    android:paddingStart="?android:attr/expandableListPreferredChildPaddingLeft"
-    android:gravity="left"
+    android:gravity="start"
+    android:background="@color/border_color"
     android:layoutDirection="ltr">
-    <CheckBox
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/table1">
+        <CheckBox
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/checkbox1"
-        android:text="  5 star"
         android:button="@drawable/customcheckbox"
-        android:scaleX="0.6"
-        android:scaleY="0.6"
+        android:scaleX="0.3"
+        android:scaleY="0.3"
         android:focusable="true"
-         />
+        android:layout_column="1"
+            android:layout_marginStart="3dp" />
+            <TextView
+                android:id="@+id/cb1_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5 stars"
+                android:layout_column="2"
+                android:layout_marginStart="8dp"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/table2">
     <CheckBox
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/checkbox2"
+        android:layout_marginStart="3dp"
         android:button="@drawable/customcheckbox"
-        android:scaleX="0.6"
-        android:scaleY="0.6"
-        android:text="  4 star"
+        android:scaleX="0.3"
+        android:scaleY="0.3"
         android:focusable="true"
+        android:layout_column="1"
         />
+            <TextView
+                android:id="@+id/cb2_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4 stars"
+                android:layout_column="2"
+                android:layout_marginStart="8dp"
+                />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/table3">
     <CheckBox
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/checkbox3"
         android:button="@drawable/customcheckbox"
-        android:scaleX="0.6"
-        android:scaleY="0.6"
-        android:text="  3 star"
+        android:scaleX="0.3"
+        android:scaleY="0.3"
         android:focusable="true"
+        android:layout_marginStart="3dp"
+        android:layout_column="1"
         />
+            <TextView
+                android:id="@+id/cb3_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3 stars"
+                android:layout_column="2"
+                android:layout_marginStart="8dp"
+                />
+        </TableRow>
+        <TableRow android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/table4">
     <CheckBox
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/checkbox4"
         android:button="@drawable/customcheckbox"
-        android:scaleX="0.6"
-        android:scaleY="0.6"
-        android:text="  2 star"
+        android:scaleX="0.3"
+        android:layout_marginStart="3dp"
+        android:scaleY="0.3"
         android:focusable="true"
-    />
+        android:layout_column="1"
+        />
+
+        <TextView
+            android:id="@+id/cb4_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2 stars"
+            android:layout_column="2"
+            android:layout_marginStart="8dp"
+            />
+    </TableRow>
+
+        <TableRow android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/table5">
     <CheckBox
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/checkbox5"
         android:button="@drawable/customcheckbox"
-        android:scaleX="0.6"
-        android:scaleY="0.6"
-        android:text="  1 star"
+        android:scaleX="0.3"
+        android:scaleY="0.3"
         android:focusable="true"
-    />
+        android:layout_column="1"
+        android:layout_marginStart="3dp"
+        />
 
+        <TextView
+            android:id="@+id/cb5_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1 star"
+            android:layout_marginStart="8dp"
+            android:layout_column="2"
+            />
+    </TableRow>
 
+    </TableLayout>
     <TextView
         android:id="@+id/expandedListItem1"
         android:layout_width="fill_parent"
@@ -67,4 +143,5 @@
         android:paddingTop="10dp"
         android:visibility="gone"
         android:paddingBottom="10dp" />
+
 </LinearLayout>
