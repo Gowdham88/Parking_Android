@@ -60,7 +60,7 @@ public class ViewImageActivity extends AppCompatActivity {
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
-    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,docid;
+    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,docid,documentiDs;
     Boolean isBookedAny = false;
     List<Users> bookinglist = new ArrayList<Users>();
      FirebaseFirestore db;
@@ -101,7 +101,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
             Log.e("lattitudeview", String.valueOf(latitude));
             Log.e("longitudeview", String.valueOf(longitude));
-            Log.e("place", String.valueOf(DestName));
+            Log.e("place", String.valueOf(cameraImageUrl));
 
             //The key argument here must match that used in the other activity
         }
@@ -280,7 +280,7 @@ public class ViewImageActivity extends AppCompatActivity {
 //
                                                 if (val) {
 
-                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
+//                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
                                                     String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
 
                                                     popup(valuedoc,entry.getKey(),bookingRequest);
@@ -288,7 +288,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
                                                 }else{
-                                                    Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
+//                                                    Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         }else{
@@ -341,8 +341,8 @@ public class ViewImageActivity extends AppCompatActivity {
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setView(deleteDialogView);
-        Button ok = deleteDialogView.findViewById(R.id.ok_button);
-        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
 
         final AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {
@@ -363,12 +363,14 @@ public class ViewImageActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                                isBookedAny = false;
-                                if (bookingRequest){
-                                    makeAlreadyBookedAlert(true);
-                                }else{
-                                    makeAlreadyBookedAlert(false);
-                                }
+                                documentiDs =PreferencesHelper.getPreference(ViewImageActivity.this,PreferencesHelper.PREFERENCE_DOCUMENTID);
+                                PopUpprotectcar(documentiDs,bookingRequest);
+//                                isBookedAny = false;
+//                                if (bookingRequest){
+//                                    makeAlreadyBookedAlert(true);
+//                                }else{
+//                                    makeAlreadyBookedAlert(false);
+//                                }
 
 
                             }
@@ -382,25 +384,25 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
 
-                Map<String, Object> likeupdate = new HashMap<>();
-                likeupdate.put( "bookingStatus", false);
-
-                db.collection("Bookings").document(mUid)
-                        .update(likeupdate)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+//                Map<String, Object> likeupdate = new HashMap<>();
+//                likeupdate.put( "bookingStatus", false);
+//
+//                db.collection("Bookings").document(mUid)
+//                        .update(likeupdate)
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Log.d(TAG, "DocumentSnapshot successfully written!");
+//
+//
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.w(TAG, "Error writing document", e);
+//                            }
+//                        });
 //        if(!documentID.equals(null) || !documentID.isEmpty()){
 //            PopUpprotectcar(documentID);
 //            Log.e("documentID",documentID);
@@ -440,14 +442,14 @@ public class ViewImageActivity extends AppCompatActivity {
         alertDialog1.show();
     }
 
-    private void PopUpprotectcar(String documentID) {
+    private void PopUpprotectcar(String documentiDs, Boolean bookingRequest) {
 
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setView(deleteDialogView);
-        Button ok = deleteDialogView.findViewById(R.id.ok_button);
-        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
 //        final MediaPlayer mp = MediaPlayer.create(this, R.raw.soho);
 
         final AlertDialog alertDialog1 = alertDialog.create();
@@ -455,18 +457,24 @@ public class ViewImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-
+                isBookedAny = false;
+                if (bookingRequest){
+                    makeAlreadyBookedAlert(true);
+                }else{
+                    makeAlreadyBookedAlert(false);
+                }
 
 //                mp.start();
                 final Map<String, Object> protectdata = new HashMap<>();
                 protectdata.put("protectCar", true);
+                protectdata.put("bookingStatus", false);
 
 
 
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-                db.collection("Bookings").document(documentID)
+                db.collection("Bookings").document(documentiDs)
                         .update(protectdata)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override

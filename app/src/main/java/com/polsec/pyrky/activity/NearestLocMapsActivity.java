@@ -144,6 +144,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     private GoogleApiClient mGoogleApiClient;
     private android.support.v7.app.AlertDialog dialog;
     Boolean isBookedAny = false;
+    String documentIDs;
 
     public static NearestLocMapsActivity newInstance(String s, String s1, String carousel, int adapterPosition, String s2) {
 
@@ -225,7 +226,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                 Log.e("lattitude", String.valueOf(mLat));
                  Log.e("longitude", String.valueOf(mLongi));
-                Log.e("plc", String.valueOf(PlaceName));
+                Log.e("plc", String.valueOf(mListPosition));
             }
             else{
 
@@ -368,7 +369,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                 mAccurateDistancesString.add(String.valueOf(mAccurateDistance));
                                 Log.e("distancemap", String.valueOf(mAccurateDistancesString));
 
-                                if (locationDistance < 1500) {
+                                if (locationDistance < 15000) {
                                     mCalculateDistances.add(String.valueOf(mLocationDistances));
                                     Log.e("mCalculateDistances", String.valueOf(mCalculateDistances));
                                     mCameraLat.add(datalist.get(i).getCameraLat());
@@ -614,6 +615,7 @@ hideProgressDialog();
                 Log.e("longitude", String.valueOf(m.getPosition().longitude));
                 Log.e("yourplace",yourplace);
                 Log.e("cameraid",cameraid);
+                Log.e("cameraidimg",cameraImageUrl);
                 startActivity(intent);
                 alertD.cancel();
                 mNearestPlaceRecycler.setVisibility(View.VISIBLE);
@@ -777,8 +779,8 @@ hideProgressDialog();
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
         alertDialog.setView(deleteDialogView);
-        Button ok = deleteDialogView.findViewById(R.id.ok_button);
-        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
 
         final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {
@@ -802,12 +804,14 @@ hideProgressDialog();
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                                isBookedAny = false;
-                                if (bookingRequest){
-                                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
-                                }else{
-                                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
-                                }
+                                documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+                                PopUpprotectcar(documentIDs,bookingRequest,latitude,longitude,yourPlace);
+//                                isBookedAny = false;
+//                                if (bookingRequest){
+//                                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+//                                }else{
+//                                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
+//                                }
 
                             }
                         })
@@ -819,25 +823,25 @@ hideProgressDialog();
                         });
 
 
-                Map<String, Object> likeupdate = new HashMap<>();
-                likeupdate.put( "bookingStatus", false);
-
-                db.collection("Bookings").document(mUid)
-                        .update(likeupdate)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+//                Map<String, Object> likeupdate = new HashMap<>();
+//                likeupdate.put( "bookingStatus", false);
+//
+//                db.collection("Bookings").document(mUid)
+//                        .update(likeupdate)
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Log.d(TAG, "DocumentSnapshot successfully written!");
+//
+//
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.w(TAG, "Error writing document", e);
+//                            }
+//                        });
 
 //                PopUpprotectcar(documentID);
 
@@ -872,14 +876,14 @@ hideProgressDialog();
         alertDialog1.getWindow().setAttributes(lp);
     }
 
-    private void PopUpprotectcar(String documentID) {
+    private void PopUpprotectcar(String documentIDs, Boolean bookingRequest, double latitude, double longitude, String yourPlace) {
 
         LayoutInflater factory = LayoutInflater.from(getActivity());
         final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
         final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
         alertDialog.setView(deleteDialogView);
-        Button ok = deleteDialogView.findViewById(R.id.ok_button);
-        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
 //        final MediaPlayer mp = MediaPlayer.create(this, R.raw.soho);
 
         final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
@@ -887,18 +891,24 @@ hideProgressDialog();
             @Override
             public void onClick(View view) {
 
-
+                isBookedAny = false;
+                if (bookingRequest){
+                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+                }else{
+                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
+                }
 
 //                mp.start();
                 final Map<String, Object> protectdata = new HashMap<>();
                 protectdata.put("protectCar", true);
+                protectdata.put("bookingStatus", false);
 
 
 
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-                db.collection("Bookings").document(documentID)
+                db.collection("Bookings").document(documentIDs)
                         .update(protectdata)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -982,45 +992,50 @@ hideProgressDialog();
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                    bookingid = document.getData();
+                                    if(document.contains("Booking_ID")){
+                                        bookingid = document.getData();
 
-                                    bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
 
-                                    for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
-                                        Boolean value = (Boolean) bookingEntry.getValue();
-                                        if (value){
-                                            isBookedAny = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (isBookedAny){
-                                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                                            System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                                            Boolean val = (Boolean) entry.getValue();
-                                            String values = String.valueOf(val);
-
-                                            Log.e("values", values);
-//
-                                            if (val) {
-
-//                                                Toast.makeText(getActivity(), values, Toast.LENGTH_SHORT).show();
-                                                String valuedoc=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-
-                                                popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace);
+                                        for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
+                                            Boolean value = (Boolean) bookingEntry.getValue();
+                                            if (value){
+                                                isBookedAny = true;
                                                 break;
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-                                            }else{
-                                                Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
                                             }
                                         }
-                                    }else{
-                                        if (bookingRequest){
-                                            bookAndNavigate(latitude,longitude,yourPlace);
-                                        }
+
+                                        if (isBookedAny){
+                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                                System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                                Boolean val = (Boolean) entry.getValue();
+                                                String values = String.valueOf(val);
+
+                                                Log.e("values", values);
+//
+                                                if (val) {
+
+//                                                Toast.makeText(getActivity(), values, Toast.LENGTH_SHORT).show();
+                                                    String valuedoc=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+                                                    popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace);
+                                                    break;
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                                }else{
+//                                                    Toast.makeText(getActivity(), "False value", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                    }
+
+                                        else{
+                                            if (bookingRequest){
+                                                bookAndNavigate(latitude,longitude,yourPlace);
+                                            }
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+
+                                    }
 
                                     }
 

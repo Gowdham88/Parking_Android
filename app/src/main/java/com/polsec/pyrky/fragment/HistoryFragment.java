@@ -105,7 +105,8 @@ public class HistoryFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
-        mRecyclerView.setHasFixedSize(true);
+//        recyclerAdapter.notifyDataSetChanged();
+//        mRecyclerView.setHasFixedSize(true);
 
         return view;
     }
@@ -160,7 +161,7 @@ public class HistoryFragment extends Fragment {
 
 
                         setupFeed();
-                        recyclerAdapter.notifyDataSetChanged();
+//                        recyclerAdapter.notifyDataSetChanged();
                     }
 
                 });
@@ -199,6 +200,7 @@ public class HistoryFragment extends Fragment {
                             }
 
                             setupFeed();
+//                            recyclerAdapter.notifyDataSetChanged();
                         }
                         else{
 
@@ -222,6 +224,11 @@ public class HistoryFragment extends Fragment {
                 }
             }
         });
+
+    }
+
+    public void addItem(View v){
+//        BookingList.add();
 
     }
 

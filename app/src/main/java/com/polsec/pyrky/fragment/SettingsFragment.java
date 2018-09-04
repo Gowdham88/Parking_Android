@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.FileProvider;
@@ -29,12 +31,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -222,6 +226,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             @Override
             public void onClick(View view) {
                 PopUp();
+
             }
         });
         String profileimg= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
@@ -333,6 +338,12 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         View bottomSheetView = factory.inflate(R.layout.dialo_camera_bottomsheet, null);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
+//        RelativeLayout HmRelayLay=bottomSheetView.findViewById(R.id.home_lay);
+//        HmRelayLay.setAlpha(0.1F);
+//        bottomSheetView.getWindow().getDecorView().getBackground().setColorFilter(new LightingColorFilter(0xFF000000,Color.TRANSPARENT));
+//
+//        bottomSheetView.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
         Camera = bottomSheetView.findViewById(R.id.camera_title);
         Gallery = bottomSheetView.findViewById(R.id.gallery_title);

@@ -53,7 +53,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     String[] mCarRange = {"[3.5 - 4.5m]", "[2.5 - 3.5m]", "[4 - 5m]", "[5 - 5.5m]", "[5.5 - 6.5m]"};
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     TextView email,carSize,carDimension;
- ImageView mProfileImage;
+ ImageView mProfileImages;
     private final int PICK_IMAGE_REQUEST = 71;
     private Uri filePath;
     ActionBar actionBar;
@@ -102,7 +102,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         mCarIcon = Integer.parseInt(PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR));
 
         email = view.findViewById(R.id.et_email);
-        mProfileImage = view.findViewById(R.id.profile_img);
+        mProfileImages = view.findViewById(R.id.profile_img);
         nameEdt = view.findViewById(R.id.name_txt);
         carIcon = view.findViewById(R.id.car_icon);
         carSize = view.findViewById(R.id.car_size);
@@ -121,9 +121,9 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
             Picasso.with(getActivity())
                     .load(mProfilepic)
                     .resize(avatarSize, avatarSize)
-                    .centerCrop()
-                    .transform(new CircleTransformation())
-                    .into(mProfileImage);
+//                    .centerCrop()
+//                    .transform(new CircleTransformation())
+                    .into(mProfileImages);
         }
 
 

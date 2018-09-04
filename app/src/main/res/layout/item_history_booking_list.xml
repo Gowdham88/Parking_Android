@@ -42,7 +42,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/view_car_text"
         android:max="5"
-        android:isIndicator="false"
+        android:isIndicator="true"
         android:numStars="5"
         android:text="" />
 

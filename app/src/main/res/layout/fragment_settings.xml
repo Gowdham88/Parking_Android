@@ -117,7 +117,6 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:layout_marginTop="10dp"
                 android:id="@+id/carousel_recycler"
                 />
             <Button
@@ -130,6 +129,14 @@
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
                 android:layout_alignParentEnd="true" />
+            <View
+                android:id="@+id/passlineemail1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:focusable="false"
+                android:layout_marginTop="3dp"
+                android:background="@color/booking_txtclr"
+                android:layout_below="@+id/carousel_recycler"/>
         </RelativeLayout>
         <!--<Spinner-->
         <!--android:layout_width="match_parent"-->

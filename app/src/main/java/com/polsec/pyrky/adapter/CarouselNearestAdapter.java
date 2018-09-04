@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -146,6 +147,8 @@ public void onClick(View v) {
     FragmentTransaction transaction =  ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
     transaction.replace(R.id.main_frame_layout, NearestLocMapsActivity.newInstance(nearlat1.get(position),nearlong1.get(position),value,holder.getAdapterPosition(),Placename.get(position)));
     transaction.addToBackStack(null).commit();
+
+    Log.e("position", String.valueOf(holder.getAdapterPosition()));
         }
         });
         }
