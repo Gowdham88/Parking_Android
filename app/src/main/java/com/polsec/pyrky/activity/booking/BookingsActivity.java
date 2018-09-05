@@ -16,9 +16,10 @@ import com.polsec.pyrky.R;
 import com.polsec.pyrky.adapter.CustomViewPagerAdapter;
 import com.polsec.pyrky.fragment.CurrentBookingsFragment;
 import com.polsec.pyrky.fragment.HistoryFragment;
+import com.polsec.pyrky.utils.CustomViewPager;
 
 public class BookingsActivity extends AppCompatActivity implements  TabHost.OnTabChangeListener{
-    ViewPager viewPager;
+    CustomViewPager viewPager;
     TabLayout tabLayout;
 Toolbar toolbar;
     ImageView mBackIcon;
@@ -57,6 +58,9 @@ Toolbar toolbar;
 
         tabLayout.setFocusableInTouchMode(false); //Not Working
         tabLayout.setFocusable(false);
+        viewPager.setSwipeable(false);
+//        viewPager.setPagingEnabled(false);
+
 //        BookingTabAdapter pagerAdapter = new BookingTabAdapter(getFragmentManager(),getActivity());
 //        viewPager.setAdapter(pagerAdapter);
 //        setupTabIcons();
@@ -70,6 +74,7 @@ Toolbar toolbar;
 
         setupTabLayout();
         viewPager.setCurrentItem(0);
+//        viewPager.endFakeDrag();
     }
 
 
@@ -119,6 +124,7 @@ Toolbar toolbar;
 
     @Override
     public void onTabChanged(String s) {
+//        viewPager.endFakeDrag();
 
     }
 

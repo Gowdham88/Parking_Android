@@ -28,9 +28,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
@@ -96,7 +99,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     //Nearest Place recycler
     RecyclerView mNearestPlaceRecycler;
     CarouselNearestAdapter mNearestrecyclerAdapter;
-    Boolean isCarouselSwiped = false;
+
     //Filter
     Boolean isExpandableListEnabled = false;
     Button mFilterButton;
@@ -174,10 +177,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     Marker marker;
     MarkerOptions makeroptions;
     CarouselLayoutManager carouselLayoutManager;
+//    public static final String TAG = "ImmersiveModeFragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        getActivity().requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
     }
 
@@ -186,6 +193,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         super.onResume();
         ((HomeActivity) getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+//        mNearestrecyclerAdapter.notifyDataSetChanged();
+
+
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Places.GEO_DATA_API)
@@ -237,8 +247,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                 BOUNDS_MOUNTAIN_VIEW, null);
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
+//        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
 
+//        final View decorView = getActivity().getWindow().getDecorView();
+//        decorView.setOnSystemUiVisibilityChangeListener(
+//                new View.OnSystemUiVisibilityChangeListener() {
+//                    @Override
+//                    public void onSystemUiVisibilityChange(int i) {
+//                        int height = decorView.getHeight();
+//                        Log.i(TAG, "Current height: " + height);
+//                    }
+//                });
+//
+//        toggleHideyBar();
         HomeRelLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -271,36 +293,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
         getCurrentLocation();
         loadCameraLocations();
+        mNearestLocationList.clear();
+
+//
 
         if (mCameraLat!=null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 mNearestPlaceRecycler.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                     @Override
                     public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+//                        mNearestrecyclerAdapter.notifyDataSetChanged();
 
                         int scrollPosition = carouselLayoutManager.getCenterItemPosition();
                         double lat = Double.parseDouble(mCameraLat.get(scrollPosition));
                         double lng = Double.parseDouble(mCameraLong.get(scrollPosition));
                         LatLng latLng = new LatLng(lat,lng);
-//                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        if (scrollPosition == 0){
-
-                            if (isCarouselSwiped){
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
-                            }else{
-
-                            }
-
-//                            Toast.makeText(getActivity(), "Same count", Toast.LENGTH_SHORT).show();
-                        }else{
-                            isCarouselSwiped = true;
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
-                        }
-
+                        //                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
                     }
                 });
             }
         }
+
 
 
         mSearchButton.setOnClickListener(new View.OnClickListener() {
@@ -308,21 +322,43 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             public void onClick(View v) {
 
                 if (autoCompView.getText().toString().isEmpty() || description == null) {
-                    Toast.makeText(getActivity(), "Please enter the search location", Toast.LENGTH_SHORT).show();
-                } else {
+
+                    String str="Please enter the search location";
+                    athenticaationpopup(str);
+
+
+
+                }
+                 else {
                     Toast.makeText(getActivity(), getFirstWord(description), Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
-                    intent.putExtra("placeid", placeId);
-                    intent.putExtra("latitude", String.valueOf(Latitude).trim());
-                    intent.putExtra("longitude", String.valueOf(Longitude).trim());
-                    intent.putExtra("value", "home");
-                    intent.putExtra("place", description);
-                    Log.e("strLatitude", String.valueOf(Latitude));
-                    Log.e("strLongitude", String.valueOf(Longitude));
-                    intent.putStringArrayListExtra("placesarray", caldis);
-                    getActivity().startActivity(intent);
-                    autoCompView.setText("");
+                    NearestLocMapsActivity newFragment = new NearestLocMapsActivity();
+                    Bundle args = new Bundle();
+                    args.putString("placeid", placeId);
+                    args.putString("latitude", String.valueOf(Latitude).trim());
+                    args.putString("longitude", String.valueOf(Longitude).trim());
+                    args.putString("value", "home");
+                    args.putString("place", description);
+//                    Log.e("strLatitude", String.valueOf(Latitude));
+//                    Log.e("strLongitude", String.valueOf(Longitude));
+                    args.putStringArrayList("placesarray", caldis);
+
+                    newFragment.setArguments(args);
+
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                    // Replace whatever is in the fragment_container view with this fragment,
+                    // and add the transaction to the back stack so the user can navigate back
+                    transaction.replace(R.id.main_frame_layout, newFragment);
+                    transaction.addToBackStack(null);
+
+                    // Commit the transaction
+                    transaction.commit();
+
+//                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
+//
+//                    getActivity().startActivity(intent);
+//                    autoCompView.setText("");
                 }
 
             }
@@ -403,10 +439,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
                             Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
                             Log.e("address1", address1);
-
+                            LatLng sydney = new LatLng(latt, longi);
+                            mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,14));
 
                             Log.e("lattd", String.valueOf(latt));
                             Log.e("latgd", String.valueOf(longi));
+
 
 
                         }
@@ -469,7 +508,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 distances1.add(String.valueOf(distanceval));
                                 Log.e("distance", String.valueOf(distances1));
 
-//                                if (locationDistance < 1500) {
+
+
+                                if (locationDistance < 15000) {
                                 caldis1.add(String.valueOf(mLocationDistances));
                                 Log.e("caldis1", String.valueOf(caldis1));
                                 mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
@@ -488,25 +529,39 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 mNearestPlaceRecycler.setHasFixedSize(true);
                                 mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName);
                                 mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
-                                mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
                                 mNearestrecyclerAdapter.notifyDataSetChanged();
+                                mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
+//
+
 
                                 LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
-                                if (mNearestLocationList.get(i).getParkingTypes().equals("Free street parking")){
-                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-                                }else {
-                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
+                                mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+//                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
+//                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
                                 }
-                                }
+
+
 
                             }
-//                        }
 
+
+                        }
+//                        Double lat = mCurrentGpsLoc.getLatitude();
+//                        Double lng = mCurrentGpsLoc.getLongitude();
+//                        LatLng locateMe = new LatLng(lat, lng);
+//
+//
+//                        float zoomLevel = 14.0f;
+//
+//                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateMe,14));
                         hideProgressDialog();
 
                     }
 
                 });
+
+
     }
     private void proceedAfterPermission() {
 
@@ -517,6 +572,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.clear();
+//        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
 
         // Helper method for smooth
         // animation
@@ -636,7 +692,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                     Log.e("distancemtrs", String.valueOf(distancesmtrs));
 //                        for(int j =0;j<distancesmtrs.size();j++){
 
-//                                    if (distancemtrs < 1500) {
+                                    if (distancemtrs < 1500) {
                                         caldis.add(String.valueOf(distancesmtrs));
                                         Log.e("caldis", String.valueOf(caldis));
                                         nearlat.add(mNearestLocationList.get(i).getCameraLat());
@@ -645,9 +701,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                         Log.e("nearlong", String.valueOf(nearlong));
 //                            }
 //                                    }
-                                    distance = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
-                                    Log.e("distance", String.valueOf(distance));
-                                    distances.add(distance);
+                                        distance = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
+                                        Log.e("distance", String.valueOf(distance));
+                                        distances.add(distance);
+
 //                                          distancedata();
 
 
@@ -657,6 +714,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
 //
+                                    }
                                 }
 
                             }
@@ -856,12 +914,89 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mGoogleApiClient.disconnect();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mGoogleApiClient.stopAutoManage(getActivity());
-        mGoogleApiClient.disconnect();
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        mGoogleApiClient.stopAutoManage(getActivity());
+//        mGoogleApiClient.disconnect();
+//    }
+    private void athenticaationpopup(String message) {
+
+        LayoutInflater factory = LayoutInflater.from(getActivity());
+        final View deleteDialogView = factory.inflate(R.layout.authentication_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setView(deleteDialogView);
+        TextView AthuntTxt=(TextView)deleteDialogView.findViewById(R.id.txt_authent);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+        AthuntTxt.setText(message);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)  {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
     }
 
+    public void toggleHideyBar() {
+
+        // BEGIN_INCLUDE (get_current_ui_flags)
+        // The UI options currently enabled are represented by a bitfield.
+        // getSystemUiVisibility() gives us that bitfield.
+        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+        int newUiOptions = uiOptions;
+        // END_INCLUDE (get_current_ui_flags)
+        // BEGIN_INCLUDE (toggle_ui_flags)
+        boolean isImmersiveModeEnabled =
+                ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+        if (isImmersiveModeEnabled) {
+            Log.i(TAG, "Turning immersive mode mode off. ");
+        } else {
+            Log.i(TAG, "Turning immersive mode mode on.");
+        }
+
+        // Navigation bar hiding:  Backwards compatible to ICS.
+        if (Build.VERSION.SDK_INT >= 14) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+
+        // Status bar hiding: Backwards compatible to Jellybean
+        if (Build.VERSION.SDK_INT >= 16) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        }
+
+        // Immersive mode: Backward compatible to KitKat.
+        // Note that this flag doesn't do anything by itself, it only augments the behavior
+        // of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the purposes of this sample
+        // all three flags are being toggled together.
+        // Note that there are two immersive mode UI flags, one of which is referred to as "sticky".
+        // Sticky immersive mode differs in that it makes the navigation and status bars
+        // semi-transparent, and the UI flag does not get cleared when the user interacts with
+        // the screen.
+        if (Build.VERSION.SDK_INT >= 18) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
+
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
+        //END_INCLUDE (set_ui_flags)
+    }
 
 }

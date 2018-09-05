@@ -227,6 +227,7 @@ public class CurrentBookingsFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+                        if(document.contains("Booking_ID")){
 //                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         bookingid = document.getData();
 
@@ -251,6 +252,10 @@ public class CurrentBookingsFragment extends Fragment {
                         }
 
                         setupFeed();
+                        }
+                        else{
+
+                        }
 //                        recyclerAdapter.notifyDataSetChanged();
 
 

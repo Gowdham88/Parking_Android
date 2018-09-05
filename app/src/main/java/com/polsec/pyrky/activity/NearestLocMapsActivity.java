@@ -18,13 +18,16 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.Interpolator;
@@ -61,6 +64,8 @@ import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
+import com.polsec.pyrky.fragment.HomeFragment;
+import com.polsec.pyrky.fragment.ProfileFragment;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.preferences.PreferencesHelper;
@@ -82,11 +87,11 @@ import java.util.Map;
 import static android.content.ContentValues.TAG;
 
 
-public class NearestLocMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener,
+public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener,
         GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks,CarouselDetailMapAdapter.ListAdapterListener, DiscreteScrollView.OnItemChangedListener {
+        GoogleApiClient.ConnectionCallbacks, DiscreteScrollView.OnItemChangedListener {
 
-    Context context = this;
+    Context context = getActivity();
 
     CarouselDetailMapAdapter mNearestrecyclerAdapter;
 //    RecyclerView mNearestPlaceRecycler;
@@ -139,65 +144,89 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
     private GoogleApiClient mGoogleApiClient;
     private android.support.v7.app.AlertDialog dialog;
     Boolean isBookedAny = false;
+    String documentIDs;
+
+    public static NearestLocMapsActivity newInstance(String s, String s1, String carousel, int adapterPosition, String s2) {
+
+        NearestLocMapsActivity home = new NearestLocMapsActivity();
+
+        Bundle args = new Bundle();
+        args.putString("latt", s);
+        args.putString("longg", s1);
+        args.putString("carousel", carousel);
+        args.putInt("adapterPosition", adapterPosition);
+        args.putString("place", s2);
+
+        home.setArguments(args);
+        return home;
+    }
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(Places.GEO_DATA_API)
-                .enableAutoManage((FragmentActivity) context, 0, this)
-                .addConnectionCallbacks(this)
-                .build();
+//        mGoogleApiClient = new GoogleApiClient.Builder(context)
+//                .addApi(Places.GEO_DATA_API)
+//                .enableAutoManage((FragmentActivity) getActivity(), 1, NearestLocMapsActivity.this)
+//                .addConnectionCallbacks(NearestLocMapsActivity.this)
+//                .build();
+
         mNearestPlaceRecycler.setVisibility(View.VISIBLE);
     }
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nearest_loc_maps);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_nearest_loc_maps, container, false);
+
+
+        SupportMapFragment mapFragment = (SupportMapFragment)getChildFragmentManager()
                 .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
         mapFragment.getMapAsync(NearestLocMapsActivity.this);
         showProgressDialog();
-        mNearestPlaceRecycler = findViewById(R.id.nearest_places_recycler);
+        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.GONE);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+        mNearestPlaceRecycler =  view.findViewById(R.id.nearest_places_recycler);
         mNearestPlaceRecycler.setVisibility(View.VISIBLE);
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        mUid = PreferencesHelper.getPreference(NearestLocMapsActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-        docid=PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_DOCUMENTID);
+        mUid = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+        docid=PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCUMENTID);
 
-        mBackIcon = (ImageView) findViewById(R.id.back_icon);
-        TitlaTxt = (TextView) findViewById(R.id.extra_title);
+        mBackIcon = (ImageView) view.findViewById(R.id.back_icon);
+        TitlaTxt = (TextView) view. findViewById(R.id.extra_title);
         TitlaTxt.setText("Map");
         mBackIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+//                refreshActivity();
+                getActivity().onBackPressed();
             }
         });
 
-        Intent chatIntent = getIntent();
-        if(chatIntent!=null){
-            String Value=chatIntent.getStringExtra("value");
-            String Value1=chatIntent.getStringExtra("values");
+
+
+        Bundle bundle = this.getArguments();
+        if(bundle!=null){
+            String Value=bundle.getString("value");
+            String Value1=bundle.getString("carousel");
 
             if(Nameval.equals(Value)){
-                mLat = chatIntent.getStringExtra("latitude").trim();
-                mLongi = chatIntent.getStringExtra("longitude").trim();
-                PlaceName= chatIntent.getStringExtra("place").trim();
+                mLat = bundle.getString("latitude").trim();
+                mLongi = bundle.getString("longitude").trim();
+                PlaceName= bundle.getString("place").trim();
                 Log.e("hlattitude", String.valueOf(mLat));
                 Log.e("hlongitude", String.valueOf(mLongi));
                 Log.e("hplace", String.valueOf(PlaceName));
             }
             else if(Nameval1.equals(Value1)){
-                mLat = chatIntent.getStringExtra("lat").trim();
-                mLongi = chatIntent.getStringExtra("lng").trim();
-                mListPosition = chatIntent.getIntExtra("listposition",0);
-                PlaceName= chatIntent.getStringExtra("placename").trim();
+                mLat = bundle.getString("latt").trim();
+                mLongi = bundle.getString("longg").trim();
+                mListPosition = bundle.getInt("adapterPosition");
+                PlaceName= bundle.getString("place").trim();
 
                 Log.e("lattitude", String.valueOf(mLat));
                  Log.e("longitude", String.valueOf(mLongi));
-                Log.e("plc", String.valueOf(PlaceName));
+                Log.e("plc", String.valueOf(mListPosition));
             }
             else{
 
@@ -279,7 +308,20 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
             }
             }
             }
+        return view;
         }
+
+    private void refreshActivity() {
+
+        HomeFragment newFragment = new HomeFragment();
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.main_frame_layout, newFragment).commit();
+
+    }
 
 
     private void loadCameraLocation(Query query){
@@ -327,7 +369,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                                 mAccurateDistancesString.add(String.valueOf(mAccurateDistance));
                                 Log.e("distancemap", String.valueOf(mAccurateDistancesString));
 
-//                                if (locationDistance < 15000) {
+                                if (locationDistance < 15000) {
                                     mCalculateDistances.add(String.valueOf(mLocationDistances));
                                     Log.e("mCalculateDistances", String.valueOf(mCalculateDistances));
                                     mCameraLat.add(datalist.get(i).getCameraLat());
@@ -357,9 +399,10 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
 
                                     mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
                                     mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
-                                    mNearestrecyclerAdapter = new CarouselDetailMapAdapter(context, mCameraImageUrl, mCameraLat, mCameraLong, mAccurateDistancesString, mCameraLocName, mCameraId, NearestLocMapsActivity.this);
+                                    mNearestrecyclerAdapter = new CarouselDetailMapAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, mAccurateDistancesString, mCameraLocName, mCameraId);
                                     mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                     mNearestPlaceRecycler.scrollToPosition(mListPosition);
+                                    mNearestrecyclerAdapter.notifyDataSetChanged();
                                     mNearestPlaceRecycler.setItemTransformer(new ScaleTransformer.Builder()
                                             .setMinScale(0.8f)
                                             .build());
@@ -386,7 +429,7 @@ public class NearestLocMapsActivity extends FragmentActivity implements OnMapRea
                 }
 
 hideProgressDialog();
-//                                }
+                                }
 //
 
                             }
@@ -397,21 +440,21 @@ hideProgressDialog();
 
     }
 
-    @Override
-    public void onClickimageButton(final int position, final String actionLikeButtonClicked, final String s, final String s1, String mapvalues, String s2, String s3) {
-
-
-//        Toast.makeText(NearestLocMapsActivity.this, "click", Toast.LENGTH_SHORT).show();
-//        mLat= String.valueOf(s);
-//        mLongi= String.valueOf(s1);
-//        valuestr=mapvalues;
-//        PlaceNameval=s2;
-//        Mmap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(mLat), Double.parseDouble(mLongi))));
-//        Log.e("maplattitude", String.valueOf(mLat));
-//                Log.e("maplongitude", String.valueOf(mLongi));
-//        Log.e("valuemap",valuelat+valuelongi+valuestr);
-
-    }
+//    @Override
+//    public void onClickimageButton(final int position, final String actionLikeButtonClicked, final String s, final String s1, String mapvalues, String s2, String s3) {
+//
+//
+////        Toast.makeText(NearestLocMapsActivity.this, "click", Toast.LENGTH_SHORT).show();
+////        mLat= String.valueOf(s);
+////        mLongi= String.valueOf(s1);
+////        valuestr=mapvalues;
+////        PlaceNameval=s2;
+////        Mmap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(mLat), Double.parseDouble(mLongi))));
+////        Log.e("maplattitude", String.valueOf(mLat));
+////                Log.e("maplongitude", String.valueOf(mLongi));
+////        Log.e("valuemap",valuelat+valuelongi+valuestr);
+//
+//    }
 
     private void onItemChanged(String lat, String lng, String cameraId, String parkingType) {
         mapLat = lat.trim();
@@ -516,9 +559,9 @@ hideProgressDialog();
     }
 
     public void showDialog(Marker m, String cameraid, HashMap<String,Object> listofparkingRules, String cameraImageUrl){
-        LayoutInflater layoutInflater = LayoutInflater.from(NearestLocMapsActivity.this);
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View promptView = layoutInflater.inflate(R.layout.ruls_layout , null);
-        final AlertDialog alertD = new AlertDialog.Builder(this).create();
+        final AlertDialog alertD = new AlertDialog.Builder(getActivity()).create();
 
             TextView ViewTxt,NavigateTxt,rule1,rule2,rule3,rule4;
 
@@ -541,7 +584,7 @@ hideProgressDialog();
 
         Geocoder geocoder;
 ////
-        geocoder = new Geocoder(context, Locale.getDefault());
+        geocoder = new Geocoder(getActivity(), Locale.getDefault());
         try {
             yourAddresses= geocoder.getFromLocation(Double.parseDouble(String.valueOf(m.getPosition().latitude)),Double.parseDouble(String.valueOf(m.getPosition().longitude)) , 1);
         } catch (IOException e) {
@@ -561,7 +604,7 @@ hideProgressDialog();
             @Override
             public void onClick(View view) {
 
-                Intent intent=new Intent(NearestLocMapsActivity.this, ViewImageActivity.class);
+                Intent intent=new Intent(getActivity(), ViewImageActivity.class);
                 intent.putExtra("latitude",m.getPosition().latitude);
                 intent.putExtra("longitude",m.getPosition().longitude);
                 intent.putExtra("place",yourplace);
@@ -572,6 +615,7 @@ hideProgressDialog();
                 Log.e("longitude", String.valueOf(m.getPosition().longitude));
                 Log.e("yourplace",yourplace);
                 Log.e("cameraid",cameraid);
+                Log.e("cameraidimg",cameraImageUrl);
                 startActivity(intent);
                 alertD.cancel();
                 mNearestPlaceRecycler.setVisibility(View.VISIBLE);
@@ -608,7 +652,7 @@ hideProgressDialog();
     private void SaveData(String latitude, String longitude, String yourplace) {
 
 
-        final String uid = PreferencesHelper.getPreference(NearestLocMapsActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+        final String uid = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 
 
         parkingSpaceRating=0;
@@ -643,7 +687,7 @@ hideProgressDialog();
                     public void onSuccess(Void aVoid) {
 
 
-                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCUMENTID,documentID);
+                        PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCUMENTID,documentID);
 
                         Map<String, Boolean> likeData1 = new HashMap<>();
                         likeData1.put( documentID, true);
@@ -690,8 +734,8 @@ hideProgressDialog();
     private void showBottomSheet(double latitude, double longitude, String yourPlace) {
 
 
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NearestLocMapsActivity.this);
-        LayoutInflater factory = LayoutInflater.from(NearestLocMapsActivity.this);
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getActivity());
+        LayoutInflater factory = LayoutInflater.from(getActivity());
         View bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
         TextView map = bottomSheetView.findViewById(R.id.maps_title);
         TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
@@ -705,10 +749,7 @@ hideProgressDialog();
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
 
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent())
-                .getLayoutParams();
-        CoordinatorLayout.Behavior behavior = params.getBehavior();
-        ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
+
 
         map.setOnClickListener(view -> {
 
@@ -734,12 +775,12 @@ hideProgressDialog();
     }
 
     private void popup(String valuedoc,String key,Boolean bookingRequest,double latitude, double longitude, String yourPlace) {
-        LayoutInflater factory = LayoutInflater.from(this);
+        LayoutInflater factory = LayoutInflater.from(getActivity());
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
-        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(this);
+        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
         alertDialog.setView(deleteDialogView);
-        Button ok = deleteDialogView.findViewById(R.id.ok_button);
-        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
 
         final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {
@@ -763,12 +804,14 @@ hideProgressDialog();
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                                isBookedAny = false;
-                                if (bookingRequest){
-                                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
-                                }else{
-                                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
-                                }
+                                documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+                                PopUpprotectcar(documentIDs,bookingRequest,latitude,longitude,yourPlace);
+//                                isBookedAny = false;
+//                                if (bookingRequest){
+//                                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+//                                }else{
+//                                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
+//                                }
 
                             }
                         })
@@ -780,25 +823,25 @@ hideProgressDialog();
                         });
 
 
-                Map<String, Object> likeupdate = new HashMap<>();
-                likeupdate.put( "bookingStatus", false);
-
-                db.collection("Bookings").document(mUid)
-                        .update(likeupdate)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+//                Map<String, Object> likeupdate = new HashMap<>();
+//                likeupdate.put( "bookingStatus", false);
+//
+//                db.collection("Bookings").document(mUid)
+//                        .update(likeupdate)
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Log.d(TAG, "DocumentSnapshot successfully written!");
+//
+//
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.w(TAG, "Error writing document", e);
+//                            }
+//                        });
 
 //                PopUpprotectcar(documentID);
 
@@ -833,14 +876,14 @@ hideProgressDialog();
         alertDialog1.getWindow().setAttributes(lp);
     }
 
-    private void PopUpprotectcar(String documentID) {
+    private void PopUpprotectcar(String documentIDs, Boolean bookingRequest, double latitude, double longitude, String yourPlace) {
 
-        LayoutInflater factory = LayoutInflater.from(this);
+        LayoutInflater factory = LayoutInflater.from(getActivity());
         final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
-        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(this);
+        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
         alertDialog.setView(deleteDialogView);
-        Button ok = deleteDialogView.findViewById(R.id.ok_button);
-        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
 //        final MediaPlayer mp = MediaPlayer.create(this, R.raw.soho);
 
         final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
@@ -848,18 +891,24 @@ hideProgressDialog();
             @Override
             public void onClick(View view) {
 
-
+                isBookedAny = false;
+                if (bookingRequest){
+                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+                }else{
+                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
+                }
 
 //                mp.start();
                 final Map<String, Object> protectdata = new HashMap<>();
                 protectdata.put("protectCar", true);
+                protectdata.put("bookingStatus", false);
 
 
 
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-                db.collection("Bookings").document(documentID)
+                db.collection("Bookings").document(documentIDs)
                         .update(protectdata)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -902,6 +951,13 @@ hideProgressDialog();
             @Override
             public void onClick(View view) {
 
+//                isBookedAny = false;
+                if (bookingRequest){
+                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+                }else{
+                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
+                }
+
                 alertDialog1.dismiss();
             }
         });
@@ -943,45 +999,50 @@ hideProgressDialog();
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                    bookingid = document.getData();
+                                    if(document.contains("Booking_ID")){
+                                        bookingid = document.getData();
 
-                                    bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
 
-                                    for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
-                                        Boolean value = (Boolean) bookingEntry.getValue();
-                                        if (value){
-                                            isBookedAny = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (isBookedAny){
-                                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                                            System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                                            Boolean val = (Boolean) entry.getValue();
-                                            String values = String.valueOf(val);
-
-                                            Log.e("values", values);
-//
-                                            if (val) {
-
-                                                Toast.makeText(NearestLocMapsActivity.this, values, Toast.LENGTH_SHORT).show();
-                                                String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-
-                                                popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace);
+                                        for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
+                                            Boolean value = (Boolean) bookingEntry.getValue();
+                                            if (value){
+                                                isBookedAny = true;
                                                 break;
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-                                            }else{
-                                                Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
                                             }
                                         }
-                                    }else{
-                                        if (bookingRequest){
-                                            bookAndNavigate(latitude,longitude,yourPlace);
-                                        }
+
+                                        if (isBookedAny){
+                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                                System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                                Boolean val = (Boolean) entry.getValue();
+                                                String values = String.valueOf(val);
+
+                                                Log.e("values", values);
+//
+                                                if (val) {
+
+//                                                Toast.makeText(getActivity(), values, Toast.LENGTH_SHORT).show();
+                                                    String valuedoc=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+                                                    popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace);
+                                                    break;
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                                }else{
+//                                                    Toast.makeText(getActivity(), "False value", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                    }
+
+                                        else{
+                                            if (bookingRequest){
+                                                bookAndNavigate(latitude,longitude,yourPlace);
+                                            }
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+
+                                    }
 
                                     }
 
@@ -1011,7 +1072,7 @@ hideProgressDialog();
             public void onFailure(@NonNull Exception e) {
 
                 Log.w("Error", "Error adding document", e);
-                Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Login failed", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -1020,7 +1081,7 @@ hideProgressDialog();
     private void bookAndNavigate(double latitude, double longitude, String yourPlace){
 //        showBottomSheet(latitude, longitude,yourPlace);
         SaveData(lat, longi, yourPlace);
-        PackageManager pm = NearestLocMapsActivity.this.getPackageManager();
+        PackageManager pm =getActivity().getPackageManager();
         if(isPackageInstalled()){
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                     Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
@@ -1039,7 +1100,7 @@ hideProgressDialog();
     private boolean isPackageInstalled() {
         try
         {
-            ApplicationInfo info = getPackageManager().getApplicationInfo("com.google.android.apps.maps", 0 );
+            ApplicationInfo info = getActivity().getPackageManager().getApplicationInfo("com.google.android.apps.maps", 0 );
             return true;
         }
         catch(PackageManager.NameNotFoundException e)
@@ -1082,23 +1143,23 @@ hideProgressDialog();
     }
 
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mGoogleApiClient.stopAutoManage((FragmentActivity) context);
-        mGoogleApiClient.disconnect();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mGoogleApiClient.stopAutoManage((FragmentActivity) context);
-        mGoogleApiClient.disconnect();
-    }
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        mGoogleApiClient.stopAutoManage((FragmentActivity) context);
+//        mGoogleApiClient.disconnect();
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        mGoogleApiClient.stopAutoManage((FragmentActivity) context);
+//        mGoogleApiClient.disconnect();
+//    }
     public void showProgressDialog() {
 
 
-        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(NearestLocMapsActivity.this);
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
         //View view = getLayoutInflater().inflate(R.layout.progress);
         alertDialog.setView(R.layout.progress);
         dialog = alertDialog.create();
@@ -1111,6 +1172,7 @@ hideProgressDialog();
         if(dialog!=null)
             dialog.dismiss();
     }
+
 
 
 }
