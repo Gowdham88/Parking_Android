@@ -3,9 +3,11 @@ package com.polsec.pyrky.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -62,11 +64,17 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private void showpopup() {
 
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        final
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
         LayoutInflater factory = LayoutInflater.from(context);
         View bottomSheetView = factory.inflate(R.layout.notification_popup, null);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
+
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent())
+                .getLayoutParams();
+        CoordinatorLayout.Behavior behavior = params.getBehavior();
+        ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
 
         TextView map = (TextView) bottomSheetView.findViewById(R.id.maps_title);
         TextView pyrky = (TextView) bottomSheetView.findViewById(R.id.pyrky_title);

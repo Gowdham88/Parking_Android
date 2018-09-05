@@ -39,12 +39,13 @@
             app:tabPaddingEnd="0dp"
             app:tabMode="fixed"
             app:tabIndicatorHeight="0dp"
-            app:tabTextColor="@color/booking_txtclr" />
+            app:tabTextColor="@color/textColor" />
 
         <android.support.v4.view.ViewPager
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/viewpager_events"
+
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_below="@id/simpleTabLayout"
             />

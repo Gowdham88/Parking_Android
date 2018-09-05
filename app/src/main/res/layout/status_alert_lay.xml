@@ -16,7 +16,7 @@
     <TextView
         style="@style/Nunitoregular"
         android:textSize="14dp"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:text="Close Booking"
         android:layout_width="212dp"
         android:gravity="center"
@@ -25,7 +25,7 @@
     <TextView
         style="@style/Nunitoregular"
         android:textSize="14dp"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:text="@string/status"
         android:layout_width="212dp"
         android:gravity="center"

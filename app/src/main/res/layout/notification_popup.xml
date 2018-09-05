@@ -41,7 +41,7 @@
             android:gravity="center"
             android:text="@string/notification_txt"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/booking_txtclr"
+            android:textColor="@color/textColor"
             android:textSize="14sp" />
 
         <View
@@ -75,7 +75,7 @@
             android:gravity="center"
             android:text="Yes"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/booking_txtclr"
+            android:textColor="@color/textColor"
             android:textSize="14sp" />
 
         <!--<View-->

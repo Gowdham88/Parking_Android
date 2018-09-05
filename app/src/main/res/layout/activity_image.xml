@@ -41,7 +41,7 @@
         android:textAllCaps="false"
         style="@style/Nunitoregular"
         android:layout_centerInParent="true"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:textSize="12dp"/>
 
 </RelativeLayout>

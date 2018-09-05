@@ -12,7 +12,7 @@
         android:id="@+id/place"
         android:layout_marginTop="18dp"
         android:textSize="12dp"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:layout_alignParentStart="true" />
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -29,7 +29,7 @@
         android:textSize="12dp"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/history_ratings"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:visibility="visible"
         android:id="@+id/view_car_text"
         />
@@ -55,7 +55,7 @@
             android:layout_alignTop="@+id/view_car_text"
             android:numStars="5"
             android:textSize="12dp"
-            android:textColor="@color/booking_txtclr"
+            android:textColor="@color/textColor"
             android:visibility="gone"
             android:text="Rate the space" />
     </RelativeLayout>
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/date_time"
         android:textSize="12dp"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:text="09 July, 10.30pm"
         android:layout_marginTop="25dp"
         android:layout_alignParentRight="true"

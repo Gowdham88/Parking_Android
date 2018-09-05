@@ -115,48 +115,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                 TableRow tablRow2 = convertView.findViewById(R.id.table2);
                 TableRow tablRow3 = convertView.findViewById(R.id.table3);
 
-                tablRow1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (!rb1.isChecked()){
-                            Constants.PARKING_TYPES.add("Free street parking");
-                            rb1.setChecked(true);
-                            rb2.setChecked(false);
-                            rb3.setChecked(false);
-                        }else {
-                            Constants.PARKING_TYPES.remove("Free street parking");
-                            rb1.setChecked(false);
-                        }
-                    }
-                });
-                tablRow2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (!rb2.isChecked()){
-                            Constants.PARKING_TYPES.add("Paid street parking");
-                            rb1.setChecked(false);
-                            rb2.setChecked(true);
-                            rb3.setChecked(false);
-                        }else {
-                            Constants.PARKING_TYPES.remove("Paid street parking");
-                            rb2.setChecked(false);
-                        }
-                    }
-                });
-                tablRow3.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (!rb3.isChecked()){
-                            Constants.PARKING_TYPES.add("Paid parking");
-                            rb1.setChecked(false);
-                            rb2.setChecked(false);
-                            rb3.setChecked(true);
-                        }else {
-                            Constants.PARKING_TYPES.remove("Paid parking");
-                            rb3.setChecked(false);
-                        }
-                    }
-                });
+
                 if (Constants.PARKING_TYPES.size() > 0){
                     String checkedItem = Constants.PARKING_TYPES.get(0);
 
@@ -172,6 +131,53 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                             break;
                     }
                 }
+
+                tablRow1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rb1.isChecked()){
+                            Constants.PARKING_TYPES.clear();
+                            Constants.PARKING_TYPES.add("Free street parking");
+                            rb1.setChecked(true);
+                            rb2.setChecked(false);
+                            rb3.setChecked(false);
+                        }else {
+                            Constants.PARKING_TYPES.remove("Free street parking");
+                            rb1.setChecked(false);
+                        }
+                    }
+                });
+                tablRow2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rb2.isChecked()){
+                            Constants.PARKING_TYPES.clear();
+                            Constants.PARKING_TYPES.add("Paid street parking");
+                            rb1.setChecked(false);
+                            rb2.setChecked(true);
+                            rb3.setChecked(false);
+                        }else {
+                            Constants.PARKING_TYPES.remove("Paid street parking");
+                            rb2.setChecked(false);
+                        }
+                    }
+                });
+                tablRow3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!rb3.isChecked()){
+                            Constants.PARKING_TYPES.clear();
+                            Constants.PARKING_TYPES.add("Paid parking");
+                            rb1.setChecked(false);
+                            rb2.setChecked(false);
+                            rb3.setChecked(true);
+                        }else {
+                            Constants.PARKING_TYPES.remove("Paid parking");
+                            rb3.setChecked(false);
+                        }
+                    }
+                });
+
                 rgps.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {

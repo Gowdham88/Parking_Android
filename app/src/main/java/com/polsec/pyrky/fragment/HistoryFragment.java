@@ -198,7 +198,7 @@ public class HistoryFragment extends Fragment {
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
 
                         }
-                        setupFeed();
+//                        setupFeed();
 
 //                        recyclerAdapter.notifyDataSetChanged();
 

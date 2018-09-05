@@ -7,6 +7,6 @@
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
     android:paddingTop="5dp"
-    android:textColor="@color/booking_txtclr"
+    android:textColor="@color/textColor"
  style="@style/NunitoBlackLight"
     xmlns:android="http://schemas.android.com/apk/res/android" />
