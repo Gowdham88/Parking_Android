@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.activity.NearestLocMapsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -45,24 +46,24 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     ArrayList<String> ruls = new ArrayList<>();
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
-    private ListAdapterListener mListener;
+//    private ListAdapterListener mListener;
     private RecyclerView parentRecycler;
     int postionval;
 
     public static final String ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button";
 
 
-    public interface ListAdapterListener {
-        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1, String mapvalues, String s2, String s3);
-//        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1); // create an interface
-
-
-
-
-
+//    public interface ListAdapterListener {
+//        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1, String mapvalues, String s2, String s3);
+////        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1); // create an interface
 //
-    }
-    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<String> ruls, ListAdapterListener mListener) {
+//
+//
+//
+//
+////
+//    }
+    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<String> ruls, NearestLocMapsActivity nearestLocMapsActivity) {
         this.context = context;
         this.nearimg = nearimg;
         this.nearlat1 = nearlat1;
@@ -70,7 +71,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
         this.distances1 = distances1;
         this.Placename=Placename;
         this.ruls=ruls;
-        this.mListener=mListener;
+//        this.mListener=mListener;
         notifyDataSetChanged();
     }
 
@@ -92,7 +93,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 //        holder.nearestPlaceImage.setImageResource(mLocationImage[position]);
-        this.avatarSize = context.getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+//        this.avatarSize = context.getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
 
         Picasso.with(context).load(nearimg.get(position))
                 .fit()
@@ -133,7 +134,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
             public void onClick(View v) {
 //                Toast.makeText(context, "click", Toast.LENGTH_SHORT).show();
                 String mapvalues="mapvalues";
-                mListener.onClickimageButton(position,ACTION_LIKE_BUTTON_CLICKED,nearlat1.get(position),nearlong1.get(position),mapvalues,Placename.get(position),ruls.get(position));
+//                mListener.onClickimageButton(position,ACTION_LIKE_BUTTON_CLICKED,nearlat1.get(position),nearlong1.get(position),mapvalues,Placename.get(position),ruls.get(position));
 
             }
         });
