@@ -99,7 +99,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     //Nearest Place recycler
     RecyclerView mNearestPlaceRecycler;
     CarouselNearestAdapter mNearestrecyclerAdapter;
-
+    Boolean isCarouselSwiped = false;
     //Filter
     Boolean isExpandableListEnabled = false;
     Button mFilterButton;
@@ -298,7 +298,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //
 
         if (mCameraLat!=null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 mNearestPlaceRecycler.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                     @Override
                     public void onScrollChange(View view, int i, int i1, int i2, int i3) {
@@ -309,7 +309,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         double lng = Double.parseDouble(mCameraLong.get(scrollPosition));
                         LatLng latLng = new LatLng(lat,lng);
                         //                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+                        if (scrollPosition == 0){
+
+                            if (isCarouselSwiped){
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+                            }else{
+
+                            }
+
+//                            Toast.makeText(getActivity(), "Same count", Toast.LENGTH_SHORT).show();
+                        }else{
+                            isCarouselSwiped = true;
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+                        }
+
+
                     }
                 });
             }
@@ -441,7 +455,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             Log.e("address1", address1);
                             LatLng sydney = new LatLng(latt, longi);
                             mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,14));
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,8));
 
                             Log.e("lattd", String.valueOf(latt));
                             Log.e("latgd", String.valueOf(longi));
@@ -608,7 +622,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mMap.setMyLocationEnabled(false);
 //
         mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocationicon)));
-        float zoomLevel = 14;
+        float zoomLevel = 12;
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override

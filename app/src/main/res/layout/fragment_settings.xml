@@ -141,7 +141,7 @@
                 android:layout_height="1dp"
                 android:focusable="false"
                 android:layout_marginTop="3dp"
-                android:background="@color/booking_txtclr"
+                android:background="@color/textColor"
                 android:layout_below="@+id/carousel_recycler"/>
         </RelativeLayout>
         <!--<Spinner-->

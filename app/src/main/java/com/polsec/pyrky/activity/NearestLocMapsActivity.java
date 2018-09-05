@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -399,7 +400,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                                     mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
                                     mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
-                                    mNearestrecyclerAdapter = new CarouselDetailMapAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, mAccurateDistancesString, mCameraLocName, mCameraId);
+                                    mNearestrecyclerAdapter = new CarouselDetailMapAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, mAccurateDistancesString, mCameraLocName, mCameraId,NearestLocMapsActivity.this);
                                     mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                     mNearestPlaceRecycler.scrollToPosition(mListPosition);
                                     mNearestrecyclerAdapter.notifyDataSetChanged();
@@ -748,6 +749,10 @@ hideProgressDialog();
         }
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent())
+                .getLayoutParams();
+        CoordinatorLayout.Behavior behavior = params.getBehavior();
+        ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
 
 
 

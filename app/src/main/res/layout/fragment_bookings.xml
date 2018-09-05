@@ -37,6 +37,7 @@
             app:tabGravity="fill"
             app:tabPaddingStart="0dp"
             app:tabPaddingEnd="0dp"
+            app:tabBackground="@drawable/tab_selector_ripple"
             app:tabMode="fixed"
             app:tabIndicatorHeight="0dp"
             app:tabTextColor="@color/textColor" />
