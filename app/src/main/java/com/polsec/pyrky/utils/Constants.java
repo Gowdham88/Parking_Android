@@ -30,6 +30,8 @@ public class Constants {
 
     public static Boolean IS_AR_ENABLED;
 
+    public static List<String> SEARCH_ARRAY = new ArrayList<>();
+
     public static List<String> SECURITY_RATINGS = new ArrayList<>();
 
     public static List<String> CAR_CATEGORY = new ArrayList<>();

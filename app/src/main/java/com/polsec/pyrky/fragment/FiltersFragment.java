@@ -13,11 +13,15 @@ import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.polsec.pyrky.ExpandableListData;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.adapter.ExpandableListAdapter;
+import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.Constants;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,9 +61,9 @@ public class FiltersFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_filters, null);
 
-        Constants.CAR_CATEGORY.clear();
-        Constants.PARKING_TYPES.clear();
-        Constants.SECURITY_RATINGS.clear();
+//        Constants.CAR_CATEGORY.clear();
+//        Constants.PARKING_TYPES.clear();
+//        Constants.SECURITY_RATINGS.clear();
 
         mEnableButton = view.findViewById(R.id.enable_button);
         mEnableButton.setVisibility(View.GONE);
@@ -87,7 +91,6 @@ public class FiltersFragment extends Fragment {
                     mExpandableListView.setVisibility(View.VISIBLE);
                     mExpandableListDetail = ExpandableListData.getData();
                     mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
-                    Collections.reverse(mExpandableListTitle);
                     mExpandableListAdapter = new ExpandableListAdapter(getActivity(), mExpandableListTitle, mExpandableListDetail);
 
                     mExpandableListView.setAdapter(mExpandableListAdapter);
@@ -107,6 +110,7 @@ public class FiltersFragment extends Fragment {
 
                 if(groupPosition != previousGroup){
                     mExpandableListView.collapseGroup(previousGroup);
+
                 previousGroup = groupPosition;
             }
              Toast.makeText(getActivity(),
@@ -143,5 +147,29 @@ public class FiltersFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (Constants.PARKING_TYPES.size()>0){
+            String parkingTypeData = new Gson().toJson(Constants.PARKING_TYPES);
+            PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PARKING_TYPES,parkingTypeData);
+
+//            String str = "";//you need to retrieve this string from shared preferences.
+//
+//            Type type = new TypeToken<List<String>>() { }.getType();
+//            List<String> restoreData = new Gson().fromJson(str, type);
+        }
+        if (Constants.CAR_CATEGORY.size()>0){
+            String carCategoryData = new Gson().toJson(Constants.CAR_CATEGORY);
+            PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_CAR_CATEGORY,carCategoryData);
+        }
+
+        if (Constants.SECURITY_RATINGS.size()>0){
+            String securityRatingsData = new Gson().toJson(Constants.SECURITY_RATINGS);
+            PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_SECURITY_RATINGS,securityRatingsData);
+        }
+
     }
 }

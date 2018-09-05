@@ -10,30 +10,28 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/filter_frame"
-        >
+        android:id="@+id/filter_frame">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/enable_button"
         android:layout_alignParentTop="true"
         android:text="enable"
+        android:visibility="gone"
         />
 
         <ExpandableListView
             android:id="@+id/expandableListView"
             android:layoutDirection="rtl"
-            android:gravity="left"
+            android:gravity="start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/enable_button"
             android:layout_margin="5dp"
             android:background="@drawable/expandable_list_shape"
             android:divider="@android:color/darker_gray"
             android:dividerHeight="0.5dp"
             android:elevation="5dp"
-
             android:indicatorEnd="?android:attr/expandableListPreferredItemIndicatorRight"
-            tools:targetApi="lollipop" />
+            tools:targetApi="jelly_bean_mr2" />
     </FrameLayout>
 </RelativeLayout>

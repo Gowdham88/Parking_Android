@@ -26,7 +26,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -88,6 +88,17 @@
         <item name="android:textColor">@color/booking_txtclr</item>
         <item name="android:titleTextColor">@color/booking_txtclr</item>
     </style>
+
+    <style name="AppBottomSheetDialogTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottom_sheet_transparent</item>
+    </style>
+
     <!--<style name="FontAvenirLight">-->
         <!--<item name="fontPath">fonts/Avenir-Light.ttf</item>-->
     <!--</style>-->

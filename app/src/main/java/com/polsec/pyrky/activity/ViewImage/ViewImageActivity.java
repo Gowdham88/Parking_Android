@@ -42,6 +42,7 @@ import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Users;
 import com.polsec.pyrky.preferences.PreferencesHelper;
+import com.polsec.pyrky.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class ViewImageActivity extends AppCompatActivity {
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
-    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid;
+    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,docid;
     Boolean isBookedAny = false;
     List<Users> bookinglist = new ArrayList<Users>();
      FirebaseFirestore db;
@@ -68,7 +69,7 @@ public class ViewImageActivity extends AppCompatActivity {
     Map<String, Object> bookingid = new HashMap<>();
 
     Map<String, Object> bookingid1=new HashMap<>();
-    Boolean arEnabledDevice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
@@ -76,17 +77,8 @@ public class ViewImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image);
         mAuth = FirebaseAuth.getInstance();
         mUid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-
+        docid=PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_DOCUMENTID);
         ImageView cameraImage = findViewById(R.id.camera_image);
-//        BackImg = (ImageView) findViewById(R.id.back_image);
-//        BackImg.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                onBackPressed();
-//            }
-//        });
-
-        checkWhetherArEnabled();
 
         TrackGPS trackGps = new TrackGPS(context);
 
@@ -380,11 +372,33 @@ public class ViewImageActivity extends AppCompatActivity {
                                 Log.w(TAG, "Error writing document", e);
                             }
                         });
-        if(!documentID.equals(null) || !documentID.isEmpty()){
-            PopUpprotectcar(documentID);
-            Log.e("documentID",documentID);
 
-        }
+
+
+                Map<String, Object> likeupdate = new HashMap<>();
+                likeupdate.put( "bookingStatus", false);
+
+                db.collection("Bookings").document(mUid)
+                        .update(likeupdate)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+//        if(!documentID.equals(null) || !documentID.isEmpty()){
+//            PopUpprotectcar(documentID);
+//            Log.e("documentID",documentID);
+
+//        }
 
 
                 alertDialog1.dismiss();
@@ -531,11 +545,11 @@ public class ViewImageActivity extends AppCompatActivity {
         bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
         TextView map = bottomSheetView.findViewById(R.id.maps_title);
         TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
-        if (arEnabledDevice){
-
-        }else {
-            pyrky.setVisibility(View.GONE);
-        }
+//        if (Constants.IS_AR_ENABLED){
+//
+//        }else {
+//            pyrky.setVisibility(View.GONE);
+//        }
 
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
@@ -605,24 +619,6 @@ public class ViewImageActivity extends AppCompatActivity {
 
     }
 
-    void checkWhetherArEnabled() {
-        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
-        if (availability.isTransient()) {
-            // Re-query at 5Hz while compatibility is checked in the background.
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    checkWhetherArEnabled();
-                }
-            }, 300);
-        }
-        if (availability.isSupported()) {
-           arEnabledDevice = true;
-            // indicator on the button.
-        } else { // Unsupported or unknown.
-            arEnabledDevice = false;
-        }
-    }
     public long getPostTime() {
 
         Date currentDate = new Date();

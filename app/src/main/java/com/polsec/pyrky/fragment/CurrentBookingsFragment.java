@@ -234,8 +234,8 @@ public class CurrentBookingsFragment extends Fragment {
                         bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
 
 
-                        String count = String.valueOf(bookingid1.size());
-                        Log.e("count", count);
+//                        String count = String.valueOf(bookingid1.size());
+//                        Log.e("count", count);
 
 
 //                                    followingcount = 1;
@@ -251,7 +251,7 @@ public class CurrentBookingsFragment extends Fragment {
                         }
 
                         setupFeed();
-                        recyclerAdapter.notifyDataSetChanged();
+//                        recyclerAdapter.notifyDataSetChanged();
 
 
                     } else {

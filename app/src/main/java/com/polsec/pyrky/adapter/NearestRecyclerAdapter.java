@@ -22,7 +22,7 @@ import java.util.List;
  * Created by thulirsoft on 7/3/18.
  */
 
-public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecyclerAdapter.ViewHolder> {
+public class  NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecyclerAdapter.ViewHolder> {
 
     private Context context;
     private int images[];
@@ -52,7 +52,7 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
     @Override
     public NearestRecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.nearest_places_item, parent, false);
+                .inflate(R.layout.nearest_loc_layout, parent, false);
 
         return new ViewHolder(view);
     }
