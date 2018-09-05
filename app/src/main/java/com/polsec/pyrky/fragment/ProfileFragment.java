@@ -3,13 +3,17 @@ package com.polsec.pyrky.fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +25,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -53,7 +60,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     String[] mCarRange = {"[3.5 - 4.5m]", "[2.5 - 3.5m]", "[4 - 5m]", "[5 - 5.5m]", "[5.5 - 6.5m]"};
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     TextView email,carSize,carDimension;
- ImageView mProfileImages;
+    ImageView mProfileImages;
     private final int PICK_IMAGE_REQUEST = 71;
     private Uri filePath;
     ActionBar actionBar;
@@ -119,11 +126,17 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         Log.e("mProfilepic", mProfilepic);
         if (mProfilepic != null && !mProfilepic.isEmpty()) {
             Picasso.with(getActivity())
-                    .load(mProfilepic)
-                    .resize(avatarSize, avatarSize)
-//                    .centerCrop()
-//                    .transform(new CircleTransformation())
+                    .load(mProfilepic).fit()
                     .into(mProfileImages);
+
+
+//
+//
+//            Glide.with(getActivity())
+//                    .load(mProfilepic).
+//                    .into(mProfileImages);
+
+
         }
 
 
@@ -166,6 +179,9 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 //        });
         return view;
     }
+
+
+
     private void UpdateData(final String email, String carCategory) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));

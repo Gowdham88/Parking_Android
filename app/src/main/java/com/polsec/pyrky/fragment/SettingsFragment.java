@@ -176,11 +176,10 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         if (mProfilepic != null && !mProfilepic.isEmpty()) {
 
             Picasso.with(getActivity())
-                    .load(mProfilepic)
-                    .resize(avatarSize, avatarSize)
-//                    .centerCrop()
+                    .load(mProfilepic).fit()
 //                    .transform(new CircleTransformation())
                     .into(mProfileImage);
+
 
         }
 
@@ -697,8 +696,6 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
                             Picasso.with(getActivity())
                                     .load(postimageurl)
-                                    .resize(avatarSize, avatarSize)
-//                                    .centerCrop()
 //                                    .transform(new CircleTransformation())
                                     .into(ProfileImg);
 

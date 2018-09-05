@@ -951,6 +951,13 @@ hideProgressDialog();
             @Override
             public void onClick(View view) {
 
+//                isBookedAny = false;
+                if (bookingRequest){
+                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+                }else{
+                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
+                }
+
                 alertDialog1.dismiss();
             }
         });

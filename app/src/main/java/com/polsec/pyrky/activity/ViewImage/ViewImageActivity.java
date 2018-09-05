@@ -517,6 +517,13 @@ public class ViewImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                isBookedAny = false;
+                if (bookingRequest){
+                    makeAlreadyBookedAlert(true);
+                }else{
+                    makeAlreadyBookedAlert(false);
+                }
+
                 alertDialog1.dismiss();
             }
         });

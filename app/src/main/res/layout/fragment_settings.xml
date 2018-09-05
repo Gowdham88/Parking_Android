@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/signup_parent_layout"
+<RelativeLayout android:id="@+id/signup_parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusableInTouchMode="true"
     android:focusable="true"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/white">
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <include
         android:id="@+id/toolbar"
         layout="@layout/nearloc_toolbar" />
@@ -20,8 +20,9 @@
 
     <ScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-        android:layout_below="@+id/myview">
+    android:layout_height="wrap_content"
+        android:layout_below="@+id/myview"
+        android:layout_marginBottom="55dp">
     <LinearLayout
 
         android:id="@+id/scrollviewlin"
@@ -30,15 +31,20 @@
         android:orientation="vertical"
         android:paddingStart="15dp"
         android:paddingEnd="15dp">
-        <ImageView
-            android:id="@+id/profile_img"
-            android:layout_width="115dp"
-            android:layout_height="110dp"
+        <android.support.v7.widget.CardView
+            android:id="@+id/profile_img1"
+            android:layout_width="120dp"
+            android:layout_height="114dp"
             android:layout_marginTop="58dp"
-            android:background="@drawable/square_shape"
-            android:layout_gravity="center"
-        />
-
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            android:layout_gravity="center">
+            <ImageView
+                android:id="@+id/profile_img"
+                android:layout_width="120dp"
+                android:layout_height="114dp"
+                android:layout_gravity="center"/>
+        </android.support.v7.widget.CardView>
         <EditText
             android:id="@+id/et_name"
             style="@style/NunitoBlackLight"
@@ -169,6 +175,7 @@
             android:background="@drawable/signin_bg"
             android:textColor="@color/white"
             android:textSize="14sp"
+            android:layout_marginBottom="22dp"
             />
 
     </LinearLayout>
