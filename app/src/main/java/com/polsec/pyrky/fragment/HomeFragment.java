@@ -243,8 +243,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
         //Auto Complete textview
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
-        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,
+        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(),R.layout.drop_downlay,
                 BOUNDS_MOUNTAIN_VIEW, null);
+//        autoCompView.setDropDownWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+//        autoCompView.setDropDownWidth(850);
+
+        int offset = 64;
+
+        autoCompView.setDropDownHorizontalOffset(-1 * offset);
+        autoCompView.setDropDownWidth((int) (autoCompView.getWidth() + offset * 15.6));
+//        autoCompView.setDropDownHorizontalOffset(10);
+        autoCompView.setDropDownVerticalOffset(7);
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
 //        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);

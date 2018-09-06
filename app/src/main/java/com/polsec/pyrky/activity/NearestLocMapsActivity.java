@@ -1,6 +1,7 @@
 package com.polsec.pyrky.activity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -560,6 +561,7 @@ hideProgressDialog();
     }
 
     public void showDialog(Marker m, String cameraid, HashMap<String,Object> listofparkingRules, String cameraImageUrl){
+
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View promptView = layoutInflater.inflate(R.layout.ruls_layout , null);
         final AlertDialog alertD = new AlertDialog.Builder(getActivity()).create();
@@ -637,7 +639,8 @@ hideProgressDialog();
         });
         alertD.setView(promptView);
         alertD.getWindow().setDimAmount(0.0f);
-        alertD.getWindow().setGravity(Gravity.NO_GRAVITY);
+        alertD.getWindow().setGravity(Gravity.RELATIVE_LAYOUT_DIRECTION);
+//        alertD.setView(getView(),0,20,0,0);
 
         alertD.show();
 

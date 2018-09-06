@@ -16,7 +16,7 @@
         <!--android:layout_height="1dp"-->
         <!--android:background="@color/search_boarder_clr" />-->
     <ImageView
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/close_iconimg"
         android:layout_width="35dp"
         android:layout_height="35dp"
@@ -24,7 +24,7 @@
         android:background="@drawable/crossimg_bg"
         android:layout_alignParentRight="true"
         android:layout_marginRight="14dp"
-        android:src="@drawable/close_icon"/>
+        android:src="@drawable/ic_group_expand_10"/>
 
     <ImageView
         android:id="@+id/camera_image"
