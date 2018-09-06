@@ -114,7 +114,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
         if(!cameraImageUrl.equals(null)|| !cameraImageUrl.isEmpty()){
             Picasso.with(context).load(cameraImageUrl).fit().into(cameraImage);
-            Close_Img.setVisibility(View.VISIBLE);
+//            Close_Img.setVisibility(View.VISIBLE);
 
         }else {
             Close_Img.setVisibility(View.VISIBLE);
