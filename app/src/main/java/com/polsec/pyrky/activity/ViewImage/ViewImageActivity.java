@@ -110,7 +110,7 @@ public class ViewImageActivity extends AppCompatActivity {
         }
 
 
-//        makeAlreadyBookedAlert(false);
+//        makeAlreadyBookedAlert(false);..
 
         if(!cameraImageUrl.equals(null)|| !cameraImageUrl.isEmpty()){
             Picasso.with(context).load(cameraImageUrl).fit().into(cameraImage);
