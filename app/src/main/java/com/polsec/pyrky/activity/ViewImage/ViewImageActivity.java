@@ -67,6 +67,7 @@ public class ViewImageActivity extends AppCompatActivity {
     List<String> booking_ID = new ArrayList<>();
     FirebaseAuth mAuth;
     Map<String, Object> bookingid = new HashMap<>();
+    ImageView Close_Img;
 
     Map<String, Object> bookingid1=new HashMap<>();
 
@@ -79,6 +80,8 @@ public class ViewImageActivity extends AppCompatActivity {
         mUid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
         docid=PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_DOCUMENTID);
         ImageView cameraImage = findViewById(R.id.camera_image);
+        Close_Img=findViewById(R.id.close_iconimg);
+        Close_Img.setVisibility(View.VISIBLE);
 
         TrackGPS trackGps = new TrackGPS(context);
 
@@ -109,7 +112,15 @@ public class ViewImageActivity extends AppCompatActivity {
 
 //        makeAlreadyBookedAlert(false);
 
-        Picasso.with(context).load(cameraImageUrl).into(cameraImage);
+        if(!cameraImageUrl.equals(null)|| !cameraImageUrl.isEmpty()){
+            Picasso.with(context).load(cameraImageUrl).fit().into(cameraImage);
+            Close_Img.setVisibility(View.VISIBLE);
+
+        }else {
+            Close_Img.setVisibility(View.VISIBLE);
+        }
+
+
         BookBtn = findViewById(R.id.book_btn);
         BookBtn.setOnClickListener(new View.OnClickListener() {
             @Override

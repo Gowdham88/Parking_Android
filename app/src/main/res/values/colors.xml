@@ -9,7 +9,8 @@
     <!--<color name="colorAccent">#FF4081</color>-->
     <!--<color name="colorAccent">#808080</color>-->
     <color name="colorAccent">#00B9AB</color>
-    <color name="white">#FFFFFF</color>
+    <color name="white">#ffffff</color>
+    <color name="white_bg">#B3ffffff</color>
     <color name="border_color">#EAEAEA</color>
     <color name="transparent2">#00000000</color>
     <color name="booking_txtclr">#404B69</color>
