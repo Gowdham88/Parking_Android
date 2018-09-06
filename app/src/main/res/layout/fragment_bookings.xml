@@ -37,14 +37,16 @@
             app:tabGravity="fill"
             app:tabPaddingStart="0dp"
             app:tabPaddingEnd="0dp"
+            app:tabBackground="@drawable/tab_selector_ripple"
             app:tabMode="fixed"
             app:tabIndicatorHeight="0dp"
-            app:tabTextColor="@color/booking_txtclr" />
+            app:tabTextColor="@color/textColor" />
 
         <com.polsec.pyrky.utils.CustomViewPager
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/viewpager_events"
+
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_below="@id/simpleTabLayout"
             />

@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.activity.NearestLocMapsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 //
 ////
 //    }
-    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<String> ruls) {
+    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<String> ruls, NearestLocMapsActivity nearestLocMapsActivity) {
         this.context = context;
         this.nearimg = nearimg;
         this.nearlat1 = nearlat1;

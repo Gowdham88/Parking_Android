@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
-            android:textColor="@color/booking_txtclr"
+            android:textColor="@color/textColor"
             android:text="@string/email"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/profile_img1"
@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/name_txt"
-            android:textColor="@color/booking_txtclr"
+            android:textColor="@color/textColor"
             android:text="@string/email" />
         <!--  <android.support.design.widget.TextInputLayout
               android:id="@+id/et_email_layout"
@@ -68,9 +68,9 @@
             android:layout_marginBottom="5dp"
             android:layout_marginTop="10dp"
             android:textColorHint="@color/email_txtclr"
-            android:drawableBottom="@color/booking_txtclr"
+            android:drawableBottom="@color/textColor"
             android:textSize="12sp"
-            android:textColor="@color/booking_txtclr"
+            android:textColor="@color/textColor"
             android:inputType="textEmailAddress"
             android:hint="@string/enter_your_email"
             android:imeOptions="actionNext"
@@ -80,12 +80,12 @@
             android:id="@+id/passlineemail"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/booking_txtclr"/>
+            android:background="@color/textColor"/>
         <!--</android.support.design.widget.TextInputLayout>-->
 
           <TextView
               android:layout_below="@+id/passlineemail"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:textSize="12dp"
         style="@style/NunitoBlackLight"
         android:id="@+id/tx_car_category"
@@ -126,7 +126,7 @@
                     android:layout_marginLeft="13dp"
                     android:layout_marginTop="8dp"
                     android:text="small"
-                    android:textColor="@color/booking_txtclr"
+                    android:textColor="@color/textColor"
                     android:textSize="12dp" />
 
                 <TextView
@@ -137,7 +137,7 @@
                     android:layout_marginTop="5dp"
                     android:id="@+id/car_dimension"
                     android:text="[3 to 4.5m]"
-                    android:textColor="@color/booking_txtclr"
+                    android:textColor="@color/textColor"
                     android:textSize="12dp" />
             </LinearLayout>
         </LinearLayout>
@@ -146,7 +146,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/booking_txtclr"/>
+            android:background="@color/textColor"/>
     </RelativeLayout>
     <!--</ScrollView>-->
 </RelativeLayout>

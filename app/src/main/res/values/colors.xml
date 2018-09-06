@@ -13,7 +13,7 @@
     <color name="white_bg">#B3ffffff</color>
     <color name="border_color">#EAEAEA</color>
     <color name="transparent2">#00000000</color>
-    <color name="booking_txtclr">#404B69</color>
+    <color name="textColor">#404B69</color>
     <color name="email_txtclr">#B6B6B6</color>
     <color name="search_boarder_clr">#B6B6B6</color>
     <color name="colorred">#F8021E</color>

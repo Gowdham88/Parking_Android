@@ -16,7 +16,7 @@
     <TextView
         style="@style/Nunitoregular"
         android:textSize="18dp"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:text="Oops..!!"
         android:layout_width="match_parent"
         android:gravity="center"
@@ -26,7 +26,7 @@
     <TextView
         style="@style/Nunitoregular"
         android:textSize="14dp"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:text="@string/status_txt"
         android:layout_width="match_parent"
         android:gravity="center"

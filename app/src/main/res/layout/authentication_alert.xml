@@ -18,7 +18,7 @@
     <TextView
         style="@style/Nunitosemibold"
         android:textSize="20dp"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:text="Oops!"
         android:layout_width="212dp"
         android:gravity="center"
@@ -30,7 +30,7 @@
         style="@style/Nunitoregular"
         android:id="@+id/txt_authent"
         android:textSize="14dp"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:text=""
         android:layout_width="wrap_content"
         android:gravity="center"

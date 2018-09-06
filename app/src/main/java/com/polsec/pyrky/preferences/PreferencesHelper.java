@@ -32,6 +32,9 @@ public class PreferencesHelper {
     public static final String PREFERENCE_PARKINGSTATUS ="parkingstatus";
     public static final String PREFERENCE_DOCUMENTID ="docid";
     public static final String PREFERENCE_POSTTIME ="posttime";
+    public static final String PREFERENCE_PARKING_TYPES = "parkingtype";
+    public static final String PREFERENCE_CAR_CATEGORY = "carcategory";
+    public static final String PREFERENCE_SECURITY_RATINGS = "securityratings";
 //    public static final String PREFERENCE_PARKINGSTATUS ="parkingstatus";
     //End Region
 

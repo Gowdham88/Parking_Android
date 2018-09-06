@@ -33,6 +33,8 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.polsec.pyrky.activity.booking.BookingsActivity;
 import com.polsec.pyrky.activity.signin.SignInActivity;
 import com.polsec.pyrky.fragment.HomeFragment;
@@ -44,6 +46,9 @@ import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.CircleTransformation;
 import com.polsec.pyrky.utils.Constants;
 import com.squareup.picasso.Picasso;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -86,6 +91,28 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         checkWhetherArEnabled();
+
+        String parkType = PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_PARKING_TYPES);
+        String secRatings = PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_SECURITY_RATINGS);
+        String carCategory = PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_CAR_CATEGORY);
+
+        if (!parkType.equals("")&&!secRatings.equals("")&&!carCategory.equals("")){
+
+            Type type = new TypeToken<List<String>>() { }.getType();
+            List<String> restoreData1 = new Gson().fromJson(parkType, type);
+            List<String> restoreData2 = new Gson().fromJson(secRatings, type);
+            List<String> restoreData3 = new Gson().fromJson(carCategory, type);
+
+            Constants.PARKING_TYPES = restoreData1;
+            Constants.SECURITY_RATINGS = restoreData2;
+            Constants.CAR_CATEGORY = restoreData3;
+
+            if (restoreData1.size() >0 && restoreData2.size() >0 && restoreData3.size() >0){
+                Toast.makeText(context, restoreData1.get(0)+restoreData2.get(0)+restoreData3.get(0), Toast.LENGTH_LONG).show();
+            }
+        }
+
+
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

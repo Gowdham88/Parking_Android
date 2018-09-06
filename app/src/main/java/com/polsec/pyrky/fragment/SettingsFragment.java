@@ -19,6 +19,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -337,12 +338,11 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         View bottomSheetView = factory.inflate(R.layout.dialo_camera_bottomsheet, null);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
-//        RelativeLayout HmRelayLay=bottomSheetView.findViewById(R.id.home_lay);
-//        HmRelayLay.setAlpha(0.1F);
-//        bottomSheetView.getWindow().getDecorView().getBackground().setColorFilter(new LightingColorFilter(0xFF000000,Color.TRANSPARENT));
-//
-//        bottomSheetView.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent())
+                .getLayoutParams();
+        CoordinatorLayout.Behavior behavior = params.getBehavior();
+        ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
 
         Camera = bottomSheetView.findViewById(R.id.camera_title);
         Gallery = bottomSheetView.findViewById(R.id.gallery_title);

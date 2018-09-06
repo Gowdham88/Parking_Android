@@ -12,7 +12,7 @@
         android:text=""
         android:layout_marginTop="18dp"
         android:textSize="12dp"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:layout_alignParentLeft="true"
         android:id="@+id/place"
         />
@@ -32,7 +32,7 @@
             android:textSize="12dp"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/history_ratings"
-            android:textColor="@color/booking_txtclr"
+            android:textColor="@color/textColor"
             android:visibility="visible"
             android:layout_marginRight="14dp"
             android:id="@+id/view_car_text"
@@ -59,7 +59,7 @@
             android:layout_alignTop="@+id/view_car_text"
             android:numStars="5"
             android:textSize="12dp"
-            android:textColor="@color/booking_txtclr"
+            android:textColor="@color/textColor"
             android:visibility="gone"
             android:text="Rate the space" />
     </RelativeLayout>
@@ -69,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/date_time"
-        android:textColor="@color/booking_txtclr"
+        android:textColor="@color/textColor"
         android:text=""
         android:layout_marginRight="5dp"
         android:layout_alignParentRight="true"
