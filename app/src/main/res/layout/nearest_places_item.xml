@@ -59,24 +59,24 @@
     android:layout_height="wrap_content"
     android:layout_below="@id/nearest_place_city"
     android:layout_centerHorizontal="true">
+    <!--<TextView-->
+        <!--android:id="@+id/disttxt"-->
+        <!--style="@style/Nunitoregular"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignBaseline="@+id/nearest_place_distance"-->
+        <!--android:layout_alignBottom="@+id/nearest_place_distance"-->
+        <!--android:text="Distance :"-->
+        <!--android:textColor="#404B69"-->
+        <!--android:textSize="8sp" />-->
     <TextView
-        android:id="@+id/disttxt"
-        style="@style/Nunitoregular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/nearest_place_distance"
-        android:layout_alignBottom="@+id/nearest_place_distance"
-        android:text="Distance :"
-        android:textColor="#404B69"
-        android:textSize="8sp" />
-    <TextView
-        android:layout_toRightOf="@+id/disttxt"
         style="@style/Nunitoregular"
         android:layout_marginStart="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/nearest_place_distance"
         android:gravity="center"
+        android:layout_centerHorizontal="true"
         android:textColor="#404B69"
         android:textSize="8sp"
         android:text=""

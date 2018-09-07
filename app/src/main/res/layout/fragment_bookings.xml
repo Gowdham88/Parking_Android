@@ -31,13 +31,13 @@
             android:layout_height="40dp"
             app:tabSelectedTextColor="@drawable/tab_selector"
             android:background="@drawable/tab_bagroundcorner"
+            android:foreground="?attr/selectableItemBackground"
             android:layout_marginLeft="33dp"
             android:layout_marginRight="33dp"
             android:layout_marginTop="30dp"
             app:tabGravity="fill"
             app:tabPaddingStart="0dp"
             app:tabPaddingEnd="0dp"
-            app:tabBackground="@drawable/tab_selector_ripple"
             app:tabMode="fixed"
             app:tabIndicatorHeight="0dp"
             app:tabTextColor="@color/textColor" />
@@ -46,7 +46,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/viewpager_events"
-
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_below="@id/simpleTabLayout"
             />

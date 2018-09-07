@@ -59,24 +59,24 @@
                          android:layout_marginLeft="10dp"
                          android:layout_alignParentStart="true"
                          android:layout_gravity="center_vertical"
-                         android:background="@drawable/ic_search1"
+                         android:background="@drawable/searchbtn"
                          />
 
                      <AutoCompleteTextView
                          android:id="@+id/autoCompleteTextView"
                          style="@style/NunitoBlackLight"
-                         android:layout_width="275dp"
+                         android:layout_width="match_parent"
                          android:layout_height="38dp"
-                         android:layout_marginStart="20dp"
-                         android:paddingLeft="20dp"
-                         android:paddingRight="10dp"
-                         android:layout_marginRight="35dp"
+                         android:layout_alignParentStart="true"
+                         android:layout_alignParentTop="true"
                          android:background="@null"
+                         android:elevation="0dp"
                          android:ems="10"
                          android:hint="Search your destination"
+                         android:paddingLeft="40dp"
+                         android:paddingRight="40dp"
                          android:singleLine="true"
                          android:text=""
-                         android:elevation="0dp"
                          android:textColor="@color/textColor"
                          android:textSize="12dp">
 
@@ -90,7 +90,7 @@
                          android:layout_gravity="center_vertical"
                          android:layout_alignParentEnd="true"
                          android:layout_centerVertical="true"
-                         android:background="@drawable/ic_fliter1"
+                         android:background="@drawable/fliter"
                          />
                  </RelativeLayout>
 
@@ -114,7 +114,7 @@
                 android:layout_marginEnd="15dp"
                 android:layout_marginTop="15dp"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                app:cardElevation="3dp">
 
                 <fragment
                     xmlns:android="http://schemas.android.com/apk/res/android"

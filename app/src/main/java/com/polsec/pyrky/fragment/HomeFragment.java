@@ -3,19 +3,22 @@ package com.polsec.pyrky.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -25,17 +28,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -126,6 +125,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     Location mNearestLocations = new Location("");
 
     String placeId, description;
+    BitmapDrawable bitmapdraw;
     public static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
 
@@ -138,6 +138,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     private SharedPreferences permissionStatus;
 
     private android.support.v7.app.AlertDialog dialog;
+    HomeFragment mcontext=HomeFragment.this;
 
 //            @Override
 //            public void onAttach(Context context) {
@@ -163,7 +164,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     ArrayList<String> distances1 = new ArrayList<>();
     ArrayList<Double> mLocationDistances = new ArrayList<>();
-    ArrayList<String> caldis1 = new ArrayList<>();
+    ArrayList<Double> caldis1 = new ArrayList<>();
     ArrayList<String> mCameraLat = new ArrayList<>();
     ArrayList<String> mCameraLong = new ArrayList<>();
     ArrayList<String> mCameraImageUrl = new ArrayList<>();
@@ -177,6 +178,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     Marker marker;
     MarkerOptions makeroptions;
     CarouselLayoutManager carouselLayoutManager;
+    HomeActivity parent=(HomeActivity) getActivity();
 //    public static final String TAG = "ImmersiveModeFragment";
 
     @Override
@@ -248,10 +250,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //        autoCompView.setDropDownWidth(ViewGroup.LayoutParams.MATCH_PARENT);
 //        autoCompView.setDropDownWidth(850);
 
-        int offset = 64;
-
-        autoCompView.setDropDownHorizontalOffset(-1 * offset);
-        autoCompView.setDropDownWidth((int) (autoCompView.getWidth() + offset * 15.6));
+//        int offset = 64;
+//
+//        autoCompView.setDropDownHorizontalOffset(-1 * offset);
+//        autoCompView.setDropDownWidth((int) (autoCompView.getWidth() + offset * 10.7));
 //        autoCompView.setDropDownHorizontalOffset(10);
         autoCompView.setDropDownVerticalOffset(7);
         autoCompView.setAdapter(mPlaceArrayAdapter);
@@ -463,7 +465,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
                             Log.e("address1", address1);
                             LatLng sydney = new LatLng(latt, longi);
-                            mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+                            int height = 70;
+                            int width = 50;
+                            BitmapDrawable bitmapdraw=(BitmapDrawable)getContext().getResources().getDrawable(R.drawable.marker);
+                            Bitmap b=bitmapdraw.getBitmap();
+                            Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+                            mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,8));
 
                             Log.e("lattd", String.valueOf(latt));
@@ -533,8 +540,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
 
-                                if (locationDistance < 15000) {
-                                caldis1.add(String.valueOf(mLocationDistances));
+                                if (locationDistance < 1500) {
+                                caldis1.add(locationDistance);
                                 Log.e("caldis1", String.valueOf(caldis1));
                                 mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
                                 mCameraLong.add(mNearestLocationList.get(i).getCameraLong());
@@ -550,7 +557,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                                 mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
                                 mNearestPlaceRecycler.setHasFixedSize(true);
-                                mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName);
+                                mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName,caldis1);
                                 mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                 mNearestrecyclerAdapter.notifyDataSetChanged();
                                 mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
@@ -558,8 +565,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
                                 LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
-                                mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-//                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
+                                    int height = 70;
+                                    int width = 50;
+                                    bitmapdraw =(BitmapDrawable)getActivity().getResources().getDrawable(R.drawable.marker);
+                                    Bitmap b=bitmapdraw.getBitmap();
+                                    Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+//                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
 //                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
                                 }
@@ -629,8 +642,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         }
 
         mMap.setMyLocationEnabled(false);
-//
-        mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocationicon)));
+
+        int height = 95;
+        int width = 95;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            bitmapdraw=(BitmapDrawable)getActivity().getDrawable(R.drawable.currentlocationicon);
+        }
+        Bitmap b=bitmapdraw.getBitmap();
+        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+        mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+
+//        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocationicon));
         float zoomLevel = 12;
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
