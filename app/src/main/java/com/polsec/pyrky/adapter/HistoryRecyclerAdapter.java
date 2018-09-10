@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,6 +30,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.activity.signin.SignInActivity;
+import com.polsec.pyrky.helper.RecyclerDiffCallBack;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.pojo.Reports;
@@ -48,21 +52,15 @@ import java.util.Map;
 
 public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecyclerAdapter.ViewHolder>{
     private Context context;
-    private String places[];
-    private String dateTime[];
-    private int[] currentRating;
-    private int mPosition;
-    private Boolean isPopUpShowing = false;
- int currenRating;
+    private int currenRating;
     int count = 0;
-    String docid,uid,Rating,cameraid,lat,longi,bookingidval;
-    RatingBar ratingBar;
+    private android.support.v7.app.AlertDialog dialog;
+    String docid,uid,cameraid,lat,longi,bookingidval;
+    private RatingBar ratingBar;
            TextView ratingbar1,viewCar;
     FirebaseFirestore db;
 
     FirebaseAuth mAuth;
-    String mUid;
-    Map<String, Object> bookingid = new HashMap<>();
 
     Map<String, Object> bookingid1=new HashMap<>();
     List<Camera>CameraList = new ArrayList<Camera>();
@@ -73,15 +71,21 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
     HistoryRecyclerAdapter recyclerAdapter;
     RecyclerView mRecyclerView;
+    private int mPosition;
+
     public HistoryRecyclerAdapter(Context context, List<Booking> bookingList, Map<String, Object> bookingid1, List<Camera> cameraList, HistoryRecyclerAdapter recyclerAdapter, RecyclerView mRecyclerView) {
         this.context = context;
         this.bookingList = bookingList;
-        this.bookingid1=bookingid1;
-        this.CameraList=CameraList;
-        this.recyclerAdapter=recyclerAdapter;
         this.mRecyclerView=mRecyclerView;
 
     }
+
+    public HistoryRecyclerAdapter(Context context, List<Booking> bookingList, RecyclerView mRecyclerView) {
+        this.context = context;
+        this.bookingList = bookingList;
+        this.mRecyclerView=mRecyclerView;
+    }
+
 
     @NonNull
     @Override
@@ -134,23 +138,10 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 //        Log.e("vv", String.valueOf(str));
         holder.dateTime.setText(str);
 
-
-        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)holder.itemView.getLayoutParams();
         bookingidval=bookingList.get(position).getDocumentID();
 
-        if(bookingid1.containsKey(bookingList.get(position).getDocumentID())){
-            Boolean value=(Boolean) bookingid1.get(bookingList.get(position).getDocumentID());
+        holder.city.setText(bookingList.get(position).getDestName());
 
-            if(!value){
-                holder.city.setText(bookingList.get(position).getDestName());
-            }
-            else {
-                holder.itemView.setVisibility(View.GONE);
-                param.height = 0;
-                param.width = 0;
-            }
-        }
-//        }
 
         cameraid=bookingList.get(position).getCameraId();
         lat=bookingList.get(position).getDestLat();
@@ -180,8 +171,6 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
                     showDialog(uid,cameraid,latlong,current,position);
 
-
-//                showDialog(cameraid,uid,latlong);
                     return false;
                 }
             });
@@ -229,6 +218,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         Oktaxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                showProgressDialog();
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
                 Map<String, Object> rating = new HashMap<>();
                 rating.put("parkingSpaceRating", currenRating );
@@ -238,22 +228,23 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 db.collection("Bookings").document(current).update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-//                        bookingList.get(position).getParkingSpaceRating();
-//                        bookingList.get(position).setParkingSpaceRating(currenRating);
-//                        swapItems(bookingList);
-//                        ratingbar1.setVisibility(View.GONE);
-//                        ratingBar.setVisibility(View.VISIBLE);
-//                        ratingBar.setRating((float) bookingList.get(position).getParkingSpaceRating());
-//                        ratingBar.setIsIndicator(true);
-//                        Drawable drawable = ratingBar.getProgressDrawable();
-//                        drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
+
+                        List<Booking> mRatingUpdatedList = new ArrayList<Booking>(bookingList);
+                        mRatingUpdatedList.get(position).setParkingSpaceRating(currenRating);
+
+                        HistoryRecyclerAdapter historyRecyclerAdapter = new HistoryRecyclerAdapter(context,bookingList,mRecyclerView);
+                        mRecyclerView.setAdapter(historyRecyclerAdapter);
+
+                        hideProgressDialog();
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
+                        hideProgressDialog();
                     }
                 });
+
                 ratingbar1.setVisibility(View.GONE);
                         ratingBar.setVisibility(View.VISIBLE);
                         ratingBar.setRating(currenRating);
@@ -272,7 +263,6 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 db.collection("Reports").document(latlongi).set(reports).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -298,61 +288,13 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
     }
 
+    public void updateBookingListItems(List<Booking> employees) {
+        final RecyclerDiffCallBack diffCallback = new RecyclerDiffCallBack(this.bookingList, employees);
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
 
-        public void showDialog(int currentRating, View v){
-        isPopUpShowing = true;
-        AlertDialog.Builder popDialog = new AlertDialog.Builder(context);
-
-        LinearLayout linearLayout = new LinearLayout(context);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        final RatingBar rating = new RatingBar(context);
-        rating.setLayoutParams(lp);
-        rating.setMax(5);
-        rating.setNumStars(5);
-        rating.setRating(currentRating);
-        linearLayout.setGravity(Gravity.CENTER);
-        linearLayout.addView(rating);
-
-        rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-//                currentRating[mPosition] = ( int ) v;
-                System.out.println("Rated val:"+v);
-            }
-        });
-
-        popDialog.setTitle("Rate the space");
-
-        popDialog.setView(linearLayout);
-        popDialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                int pos = getItemCount();
-                if (pos != RecyclerView.NO_POSITION){
-
-                }
-                String stars = String.valueOf(rating.getRating());
-                Toast.makeText(context, stars, Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-                isPopUpShowing = false;
-            }
-        });
-        popDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.cancel();
-                isPopUpShowing = false;
-            }
-        });
-        popDialog.setCancelable(false);
-        popDialog.create();
-        popDialog.show();
-
+        this.bookingList.clear();
+        this.bookingList.addAll(employees);
+        diffResult.dispatchUpdatesTo(this);
     }
 //
 
@@ -366,4 +308,16 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         return bookingList.size();
     }
 
+    public void showProgressDialog() {
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(context);
+        alertDialog.setView(R.layout.progress);
+        dialog = alertDialog.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+    }
+
+    public void hideProgressDialog(){
+        if(dialog!=null)
+            dialog.dismiss();
+    }
 }

@@ -30,9 +30,7 @@ public class RecyclerDiffCallBack extends DiffUtil.Callback {
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
 
-        return mOldBookingList.get(oldItemPosition).getCameraId().equals(mNewBookingList.get(
-                newItemPosition).getCameraId());
-
+        return mOldBookingList.get(oldItemPosition).getDestLat().equals(mNewBookingList.get(newItemPosition).getDestLat());
 
     }
 
@@ -41,7 +39,7 @@ public class RecyclerDiffCallBack extends DiffUtil.Callback {
         final Booking oldBooking = mOldBookingList.get(oldItemPosition);
         final Booking newBooking = mNewBookingList.get(newItemPosition);
 
-        return oldBooking.getDestLat().equals(newBooking.getDestLat());
+        return oldBooking.getParkingSpaceRating() == newBooking.getParkingSpaceRating();
 
     }
 

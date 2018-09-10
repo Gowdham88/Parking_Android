@@ -29,6 +29,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.Interpolator;
@@ -636,8 +637,13 @@ hideProgressDialog();
             }
         });
         alertD.setView(promptView);
+//        alertD.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        WindowManager.LayoutParams params = alertD.getWindow().getAttributes();
+        params.y = 150;
+        alertD.getWindow().setAttributes(params);
         alertD.getWindow().setDimAmount(0.0f);
-        alertD.getWindow().setGravity(Gravity.NO_GRAVITY);
+        alertD.getWindow().setGravity(Gravity.TOP);
+
 
         alertD.show();
 
