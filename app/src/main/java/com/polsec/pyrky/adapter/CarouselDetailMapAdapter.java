@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.activity.NearestLocMapsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -43,26 +45,28 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     ArrayList<String> distances1 = new ArrayList<>();
     ArrayList<String> Placename = new ArrayList<>();
     ArrayList<String> ruls = new ArrayList<>();
+    ArrayList<Double> mLocationDistancesmtrs = new ArrayList<>();
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
-    private ListAdapterListener mListener;
+//    private ListAdapterListener mListener;
     private RecyclerView parentRecycler;
     int postionval;
+    int distance,distanceval;
 
     public static final String ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button";
 
 
-    public interface ListAdapterListener {
-        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1, String mapvalues, String s2, String s3);
-//        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1); // create an interface
-
-
-
-
-
+//    public interface ListAdapterListener {
+//        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1, String mapvalues, String s2, String s3);
+////        void onClickimageButton(int position, String actionLikeButtonClicked, String s, String s1); // create an interface
 //
-    }
-    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<String> ruls, ListAdapterListener mListener) {
+//
+//
+//
+//
+////
+//    }
+    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<String> ruls, ArrayList<Double> mLocationDistancesmtrs, int distance, NearestLocMapsActivity nearestLocMapsActivity) {
         this.context = context;
         this.nearimg = nearimg;
         this.nearlat1 = nearlat1;
@@ -70,7 +74,9 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
         this.distances1 = distances1;
         this.Placename=Placename;
         this.ruls=ruls;
-        this.mListener=mListener;
+        this.distance=distance;
+        this.mLocationDistancesmtrs=mLocationDistancesmtrs;
+//        this.mListener=mListener;
         notifyDataSetChanged();
     }
 
@@ -84,7 +90,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.nearest_places_item, parent, false);
+                .inflate(R.layout.nearest_loc_layout, parent, false);
 
         return new ViewHolder(view);
     }
@@ -92,18 +98,107 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 //        holder.nearestPlaceImage.setImageResource(mLocationImage[position]);
-        this.avatarSize = context.getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+//        this.avatarSize = context.getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
 
         Picasso.with(context).load(nearimg.get(position))
                 .fit()
                 .into(holder.nearestPlaceImage);
 
         postionval =holder.getAdapterPosition();
+        if(distance>0){
+            if(distance>0 && distance <=100 ){
+                holder.nearestPlaceDistance.setText("0 - 100m");
+            }
+            else if(distance>100 && distance <=200 ){
+                holder.nearestPlaceDistance.setText("100 - 200m");
+            }
+            else if(distance>200 && distance <=300 ){
+                holder.nearestPlaceDistance.setText("200 - 300m");
+            }
+
+            else if(distance>300 && distance <=400 ){
+                holder.nearestPlaceDistance.setText("300 - 400m");
+            }
+
+            else if(distance>400 && distance <=500 ){
+                holder.nearestPlaceDistance.setText("400 - 500m");
+            }
+
+            else if(distance>500 && distance <=600 ){
+                holder.nearestPlaceDistance.setText("500 - 600m");
+            }
+
+            else if(distance>600 && distance <=700 ){
+                holder.nearestPlaceDistance.setText("600 - 700m");
+            }
+
+            else if(distance>700 && distance <=800 ){
+                holder.nearestPlaceDistance.setText("700 - 800m");
+            }
+
+            else if(distance>800 && distance <=900 ){
+                holder.nearestPlaceDistance.setText("800 - 900m");
+            }
+
+            else {
+                holder.nearestPlaceDistance.setText("900 - 1000m");
+            }
+        }
+        else {
+            double disval=mLocationDistancesmtrs.get(position);
+            Log.e("val", String.valueOf(disval));
+
+
+            distanceval=(int) Double.parseDouble(String.valueOf(disval));
+            Log.e("distanceval", String.valueOf(distanceval));
+            if(!mLocationDistancesmtrs.get(position).equals(null)){
+                if(distanceval>0 && distanceval <=100 ){
+                    holder.nearestPlaceDistance.setText("0 - 100m");
+                }
+                else if(distanceval>100 && distanceval <=200 ){
+                    holder.nearestPlaceDistance.setText("100 - 200m");
+                }
+                else if(distanceval>200 && distanceval <=300 ){
+                    holder.nearestPlaceDistance.setText("200 - 300m");
+                }
+
+                else if(distanceval>300 && distanceval <=400 ){
+                    holder.nearestPlaceDistance.setText("300 - 400m");
+                }
+
+                else if(distanceval>400 && distanceval <=500 ){
+                    holder.nearestPlaceDistance.setText("400 - 500m");
+                }
+
+                else if(distanceval>500 && distanceval <=600 ){
+                    holder.nearestPlaceDistance.setText("500 - 600m");
+                }
+
+                else if(distanceval>600 && distanceval <=700 ){
+                    holder.nearestPlaceDistance.setText("600 - 700m");
+                }
+
+                else if(distanceval>700 && distanceval <=800 ){
+                    holder.nearestPlaceDistance.setText("700 - 800m");
+                }
+
+                else if(distanceval>800 && distanceval <=900 ){
+                    holder.nearestPlaceDistance.setText("800 - 900m");
+                }
+
+                else {
+                    holder.nearestPlaceDistance.setText("900 - 1000m");
+                }
+            }
+
+        }
+
+
+
 //        holder.nearestPlaceAve.setText(mAve[position]);
 //        holder.nearestPlaceCity.setText(mCity[position]);
 
 //        S val= Integer.parseInt(distances1.get(position));
-        holder.nearestPlaceDistance.setText(distances1.get(position));
 
         final double latitude = Double.parseDouble(nearlat1.get(position));
         final double  longitude = Double.parseDouble(nearlong1.get(position));
@@ -133,7 +228,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
             public void onClick(View v) {
 //                Toast.makeText(context, "click", Toast.LENGTH_SHORT).show();
                 String mapvalues="mapvalues";
-                mListener.onClickimageButton(position,ACTION_LIKE_BUTTON_CLICKED,nearlat1.get(position),nearlong1.get(position),mapvalues,Placename.get(position),ruls.get(position));
+//                mListener.onClickimageButton(position,ACTION_LIKE_BUTTON_CLICKED,nearlat1.get(position),nearlong1.get(position),mapvalues,Placename.get(position),ruls.get(position));
 
             }
         });

@@ -1,6 +1,5 @@
 package com.polsec.pyrky.fragment;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
@@ -11,11 +10,9 @@ import android.support.annotation.Nullable;
 
 import android.support.v4.app.Fragment;
 
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +23,6 @@ import android.widget.VideoView;
 
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.HomeActivity;
-import com.polsec.pyrky.adapter.NotificationAdapter;
 
 public class NotificationVideoFragment extends Fragment{
 
@@ -35,6 +31,7 @@ public class NotificationVideoFragment extends Fragment{
     VideoView videoView;
     private String urlStream;
     private android.support.v7.app.AlertDialog dialog;
+    private final int VIDEO_MAXIMUM_DURATION = 3000;
 
 
     public static NotificationVideoFragment newInstance() {
@@ -63,52 +60,31 @@ public class NotificationVideoFragment extends Fragment{
 
         videoView = (VideoView)view.findViewById(R.id.VideoView);
 
-
-
-//        MediaController mc = new MediaController(getActivity());
-//        videoView.setMediaController(mc);
-
-//        setupVideoView();
-        showProgressDialog();
-
         videoView.setMediaController(new MediaController(getActivity()));
         videoView.setVideoURI(Uri.parse("http://playertest.longtailvideo.com/adaptive/wowzaid3/playlist.m3u8"));
-//        videoView.setVideoURI(Uri.parse("http://dev.stream.polsecled.com:1935/polsec-uai/polsec_camera_2_confins.stream/playlist.m3u8"));
+        showProgressDialog();
         videoView.requestFocus();
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             public void onPrepared(MediaPlayer mp) {
                 hideProgressDialog();
-                mp.start();
+//                mp.start();
+
+                new Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run() {
+                        mp.start();
+                /* Create an Intent that will start the Menu-Activity. */
+
+                    }
+                }, VIDEO_MAXIMUM_DURATION);
 
             }
         });
-
-//        urlStream = "http://dev.stream.polsecled.com:1935/polsec-uai/polsec_camera_2_confins.stream/playlist.m3u8";
-//
-//        videoView.setVideoURI(Uri.parse(urlStream));
-
-//        videoView.setVideoURI(Uri.parse("http://dev.stream.polsecled.com:1935/polsec-uai/polsec_camera_2_confins.stream/playlist.m3u8"));
-//
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
-//
-//                Fragment fragment = new NotificationFragment();
-//                if (fragment != null) {
-//                    FragmentManager fragmentManager = fragment.getSuFragmentManager().beginTransaction();
-//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                    fragmentTransaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left);
-//
-//                    // Replace whatever is in the fragment_container view with this fragment,
-//                    // and add the transaction to the back stack so the user can navigate back
-//                    fragmentTransaction.replace(R.id.main_frame_layout, fragment).commit();
-////                    fragmentTransaction.addToBackStack(null);
-////
-////                    // Commit the transaction
-////                    fragmentTransaction.commit();
-//                }
                 FragmentTransaction transaction =getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left);
                 transaction.replace(R.id.main_frame_layout, new NotificationFragment());

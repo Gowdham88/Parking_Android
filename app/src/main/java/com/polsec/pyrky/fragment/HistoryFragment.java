@@ -20,10 +20,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.polsec.pyrky.R;
-import com.polsec.pyrky.adapter.CurrentBookingRecyclerAdapter;
 import com.polsec.pyrky.adapter.HistoryRecyclerAdapter;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
@@ -34,37 +32,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.crashlytics.android.answers.Answers.TAG;
-
 /**
  * Created by thulirsoft on 7/9/18.
  */
 
 public class HistoryFragment extends Fragment {
-    Context context;
+
     RecyclerView mRecyclerView;
-    String mPlace[] = {"Rio de Janeiro","Brasília","Salvador","Fortaleza","Belo Horizonte"};
-    String mTimeDate[] = {"05 Jan, 12.30am","15 Feb, 03.10pm","25 Mar, 05.50pm","17 Jun, 10.30am","01 Jan, 12.00am"};
-    int[] mCurrentRating = {5,5,5,5,5};
     HistoryRecyclerAdapter recyclerAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
     String uid;
     FirebaseFirestore db;
     List<Booking> BookingList = new ArrayList<Booking>();
+    List<Booking> mFilteredBookingList = new ArrayList<Booking>();
     List<String> BookingListId = new ArrayList<String>();
     List<Camera>CameraList = new ArrayList<Camera>();
-    List<String> CameraListId = new ArrayList<String>();
-    List<Booking> Booklist = new ArrayList<Booking>();
-    int i;
-
-
-
-    String mUid;
     Map<String, Object> bookingid = new HashMap<>();
 
     Map<String, Object> bookingid1=new HashMap<>();
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
     public static final String ACTION_SHOW_DEFAULT_ITEM = "action_show_default_item";
+
     public HistoryFragment() {
 
     }
@@ -74,9 +62,7 @@ public class HistoryFragment extends Fragment {
         super.onResume();
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
 //        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
-        loadPost(ACTION_SHOW_LOADING_ITEM);
-        loadPostval(ACTION_SHOW_LOADING_ITEM);
-        recyclerAdapter.notifyDataSetChanged();
+
     }
 
     @Nullable
@@ -88,56 +74,54 @@ public class HistoryFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
         uid = PreferencesHelper.getPreference(getContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-//        loadPost(ACTION_SHOW_LOADING_ITEM);
+
+
+
         swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-//                        feedAdapter.notifyDataSetChanged();
-
-                        doYourUpdate();
-                    }
+                () -> {
+                    retrieveContents();
                 }
         );
-        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1,CameraList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(recyclerAdapter);
-        mRecyclerView.setHasFixedSize(true);
-        recyclerAdapter.notifyDataSetChanged();
 
         return view;
     }
 
-    private void doYourUpdate() {
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        recyclerAdapter.notifyDataSetChanged();
+        retrieveContents();
+
+    }
+
+    private void retrieveContents() {
+
         loadPost(ACTION_SHOW_LOADING_ITEM);
-        loadPostval(ACTION_SHOW_LOADING_ITEM);
-        swipeRefreshLayout.setRefreshing(false);
+
+
     }
 
     private void setupFeed() {
 
-        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),BookingList,bookingid1,CameraList);
+        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),mFilteredBookingList,bookingid1,CameraList,recyclerAdapter,mRecyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
 
-//        mAdapter.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
-//            }
-//        });
-//        mAdapter.setItemAnimator(new FeedItemAnimator());
+        if (swipeRefreshLayout.isRefreshing()){
+            swipeRefreshLayout.setRefreshing(false);
+        }
 
     }
+
+    //Retrieve Booking records using Current_User_UID field.
     public void loadPost(final String type) {
 
         BookingList.clear();
         BookingListId.clear();
+        mFilteredBookingList.clear();
 //        showProgressDialog();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -160,19 +144,15 @@ public class HistoryFragment extends Fragment {
                             BookingList.add(comment);
                             BookingListId.add(document.getId());
 
-//                            Log.e("dbbd",document.getId());
-//                            Log.e("dbbd", String.valueOf(document.getData()));
-
                         }
-//                        loadPostval(ACTION_SHOW_LOADING_ITEM);
 
-
-                        setupFeed();
-                        recyclerAdapter.notifyDataSetChanged();
+                        loadPostval(ACTION_SHOW_LOADING_ITEM);
                     }
 
                 });
     }
+
+    //Retrieve Booking records using Current_User_UID field.
     public void loadPostval(final String type) {
 
         DocumentReference docRef = db.collection("users").document(uid);
@@ -183,44 +163,58 @@ public class HistoryFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
 //                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        bookingid = document.getData();
+                        if(document.contains("Booking_ID")){
+                            bookingid = document.getData();
 
 
-                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+                            bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
 
 
-                        String count = String.valueOf(bookingid1.size());
-                        Log.e("count", count);
+                            String count = String.valueOf(bookingid1.size());
+                            Log.e("count", count);
 
 
 //                                    followingcount = 1;
-                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                            System.out.println(entry.getKey() + " = " + entry.getValue());
+                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                System.out.println(entry.getKey() + " = " + entry.getValue());
 
-                            Boolean val = (Boolean) entry.getValue();
-                            String values = String.valueOf(val);
+                                Boolean val = (Boolean) entry.getValue();
+                                String values = String.valueOf(val);
 
-                            Log.e("valuesh", values);
-                            setupFeed();
+                                Log.e("valuesh", values);
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+
+                            }
+
+                            for (int i = 0; i < BookingList.size();i++){
+                                if(bookingid1.containsKey(BookingList.get(i).getDocumentID())){
+                                    Boolean value=(Boolean) bookingid1.get(BookingList.get(i).getDocumentID());
+
+                                    if(!value){
+                                        mFilteredBookingList.add(BookingList.get(i));
+                                    }
+
+                                }
+                            }
+
+
+
+
+                        }
+                        else{
 
                         }
 
-
-//                        recyclerAdapter.notifyDataSetChanged();
-
-
                     } else {
-//                        Log.d(TAG, "No such document");
 
                     }
                 } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
 
                 }
+
+                setupFeed();
             }
         });
 
     }
-
 }

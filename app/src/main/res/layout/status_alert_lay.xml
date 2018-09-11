@@ -15,51 +15,85 @@
 
     <TextView
         style="@style/Nunitoregular"
-        android:textSize="14dp"
-        android:textColor="@color/booking_txtclr"
-        android:text="Close Booking"
-        android:layout_width="212dp"
+        android:textSize="18dp"
+        android:textColor="@color/textColor"
+        android:text="Oops..!!"
+        android:layout_width="match_parent"
         android:gravity="center"
         android:layout_gravity="center"
+        android:textStyle="bold"
         android:layout_height="wrap_content" />
     <TextView
         style="@style/Nunitoregular"
         android:textSize="14dp"
-        android:textColor="@color/booking_txtclr"
-        android:text="@string/status"
-        android:layout_width="212dp"
+        android:textColor="@color/textColor"
+        android:text="@string/status_txt"
+        android:layout_width="match_parent"
         android:gravity="center"
         android:layout_gravity="center"
-        android:layout_height="50dp" />
-    <RelativeLayout
-        android:layout_width="212dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/border_color" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:layout_gravity="center"
         android:layout_marginBottom="4dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        >
 
-        <Button
+        <TextView
             android:id="@+id/ok_button"
-            style="@style/ok_button"
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:text="OK"
-            android:textAllCaps="false"
-            android:textSize="15dp"
-
-            />
-
-        <Button
+            android:layout_width="160dp"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorAccent"
+            android:textSize="14dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Ok"
+            style="@style/Nunitoregular"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_gravity="center"
+            android:background="@color/border_color"
+            android:layout_height="match_parent" />
+        <TextView
+            style="@style/Nunitoregular"
+            android:textColor="@color/colorAccent"
             android:id="@+id/cancel_button"
-            style="@style/ok_button"
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="end"
+            android:textSize="14dp"
             android:text="Cancel"
-            android:textSize="15dp" />
+            android:gravity="center"
+            android:layout_toRightOf="@+id/ok_button"
+            android:layout_width="160dp"
+            android:layout_height="match_parent" />
+        <!--<Button-->
+            <!--android:id="@+id/ok_button"-->
+            <!--style="@style/ok_button"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="35dp"-->
+            <!--android:text="OK"-->
+            <!--android:textAllCaps="false"-->
+            <!--android:textSize="15dp"-->
 
-    </RelativeLayout>
+            <!--/>-->
+
+        <!--<Button-->
+            <!--android:id="@+id/cancel_button"-->
+            <!--style="@style/ok_button"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="35dp"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_gravity="end"-->
+            <!--android:text="Cancel"-->
+            <!--android:textSize="15dp" />-->
+
+    </LinearLayout>
 
 </LinearLayout>

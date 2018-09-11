@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/linearlay"
+    android:background="@color/border_color"
+    android:layoutDirection="ltr">
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/radio_group">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/table1">
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rb1"
+            android:button="@drawable/custom_radio_box"
+            android:scaleX="0.3"
+            android:scaleY="0.3"
+            android:textSize="18sp"
+            android:layout_column="1"
+            android:layout_marginStart="3dp"
+            />
+            <TextView
+                android:id="@+id/cb1_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Free street parking"
+                android:textColor="@color/textColor"
+                android:layout_column="2"
+                android:layout_marginStart="8dp"
+                />
+        </TableRow>
+
+            <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/table2">
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rb2"
+            android:scaleX="0.3"
+            android:scaleY="0.3"
+            android:button="@drawable/custom_radio_box"
+            android:textSize="18sp"
+            android:layout_column="1"
+            android:layout_marginStart="3dp"
+            />
+                <TextView
+                    android:id="@+id/cb2_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Paid street parking"
+                    android:textColor="@color/textColor"
+                    android:layout_column="2"
+                    android:layout_marginStart="8dp"
+                    />
+            </TableRow>
+
+            <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/table3">
+            <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rb3"
+            android:scaleX="0.3"
+            android:scaleY="0.3"
+            android:button="@drawable/custom_radio_box"
+            android:textSize="18sp"
+            android:layout_column="1"
+                android:layout_marginStart="3dp"
+            />
+            <TextView
+                android:id="@+id/cb3_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Paid parking"
+                android:layout_column="2"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/textColor"
+                />
+            </TableRow>
+        </TableLayout>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/expandedListItem"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:visibility="gone"
+        android:paddingBottom="10dp" />
+</LinearLayout>

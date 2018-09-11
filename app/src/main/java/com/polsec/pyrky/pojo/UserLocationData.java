@@ -3,12 +3,11 @@ package com.polsec.pyrky.pojo;
 public class UserLocationData {
 
     private String cameraLat;
-
-
     private String cameraLong;
     private String cameraImageUrl;
     private String cameraLocationName;
-
+    private String carCategory;
+    private String parkingTypes;
 
     public UserLocationData(String cameraLat, String cameraLong, String cameraImageUrl, String cameraLocationName) {
         this.cameraLat = cameraLat;
@@ -18,6 +17,21 @@ public class UserLocationData {
 
     }
 
+    public String getCarCategory() {
+        return carCategory;
+    }
+
+    public void setCarCategory(String carCategory) {
+        this.carCategory = carCategory;
+    }
+
+    public String getParkingTypes() {
+        return parkingTypes;
+    }
+
+    public void setParkingTypes(String parkingTypes) {
+        this.parkingTypes = parkingTypes;
+    }
 
     public String getCameraLat() {
         return cameraLat;

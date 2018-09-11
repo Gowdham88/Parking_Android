@@ -7,15 +7,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -25,14 +25,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -75,11 +74,12 @@ import com.polsec.pyrky.activity.HomeActivity;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
 import com.polsec.pyrky.adapter.CarouselNearestAdapter;
 import com.polsec.pyrky.adapter.PlaceArrayAdapter;
-import com.polsec.pyrky.pojo.UserLocationData;
+import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -91,12 +91,12 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener,
         GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks {
+        GoogleApiClient.ConnectionCallbacks, CarouselLayoutManager.OnCenterItemSelectionListener {
 
     //Nearest Place recycler
     RecyclerView mNearestPlaceRecycler;
     CarouselNearestAdapter mNearestrecyclerAdapter;
-
+    Boolean isCarouselSwiped = false;
     //Filter
     Boolean isExpandableListEnabled = false;
     Button mFilterButton;
@@ -111,7 +111,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     double mCurLocLat, mCurLocLong;
     double latitu, longitu;
     double latt, longi;
-    List<UserLocationData> mNearestLocationList = new ArrayList<UserLocationData>();
+    List<Camera> mNearestLocationList = new ArrayList<Camera>();
 
     TextView mSearchButton;
     RelativeLayout HomeRelativeLay;
@@ -123,6 +123,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     Location mNearestLocations = new Location("");
 
     String placeId, description;
+    BitmapDrawable bitmapdraw;
     public static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
 
@@ -135,6 +136,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     private SharedPreferences permissionStatus;
 
     private android.support.v7.app.AlertDialog dialog;
+    HomeFragment mcontext=HomeFragment.this;
 
 //            @Override
 //            public void onAttach(Context context) {
@@ -160,24 +162,35 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     ArrayList<String> distances1 = new ArrayList<>();
     ArrayList<Double> mLocationDistances = new ArrayList<>();
-    ArrayList<String> caldis1 = new ArrayList<>();
+    ArrayList<Double> caldis1 = new ArrayList<>();
     ArrayList<String> mCameraLat = new ArrayList<>();
     ArrayList<String> mCameraLong = new ArrayList<>();
     ArrayList<String> mCameraImageUrl = new ArrayList<>();
     ArrayList<Double> distancesmtrscurrent = new ArrayList<>();
     ArrayList<String> distancescurrentarr = new ArrayList<>();
     ArrayList<String> mCameraLocName = new ArrayList<>();
+    ArrayList<String> mrlslist = new ArrayList<>();
+    ArrayList<HashMap<String, Object>> Ruleslist = new ArrayList<HashMap<String, Object>>();
+
+    ArrayList<String> mCameraID = new ArrayList<>();
+ HashMap<String, Object> popupruls = new HashMap<String, Object>();
     List<Address> mCurLocAddress = null;
     double distanceval;
+    HashMap<String,Object> listofparkingRules=new HashMap<>();
     RelativeLayout HomeRelLayout, mParentLayout, HomeFragrellay;
     LinearLayout NearLinLay;
     Marker marker;
     MarkerOptions makeroptions;
     CarouselLayoutManager carouselLayoutManager;
+    HomeActivity parent=(HomeActivity) getActivity();
+//    public static final String TAG = "ImmersiveModeFragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        getActivity().requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
     }
 
@@ -186,6 +199,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         super.onResume();
         ((HomeActivity) getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+//        mNearestrecyclerAdapter.notifyDataSetChanged();
+
+
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Places.GEO_DATA_API)
@@ -199,6 +215,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     == PackageManager.PERMISSION_GRANTED) {
 
                 //Request location updates:
+//                getCurrentLocation();
+//                loadCameraLocations();
 
             }
         }
@@ -231,12 +249,33 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
         //Auto Complete textview
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
-        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,
+        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(),R.layout.drop_downlay,
                 BOUNDS_MOUNTAIN_VIEW, null);
+//        autoCompView.setDropDownWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+//        autoCompView.setDropDownWidth(850);
+
+//        int offset = 64;
+//
+//        autoCompView.setDropDownHorizontalOffset(-1 * offset);
+//        autoCompView.setDropDownWidth((int) (autoCompView.getWidth() + offset * 10.7));
+//        autoCompView.setDropDownHorizontalOffset(10);
+        autoCompView.setDropDownVerticalOffset(7);
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
+//        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
 
+//        final View decorView = getActivity().getWindow().getDecorView();
+//        decorView.setOnSystemUiVisibilityChangeListener(
+//                new View.OnSystemUiVisibilityChangeListener() {
+//                    @Override
+//                    public void onSystemUiVisibilityChange(int i) {
+//                        int height = decorView.getHeight();
+//                        Log.i(TAG, "Current height: " + height);
+//                    }
+//                });
+//
+//        toggleHideyBar();
         HomeRelLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -267,7 +306,140 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         });
 
+        getCurrentLocation();
+        loadCameraLocations();
+        mNearestLocationList.clear();
 
+//
+
+        if (mCameraLat!=null){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mNearestPlaceRecycler.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                    @Override
+                    public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+//                        mNearestrecyclerAdapter.notifyDataSetChanged();
+
+                        int scrollPosition = carouselLayoutManager.getCenterItemPosition();
+                        double lat = Double.parseDouble(mCameraLat.get(scrollPosition));
+                        double lng = Double.parseDouble(mCameraLong.get(scrollPosition));
+                        LatLng latLng = new LatLng(lat,lng);
+                        //                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        if (scrollPosition == 0){
+
+                            if (isCarouselSwiped){
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+                            }else{
+
+                            }
+
+//                            Toast.makeText(getActivity(), "Same count", Toast.LENGTH_SHORT).show();
+                        }else{
+                            isCarouselSwiped = true;
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+                        }
+
+
+                    }
+                });
+            }
+        }
+
+
+
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (autoCompView.getText().toString().isEmpty() || description == null) {
+
+                    String str="Please enter the search location";
+                    athenticaationpopup(str);
+
+
+
+                }
+                 else {
+                    Toast.makeText(getActivity(), getFirstWord(description), Toast.LENGTH_SHORT).show();
+
+                    NearestLocMapsActivity newFragment = new NearestLocMapsActivity();
+                    Bundle args = new Bundle();
+                    args.putString("placeid", placeId);
+                    args.putString("latitude", String.valueOf(Latitude).trim());
+                    args.putString("longitude", String.valueOf(Longitude).trim());
+                    args.putString("value", "home");
+                    args.putString("place", description);
+//                    Log.e("strLatitude", String.valueOf(Latitude));
+//                    Log.e("strLongitude", String.valueOf(Longitude));
+                    args.putStringArrayList("placesarray", caldis);
+
+                    newFragment.setArguments(args);
+
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                    // Replace whatever is in the fragment_container view with this fragment,
+                    // and add the transaction to the back stack so the user can navigate back
+                    transaction.replace(R.id.main_frame_layout, newFragment);
+                    transaction.addToBackStack(null);
+
+                    // Commit the transaction
+                    transaction.commit();
+
+//                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
+//
+//                    getActivity().startActivity(intent);
+//                    autoCompView.setText("");
+                }
+
+            }
+        });
+
+
+        mFilterButton = (Button) view.findViewById(R.id.filter_button);
+
+        mFilterButton.setVisibility(View.VISIBLE);
+
+        mFilterButton.setOnClickListener(new View.OnClickListener() {
+            FragmentTransaction transaction;
+
+            @Override
+            public void onClick(View v) {
+                if (!isExpandableListEnabled) {
+                    isExpandableListEnabled = true;
+                    Toast.makeText(getActivity(), "Filter Enabled", Toast.LENGTH_SHORT).show();
+                    Fragment filterFragment = new FiltersFragment();
+                    transaction = getChildFragmentManager().beginTransaction();
+                    transaction.add(R.id.frame_layout, filterFragment).addToBackStack(null).commit();
+                    Utils.hideKeyboard(getActivity());
+                } else {
+                    isExpandableListEnabled = false;
+                    Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
+                    getChildFragmentManager().popBackStack();
+                }
+            }
+        });
+
+        //NearestPlace Recycler
+
+        HomeRelativeLay = view.findViewById(R.id.home_lay);
+        HomeRelativeLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.hideKeyboard(getActivity());
+            }
+        });
+        mNearestPlaceRecycler.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.hideKeyboard(getActivity());
+            }
+        });
+//
+        permissionStatus = getActivity().getSharedPreferences("permissionStatus", MODE_PRIVATE);
+
+        return view;
+    }
+
+    private void getCurrentLocation(){
         //Getting Current Location from independent class
         mCurrentGpsLoc = new TrackGPS(getActivity());
         try {
@@ -296,10 +468,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
                             Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
                             Log.e("address1", address1);
-
+                            LatLng sydney = new LatLng(latt, longi);
+                            mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,8));
 
                             Log.e("lattd", String.valueOf(latt));
                             Log.e("latgd", String.valueOf(longi));
+
 
 
                         }
@@ -309,7 +484,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     e.printStackTrace();
                 }
 
-
             } else {
                 mCurrentGpsLoc.showSettingsAlert();
             }
@@ -317,6 +491,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             e.printStackTrace();
         }
 
+    }
+
+    private void loadCameraLocations(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Query first = db.collection("camera");
         first.get()
@@ -329,7 +506,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                         for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
 
-                            UserLocationData comment = document.toObject(UserLocationData.class);
+                            Camera comment = document.toObject(Camera.class);
                             mNearestLocationList.add(comment);
                             Log.e("dbbd", String.valueOf(document.getData()));
 //
@@ -342,6 +519,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             distances1.clear();
                             mCameraImageUrl.clear();
                             mCameraLocName.clear();
+                            popupruls.clear();
+                            mCameraID.clear();
+                            listofparkingRules.clear();
+                            Ruleslist.clear();
+
 
                             for (int i = 0; i < mNearestLocationList.size(); i++) {
 //
@@ -360,140 +542,75 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 distances1.add(String.valueOf(distanceval));
                                 Log.e("distance", String.valueOf(distances1));
 
-//                                if (locationDistance < 15000) {
-                                    caldis1.add(String.valueOf(mLocationDistances));
-                                    Log.e("caldis1", String.valueOf(caldis1));
-                                    mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
-                                    mCameraLong.add(mNearestLocationList.get(i).getCameraLong());
-                                    mCameraImageUrl.add(mNearestLocationList.get(i).getCameraImageUrl());
-                                    mCameraLocName.add(mNearestLocationList.get(i).getCameraLocationName());
-                                    Log.e("mCameraLat", String.valueOf(mCameraLat));
-                                    Log.e("mCameraLong", String.valueOf(mCameraLong));
-                                    Log.e("mCameraImageUrl", String.valueOf(mCameraImageUrl));
-
-                                    carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
-                                    carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-                                    carouselLayoutManager.setMaxVisibleItems(1);
-
-                                    mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
-                                    mNearestPlaceRecycler.setHasFixedSize(true);
-                                    mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName);
-                                    mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
-                                    mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
-                                    mNearestrecyclerAdapter.notifyDataSetChanged();
-
-                                    LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
-                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
 
-//                                }
+                                if (locationDistance < 1500) {
+                                caldis1.add(locationDistance);
+                                Log.e("caldis1", String.valueOf(caldis1));
+                                mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
+                                mCameraLong.add(mNearestLocationList.get(i).getCameraLong());
+                                mCameraImageUrl.add(mNearestLocationList.get(i).getCameraImageUrl());
+                                mCameraLocName.add(mNearestLocationList.get(i).getCameraLocationName());
+                                mCameraID.add(mNearestLocationList.get(i).getCameraID());
+                                    Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
+//                                    mrlslist.add(mNearestLocationList.get(i).getParkingRules());
+
+
+                                Log.e("mCameraLat", String.valueOf(mCameraLat));
+                                Log.e("mCameraLong", String.valueOf(mCameraLong));
+                                Log.e("mCameraImageUrl", String.valueOf(mCameraImageUrl));
+                                    Log.e("mCameraID", String.valueOf(mCameraID));
+//                                    Log.e("mCameraruls", String.valueOf(mrlslist));
+
+
+                                carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
+                                carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
+                                carouselLayoutManager.setMaxVisibleItems(1);
+
+                                mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
+                                mNearestPlaceRecycler.setHasFixedSize(true);
+                                mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName,caldis1,mCameraID,Ruleslist);
+                                mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
+                                mNearestrecyclerAdapter.notifyDataSetChanged();
+                                mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
+//
+
+
+                                LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
+//                                    int height = 70;
+//                                    int width = 50;
+//                                    bitmapdraw =(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
+//                                    Bitmap b=bitmapdraw.getBitmap();
+//                                    Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
+//                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+                                }
+
+
 
                             }
+
+
                         }
-                        Double lat = mCurrentGpsLoc.getLatitude();
-                        Double lng = mCurrentGpsLoc.getLongitude();
-                        LatLng locateMe = new LatLng(lat, lng);
-
-
-                        float zoomLevel = 14.0f;
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateMe,zoomLevel));
-                        mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f), 2000, null);
-                      hideProgressDialog();
-
-                    }
-
-                });
-        if (mCameraLat!=null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mNearestPlaceRecycler.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                    @Override
-                    public void onScrollChange(View view, int i, int i1, int i2, int i3) {
-
-                        int scrollPosition = carouselLayoutManager.getCenterItemPosition();
-                        double lat = Double.parseDouble(mCameraLat.get(scrollPosition));
-                        double lng = Double.parseDouble(mCameraLong.get(scrollPosition));
-                        LatLng latLng = new LatLng(lat,lng);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    }
-                });
-            }
-        }
-
-
-        mSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (autoCompView.getText().toString().isEmpty() || description == null) {
-                    Toast.makeText(getActivity(), "Please enter the search location", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), getFirstWord(description), Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
-                    intent.putExtra("placeid", placeId);
-                    intent.putExtra("latitude", String.valueOf(Latitude).trim());
-                    intent.putExtra("longitude", String.valueOf(Longitude).trim());
-                    intent.putExtra("value", "home");
-                    intent.putExtra("place", description);
-                    Log.e("strLatitude", String.valueOf(Latitude));
-                    Log.e("strLongitude", String.valueOf(Longitude));
-                    intent.putStringArrayListExtra("placesarray", caldis);
-                    getActivity().startActivity(intent);
-                    autoCompView.setText("");
-                }
-
-            }
-        });
-
-
-        mFilterButton = (Button) view.findViewById(R.id.filter_button);
-
-        mFilterButton.setVisibility(View.VISIBLE);
-
-        mFilterButton.setOnClickListener(new View.OnClickListener() {
-            FragmentTransaction transaction;
-
-            @Override
-            public void onClick(View v) {
-                if (!isExpandableListEnabled) {
-                    isExpandableListEnabled = true;
-                    Toast.makeText(getActivity(), "Filter Enabled", Toast.LENGTH_SHORT).show();
-                    Fragment filterFragment = new FiltersFragment();
-                    transaction = getChildFragmentManager().beginTransaction();
-                    transaction.add(R.id.frame_layout, filterFragment).addToBackStack(null).commit();
-                    Utils.hideKeyboard(getActivity());
-                } else {
-                    isExpandableListEnabled = false;
-                    Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
-                    getChildFragmentManager().popBackStack();
-                }
-
-
-            }
-        });
-
-        //NearestPlace Recycler
-
-        HomeRelativeLay = view.findViewById(R.id.home_lay);
-        HomeRelativeLay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Utils.hideKeyboard(getActivity());
-            }
-        });
-        mNearestPlaceRecycler.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Utils.hideKeyboard(getActivity());
-            }
-        });
+//                        Double lat = mCurrentGpsLoc.getLatitude();
+//                        Double lng = mCurrentGpsLoc.getLongitude();
+//                        LatLng locateMe = new LatLng(lat, lng);
 //
-        permissionStatus = getActivity().getSharedPreferences("permissionStatus", MODE_PRIVATE);
+//
+//                        float zoomLevel = 14.0f;
+//
+//                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateMe,14));
+                        hideProgressDialog();
 
-        return view;
+                    }
+
+                });
+
+
     }
-
     private void proceedAfterPermission() {
 
     }
@@ -503,11 +620,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.clear();
-        //    mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_markf)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln, 12.0f));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
-        mMap.setMaxZoomPreference(13.5f);
-        mMap.setMinZoomPreference(6.5f);
+//        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
+
         // Helper method for smooth
         // animation
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -534,21 +648,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         Double lng = mCurrentGpsLoc.getLongitude();
         LatLng locateme = new LatLng(lat, lng);
 
-//        mMap.getUiSettings().isZoomControlsEnabled();
-//        mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
         }
 
         mMap.setMyLocationEnabled(false);
-//
-        mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocationicon)));
-        float zoomLevel = 12.0f;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
 
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
+//        int height = 95;
+//        int width = 95;
+//
+//        bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.currentlocationicon);
+//
+//        Bitmap b=bitmapdraw.getBitmap();
+//        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//        mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+
+        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
+        float zoomLevel = 12;
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
@@ -574,11 +692,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     {
         mMap.clear();
 
-        //  mMap.addMarker(new MarkerOptions().position(laln).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_pin2)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,13.5f));
 
-        // map.animateCamera(CameraUpdateFactory.zoomIn());
-//        mMap.animateCamera(CameraUpdateFactory.zoomTo(13.5f), 2000, null);
         latitu=laln.latitude;
         longitu=laln.longitude;
 
@@ -634,7 +749,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                     Log.e("distancemtrs", String.valueOf(distancesmtrs));
 //                        for(int j =0;j<distancesmtrs.size();j++){
 
-//                                    if (distancemtrs < 1500) {
+                                    if (distancemtrs < 1500) {
                                         caldis.add(String.valueOf(distancesmtrs));
                                         Log.e("caldis", String.valueOf(caldis));
                                         nearlat.add(mNearestLocationList.get(i).getCameraLat());
@@ -643,9 +758,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                         Log.e("nearlong", String.valueOf(nearlong));
 //                            }
 //                                    }
-                                    distance = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
-                                    Log.e("distance", String.valueOf(distance));
-                                    distances.add(distance);
+                                        distance = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
+                                        Log.e("distance", String.valueOf(distance));
+                                        distances.add(distance);
+
 //                                          distancedata();
 
 
@@ -655,6 +771,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
 //
+                                    }
                                 }
 
                             }
@@ -821,41 +938,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         }
     }
 
-    public void animateMarker(final Marker marker, final Location location) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        final LatLng startLatLng = marker.getPosition();
-        final double startRotation = marker.getRotation();
-        final long duration = 500;
-
-        final Interpolator interpolator = new LinearInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-
-                double lng = t * location.getLongitude() + (1 - t)
-                        * startLatLng.longitude;
-                double lat = t * location.getLatitude() + (1 - t)
-                        * startLatLng.latitude;
-
-                float rotation = (float) (t * location.getBearing() + (1 - t)
-                        * startRotation);
-
-                marker.setPosition(new LatLng(lat, lng));
-                marker.setRotation(rotation);
-
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
-                }
-            }
-        });
-    }
-
     private String getFirstWord(String text) {
         int index = text.indexOf(' ');
         if (index > -1) { // Check if there is more than one word.
@@ -889,12 +971,100 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mGoogleApiClient.disconnect();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mGoogleApiClient.stopAutoManage(getActivity());
-        mGoogleApiClient.disconnect();
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        mGoogleApiClient.stopAutoManage(getActivity());
+//        mGoogleApiClient.disconnect();
+//    }
+    private void athenticaationpopup(String message) {
+
+        LayoutInflater factory = LayoutInflater.from(getActivity());
+        final View deleteDialogView = factory.inflate(R.layout.authentication_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setView(deleteDialogView);
+        TextView AthuntTxt=(TextView)deleteDialogView.findViewById(R.id.txt_authent);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+        AthuntTxt.setText(message);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)  {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
     }
 
+    public void toggleHideyBar() {
 
+        // BEGIN_INCLUDE (get_current_ui_flags)
+        // The UI options currently enabled are represented by a bitfield.
+        // getSystemUiVisibility() gives us that bitfield.
+        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+        int newUiOptions = uiOptions;
+        // END_INCLUDE (get_current_ui_flags)
+        // BEGIN_INCLUDE (toggle_ui_flags)
+        boolean isImmersiveModeEnabled =
+                ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+        if (isImmersiveModeEnabled) {
+            Log.i(TAG, "Turning immersive mode mode off. ");
+        } else {
+            Log.i(TAG, "Turning immersive mode mode on.");
+        }
+
+        // Navigation bar hiding:  Backwards compatible to ICS.
+        if (Build.VERSION.SDK_INT >= 14) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+
+        // Status bar hiding: Backwards compatible to Jellybean
+        if (Build.VERSION.SDK_INT >= 16) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        }
+
+        // Immersive mode: Backward compatible to KitKat.
+        // Note that this flag doesn't do anything by itself, it only augments the behavior
+        // of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the purposes of this sample
+        // all three flags are being toggled together.
+        // Note that there are two immersive mode UI flags, one of which is referred to as "sticky".
+        // Sticky immersive mode differs in that it makes the navigation and status bars
+        // semi-transparent, and the UI flag does not get cleared when the user interacts with
+        // the screen.
+        if (Build.VERSION.SDK_INT >= 18) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
+
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
+        //END_INCLUDE (set_ui_flags)
+    }
+
+    /**
+     * Listener that will be called on every change of center item.
+     * This listener will be triggered on <b>every</b> layout operation if item was changed.
+     * Do not do any expensive operations in this method since this will effect scroll experience.
+     *
+     * @param adapterPosition current layout center item
+     */
+    @Override
+    public void onCenterItemChanged(int adapterPosition) {
+        Toast.makeText(getActivity(), "click", Toast.LENGTH_SHORT).show();
+    }
 }

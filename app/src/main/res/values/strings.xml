@@ -18,7 +18,7 @@
      -->
     <string name="default_notification_channel_name" translatable="true">News</string>
     <string name="auth_token" />
-    <string name="nearest_parking_places_next_to_my_current_location">Nearest Parking Places next to my current Location</string>
+    <string name="nearest_parking_places_next_to_my_current_location">Nearest Parking Places Next to My Current Location</string>
     <string name="title_activity_main">SampleDrawerActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -32,7 +32,15 @@
     <string name="enter_your_user_name">Enter your user name</string>
     <string name="resetpass">A reset link has been sent your email</string>
     <string name="status">Click OK to end the Previous booking</string>
+    <string name="status_txt">Please close your Previous bookings</string>
+    <string name="protect_txt">Do you want protect your car?</string>
     <string name="notification_txt">Do you want to request a camera view\n for three seconds</string>
+    <string name="empy_txt">Username or email or password should\n not be empty</string>
+    <string name="signinempy_txt">Email or Password should not be empty</string>
+    <string name="passworderror_txt">Enter valid Password</string>
+    <string name="usernameerror_txt">Username should not be empty</string>
+    <string name="emailerror_txt">Enter valid Email</string>
+    <string name="imageerror_txt">Profile should not be empty</string>
 
     <string-array name="navigation_drawer_items_array">
         <item>Home</item>

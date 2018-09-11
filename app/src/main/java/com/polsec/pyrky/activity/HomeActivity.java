@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,13 +22,19 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.polsec.pyrky.activity.booking.BookingsActivity;
 import com.polsec.pyrky.activity.signin.SignInActivity;
 import com.polsec.pyrky.fragment.HomeFragment;
@@ -37,7 +44,11 @@ import com.polsec.pyrky.R;
 import com.polsec.pyrky.fragment.SettingsFragment;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.CircleTransformation;
+import com.polsec.pyrky.utils.Constants;
 import com.squareup.picasso.Picasso;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -65,12 +76,12 @@ public class HomeActivity extends AppCompatActivity
     String profileImageUrl;
     CircleImageView profileImage;
     String Nameval="settings";
+    boolean isDrawerLocked;
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
 //        ((MyApplication )getApplication()).getNetComponent().inject(this);
 //    }
-
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -78,6 +89,30 @@ public class HomeActivity extends AppCompatActivity
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        checkWhetherArEnabled();
+
+        String parkType = PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_PARKING_TYPES);
+        String secRatings = PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_SECURITY_RATINGS);
+        String carCategory = PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_CAR_CATEGORY);
+
+        if (!parkType.equals("")&&!secRatings.equals("")&&!carCategory.equals("")){
+
+            Type type = new TypeToken<List<String>>() { }.getType();
+            List<String> restoreData1 = new Gson().fromJson(parkType, type);
+            List<String> restoreData2 = new Gson().fromJson(secRatings, type);
+            List<String> restoreData3 = new Gson().fromJson(carCategory, type);
+
+            Constants.PARKING_TYPES = restoreData1;
+            Constants.SECURITY_RATINGS = restoreData2;
+            Constants.CAR_CATEGORY = restoreData3;
+
+            if (restoreData1.size() >0 && restoreData2.size() >0 && restoreData3.size() >0){
+                Toast.makeText(context, restoreData1.get(0)+restoreData2.get(0)+restoreData3.get(0), Toast.LENGTH_LONG).show();
+            }
+        }
+
+
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -111,7 +146,7 @@ public class HomeActivity extends AppCompatActivity
 //            else {
 //
 //            }
-
+        checkWhetherArEnabled();
         holderView = findViewById(R.id.holder);
 
         contentView = findViewById(R.id.home_coordinator);
@@ -139,8 +174,8 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
-        profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.user_image);
+        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.user_name);
+        profileImage = navigationView.getHeaderView(0).findViewById(R.id.user_image);
         profileImageUrl= PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC);
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
@@ -153,7 +188,7 @@ public class HomeActivity extends AppCompatActivity
         }
         txtProfileName.setText(UsrName);
 
-        drawer.setScrimColor(Color.TRANSPARENT);
+//        drawer.setScrimColor(Color.TRANSPARENT);
         drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
                                      @Override
                                      public void onDrawerSlide(View drawer, float slideOffset) {
@@ -174,6 +209,34 @@ public class HomeActivity extends AppCompatActivity
                                  }
         );
 
+        try {
+            //int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+                // Do something for lollipop and above versions
+
+                Window window = getWindow();
+
+                // clear FLAG_TRANSLUCENT_STATUS flag:
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+                // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+                // finally change the color to any color with transparency
+
+//                window.setStatusBarColor(getResources().getColor(R.color.transparent2));
+            }
+
+        } catch (Exception e) {
+
+            Crashlytics.logException(e);
+
+        }
+
+//        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
+//        drawer.setScrimColor(getResources().getColor(android.R.color.transparent));
+//         isDrawerLocked= true;
+//        drawer.setScrimColor(getResources().getColor(android.R.color.transparent));
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -206,62 +269,6 @@ public class HomeActivity extends AppCompatActivity
         loadFragment(new HomeFragment());
         toolbarText.setText("Home");
     }
-
-    private boolean loadFragment(Fragment fragment) {
-        //switching fragment
-        if (fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.main_frame_layout, fragment)
-                    .commit();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }*/
-
-   /* @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (toggle.onOptionsItemSelected(item)){
-            return true;
-        }
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Toast.makeText(context, "Settings", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
-
-    @Override
-    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onPostCreate(savedInstanceState, persistentState);
-        toggle.syncState();
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -282,9 +289,9 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_booking) {
 //
 //            loadFragment(new BookingsFragment());
-                Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
+            Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                startActivity(intent);
+            startActivity(intent);
 //            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
 //            transaction.replace(R.id.main_frame_layout, new BookingsFragment());
@@ -304,39 +311,8 @@ public class HomeActivity extends AppCompatActivity
 //            transaction.addToBackStack(null);
 //            transaction.commit();
             toolbarText.setText("Profile");
-//
 
-//            bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-//                @Override
-//                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                    Fragment fragment = null;
 //
-//                    switch (item.getItemId()){
-//                        case R.id.b_nav_home:
-//                            fragment = new HomeFragment();
-////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                            toolbarText.setText("Home");
-//                            break;
-//
-//                        case R.id.b_nav_notification:
-//                            fragment = new NotificationFragment();
-////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                            toolbarText.setText("Notification");
-//                            break;
-//
-//                        case R.id.b_nav_profile:
-//                            fragment = new ProfileFragment();
-////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                            toolbarText.setText("Profile");
-//                            break;
-//                    }
-//                    return loadFragment(fragment);
-//                }
-//            });
-//        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            loadFragment(new ProfileFragment());
-//            toolbarText.setText("Profile");
         } else if (id == R.id.nav_logout) {
 
 
@@ -360,6 +336,35 @@ public class HomeActivity extends AppCompatActivity
 
         return true;
     }
+    private boolean loadFragment(Fragment fragment) {
+        //switching fragment
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_frame_layout, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        toggle.syncState();
+    }
+
+
 
     @Override
     protected void onPause() {
@@ -371,8 +376,33 @@ public class HomeActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         isRunning = true;
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            Picasso.with(HomeActivity.this)
+                    .load(profileImageUrl)
+                    .resize(avatarSize, avatarSize)
+                    .centerCrop()
+                    .transform(new CircleTransformation())
+                    .into(profileImage);
+        }
+    }
 
-
+    void checkWhetherArEnabled() {
+        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
+        if (availability.isTransient()) {
+            // Re-query at 5Hz while compatibility is checked in the background.
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkWhetherArEnabled();
+                }
+            }, 300);
+        }
+        if (availability.isSupported()) {
+            Constants.IS_AR_ENABLED = true;
+            // indicator on the button.
+        } else { // Unsupported or unknown.
+            Constants.IS_AR_ENABLED = false;
+        }
     }
 
 
