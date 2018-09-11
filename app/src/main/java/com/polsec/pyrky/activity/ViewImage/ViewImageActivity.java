@@ -70,7 +70,8 @@ import static android.content.ContentValues.TAG;
 public class ViewImageActivity extends AppCompatActivity {
     TextView BookBtn;
     TextView CloseImg;
-    double curLat,curLong,latitude,longitude;
+    double curLat,curLong,latitude1,longitude1;
+         String   latitude,longitude;
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
@@ -111,17 +112,20 @@ public class ViewImageActivity extends AppCompatActivity {
         }
         db = FirebaseFirestore.getInstance();
 
-        Bundle extras = getIntent().getExtras();
+//        Bundle extras = getIntent().getExtras();
 
-        Intent bundle = this.getIntent();
+        Intent bundle = ViewImageActivity.this.getIntent();
         if(bundle!=null){
 //            String Value=bundle.getStringExtra("recyclervalue");
 //            String Value1=bundle.getStringExtra("firebasevalue");
 //
 //            if(Nameval.equals(Value)){
 
-                latitude = Double.parseDouble(bundle.getStringExtra("latitude"));
-                longitude = Double.parseDouble(bundle.getStringExtra("longitude"));
+                latitude =bundle.getStringExtra("latitude");
+                longitude = bundle.getStringExtra("longitude");
+            latitude1= Double.parseDouble(latitude);
+            longitude1= Double.parseDouble(longitude);
+
                 DestName = bundle.getStringExtra("place");
                 CameraId = bundle.getStringExtra("cameraid");
                 cameraImageUrl = bundle.getStringExtra("cameraImageUrl");
@@ -200,7 +204,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
         private void bookAndNavigate(){
-            showBottomSheet(latitude, longitude);
+            showBottomSheet(latitude1, longitude1);
             SaveData(lat, longi, DestName);
         }
 
@@ -586,8 +590,9 @@ public class ViewImageActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 isBookedAny = false;
+
                 if (bookingRequest){
-                    makeAlreadyBookedAlert(true);
+                    makeAlreadyBookedAlert(false);
                 }else{
                     makeAlreadyBookedAlert(false);
                 }

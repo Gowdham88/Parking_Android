@@ -548,6 +548,8 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                         String address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
                         Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
                         Log.e("address1", address1);
+                        mLat= String.valueOf(mCurLocAddress.get(0).getLatitude());
+                        mLongi=String.valueOf( mCurLocAddress.get(0).getLongitude());
 
 
                         Log.e("lattd", String.valueOf(mLat));
@@ -672,7 +674,8 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 //        mNearestPlaceRecycler.setVisibility(View.VISIBLE);
         // Load custom marker icon
 
-        LatLng sydney = new LatLng(mCurLocAddress.get(0).getLatitude(),mCurLocAddress.get(0).getLongitude());
+
+        LatLng sydney = new LatLng(Double.parseDouble(mLat),Double.parseDouble(mLongi));
                         int height = 70;
                         int width = 50;
                         BitmapDrawable bitmapdraw = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.marker);
@@ -754,13 +757,16 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
+                String maltval= String.valueOf(m.getPosition().latitude);
+                String mlongival=String.valueOf(m.getPosition().longitude);
+
                 Intent intent=new Intent(getActivity(), ViewImageActivity.class);
-                intent.putExtra("latitude",m.getPosition().latitude);
-                intent.putExtra("longitude",m.getPosition().longitude);
+                intent.putExtra("latitude",maltval.trim());
+                intent.putExtra("longitude",mlongival.trim());
                 intent.putExtra("place",yourplace);
                 intent.putExtra("cameraid",cameraid);
                 intent.putExtra("cameraImageUrl",cameraImageUrl);
-//                intent.putExtra("recycler","recyclervalue");
+                intent.putExtra("recycler","recyclervalue");
 
                 Log.e("lattitude", String.valueOf(m.getPosition().latitude));
                 Log.e("longitude", String.valueOf(m.getPosition().longitude));
@@ -871,7 +877,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-//                showBottomSheet(m.getPosition().latitude,m.getPosition().longitude,yourplace);
+                showBottomSheet(Double.parseDouble(mLat),Double.parseDouble(mLongi),place);
 //                NearestLocMapsActivity.this.lat = String.valueOf(m.getPosition().latitude);
 //                longi= String.valueOf(m.getPosition().longitude);
 
@@ -1202,12 +1208,19 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-//                isBookedAny = false;
+                isBookedAny = false;
                 if (bookingRequest){
                     makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
                 }else{
                     makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
                 }
+
+//                isBookedAny = false;
+//                if (bookingRequest){
+//                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+//                }else{
+//                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
+//                }
 
                 alertDialog1.dismiss();
             }

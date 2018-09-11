@@ -91,7 +91,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener,
         GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks {
+        GoogleApiClient.ConnectionCallbacks, CarouselLayoutManager.OnCenterItemSelectionListener {
 
     //Nearest Place recycler
     RecyclerView mNearestPlaceRecycler;
@@ -1058,4 +1058,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         //END_INCLUDE (set_ui_flags)
     }
 
+    /**
+     * Listener that will be called on every change of center item.
+     * This listener will be triggered on <b>every</b> layout operation if item was changed.
+     * Do not do any expensive operations in this method since this will effect scroll experience.
+     *
+     * @param adapterPosition current layout center item
+     */
+    @Override
+    public void onCenterItemChanged(int adapterPosition) {
+        Toast.makeText(getActivity(), "click", Toast.LENGTH_SHORT).show();
+    }
 }
