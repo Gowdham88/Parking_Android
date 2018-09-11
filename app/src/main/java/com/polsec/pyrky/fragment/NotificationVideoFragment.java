@@ -26,7 +26,10 @@ import android.widget.VideoView;
 
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.HomeActivity;
+import com.polsec.pyrky.activity.signin.SignInActivity;
+import com.polsec.pyrky.activity.splash.SplashActivity;
 import com.polsec.pyrky.adapter.NotificationAdapter;
+import com.polsec.pyrky.preferences.PreferencesHelper;
 
 public class NotificationVideoFragment extends Fragment{
 
@@ -35,6 +38,7 @@ public class NotificationVideoFragment extends Fragment{
     VideoView videoView;
     private String urlStream;
     private android.support.v7.app.AlertDialog dialog;
+    private final int SPLASH_DISPLAY_LENGTH = 3000;
 
 
     public static NotificationVideoFragment newInstance() {
@@ -78,7 +82,16 @@ public class NotificationVideoFragment extends Fragment{
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             public void onPrepared(MediaPlayer mp) {
                 hideProgressDialog();
-                mp.start();
+//                mp.start();
+
+                new Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run() {
+                        mp.start();
+                /* Create an Intent that will start the Menu-Activity. */
+
+                    }
+                }, SPLASH_DISPLAY_LENGTH);
 
             }
         });

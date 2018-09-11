@@ -146,7 +146,7 @@ public class HomeActivity extends AppCompatActivity
 //            else {
 //
 //            }
-
+        checkWhetherArEnabled();
         holderView = findViewById(R.id.holder);
 
         contentView = findViewById(R.id.home_coordinator);

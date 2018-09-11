@@ -4,11 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
@@ -22,9 +27,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,6 +43,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 
@@ -43,9 +52,13 @@ import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Users;
 import com.polsec.pyrky.preferences.PreferencesHelper;
+import com.polsec.pyrky.utils.CircleTransformation;
 import com.polsec.pyrky.utils.Constants;
 import com.squareup.picasso.Picasso;
 
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,8 +69,9 @@ import static android.content.ContentValues.TAG;
 
 public class ViewImageActivity extends AppCompatActivity {
     TextView BookBtn;
-    ImageView CloseImg;
-    double curLat,curLong,latitude,longitude;
+    TextView CloseImg;
+    double curLat,curLong,latitude1,longitude1;
+         String   latitude,longitude;
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
@@ -68,8 +82,14 @@ public class ViewImageActivity extends AppCompatActivity {
     List<String> booking_ID = new ArrayList<>();
     FirebaseAuth mAuth;
     Map<String, Object> bookingid = new HashMap<>();
+    ImageView Close_Img;
 
     Map<String, Object> bookingid1=new HashMap<>();
+    private int avatarSize;
+    Bitmap bitmap;
+    RelativeLayout relay;
+    String Nameval="recyclervalue";
+    String Nameval1="firebasevalue";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +100,10 @@ public class ViewImageActivity extends AppCompatActivity {
         mUid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
         docid=PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_DOCUMENTID);
         ImageView cameraImage = findViewById(R.id.camera_image);
-
+        relay=findViewById(R.id.rel_parent);
+        Close_Img=findViewById(R.id.close_iconimg);
+        Close_Img.setVisibility(View.VISIBLE);
+        this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size1);
         TrackGPS trackGps = new TrackGPS(context);
 
         if (trackGps.canGetLocation()) {
@@ -89,28 +112,77 @@ public class ViewImageActivity extends AppCompatActivity {
         }
         db = FirebaseFirestore.getInstance();
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            latitude = extras.getDouble("latitude");
-            longitude = extras.getDouble("longitude");
-            DestName = extras.getString("place");
-            CameraId = extras.getString("cameraid");
-            cameraImageUrl = extras.getString("cameraImageUrl");
-            lat = String.valueOf(latitude);
-            longi = String.valueOf(longitude);
-            cameraid = String.valueOf(CameraId);
+//        Bundle extras = getIntent().getExtras();
 
-            Log.e("lattitudeview", String.valueOf(latitude));
-            Log.e("longitudeview", String.valueOf(longitude));
-            Log.e("place", String.valueOf(cameraImageUrl));
+        Intent bundle = ViewImageActivity.this.getIntent();
+        if(bundle!=null){
+//            String Value=bundle.getStringExtra("recyclervalue");
+//            String Value1=bundle.getStringExtra("firebasevalue");
+//
+//            if(Nameval.equals(Value)){
 
-            //The key argument here must match that used in the other activity
+                latitude =bundle.getStringExtra("latitude");
+                longitude = bundle.getStringExtra("longitude");
+            latitude1= Double.parseDouble(latitude);
+            longitude1= Double.parseDouble(longitude);
+
+                DestName = bundle.getStringExtra("place");
+                CameraId = bundle.getStringExtra("cameraid");
+                cameraImageUrl = bundle.getStringExtra("cameraImageUrl");
+                lat = String.valueOf(latitude);
+                longi = String.valueOf(longitude);
+                cameraid = String.valueOf(CameraId);
+
+                Log.e("lattitudeview", String.valueOf(latitude));
+                Log.e("longitudeview", String.valueOf(longitude));
+                Log.e("place", String.valueOf(cameraImageUrl));
+//            }
+//            else if(Nameval1.equals(Value1)){
+//
+//                latitude = extras.getDouble("latitude1");
+//                longitude = extras.getDouble("longitude1");
+//                DestName = extras.getString("place1");
+//                CameraId = extras.getString("cameraid");
+//                cameraImageUrl = extras.getString("cameraImageUrl1");
+//                lat = String.valueOf(latitude);
+//                longi = String.valueOf(longitude);
+//                cameraid = String.valueOf(CameraId);
+//
+//                Log.e("lattitudeview", String.valueOf(latitude));
+//                Log.e("longitudeview", String.valueOf(longitude));
+//                Log.e("place", String.valueOf(cameraImageUrl));
+//
+////                mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
+////                mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
+////                mNearestrecyclerAdapter1 = new Carouselfirebaseadapter(getActivity(), Imageurl, latt, Longg,plcname,distance);
+////                mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter1);
+//////                                    mNearestPlaceRecycler.scrollToPosition(mListPosition);
+////                mNearestrecyclerAdapter1.notifyDataSetChanged();
+////                mNearestPlaceRecycler.setItemTransformer(new ScaleTransformer.Builder()
+////                        .setMinScale(0.8f)
+////                        .build());
+//            }
+//            else{
+//
+//            }
+
+
         }
+
 
 
 //        makeAlreadyBookedAlert(false);
 
-        Picasso.with(context).load(cameraImageUrl).into(cameraImage);
+        if(!cameraImageUrl.equals(null)|| !cameraImageUrl.isEmpty()){
+//
+            Glide.with(ViewImageActivity.this).load(cameraImageUrl)
+                   .into(cameraImage);
+
+        }else {
+//            Close_Img.setVisibility(View.VISIBLE);
+        }
+
+
         BookBtn = findViewById(R.id.book_btn);
         BookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,8 +193,7 @@ public class ViewImageActivity extends AppCompatActivity {
             }
 
         });
-        CloseImg = findViewById(R.id.close_iconimg);
-        CloseImg.setOnClickListener(new View.OnClickListener() {
+        Close_Img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
@@ -133,7 +204,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
         private void bookAndNavigate(){
-            showBottomSheet(latitude, longitude);
+            showBottomSheet(latitude1, longitude1);
             SaveData(lat, longi, DestName);
         }
 
@@ -519,8 +590,9 @@ public class ViewImageActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 isBookedAny = false;
+
                 if (bookingRequest){
-                    makeAlreadyBookedAlert(true);
+                    makeAlreadyBookedAlert(false);
                 }else{
                     makeAlreadyBookedAlert(false);
                 }

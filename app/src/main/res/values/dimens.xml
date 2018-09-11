@@ -127,5 +127,6 @@
     <dimen name="size390">429.00dp</dimen>
     <dimen name="size400">440.00dp</dimen>
     <dimen name="user_profile_avatar_size">88dp</dimen>
+    <dimen name="user_profile_avatar_size1">488dp</dimen>
 
 </resources>

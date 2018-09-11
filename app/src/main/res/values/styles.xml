@@ -86,7 +86,7 @@
     </style>
 
     <style name="NavigationViewStyle">
-        <item name="android:listPreferredItemHeightSmall">64dp</item><!-- menu item height-->
+        <item name="android:listPreferredItemHeightSmall">58dp</item><!-- menu item height-->
         <item name="android:textSize">15dp</item>
         <item name="android:fontFamily">fonts/Nunito-Regular.ttf</item>
 

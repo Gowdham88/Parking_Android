@@ -20,6 +20,8 @@
         android:layout_height="wrap_content"
         android:text="Home"
         android:textSize="15dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
         android:textColor="@color/colorAccent"
         android:layout_marginLeft="21dp"/>
 
