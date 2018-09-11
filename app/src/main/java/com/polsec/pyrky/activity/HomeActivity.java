@@ -463,25 +463,6 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    void checkWhetherArEnabled() {
-        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
-        if (availability.isTransient()) {
-            // Re-query at 5Hz while compatibility is checked in the background.
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    checkWhetherArEnabled();
-                }
-            }, 300);
-        }
-        if (availability.isSupported()) {
-            Constants.IS_AR_ENABLED = true;
-            // indicator on the button.
-        } else { // Unsupported or unknown.
-            Constants.IS_AR_ENABLED = false;
-        }
-    }
-
 
 
 }

@@ -19,7 +19,7 @@ import com.polsec.pyrky.R;
  * Created by czsm4 on 05/09/18.
  */
 
-public class RoundedImageView extends ImageView {
+public class RoundedImageView extends android.support.v7.widget.AppCompatImageView {
     private Path mMaskPath;
     private Paint mMaskPaint    = new Paint(Paint.ANTI_ALIAS_FLAG);
     private int mCornerRadius   = 20;
