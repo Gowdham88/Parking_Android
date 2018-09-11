@@ -269,62 +269,6 @@ public class HomeActivity extends AppCompatActivity
         loadFragment(new HomeFragment());
         toolbarText.setText("Home");
     }
-
-    private boolean loadFragment(Fragment fragment) {
-        //switching fragment
-        if (fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.main_frame_layout, fragment)
-                    .commit();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }*/
-
-   /* @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (toggle.onOptionsItemSelected(item)){
-            return true;
-        }
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Toast.makeText(context, "Settings", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
-
-    @Override
-    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onPostCreate(savedInstanceState, persistentState);
-        toggle.syncState();
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -345,9 +289,9 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_booking) {
 //
 //            loadFragment(new BookingsFragment());
-                Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
+            Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                startActivity(intent);
+            startActivity(intent);
 //            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
 //            transaction.replace(R.id.main_frame_layout, new BookingsFragment());
@@ -367,39 +311,8 @@ public class HomeActivity extends AppCompatActivity
 //            transaction.addToBackStack(null);
 //            transaction.commit();
             toolbarText.setText("Profile");
-//
 
-//            bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-//                @Override
-//                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                    Fragment fragment = null;
 //
-//                    switch (item.getItemId()){
-//                        case R.id.b_nav_home:
-//                            fragment = new HomeFragment();
-////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                            toolbarText.setText("Home");
-//                            break;
-//
-//                        case R.id.b_nav_notification:
-//                            fragment = new NotificationFragment();
-////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                            toolbarText.setText("Notification");
-//                            break;
-//
-//                        case R.id.b_nav_profile:
-//                            fragment = new ProfileFragment();
-////                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                            toolbarText.setText("Profile");
-//                            break;
-//                    }
-//                    return loadFragment(fragment);
-//                }
-//            });
-//        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            loadFragment(new ProfileFragment());
-//            toolbarText.setText("Profile");
         } else if (id == R.id.nav_logout) {
 
 
@@ -423,6 +336,35 @@ public class HomeActivity extends AppCompatActivity
 
         return true;
     }
+    private boolean loadFragment(Fragment fragment) {
+        //switching fragment
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_frame_layout, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        toggle.syncState();
+    }
+
+
 
     @Override
     protected void onPause() {
