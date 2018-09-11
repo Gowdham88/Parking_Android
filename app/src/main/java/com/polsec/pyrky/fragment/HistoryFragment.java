@@ -105,7 +105,8 @@ public class HistoryFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
-        mRecyclerView.setHasFixedSize(true);
+//        recyclerAdapter.notifyDataSetChanged();
+//        mRecyclerView.setHasFixedSize(true);
 
         return view;
     }
@@ -160,7 +161,7 @@ public class HistoryFragment extends Fragment {
 
 
                         setupFeed();
-                        recyclerAdapter.notifyDataSetChanged();
+//                        recyclerAdapter.notifyDataSetChanged();
                     }
 
                 });
@@ -175,30 +176,41 @@ public class HistoryFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
 //                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        bookingid = document.getData();
+                        if(document.contains("Booking_ID")){
+                            bookingid = document.getData();
 
 
-                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+                            bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
 
 
-                        String count = String.valueOf(bookingid1.size());
-                        Log.e("count", count);
+                            String count = String.valueOf(bookingid1.size());
+                            Log.e("count", count);
 
 
 //                                    followingcount = 1;
-                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                            System.out.println(entry.getKey() + " = " + entry.getValue());
+                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                System.out.println(entry.getKey() + " = " + entry.getValue());
 
-                            Boolean val = (Boolean) entry.getValue();
-                            String values = String.valueOf(val);
+                                Boolean val = (Boolean) entry.getValue();
+                                String values = String.valueOf(val);
 
-                            Log.e("valuesh", values);
-
-//                            recyclerAdapter.notifyDataSetChanged();
+                                Log.e("valuesh", values);
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
 
+                            }
+
+                            setupFeed();
+//                            recyclerAdapter.notifyDataSetChanged();
                         }
-                        setupFeed();
+                        else{
+
+                        }
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+
+//                        recyclerAdapter.notifyDataSetChanged();
+
+
+
 
 //                        recyclerAdapter.notifyDataSetChanged();
 
@@ -212,6 +224,11 @@ public class HistoryFragment extends Fragment {
                 }
             }
         });
+
+    }
+
+    public void addItem(View v){
+//        BookingList.add();
 
     }
 

@@ -1,6 +1,7 @@
 package com.polsec.pyrky.fragment;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
@@ -59,6 +62,10 @@ public class FiltersFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+//        getActivity().requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getActivity().getWindow().setBackgroundDrawable(
+//                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
         View view = inflater.inflate(R.layout.fragment_filters, null);
 
 //        Constants.CAR_CATEGORY.clear();
@@ -74,6 +81,7 @@ public class FiltersFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mHomeRelaLay.setVisibility(View.GONE);
+                getFragmentManager().popBackStack();
             }
         });
        mExpandableListDetail = ExpandableListData.getData();

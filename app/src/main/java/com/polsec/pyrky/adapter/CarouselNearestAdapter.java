@@ -4,8 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +19,13 @@ import android.widget.TextView;
 
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
+import com.polsec.pyrky.fragment.NotificationVideoFragment;
+import com.polsec.pyrky.fragment.ProfileFragment;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,15 +51,24 @@ private int avatarSize;
         ArrayList<String> nearlong1 = new ArrayList<>();
         ArrayList<String> distances1 = new ArrayList<>();
     ArrayList<String> Placename = new ArrayList<>();
+    ArrayList<Double> caldis1 = new ArrayList<>();
+    ArrayList<String> mCameraID = new ArrayList<>();
+    ArrayList<HashMap<String, Object>> popupruls = new ArrayList<HashMap<String, Object>>();
+    HashMap<String, Object> mrlslist=new HashMap<String, Object>();
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
-public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename) {
+    String value="carousel";
+    int distanceval;
+public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<Double> caldis1, ArrayList<String> mCameraID) {
         this.context = context;
         this.nearimg = nearimg;
         this.nearlat1 = nearlat1;
         this.nearlong1 = nearlong1;
         this.distances1 = distances1;
         this.Placename=Placename;
+        this.caldis1=caldis1;
+        this.mCameraID=mCameraID;
+//        this.popupruls=popupruls;
         }
 
 @NonNull
@@ -66,7 +83,7 @@ public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 @Override
 public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 //        holder.nearestPlaceImage.setImageResource(mLocationImage[position]);
-        this.avatarSize = context.getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+        this.avatarSize =context.getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
 
         Picasso.with(context).load(nearimg.get(position))
         .fit()
@@ -75,7 +92,55 @@ public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 //        holder.nearestPlaceCity.setText(mCity[position]);
 
 //        S val= Integer.parseInt(distances1.get(position));
-        holder.nearestPlaceDistance.setText(distances1.get(position));
+    double disval=caldis1.get(position);
+    Log.e("val", String.valueOf(disval));
+
+
+    distanceval=(int) Double.parseDouble(String.valueOf(disval));
+    Log.e("distanceval", String.valueOf(distanceval));
+    if(!caldis1.get(position).equals(null)){
+        if(distanceval>0 && distanceval <=100 ){
+            holder.nearestPlaceDistance.setText("0 - 100m");
+        }
+        else if(distanceval>100 && distanceval <=200 ){
+            holder.nearestPlaceDistance.setText("100 - 200m");
+        }
+        else if(distanceval>200 && distanceval <=300 ){
+            holder.nearestPlaceDistance.setText("200 - 300m");
+        }
+
+        else if(distanceval>300 && distanceval <=400 ){
+            holder.nearestPlaceDistance.setText("300 - 400m");
+        }
+
+        else if(distanceval>400 && distanceval <=500 ){
+            holder.nearestPlaceDistance.setText("400 - 500m");
+        }
+
+        else if(distanceval>500 && distanceval <=600 ){
+            holder.nearestPlaceDistance.setText("500 - 600m");
+        }
+
+        else if(distanceval>600 && distanceval <=700 ){
+            holder.nearestPlaceDistance.setText("600 - 700m");
+        }
+
+        else if(distanceval>700 && distanceval <=800 ){
+            holder.nearestPlaceDistance.setText("700 - 800m");
+        }
+
+        else if(distanceval>800 && distanceval <=900 ){
+            holder.nearestPlaceDistance.setText("800 - 900m");
+        }
+
+        else {
+            holder.nearestPlaceDistance.setText("900 - 1000m");
+        }
+    }
+
+
+//        holder.nearestPlaceDistance.setText(caldis1.get(position));
+
 
 final double latitude = Double.parseDouble(nearlat1.get(position));
 final double  longitude = Double.parseDouble(nearlong1.get(position));
@@ -103,13 +168,43 @@ final double  longitude = Double.parseDouble(nearlong1.get(position));
         holder.nearestPlaceImage.setOnClickListener(new View.OnClickListener() {
 @Override
 public void onClick(View v) {
-        Intent intent = new Intent(context,NearestLocMapsActivity.class);
-        intent.putExtra("lat",nearlat1.get(position));
-        intent.putExtra("lng",nearlong1.get(position));
-        intent.putExtra("values","carousel");
-        intent.putExtra("listposition",holder.getAdapterPosition());
-        intent.putExtra("placename",Placename.get(position));
-        context.startActivity(intent);
+
+//    NearestLocMapsActivity newFragment = new NearestLocMapsActivity();
+//    Bundle args1 = new Bundle();
+//    args1.putString("lat",nearlat1.get(position));
+//    args1.putString("lng",nearlong1.get(position));
+//    args1.putString("values","carousel");
+//    args1.putInt("listposition",holder.getAdapterPosition());
+//    args1.putString("placename",Placename.get(position));
+//
+//    newFragment.setArguments(args1);
+//
+//    FragmentManager manager=context.getFragmentManager();
+//    FragmentTransaction transaction=manager.beginTransaction();
+//    transaction.replace(R.id.dumper,fragmentB).commit();
+//
+//    // Commit the transaction
+//    transaction.commit();
+//        Intent intent = new Intent(context,NearestLocMapsActivity.class);
+//
+//        context.startActivity(intent);
+
+
+//    Bundle args1 = new Bundle();
+//    args1.putString("lat",nearlat1.get(position));
+//    args1.putString("lng",nearlong1.get(position));
+//    args1.putString("values","carousel");
+//    args1.putInt("listposition",holder.getAdapterPosition());
+//    args1.putString("placename",Placename.get(position));
+//    //set Fragmentclass Arguments
+//    ProfileFragment fragobj = new ProfileFragment();
+//    fragobj.setArguments(args1);
+
+    FragmentTransaction transaction =  ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
+    transaction.replace(R.id.main_frame_layout, NearestLocMapsActivity.newInstance(nearlat1.get(position),nearlong1.get(position),value,holder.getAdapterPosition(),Placename.get(position),distanceval,nearimg.get(position),mCameraID.get(position)));
+    transaction.addToBackStack(null).commit();
+
+    Log.e("position", String.valueOf(holder.getAdapterPosition()));
         }
         });
         }

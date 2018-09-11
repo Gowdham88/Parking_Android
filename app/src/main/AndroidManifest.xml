@@ -18,7 +18,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -113,10 +112,11 @@
 
         <activity
             android:name=".activity.ViewImage.ViewImageActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.arnavigation.ArNavActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity android:name=".fragment.NearestLocFragment"></activity>
     </application>
 
 </manifest>

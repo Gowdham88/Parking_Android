@@ -4,13 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,9 +27,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,6 +43,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 
@@ -42,9 +52,13 @@ import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Users;
 import com.polsec.pyrky.preferences.PreferencesHelper;
+import com.polsec.pyrky.utils.CircleTransformation;
 import com.polsec.pyrky.utils.Constants;
 import com.squareup.picasso.Picasso;
 
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,20 +69,27 @@ import static android.content.ContentValues.TAG;
 
 public class ViewImageActivity extends AppCompatActivity {
     TextView BookBtn;
-    ImageView CloseImg;
-    double curLat,curLong,latitude,longitude;
+    TextView CloseImg;
+    double curLat,curLong,latitude1,longitude1;
+         String   latitude,longitude;
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
-    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,docid;
+    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,docid,documentiDs;
     Boolean isBookedAny = false;
     List<Users> bookinglist = new ArrayList<Users>();
      FirebaseFirestore db;
     List<String> booking_ID = new ArrayList<>();
     FirebaseAuth mAuth;
     Map<String, Object> bookingid = new HashMap<>();
+    ImageView Close_Img;
 
     Map<String, Object> bookingid1=new HashMap<>();
+    private int avatarSize;
+    Bitmap bitmap;
+    RelativeLayout relay;
+    String Nameval="recyclervalue";
+    String Nameval1="firebasevalue";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +100,10 @@ public class ViewImageActivity extends AppCompatActivity {
         mUid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
         docid=PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_DOCUMENTID);
         ImageView cameraImage = findViewById(R.id.camera_image);
-
+        relay=findViewById(R.id.rel_parent);
+        Close_Img=findViewById(R.id.close_iconimg);
+        Close_Img.setVisibility(View.VISIBLE);
+        this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size1);
         TrackGPS trackGps = new TrackGPS(context);
 
         if (trackGps.canGetLocation()) {
@@ -88,28 +112,77 @@ public class ViewImageActivity extends AppCompatActivity {
         }
         db = FirebaseFirestore.getInstance();
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            latitude = extras.getDouble("latitude");
-            longitude = extras.getDouble("longitude");
-            DestName = extras.getString("place");
-            CameraId = extras.getString("cameraid");
-            cameraImageUrl = extras.getString("cameraImageUrl");
-            lat = String.valueOf(latitude);
-            longi = String.valueOf(longitude);
-            cameraid = String.valueOf(CameraId);
+//        Bundle extras = getIntent().getExtras();
 
-            Log.e("lattitudeview", String.valueOf(latitude));
-            Log.e("longitudeview", String.valueOf(longitude));
-            Log.e("place", String.valueOf(DestName));
+        Intent bundle = ViewImageActivity.this.getIntent();
+        if(bundle!=null){
+//            String Value=bundle.getStringExtra("recyclervalue");
+//            String Value1=bundle.getStringExtra("firebasevalue");
+//
+//            if(Nameval.equals(Value)){
 
-            //The key argument here must match that used in the other activity
+                latitude =bundle.getStringExtra("latitude");
+                longitude = bundle.getStringExtra("longitude");
+            latitude1= Double.parseDouble(latitude);
+            longitude1= Double.parseDouble(longitude);
+
+                DestName = bundle.getStringExtra("place");
+                CameraId = bundle.getStringExtra("cameraid");
+                cameraImageUrl = bundle.getStringExtra("cameraImageUrl");
+                lat = String.valueOf(latitude);
+                longi = String.valueOf(longitude);
+                cameraid = String.valueOf(CameraId);
+
+                Log.e("lattitudeview", String.valueOf(latitude));
+                Log.e("longitudeview", String.valueOf(longitude));
+                Log.e("place", String.valueOf(cameraImageUrl));
+//            }
+//            else if(Nameval1.equals(Value1)){
+//
+//                latitude = extras.getDouble("latitude1");
+//                longitude = extras.getDouble("longitude1");
+//                DestName = extras.getString("place1");
+//                CameraId = extras.getString("cameraid");
+//                cameraImageUrl = extras.getString("cameraImageUrl1");
+//                lat = String.valueOf(latitude);
+//                longi = String.valueOf(longitude);
+//                cameraid = String.valueOf(CameraId);
+//
+//                Log.e("lattitudeview", String.valueOf(latitude));
+//                Log.e("longitudeview", String.valueOf(longitude));
+//                Log.e("place", String.valueOf(cameraImageUrl));
+//
+////                mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
+////                mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
+////                mNearestrecyclerAdapter1 = new Carouselfirebaseadapter(getActivity(), Imageurl, latt, Longg,plcname,distance);
+////                mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter1);
+//////                                    mNearestPlaceRecycler.scrollToPosition(mListPosition);
+////                mNearestrecyclerAdapter1.notifyDataSetChanged();
+////                mNearestPlaceRecycler.setItemTransformer(new ScaleTransformer.Builder()
+////                        .setMinScale(0.8f)
+////                        .build());
+//            }
+//            else{
+//
+//            }
+
+
         }
+
 
 
 //        makeAlreadyBookedAlert(false);
 
-        Picasso.with(context).load(cameraImageUrl).into(cameraImage);
+        if(!cameraImageUrl.equals(null)|| !cameraImageUrl.isEmpty()){
+//
+            Glide.with(ViewImageActivity.this).load(cameraImageUrl)
+                   .into(cameraImage);
+
+        }else {
+//            Close_Img.setVisibility(View.VISIBLE);
+        }
+
+
         BookBtn = findViewById(R.id.book_btn);
         BookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,8 +193,7 @@ public class ViewImageActivity extends AppCompatActivity {
             }
 
         });
-        CloseImg = findViewById(R.id.close_iconimg);
-        CloseImg.setOnClickListener(new View.OnClickListener() {
+        Close_Img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
@@ -132,7 +204,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
         private void bookAndNavigate(){
-            showBottomSheet(latitude, longitude);
+            showBottomSheet(latitude1, longitude1);
             SaveData(lat, longi, DestName);
         }
 
@@ -255,47 +327,54 @@ public class ViewImageActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                    bookingid = document.getData();
 
-                                    bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+                                    if(document.contains("Booking_ID")){
+                                        bookingid = document.getData();
 
-                                    for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
-                                        Boolean value = (Boolean) bookingEntry.getValue();
-                                        if (value){
-                                            isBookedAny = true;
-                                            break;
-                                        }
-                                    }
+                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
 
-                                    if (isBookedAny){
-                                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                                            System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                                            Boolean val = (Boolean) entry.getValue();
-                                            String values = String.valueOf(val);
-
-                                            Log.e("values", values);
-//
-                                            if (val) {
-
-                                                Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
-                                                String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-
-                                                popup(valuedoc,entry.getKey(),bookingRequest);
+                                        for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
+                                            Boolean value = (Boolean) bookingEntry.getValue();
+                                            if (value){
+                                                isBookedAny = true;
                                                 break;
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-                                            }else{
-                                                Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
                                             }
                                         }
-                                    }else{
-                                        if (bookingRequest){
-                                            bookAndNavigate();
-                                        }
 
+                                        if (isBookedAny){
+                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                                System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                                Boolean val = (Boolean) entry.getValue();
+                                                String values = String.valueOf(val);
+
+                                                Log.e("values", values);
+//
+                                                if (val) {
+
+//                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
+                                                    String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+                                                    popup(valuedoc,entry.getKey(),bookingRequest);
+                                                    break;
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                                }else{
+//                                                    Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }else{
+                                            if (bookingRequest){
+                                                bookAndNavigate();
+                                            }
+
+                                        }
                                     }
+                                    else {
+                                        bookAndNavigate();
+                                    }
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+
 
                                 } else {
 //                        Log.d(TAG, "No such document");
@@ -334,8 +413,8 @@ public class ViewImageActivity extends AppCompatActivity {
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setView(deleteDialogView);
-        Button ok = deleteDialogView.findViewById(R.id.ok_button);
-        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
 
         final AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {
@@ -356,12 +435,14 @@ public class ViewImageActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                                isBookedAny = false;
-                                if (bookingRequest){
-                                    makeAlreadyBookedAlert(true);
-                                }else{
-                                    makeAlreadyBookedAlert(false);
-                                }
+                                documentiDs =PreferencesHelper.getPreference(ViewImageActivity.this,PreferencesHelper.PREFERENCE_DOCUMENTID);
+                                PopUpprotectcar(documentiDs,bookingRequest);
+//                                isBookedAny = false;
+//                                if (bookingRequest){
+//                                    makeAlreadyBookedAlert(true);
+//                                }else{
+//                                    makeAlreadyBookedAlert(false);
+//                                }
 
 
                             }
@@ -375,25 +456,25 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
 
-                Map<String, Object> likeupdate = new HashMap<>();
-                likeupdate.put( "bookingStatus", false);
-
-                db.collection("Bookings").document(mUid)
-                        .update(likeupdate)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+//                Map<String, Object> likeupdate = new HashMap<>();
+//                likeupdate.put( "bookingStatus", false);
+//
+//                db.collection("Bookings").document(mUid)
+//                        .update(likeupdate)
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Log.d(TAG, "DocumentSnapshot successfully written!");
+//
+//
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.w(TAG, "Error writing document", e);
+//                            }
+//                        });
 //        if(!documentID.equals(null) || !documentID.isEmpty()){
 //            PopUpprotectcar(documentID);
 //            Log.e("documentID",documentID);
@@ -433,14 +514,14 @@ public class ViewImageActivity extends AppCompatActivity {
         alertDialog1.show();
     }
 
-    private void PopUpprotectcar(String documentID) {
+    private void PopUpprotectcar(String documentiDs, Boolean bookingRequest) {
 
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setView(deleteDialogView);
-        Button ok = deleteDialogView.findViewById(R.id.ok_button);
-        Button cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
 //        final MediaPlayer mp = MediaPlayer.create(this, R.raw.soho);
 
         final AlertDialog alertDialog1 = alertDialog.create();
@@ -448,18 +529,24 @@ public class ViewImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-
+                isBookedAny = false;
+                if (bookingRequest){
+                    makeAlreadyBookedAlert(true);
+                }else{
+                    makeAlreadyBookedAlert(false);
+                }
 
 //                mp.start();
                 final Map<String, Object> protectdata = new HashMap<>();
                 protectdata.put("protectCar", true);
+                protectdata.put("bookingStatus", false);
 
 
 
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-                db.collection("Bookings").document(documentID)
+                db.collection("Bookings").document(documentiDs)
                         .update(protectdata)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -501,6 +588,14 @@ public class ViewImageActivity extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                isBookedAny = false;
+
+                if (bookingRequest){
+                    makeAlreadyBookedAlert(false);
+                }else{
+                    makeAlreadyBookedAlert(false);
+                }
 
                 alertDialog1.dismiss();
             }
@@ -545,15 +640,18 @@ public class ViewImageActivity extends AppCompatActivity {
         bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
         TextView map = bottomSheetView.findViewById(R.id.maps_title);
         TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
-//        if (Constants.IS_AR_ENABLED){
-//
-//        }else {
-//            pyrky.setVisibility(View.GONE);
-//        }
+        if (Constants.IS_AR_ENABLED){
+
+        }else {
+            pyrky.setVisibility(View.GONE);
+        }
 
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
-
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent())
+                .getLayoutParams();
+        CoordinatorLayout.Behavior behavior = params.getBehavior();
+        ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
 
 //        GalleryIcon = (ImageView) bottomSheetView.findViewById(R.id.gallery_icon);
 //        CameraIcon = (ImageView) bottomSheetView.findViewById(R.id.camera_image);

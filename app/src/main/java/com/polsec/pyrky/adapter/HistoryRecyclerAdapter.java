@@ -82,6 +82,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         this.mRecyclerView=mRecyclerView;
 
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -156,11 +157,14 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         longi=bookingList.get(position).getDestLong();
         String latlong=lat+","+longi;
         ratingBar.setRating((int) bookingList.get(position).getParkingSpaceRating());
-        ratingBar.setIsIndicator(true);
 
-        ratingBar.setRating((float) bookingList.get(position).getParkingSpaceRating());
+
+//        ratingBar.setRating((float) bookingList.get(position).getParkingSpaceRating());
         Drawable drawable = ratingBar.getProgressDrawable();
         drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
+        ratingBar.setIsIndicator(true);
+
+     ratingBar.setTag(bookingList.get(position));
 
 //        String ratval= String.valueOf(bookingList.get(position).getParkingSpaceRating());
 
@@ -193,6 +197,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 //
     }
 
+
     private void showDialog(String uid, String cameraid, String latlongi, String current, int position) {
 
         Dialog dialog = new Dialog(context);
@@ -213,7 +218,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                 currenRating = (int) v;
 
-                ratingBar.setRating((int) currenRating);
+//                ratingBar.setRating((int) currenRating);
 
                 Toast.makeText(context, "New default rating: " + v, Toast.LENGTH_SHORT).show();
             }
@@ -233,9 +238,15 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 db.collection("Bookings").document(current).update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        bookingList.get(position).getParkingSpaceRating();
-                        bookingList.get(position).setParkingSpaceRating(currenRating);
-                        swapItems(bookingList);
+//                        bookingList.get(position).getParkingSpaceRating();
+//                        bookingList.get(position).setParkingSpaceRating(currenRating);
+//                        swapItems(bookingList);
+//                        ratingbar1.setVisibility(View.GONE);
+//                        ratingBar.setVisibility(View.VISIBLE);
+//                        ratingBar.setRating((float) bookingList.get(position).getParkingSpaceRating());
+//                        ratingBar.setIsIndicator(true);
+//                        Drawable drawable = ratingBar.getProgressDrawable();
+//                        drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -243,7 +254,12 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
                     }
                 });
-
+                ratingbar1.setVisibility(View.GONE);
+                        ratingBar.setVisibility(View.VISIBLE);
+                        ratingBar.setRating(currenRating);
+                        ratingBar.setIsIndicator(true);
+                        Drawable drawable = ratingBar.getProgressDrawable();
+                        drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
 
                 ratingval vehiclePojoObject=new ratingval();
                 vehiclePojoObject.setUser_ID(uid);
@@ -349,6 +365,5 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     public int getItemCount() {
         return bookingList.size();
     }
-
 
 }

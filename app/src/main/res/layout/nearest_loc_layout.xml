@@ -13,10 +13,19 @@
         <ImageView
             android:layout_width="140dp"
             android:layout_height="95dp"
-            android:background="@android:color/darker_gray"
+            android:background="@drawable/carousel_background"
             android:id="@+id/nearest_place_image"
             android:src="@mipmap/ic_launcher"
             />
+
+        <LinearLayout
+            android:id="@+id/opacityFilter"
+            android:layout_width="140dp"
+            android:layout_height="95dp"
+            android:orientation="vertical"
+            android:background="#00B9AB"
+            android:alpha="0.2">
+        </LinearLayout>
     </android.support.v7.widget.CardView>
     <TextView
         style="@style/Nunitoregular"
@@ -50,24 +59,24 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/nearest_place_city"
         android:layout_centerHorizontal="true">
+        <!--<TextView-->
+            <!--android:id="@+id/disttxt"-->
+            <!--style="@style/Nunitoregular"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignBaseline="@+id/nearest_place_distance"-->
+            <!--android:layout_alignBottom="@+id/nearest_place_distance"-->
+            <!--android:text="Distance :"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="8sp" />-->
         <TextView
-            android:id="@+id/disttxt"
-            style="@style/Nunitoregular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/nearest_place_distance"
-            android:layout_alignBottom="@+id/nearest_place_distance"
-            android:text="Distance :"
-            android:textColor="@color/white"
-            android:textSize="8sp" />
-        <TextView
-            android:layout_toRightOf="@+id/disttxt"
             style="@style/Nunitoregular"
             android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/nearest_place_distance"
             android:gravity="center"
+            android:layout_centerHorizontal="true"
             android:textColor="@color/white"
             android:textSize="8sp"
             android:text=""

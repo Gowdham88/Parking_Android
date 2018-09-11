@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -18,6 +19,9 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.FileProvider;
@@ -28,12 +32,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -92,7 +98,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     EditText NameEdt,EmailEdt;
     ImageView ProfileImg;
     TextView Camera,Gallery,cancel,save;
-    CircleImageView mProfileImage;
+ ImageView mProfileImage;
     private android.support.v7.app.AlertDialog dialog;
     LinearLayout cancelLay;
     int mCarouselCount;
@@ -169,12 +175,13 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         Pass =PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_LOGGED_INPASS);
 
         if (mProfilepic != null && !mProfilepic.isEmpty()) {
+
             Picasso.with(getActivity())
-                    .load(mProfilepic)
-                    .resize(avatarSize, avatarSize)
-                    .centerCrop()
-                    .transform(new CircleTransformation())
+                    .load(mProfilepic).fit()
+//                    .transform(new CircleTransformation())
                     .into(mProfileImage);
+
+
         }
 
         layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
@@ -219,13 +226,14 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             @Override
             public void onClick(View view) {
                 PopUp();
+
             }
         });
         String profileimg= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                saveUserImage(postimageurl);
+                saveUserImage(postimageurl);
 
 //                saveUserImage(profileimg);
                 String name = NameEdt.getText().toString().trim();
@@ -307,7 +315,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
 //                        NameEdt .setText(name);
-                        Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
                         PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME, name);
                         dialog.dismiss();
                     }
@@ -330,6 +338,11 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         View bottomSheetView = factory.inflate(R.layout.dialo_camera_bottomsheet, null);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
+
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent())
+                .getLayoutParams();
+        CoordinatorLayout.Behavior behavior = params.getBehavior();
+        ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
 
         Camera = bottomSheetView.findViewById(R.id.camera_title);
         Gallery = bottomSheetView.findViewById(R.id.gallery_title);
@@ -615,7 +628,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
 
     private void updateData(final String email, String carCategory,String userName) {
-        showProgressDialog();
+//        showProgressDialog();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
 //        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
@@ -626,11 +639,11 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        hideProgressDialog();
+//                        hideProgressDialog();
                         PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_EMAIL,email);
                         PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(carCategory));
-                        Toast.makeText(getActivity(), "Updated Successfully",
-                                Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getActivity(), "Updated Successfully",
+//                                Toast.LENGTH_SHORT).show();
 
 //                        getActivity().finish();
 //                        startActivity(getActivity().getIntent());
@@ -656,6 +669,8 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
                                             Log.d(TAG, "User email address updated.");
+                                            Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
+//                                            hideProgressDialog();
                                         }
                                     }
                                 });
@@ -667,7 +682,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     }
 
     public void saveUserImage(final String postimageurl) {
-//        showProgressDialog();
+        showProgressDialog();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference ref = db.collection("users").document(mUid);
@@ -678,12 +693,23 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
                         if(!postimageurl.equals(null)&&!postimageurl.isEmpty()){
+
+                            Picasso.with(getActivity())
+                                    .load(postimageurl)
+//                                    .transform(new CircleTransformation())
+                                    .into(ProfileImg);
+
+                            NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+                            CircleImageView profileImage = navigationView.getHeaderView(0).findViewById(R.id.user_image);
+
                             Picasso.with(getActivity())
                                     .load(postimageurl)
                                     .resize(avatarSize, avatarSize)
                                     .centerCrop()
                                     .transform(new CircleTransformation())
-                                    .into(ProfileImg);
+                                    .into(profileImage);
+
+
                         }
                         else{
 //            Picasso.with(this)
@@ -694,9 +720,10 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 //                    .transform(new CircleTransformation())
 //                    .into(ivUserProfilePhoto);
                         }
-                        Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
+
                         PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC, postimageurl);
-//                        hideProgressDialog();
+
+                        hideProgressDialog();
                     }
 
                 }).addOnFailureListener(new OnFailureListener() {
@@ -704,7 +731,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
             public void onFailure(@NonNull Exception e) {
                 Log.w(TAG, "Error updating document", e);
                 Toast.makeText(getActivity(),"Update failed",Toast.LENGTH_SHORT).show();
-//                hideProgressDialog();
+                hideProgressDialog();
 //                dialog.dismiss();
             }
 
