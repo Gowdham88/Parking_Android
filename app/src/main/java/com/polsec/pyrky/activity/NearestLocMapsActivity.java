@@ -77,7 +77,6 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -124,7 +123,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     double parkingSpaceRating;
     Boolean protectCar,bookingStatus;
     String lat,longi;
-
+    String mBySearch, mByCarousel;
     LatLng laln;
     Location mLocation;
     List<Camera> datalist = new ArrayList<Camera>();
@@ -155,7 +154,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     List<Address> mCurLocAddress = null;
 
-    public static NearestLocMapsActivity newInstance(String s, String s1, String carousel, int adapterPosition, String s2, int distanceval, String s3, String s4, Map<String, Object> parkingRules) {
+    public static NearestLocMapsActivity newInstance(String s, String s1, String carousel, int adapterPosition, String s2, int distanceval, String s3, String s4) {
 
         NearestLocMapsActivity home = new NearestLocMapsActivity();
 
@@ -168,7 +167,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         args.putInt("distance",distanceval);
         args.putString("imgurl",s3);
         args.putString("cameraid",s4);
-        args.putSerializable("rulslist", (Serializable) parkingRules);
+//        args.putSerializable("rulslist",stringObjectHashMap);
 
         home.setArguments(args);
         return home;
@@ -247,10 +246,10 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
         Bundle bundle = this.getArguments();
         if(bundle!=null){
-            String Value=bundle.getString("value");
-            String Value1=bundle.getString("carousel");
+            mBySearch =bundle.getString("value");
+            mByCarousel =bundle.getString("carousel");
 
-            if(Nameval.equals(Value)){
+            if(Nameval.equals(mBySearch)){
 
                 mLat = bundle.getString("latitude").trim();
                 mLongi = bundle.getString("longitude").trim();
@@ -262,7 +261,6 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                 if (parkingTypes.size() < 1 && carCategory.size() < 1 && sRatings.size() < 1){
                     Query query = db.collection("camera");
-
                     loadCameraLocation(query);
                 }
                 else{
@@ -278,7 +276,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                     }
                 }
             }
-            else if(Nameval1.equals(Value1)){
+            else if(Nameval1.equals(mByCarousel)){
 
                 mLat = bundle.getString("latt").trim();
                 mLongi = bundle.getString("longg").trim();
@@ -287,13 +285,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 distance=bundle.getInt("distance");
                 Imageurl=bundle.getString("imgurl");
                 CameraId=bundle.getString("cameraid");
-                mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
+//                mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
 
                 Log.e("lattitude", String.valueOf(mLat));
                  Log.e("longitude", String.valueOf(mLongi));
                 Log.e("plc", String.valueOf(mListPosition));
                 Log.e("distance", String.valueOf(mrlslist));
-                showDialog1(mrlslist,CameraId,mLat,mLongi,Imageurl,PlaceName);
 
                 mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
 
@@ -408,7 +405,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                 mAccurateDistancesString.add(String.valueOf(mAccurateDistance));
                                 Log.e("distancemap", String.valueOf(mAccurateDistancesString));
 
-                                if (locationDistance < 1500) {
+//                                if (locationDistance < 1500) {
                                     mLocationDistancesmtrs.add(locationDistance);
                                     Log.e("mLocationDistancesmtrs", String.valueOf(mLocationDistancesmtrs));
                                     mCalculateDistances.add(String.valueOf(mLocationDistances));
@@ -423,20 +420,6 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                     Log.e("nearlongmap", String.valueOf(mCameraLong));
                                     Log.e("nearimgmap", String.valueOf(mCameraImageUrl));
                                     Log.e("rulsmap", String.valueOf(mLocationDistancesmtrs));
-
-////                            //Carousel View
-//                                    final CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
-//                                    carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-//                                    carouselLayoutManager.setMaxVisibleItems(3);
-//
-//
-//                                    LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-//                                    mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
-//                                    mNearestPlaceRecycler.setHasFixedSize(true);
-//
-//                                    mNearestrecyclerAdapter = new CarouselDetailMapAdapter(context,mCameraImageUrl,mCameraLat,mCameraLong,mAccurateDistancesString,mCameraLocName,NearestLocMapsActivity.this);
-//                                    mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
-//                                    mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
 
                                     mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
                                     mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
@@ -488,7 +471,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                 }
 //
 
-                            }
+//                            }
                         }
 
                     }
@@ -670,26 +653,30 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     @Override
     public void onMapReady(GoogleMap gMap) {
         Mmap = gMap;
-        Mmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//        Mmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 //        mNearestPlaceRecycler.setVisibility(View.VISIBLE);
         // Load custom marker icon
 
 
         LatLng sydney = new LatLng(Double.parseDouble(mLat),Double.parseDouble(mLongi));
-                        int height = 70;
-                        int width = 50;
-                        BitmapDrawable bitmapdraw = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.marker);
-                        Bitmap b = bitmapdraw.getBitmap();
-                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-//        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-        Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 8));
+        if(Nameval1.equals(mByCarousel)){
+            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
+            Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12));
+            showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
+        }else{
+            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.defaultMarker());
+            Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12));
+            showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
+        }
+
+
 
         Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                showDialog1(mrlslist, CameraId, mLat,mLongi,Imageurl,PlaceName);
+
+                showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
                 mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
                 return false;
 
@@ -702,11 +689,6 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         } catch (SecurityException se) {
 
         }
-
-        //Edit the following as per you needs
-        Mmap.getUiSettings().setZoomControlsEnabled(true);
-        Mmap.getUiSettings().setRotateGesturesEnabled(false);
-
 //        mNearestPlaceRecycler.setVisibility(View.VISIBLE);
 
     }
@@ -793,10 +775,11 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             }
         });
         alertD.setView(promptView);
+        WindowManager.LayoutParams params = alertD.getWindow().getAttributes();
+        params.y = 150;
+        alertD.getWindow().setAttributes(params);
         alertD.getWindow().setDimAmount(0.0f);
-        alertD.getWindow().setGravity(Gravity.RELATIVE_LAYOUT_DIRECTION);
-//        alertD.setView(getView(),0,20,0,0);
-
+        alertD.getWindow().setGravity(Gravity.TOP);
         alertD.show();
 
         alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -808,7 +791,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    public void showDialog1(HashMap<String, Object> mrlslist, String cameraId, String mLat, String mLongi, String Imageurl1, String place){
+    public void showDialog1(String cameraId, String mLat, String mLongi, String Imageurl1, String place){
         mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
 
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
@@ -825,12 +808,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         rule3 =promptView.findViewById(R.id.rule3_txt);
         rule4 =promptView.findViewById(R.id.rule4_txt);
 //
-        if((!mrlslist.equals(null)) || (!mrlslist.isEmpty())){
-            rule1.setText((CharSequence) mrlslist.get("0"));
-            rule2.setText((CharSequence) mrlslist.get("1"));
-            rule3.setText((CharSequence) mrlslist.get("2"));
-            rule4.setText((CharSequence) mrlslist.get("3"));
-        }
+//        if((!mrlslist.equals(null)) || (!mrlslist.isEmpty())){
+//            rule1.setText((CharSequence) mrlslist.get("0"));
+//            rule2.setText((CharSequence) mrlslist.get("1"));
+//            rule3.setText((CharSequence) mrlslist.get("2"));
+//            rule4.setText((CharSequence) mrlslist.get("3"));
+//        }
 
 
 //
@@ -888,10 +871,11 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             }
         });
         alertD.setView(promptView);
+        WindowManager.LayoutParams params = alertD.getWindow().getAttributes();
+        params.y = 150;
+        alertD.getWindow().setAttributes(params);
         alertD.getWindow().setDimAmount(0.0f);
-        alertD.getWindow().setGravity(Gravity.RELATIVE_LAYOUT_DIRECTION);
-//        alertD.setView(getView(),0,20,0,0);
-
+        alertD.getWindow().setGravity(Gravity.TOP);
         alertD.show();
 
         alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {

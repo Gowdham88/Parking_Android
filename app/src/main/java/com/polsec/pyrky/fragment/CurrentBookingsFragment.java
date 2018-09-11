@@ -11,25 +11,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.polsec.pyrky.R;
-import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.adapter.CurrentBookingRecyclerAdapter;
 import com.polsec.pyrky.pojo.Booking;
-import com.polsec.pyrky.pojo.Users;
-import com.polsec.pyrky.pojo.UsersBooking;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 
 import java.util.ArrayList;
@@ -51,8 +45,7 @@ public class CurrentBookingsFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
 
     List<Booking> BookingList = new ArrayList<Booking>();
-    List<UsersBooking> BookinguserList = new ArrayList<UsersBooking>();
-    List<String> BookinguserListID = new ArrayList<String>();
+    List<Booking> mFilteredBookingList = new ArrayList<Booking>();
     List<String> BookingListId = new ArrayList<String>();
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
     public static final String ACTION_SHOW_DEFAULT_ITEM = "action_show_default_item";
@@ -63,7 +56,7 @@ public class CurrentBookingsFragment extends Fragment {
     String mUid;
     Map<String, Object> bookingid = new HashMap<>();
 
-    Map<String, Object> bookingid1=new HashMap<>();
+    Map<String, Object> bookingid1 = new HashMap<>();
     public CurrentBookingsFragment() {
         // Required empty public constructor
     }
@@ -73,9 +66,7 @@ public class CurrentBookingsFragment extends Fragment {
         super.onResume();
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
 //        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
-        loadPost(ACTION_SHOW_LOADING_ITEM);
-        loadPostval(ACTION_SHOW_LOADING_ITEM);
-        recyclerAdapter.notifyDataSetChanged();
+
     }
     @Nullable
     @Override
@@ -84,48 +75,6 @@ public class CurrentBookingsFragment extends Fragment {
         uid = PreferencesHelper.getPreference(getContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 //        loadPost(ACTION_SHOW_LOADING_ITEM);
         db = FirebaseFirestore.getInstance();
-//        DocumentReference docRef = db.collection("users").document(uid);
-//        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    DocumentSnapshot document = task.getResult();
-//                    if (document.exists()) {
-////                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-//                        bookingid = document.getData();
-//
-//
-//                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
-//
-//
-//                        String count = String.valueOf(bookingid1.size());
-//                        Log.e("count", count);
-//
-//
-////                                    followingcount = 1;
-////                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-////                            System.out.println(entry.getKey() + " = " + entry.getValue());
-////
-////                            Boolean val = (Boolean) entry.getValue();
-////                            String values = String.valueOf(val);
-////
-////                            Log.e("valuesc", values);
-//////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-////
-////                        }
-//
-//
-//
-//                    } else {
-////                        Log.d(TAG, "No such document");
-//
-//                    }
-//                } else {
-////                    Log.d(TAG, "get failed with ", task.getException());
-//
-//                }
-//            }
-//        });
 
         swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
 
@@ -140,9 +89,7 @@ public class CurrentBookingsFragment extends Fragment {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-//                        feedAdapter.notifyDataSetChanged();
-//
-    doYourUpdate();
+                        retrieveContents();
                     }
                 }
         );
@@ -152,30 +99,33 @@ public class CurrentBookingsFragment extends Fragment {
         return view;
     }
 
-    private void doYourUpdate() {
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        retrieveContents();
+
+    }
 
 
+    private void retrieveContents() {
         loadPost(ACTION_SHOW_LOADING_ITEM);
-        loadPostval(ACTION_SHOW_LOADING_ITEM);
-        recyclerAdapter.notifyDataSetChanged();
-        swipeRefreshLayout.setRefreshing(false);
+//        loadPostval(ACTION_SHOW_LOADING_ITEM);
+//        recyclerAdapter.notifyDataSetChanged();
+//        swipeRefreshLayout.setRefreshing(false);
     }
 
     private void setupFeed() {
 
-        recyclerAdapter= new CurrentBookingRecyclerAdapter(getActivity(),BookingList,bookingid1);
+        recyclerAdapter= new CurrentBookingRecyclerAdapter(getActivity(),mFilteredBookingList,bookingid1);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
 
-//        mAdapter.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
-//            }
-//        });
-//        mAdapter.setItemAnimator(new FeedItemAnimator());
-
+        if (swipeRefreshLayout.isRefreshing()){
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
 
@@ -183,6 +133,7 @@ public class CurrentBookingsFragment extends Fragment {
 
         BookingList.clear();
         BookingListId.clear();
+        mFilteredBookingList.clear();
 //        showProgressDialog();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -205,14 +156,8 @@ public class CurrentBookingsFragment extends Fragment {
                             BookingList.add(comment);
                             BookingListId.add(document.getId());
 
-//                            Log.e("dbbd",document.getId());
-//                            Log.e("dbbd", String.valueOf(document.getData()));
-
                         }
-//                        loadPostval(ACTION_SHOW_LOADING_ITEM);
-
-                        setupFeed();
-                        recyclerAdapter.notifyDataSetChanged();
+                        loadPostval(ACTION_SHOW_LOADING_ITEM);
                     }
 
                 });
@@ -251,7 +196,18 @@ public class CurrentBookingsFragment extends Fragment {
 
                         }
 
-                        setupFeed();
+                            for (int i = 0; i < BookingList.size();i++){
+                                if(bookingid1.containsKey(BookingList.get(i).getDocumentID())){
+                                    Boolean value=(Boolean) bookingid1.get(BookingList.get(i).getDocumentID());
+
+                                    if(value){
+                                        mFilteredBookingList.add(BookingList.get(i));
+                                    }
+
+                                }
+                            }
+
+
                         }
                         else{
 
@@ -267,6 +223,8 @@ public class CurrentBookingsFragment extends Fragment {
 //                    Log.d(TAG, "get failed with ", task.getException());
 
                 }
+
+                setupFeed();
             }
         });
 
