@@ -316,7 +316,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
     }
 
-    public void hideProgressDialog(){
+    private void hideProgressDialog(){
         if(dialog!=null)
             dialog.dismiss();
     }

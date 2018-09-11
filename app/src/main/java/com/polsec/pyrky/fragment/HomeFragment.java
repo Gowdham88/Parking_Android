@@ -468,12 +468,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
                             Log.e("address1", address1);
                             LatLng sydney = new LatLng(latt, longi);
-                            int height = 70;
-                            int width = 50;
-                            BitmapDrawable bitmapdraw=(BitmapDrawable)getContext().getResources().getDrawable(R.drawable.marker);
-                            Bitmap b=bitmapdraw.getBitmap();
-                            Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                            mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+                            mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,8));
 
                             Log.e("lattd", String.valueOf(latt));
@@ -579,13 +574,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
                                 LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
-                                    int height = 70;
-                                    int width = 50;
-                                    bitmapdraw =(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
-                                    Bitmap b=bitmapdraw.getBitmap();
-                                    Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-//                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+//                                    int height = 70;
+//                                    int width = 50;
+//                                    bitmapdraw =(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
+//                                    Bitmap b=bitmapdraw.getBitmap();
+//                                    Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
                                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
 //                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
@@ -657,16 +652,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
         mMap.setMyLocationEnabled(false);
 
-        int height = 95;
-        int width = 95;
+//        int height = 95;
+//        int width = 95;
+//
+//        bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.currentlocationicon);
+//
+//        Bitmap b=bitmapdraw.getBitmap();
+//        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//        mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 
-        bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.currentlocationicon);
-
-        Bitmap b=bitmapdraw.getBitmap();
-        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-        mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-
-//        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocationicon));
+        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
         float zoomLevel = 12;
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
