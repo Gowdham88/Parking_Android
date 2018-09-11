@@ -77,6 +77,7 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -154,7 +155,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     List<Address> mCurLocAddress = null;
 
-    public static NearestLocMapsActivity newInstance(String s, String s1, String carousel, int adapterPosition, String s2, int distanceval, String s3, String s4) {
+    public static NearestLocMapsActivity newInstance(String s, String s1, String carousel, int adapterPosition, String s2, int distanceval, String s3, String s4, Map<String, Object> parkingRules) {
 
         NearestLocMapsActivity home = new NearestLocMapsActivity();
 
@@ -167,7 +168,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         args.putInt("distance",distanceval);
         args.putString("imgurl",s3);
         args.putString("cameraid",s4);
-//        args.putSerializable("rulslist",stringObjectHashMap);
+        args.putSerializable("rulslist", (Serializable) parkingRules);
 
         home.setArguments(args);
         return home;
@@ -286,13 +287,13 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 distance=bundle.getInt("distance");
                 Imageurl=bundle.getString("imgurl");
                 CameraId=bundle.getString("cameraid");
-//                mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
+                mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
 
                 Log.e("lattitude", String.valueOf(mLat));
                  Log.e("longitude", String.valueOf(mLongi));
                 Log.e("plc", String.valueOf(mListPosition));
                 Log.e("distance", String.valueOf(mrlslist));
-                showDialog1(CameraId,mLat,mLongi,Imageurl,PlaceName);
+                showDialog1(mrlslist,CameraId,mLat,mLongi,Imageurl,PlaceName);
 
                 mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
 
@@ -688,7 +689,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
+                showDialog1(mrlslist, CameraId, mLat,mLongi,Imageurl,PlaceName);
                 mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
                 return false;
 
@@ -807,7 +808,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    public void showDialog1(String cameraId, String mLat, String mLongi, String Imageurl1, String place){
+    public void showDialog1(HashMap<String, Object> mrlslist, String cameraId, String mLat, String mLongi, String Imageurl1, String place){
         mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
 
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
@@ -824,12 +825,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         rule3 =promptView.findViewById(R.id.rule3_txt);
         rule4 =promptView.findViewById(R.id.rule4_txt);
 //
-//        if((!mrlslist.equals(null)) || (!mrlslist.isEmpty())){
-//            rule1.setText((CharSequence) mrlslist.get("0"));
-//            rule2.setText((CharSequence) mrlslist.get("1"));
-//            rule3.setText((CharSequence) mrlslist.get("2"));
-//            rule4.setText((CharSequence) mrlslist.get("3"));
-//        }
+        if((!mrlslist.equals(null)) || (!mrlslist.isEmpty())){
+            rule1.setText((CharSequence) mrlslist.get("0"));
+            rule2.setText((CharSequence) mrlslist.get("1"));
+            rule3.setText((CharSequence) mrlslist.get("2"));
+            rule4.setText((CharSequence) mrlslist.get("3"));
+        }
 
 
 //

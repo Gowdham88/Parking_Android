@@ -170,6 +170,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     ArrayList<String> distancescurrentarr = new ArrayList<>();
     ArrayList<String> mCameraLocName = new ArrayList<>();
     ArrayList<String> mrlslist = new ArrayList<>();
+    ArrayList<HashMap<String, Object>> Ruleslist = new ArrayList<HashMap<String, Object>>();
 
     ArrayList<String> mCameraID = new ArrayList<>();
  HashMap<String, Object> popupruls = new HashMap<String, Object>();
@@ -526,6 +527,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             popupruls.clear();
                             mCameraID.clear();
                             listofparkingRules.clear();
+                            Ruleslist.clear();
 
 
                             for (int i = 0; i < mNearestLocationList.size(); i++) {
@@ -555,6 +557,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 mCameraImageUrl.add(mNearestLocationList.get(i).getCameraImageUrl());
                                 mCameraLocName.add(mNearestLocationList.get(i).getCameraLocationName());
                                 mCameraID.add(mNearestLocationList.get(i).getCameraID());
+                                    Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
 //                                    mrlslist.add(mNearestLocationList.get(i).getParkingRules());
 
 
@@ -562,7 +565,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 Log.e("mCameraLong", String.valueOf(mCameraLong));
                                 Log.e("mCameraImageUrl", String.valueOf(mCameraImageUrl));
                                     Log.e("mCameraID", String.valueOf(mCameraID));
-                                    Log.e("mCameraruls", String.valueOf(mrlslist));
+//                                    Log.e("mCameraruls", String.valueOf(mrlslist));
 
 
                                 carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
@@ -571,7 +574,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                                 mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
                                 mNearestPlaceRecycler.setHasFixedSize(true);
-                                mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName,caldis1,mCameraID);
+                                mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName,caldis1,mCameraID,Ruleslist);
                                 mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                 mNearestrecyclerAdapter.notifyDataSetChanged();
                                 mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());

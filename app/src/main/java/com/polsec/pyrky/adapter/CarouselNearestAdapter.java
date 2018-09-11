@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by czsm4 on 07/08/18.
@@ -53,13 +54,13 @@ private int avatarSize;
     ArrayList<String> Placename = new ArrayList<>();
     ArrayList<Double> caldis1 = new ArrayList<>();
     ArrayList<String> mCameraID = new ArrayList<>();
-    ArrayList<HashMap<String, Object>> popupruls = new ArrayList<HashMap<String, Object>>();
+    ArrayList<HashMap<String, Object>> parkingRules  = new ArrayList<HashMap<String, Object>>();
     HashMap<String, Object> mrlslist=new HashMap<String, Object>();
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
     String value="carousel";
     int distanceval;
-public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<Double> caldis1, ArrayList<String> mCameraID) {
+public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<Double> caldis1, ArrayList<String> mCameraID, ArrayList<HashMap<String, Object>> parkingRules) {
         this.context = context;
         this.nearimg = nearimg;
         this.nearlat1 = nearlat1;
@@ -68,7 +69,7 @@ public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayL
         this.Placename=Placename;
         this.caldis1=caldis1;
         this.mCameraID=mCameraID;
-//        this.popupruls=popupruls;
+        this.parkingRules=parkingRules;
         }
 
 @NonNull
@@ -201,7 +202,7 @@ public void onClick(View v) {
 //    fragobj.setArguments(args1);
 
     FragmentTransaction transaction =  ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-    transaction.replace(R.id.main_frame_layout, NearestLocMapsActivity.newInstance(nearlat1.get(position),nearlong1.get(position),value,holder.getAdapterPosition(),Placename.get(position),distanceval,nearimg.get(position),mCameraID.get(position)));
+    transaction.replace(R.id.main_frame_layout, NearestLocMapsActivity.newInstance(nearlat1.get(position),nearlong1.get(position),value,holder.getAdapterPosition(),Placename.get(position),distanceval,nearimg.get(position),mCameraID.get(position),parkingRules.get(position)));
     transaction.addToBackStack(null).commit();
 
     Log.e("position", String.valueOf(holder.getAdapterPosition()));
