@@ -209,7 +209,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
 //                ratingBar.setRating((int) currenRating);
 
-                Toast.makeText(context, "New default rating: " + v, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "New default rating: " + v, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -222,7 +222,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
                 Map<String, Object> rating = new HashMap<>();
                 rating.put("parkingSpaceRating", currenRating );
-                Toast.makeText(context, "New default rating: " + currenRating, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "New default rating: " + currenRating, Toast.LENGTH_SHORT).show();
 
 
                 db.collection("Bookings").document(current).update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {

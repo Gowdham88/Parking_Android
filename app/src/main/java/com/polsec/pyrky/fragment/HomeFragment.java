@@ -404,16 +404,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             public void onClick(View v) {
                 if (!isExpandableListEnabled) {
                     isExpandableListEnabled = true;
-                    Toast.makeText(getActivity(), "Filter Enabled", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), "Filter Enabled", Toast.LENGTH_SHORT).show();
                     Fragment filterFragment = new FiltersFragment();
                     transaction = getChildFragmentManager().beginTransaction();
                     transaction.add(R.id.frame_layout, filterFragment).addToBackStack(null).commit();
                     Utils.hideKeyboard(getActivity());
                 } else {
                     isExpandableListEnabled = false;
-                    Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
                     getChildFragmentManager().popBackStack();
                 }
+
+
             }
         });
 
@@ -576,23 +578,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
                                 LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
-//                                    int height = 70;
-//                                    int width = 50;
-//                                    bitmapdraw =(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
-//                                    Bitmap b=bitmapdraw.getBitmap();
-//                                    Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-//                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+
                                     mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
                                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
-//                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
                                 }
-
-
-
                             }
-
-
                         }
 //                        Double lat = mCurrentGpsLoc.getLatitude();
 //                        Double lng = mCurrentGpsLoc.getLongitude();
@@ -619,7 +610,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.clear();
-//        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
 
         // Helper method for smooth
         // animation
@@ -881,6 +871,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             == PackageManager.PERMISSION_GRANTED) {
 
                         //Request location updates:
+                        getCurrentLocation();
+                        loadCameraLocations();
 
                     }
 

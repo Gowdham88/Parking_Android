@@ -92,6 +92,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks, DiscreteScrollView.OnItemChangedListener {
 
+    private static final long DEFAULT_MARKER_LENGTH = 2000;
     Context context = getActivity();
 
     CarouselDetailMapAdapter mNearestrecyclerAdapter;
@@ -286,7 +287,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 distance=bundle.getInt("distance");
                 Imageurl=bundle.getString("imgurl");
                 CameraId=bundle.getString("cameraid");
-//                mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
+                mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
 
                 Log.e("lattitude", String.valueOf(mLat));
                  Log.e("longitude", String.valueOf(mLongi));
@@ -442,28 +443,29 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                     if (datalist.get(i).getParkingTypes().equals("Free street parking")) {
                         LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
 //                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
-                        int height = 70;
-                        int width = 40;
-                        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
-                        Bitmap b=bitmapdraw.getBitmap();
-                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                        Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+//                        int height = 70;
+//                        int width = 40;
+//                        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
+//                        Bitmap b=bitmapdraw.getBitmap();
+//                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                        Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 //                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
-
+//                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
+                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
 
                     } else {
                         LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
 //                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
 
-                        int height = 70;
-                        int width = 50;
-                        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.paid);
-                        Bitmap b=bitmapdraw.getBitmap();
-                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                        Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+//                        int height = 70;
+//                        int width = 50;
+//                        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.paid);
+//                        Bitmap b=bitmapdraw.getBitmap();
+//                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                        Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 //                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
+//                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
+                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
                     }
 
                 }
@@ -563,25 +565,25 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
 
 //            LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
-             if (parkingType.equals("Free street parking")){
+//             if (parkingType.equals("Free street parking")){
 
-                 int height = 70;
-                 int width = 40;
-                 BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
-                 Bitmap b=bitmapdraw.getBitmap();
-                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                 Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-              Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-            }else{
+//                 int height = 70;
+//                 int width = 40;
+//                 BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
+//                 Bitmap b=bitmapdraw.getBitmap();
+//                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                 Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+//              Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
+//            }else{
 //            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
 
-                 int height = 70;
-                 int width = 50;
-                 BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.paid);
-                 Bitmap b=bitmapdraw.getBitmap();
-                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                 Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-              }
+//                 int height = 70;
+//                 int width = 50;
+//                 BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.paid);
+//                 Bitmap b=bitmapdraw.getBitmap();
+//                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                 Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
+//              }
 //            Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
              Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,14 ));
 
@@ -640,11 +642,10 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         mLocation = location;
 //        mNearestPlaceRecycler.setVisibility(View.VISIBLE);
         LatLng latLng = new LatLng(Double.parseDouble(mLat), Double.parseDouble(mLongi));
-        Mmap.clear();
+//        Mmap.clear();
 
-//            Mmap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
-        Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15.5f));
-        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
+//        Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15.5f));
+//        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
 
     }
 
@@ -661,7 +662,13 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         if(Nameval1.equals(mByCarousel)){
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
             Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12));
-            showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run() {
+                    showDialog1(mrlslist,CameraId, mLat,mLongi,Imageurl,PlaceName);
+                }
+            }, DEFAULT_MARKER_LENGTH);
+
         }else{
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.defaultMarker());
             Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12));
@@ -674,7 +681,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
+                showDialog1(mrlslist,CameraId, mLat,mLongi,Imageurl,PlaceName);
                 mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
                 return false;
 
@@ -789,7 +796,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    public void showDialog1(String cameraId, String mLat, String mLongi, String Imageurl1, String place){
+    public void showDialog1(HashMap<String, Object> mrlslist,String cameraId, String mLat, String mLongi, String Imageurl1, String place){
         mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
 
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
@@ -805,13 +812,13 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         rule2 = promptView.findViewById(R.id.rule2_txt);
         rule3 =promptView.findViewById(R.id.rule3_txt);
         rule4 =promptView.findViewById(R.id.rule4_txt);
-//
-//        if((!mrlslist.equals(null)) || (!mrlslist.isEmpty())){
-//            rule1.setText((CharSequence) mrlslist.get("0"));
-//            rule2.setText((CharSequence) mrlslist.get("1"));
-//            rule3.setText((CharSequence) mrlslist.get("2"));
-//            rule4.setText((CharSequence) mrlslist.get("3"));
-//        }
+
+        if((!mrlslist.equals(null)) || (!mrlslist.isEmpty())){
+            rule1.setText((CharSequence) mrlslist.get("0"));
+            rule2.setText((CharSequence) mrlslist.get("1"));
+            rule3.setText((CharSequence) mrlslist.get("2"));
+            rule4.setText((CharSequence) mrlslist.get("3"));
+        }
 
 
 //
@@ -1138,51 +1145,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                     makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
                 }
 
-//                mp.start();
-                final Map<String, Object> protectdata = new HashMap<>();
-                protectdata.put("protectCar", true);
-                protectdata.put("bookingStatus", false);
-
-
-
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
-                db.collection("Bookings").document(documentIDs)
-                        .update(protectdata)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-//                            DocumentReference washingtonRef = db.collection("users").document(uid);
-//
-//                            washingtonRef
-//                                    .update("Booking_ID",likeData1)
-//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                        @Override
-//                                        public void onSuccess(Void aVoid) {
-//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-//                                        }
-//                                    })
-//                                    .addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Log.w(TAG, "Error updating document", e);
-//                                        }
-//                                    });
-
-
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+                protectCar(true,true);
                 alertDialog1.dismiss();
             }
         });
@@ -1197,6 +1160,8 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 }else{
                     makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
                 }
+
+                protectCar(false,true);
 
 //                isBookedAny = false;
 //                if (bookingRequest){
@@ -1227,6 +1192,53 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 //        lp.windowAnimations = R.style.DialogAnimation;
         alertDialog1.getWindow().setAttributes(lp);
         alertDialog1.show();
+    }
+
+    private void protectCar(Boolean protectCar,Boolean bookingStatus){
+        final Map<String, Object> protectdata = new HashMap<>();
+        protectdata.put("protectCar", protectCar);
+        protectdata.put("bookingStatus", bookingStatus);
+
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+        db.collection("Bookings").document(documentIDs)
+                .update(protectdata)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+//                            DocumentReference washingtonRef = db.collection("users").document(uid);
+//
+//                            washingtonRef
+//                                    .update("Booking_ID",likeData1)
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            Log.w(TAG, "Error updating document", e);
+//                                        }
+//                                    });
+
+
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
     }
 
     private void makeAlreadyBookedAlert(Boolean bookingRequest,double latitude, double longitude, String yourPlace){

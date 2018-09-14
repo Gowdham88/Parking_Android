@@ -281,7 +281,7 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             bottomNavigationView.setSelectedItemId(R.id.b_nav_home);
-            navigationView.setCheckedItem(R.id.b_nav_home);
+            navigationView.setCheckedItem(R.id.nav_home);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left);
             transaction.replace(R.id.main_frame_layout, new HomeFragment()).commit();
@@ -289,6 +289,7 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_booking) {
 //
 //            loadFragment(new BookingsFragment());
+            navigationView.setCheckedItem(R.id.nav_booking);
             Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -297,7 +298,7 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_profile) {
 
             bottomNavigationView.setSelectedItemId(R.id.b_nav_profile);
-            navigationView.setCheckedItem(R.id.b_nav_profile);
+            navigationView.setCheckedItem(R.id.nav_profile);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
             transaction.replace(R.id.main_frame_layout, new ProfileFragment()).commit();

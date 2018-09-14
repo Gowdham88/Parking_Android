@@ -135,7 +135,7 @@ public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         }
 
         else {
-            holder.nearestPlaceDistance.setText("900 - 1000m");
+            holder.nearestPlaceDistance.setText("1000m and above");
         }
     }
 

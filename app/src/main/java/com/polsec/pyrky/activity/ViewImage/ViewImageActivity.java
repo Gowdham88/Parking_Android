@@ -536,51 +536,9 @@ public class ViewImageActivity extends AppCompatActivity {
                     makeAlreadyBookedAlert(false);
                 }
 
+                protectCar(true,true);
 //                mp.start();
-                final Map<String, Object> protectdata = new HashMap<>();
-                protectdata.put("protectCar", true);
-                protectdata.put("bookingStatus", false);
 
-
-
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
-                db.collection("Bookings").document(documentiDs)
-                        .update(protectdata)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-//                            DocumentReference washingtonRef = db.collection("users").document(uid);
-//
-//                            washingtonRef
-//                                    .update("Booking_ID",likeData1)
-//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                        @Override
-//                                        public void onSuccess(Void aVoid) {
-//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-//                                        }
-//                                    })
-//                                    .addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Log.w(TAG, "Error updating document", e);
-//                                        }
-//                                    });
-
-
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
                 alertDialog1.dismiss();
             }
         });
@@ -597,6 +555,7 @@ public class ViewImageActivity extends AppCompatActivity {
                     makeAlreadyBookedAlert(false);
                 }
 
+                protectCar(false,true);
                 alertDialog1.dismiss();
             }
         });
@@ -621,6 +580,33 @@ public class ViewImageActivity extends AppCompatActivity {
         alertDialog1.show();
     }
 
+    private void protectCar(Boolean protectCar, Boolean bookingStatus){
+        final Map<String, Object> protectdata = new HashMap<>();
+        protectdata.put("protectCar", protectCar);
+        protectdata.put("bookingStatus", bookingStatus);
+
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+        db.collection("Bookings").document(documentiDs)
+                .update(protectdata)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
     private boolean isPackageInstalled() {
         try
         {

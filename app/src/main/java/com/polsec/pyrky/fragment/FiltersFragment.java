@@ -121,9 +121,9 @@ public class FiltersFragment extends Fragment {
 
                 previousGroup = groupPosition;
             }
-             Toast.makeText(getActivity(),
-                        mExpandableListTitle.get(groupPosition) + " List Expanded.",
-                        Toast.LENGTH_SHORT).show();
+//             Toast.makeText(getActivity(),
+//                        mExpandableListTitle.get(groupPosition) + " List Expanded.",
+//                        Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -142,14 +142,14 @@ public class FiltersFragment extends Fragment {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                Toast.makeText(
-                        getActivity(),
-                        mExpandableListTitle.get(groupPosition)
-                                + " -> "
-                                + mExpandableListDetail.get(
-                                mExpandableListTitle.get(groupPosition)).get(
-                                childPosition), Toast.LENGTH_SHORT
-                ).show();
+//                Toast.makeText(
+//                        getActivity(),
+//                        mExpandableListTitle.get(groupPosition)
+//                                + " -> "
+//                                + mExpandableListDetail.get(
+//                                mExpandableListTitle.get(groupPosition)).get(
+//                                childPosition), Toast.LENGTH_SHORT
+//                ).show();
                 return false;
             }
         });
@@ -178,6 +178,9 @@ public class FiltersFragment extends Fragment {
             String securityRatingsData = new Gson().toJson(Constants.SECURITY_RATINGS);
             PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_SECURITY_RATINGS,securityRatingsData);
         }
+
+        getFragmentManager().popBackStack();
+        Toast.makeText(getActivity(), "Disabled", Toast.LENGTH_SHORT).show();
 
     }
 }
