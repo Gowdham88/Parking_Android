@@ -75,6 +75,7 @@ public class HomeActivity extends AppCompatActivity
     View view,holderView, contentView,contentView1;
     String profileImageUrl;
     CircleImageView profileImage;
+    NavigationView navigationView;
     String Nameval="settings";
     boolean isDrawerLocked;
 //    @Override
@@ -172,7 +173,7 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.user_name);
         profileImage = navigationView.getHeaderView(0).findViewById(R.id.user_image);
@@ -245,6 +246,8 @@ public class HomeActivity extends AppCompatActivity
                 switch (item.getItemId()){
                     case R.id.b_nav_home:
                         fragment = new HomeFragment();
+                        navigationView.setCheckedItem(R.id.b_nav_home);
+
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Home");
                         break;
@@ -258,6 +261,7 @@ public class HomeActivity extends AppCompatActivity
 
                     case R.id.b_nav_profile:
                         fragment = new ProfileFragment();
+                        navigationView.setCheckedItem(R.id.b_nav_profile);
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Profile");
                         break;
@@ -277,34 +281,23 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             bottomNavigationView.setSelectedItemId(R.id.b_nav_home);
-
+            navigationView.setCheckedItem(R.id.b_nav_home);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left);
             transaction.replace(R.id.main_frame_layout, new HomeFragment()).commit();
-//            transaction.addToBackStack(null);
-//            transaction.commit();
-//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            loadFragment(new ());
             toolbarText.setText("Home");
         } else if (id == R.id.nav_booking) {
 //
 //            loadFragment(new BookingsFragment());
             Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
-            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             startActivity(intent);
-//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-//            transaction.replace(R.id.main_frame_layout, new BookingsFragment());
-//            transaction.addToBackStack(null);
-//            transaction.commit();
-//            toolbarText.setText("Booking");
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
+
         } else if (id == R.id.nav_profile) {
 
-//            if(id==R.id.b_nav_profile){
-
-//            }
             bottomNavigationView.setSelectedItemId(R.id.b_nav_profile);
-
+            navigationView.setCheckedItem(R.id.b_nav_profile);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
             transaction.replace(R.id.main_frame_layout, new ProfileFragment()).commit();

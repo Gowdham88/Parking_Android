@@ -1,5 +1,6 @@
 package com.polsec.pyrky.activity.booking;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.activity.HomeActivity;
 import com.polsec.pyrky.adapter.CustomViewPagerAdapter;
 import com.polsec.pyrky.fragment.CurrentBookingsFragment;
 import com.polsec.pyrky.fragment.HistoryFragment;
@@ -46,10 +48,10 @@ Toolbar toolbar;
             @Override
             public void onClick(View view) {
                 onBackPressed();
-//                Intent intent=new Intent(getApplicationContext(),HomeActivity.class);
-//                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
-//                startActivity(intent);
-//                finish();
+                Intent intent=new Intent(getApplicationContext(),HomeActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+                finish();
             }
         });
 //        BookingsActivity.this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);

@@ -77,6 +77,7 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -154,7 +155,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     List<Address> mCurLocAddress = null;
 
-    public static NearestLocMapsActivity newInstance(String s, String s1, String carousel, int adapterPosition, String s2, int distanceval, String s3, String s4) {
+    public static NearestLocMapsActivity newInstance(String s, String s1, String carousel, int adapterPosition, String s2, int distanceval, String s3, String s4,Map<String, Object> parkingRules) {
 
         NearestLocMapsActivity home = new NearestLocMapsActivity();
 
@@ -167,7 +168,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         args.putInt("distance",distanceval);
         args.putString("imgurl",s3);
         args.putString("cameraid",s4);
-//        args.putSerializable("rulslist",stringObjectHashMap);
+        args.putSerializable("rulslist",(Serializable) parkingRules);
 
         home.setArguments(args);
         return home;
@@ -570,7 +571,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                  Bitmap b=bitmapdraw.getBitmap();
                  Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
                  Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-//              Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+              Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
             }else{
 //            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
 
@@ -644,9 +645,6 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 //            Mmap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
         Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15.5f));
         Mmap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
-        Mmap.setMaxZoomPreference(20.5f);
-        Mmap.setMinZoomPreference(6.5f);
-        Mmap.getUiSettings().setMyLocationButtonEnabled(false);
 
     }
 
@@ -667,7 +665,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         }else{
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.defaultMarker());
             Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12));
-            showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
+//            showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
         }
 
 

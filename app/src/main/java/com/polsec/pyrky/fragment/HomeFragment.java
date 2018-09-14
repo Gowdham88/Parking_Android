@@ -359,7 +359,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                 }
                  else {
-                    Toast.makeText(getActivity(), getFirstWord(description), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), getFirstWord(description), Toast.LENGTH_SHORT).show();
 
                     NearestLocMapsActivity newFragment = new NearestLocMapsActivity();
                     Bundle args = new Bundle();
@@ -383,11 +383,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                     // Commit the transaction
                     transaction.commit();
-
 //                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
 //
 //                    getActivity().startActivity(intent);
-//                    autoCompView.setText("");
+                    autoCompView.setText("");
                 }
 
             }
@@ -552,8 +551,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 mCameraImageUrl.add(mNearestLocationList.get(i).getCameraImageUrl());
                                 mCameraLocName.add(mNearestLocationList.get(i).getCameraLocationName());
                                 mCameraID.add(mNearestLocationList.get(i).getCameraID());
+//                                    Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
                                     Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
-//                                    mrlslist.add(mNearestLocationList.get(i).getParkingRules());
 
 
                                 Log.e("mCameraLat", String.valueOf(mCameraLat));

@@ -233,7 +233,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveUserImage(postimageurl);
+//                saveUserImage(postimageurl);
 
 //                saveUserImage(profileimg);
                 String name = NameEdt.getText().toString().trim();
@@ -495,6 +495,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), contentURI);
                         ProfileImg.setImageBitmap(bitmap);
                         selectedImagePath=getRealPathFromURI(contentURI);
+                        Picasso.with(getActivity()).load(selectedImagePath).placeholder(R.drawable.profile).fit().into(ProfileImg);
                         uploadImage(getRealPathFromURI(contentURI));
 
                     } catch (IOException e) {
@@ -512,6 +513,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 try {
                     InputStream ims = new FileInputStream(file);
                     ProfileImg.setImageBitmap(BitmapFactory.decodeStream(ims));
+                    Picasso.with(getActivity()).load(selectedImagePath).placeholder(R.drawable.profile).fit().into(ProfileImg);
                 } catch (FileNotFoundException e) {
                     return;
                 }
