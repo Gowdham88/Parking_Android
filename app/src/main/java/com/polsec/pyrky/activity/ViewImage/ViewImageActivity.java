@@ -5,15 +5,9 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
@@ -25,25 +19,21 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 
@@ -52,13 +42,8 @@ import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Users;
 import com.polsec.pyrky.preferences.PreferencesHelper;
-import com.polsec.pyrky.utils.CircleTransformation;
 import com.polsec.pyrky.utils.Constants;
-import com.squareup.picasso.Picasso;
 
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -187,8 +172,8 @@ public class ViewImageActivity extends AppCompatActivity {
         BookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    makeAlreadyBookedAlert(true);
-//                    showBottomSheet(latitude, longitude);
+
+                    showBottomSheet(Double.parseDouble(latitude), Double.parseDouble(longitude));
 //                    SaveData(lat, longi, DestName);
             }
 
@@ -203,11 +188,23 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
 
-        private void bookAndNavigate(){
-            showBottomSheet(latitude1, longitude1);
-            SaveData(lat, longi, DestName);
+    private void bookAndNavigate(String latitude, String longitude){
+//        showBottomSheet(latitude, longitude,yourPlace);
+//        SaveData(latitude, latitude, yourPlace,cameraid);
+        PackageManager pm =ViewImageActivity.this.getPackageManager();
+        if(isPackageInstalled()){
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                    Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
+            startActivity(intent);
+//                    Toast.makeText(ViewImageActivity.this, "true", Toast.LENGTH_SHORT).show();
+        }else{
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                    Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
+            startActivity(intent);
+//                    Toast.makeText(ViewImageActivity.this, "false", Toast.LENGTH_SHORT).show();
         }
 
+    }
     private void SaveData(String latitude, String longitude, String destName) {
 
 
@@ -235,6 +232,7 @@ public class ViewImageActivity extends AppCompatActivity {
             public void onSuccess(DocumentReference documentReference) {
 
                 documentID = documentReference.getId();
+                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCUMENTIDNEW,documentID);
 //                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
 
                 Booking bookingdata = new Booking(uid,latitude,longitude,destName,getPostTime(),bookingStatus,cameraid,documentID,Double.parseDouble(parkingSpaceRating),protectCar);
@@ -247,7 +245,7 @@ public class ViewImageActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
 
 
-                        PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCUMENTID,documentID);
+
 
 //                        try {
 
@@ -310,103 +308,7 @@ public class ViewImageActivity extends AppCompatActivity {
             }
         });
     }
-    private void makeAlreadyBookedAlert(Boolean bookingRequest){
-        final FirebaseUser user = mAuth.getCurrentUser();
-        DocumentReference docRef = db.collection("users").document(user.getUid());
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()){
 
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                    DocumentReference docRef = db.collection("users").document(mUid);
-                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-
-                                    if(document.contains("Booking_ID")){
-                                        bookingid = document.getData();
-
-                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
-
-                                        for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
-                                            Boolean value = (Boolean) bookingEntry.getValue();
-                                            if (value){
-                                                isBookedAny = true;
-                                                break;
-                                            }
-                                        }
-
-                                        if (isBookedAny){
-                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                                                System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                                                Boolean val = (Boolean) entry.getValue();
-                                                String values = String.valueOf(val);
-
-                                                Log.e("values", values);
-//
-                                                if (val) {
-
-//                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
-                                                    String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-
-                                                    popup(valuedoc,entry.getKey(),bookingRequest);
-                                                    break;
-
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-                                                }else{
-//                                                    Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        }else{
-                                            if (bookingRequest){
-                                                bookAndNavigate();
-                                            }
-
-                                        }
-                                    }
-                                    else {
-                                        bookAndNavigate();
-                                    }
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-
-
-                                } else {
-//                        Log.d(TAG, "No such document");
-
-                                }
-                            } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
-
-                            }
-                        }
-                    });
-
-//                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
-
-
-                } else {
-
-
-
-                }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-                Log.w("Error", "Error adding document", e);
-                Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
 
     private void popup(String valuedoc,String key,Boolean bookingRequest) {
         LayoutInflater factory = LayoutInflater.from(this);
@@ -435,14 +337,14 @@ public class ViewImageActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                                documentiDs =PreferencesHelper.getPreference(ViewImageActivity.this,PreferencesHelper.PREFERENCE_DOCUMENTID);
-                                PopUpprotectcar(documentiDs,bookingRequest);
-//                                isBookedAny = false;
-//                                if (bookingRequest){
-//                                    makeAlreadyBookedAlert(true);
-//                                }else{
-//                                    makeAlreadyBookedAlert(false);
-//                                }
+
+                                PopUpprotectcar(bookingRequest);
+                                isBookedAny = false;
+                                if (bookingRequest){
+                                    makeAlreadyBookedAlert(true);
+                                }else{
+                                    makeAlreadyBookedAlert(false);
+                                }
 
 
                             }
@@ -514,7 +416,7 @@ public class ViewImageActivity extends AppCompatActivity {
         alertDialog1.show();
     }
 
-    private void PopUpprotectcar(String documentiDs, Boolean bookingRequest) {
+    private void PopUpprotectcar(Boolean bookingRequest) {
 
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
@@ -524,21 +426,24 @@ public class ViewImageActivity extends AppCompatActivity {
         TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
 //        final MediaPlayer mp = MediaPlayer.create(this, R.raw.soho);
 
-        final AlertDialog alertDialog1 = alertDialog.create();
+        final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                isBookedAny = false;
-                if (bookingRequest){
-                    makeAlreadyBookedAlert(true);
-                }else{
-                    makeAlreadyBookedAlert(false);
-                }
+                    bookAndNavigate(latitude, longitude);
 
-                protectCar(true,true);
-//                mp.start();
 
+//                isBookedAny = false;
+//                if (bookingRequest){
+//                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, yourPlace);
+//                }else{
+//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
+//                }
+
+                documentiDs =PreferencesHelper.getPreference(ViewImageActivity.this,PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
+                Log.e("doc",documentiDs);
+                protectCar(true,false,documentiDs);
                 alertDialog1.dismiss();
             }
         });
@@ -547,19 +452,20 @@ public class ViewImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                isBookedAny = false;
+                bookAndNavigate(latitude, longitude);
 
-                if (bookingRequest){
-                    makeAlreadyBookedAlert(false);
-                }else{
-                    makeAlreadyBookedAlert(false);
-                }
-
-                protectCar(false,true);
+//                isBookedAny = false;
+//
+//                if (bookingRequest){
+//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
+//                }else{
+//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
+//                }
+//
+//                protectCar(false,true);
                 alertDialog1.dismiss();
             }
         });
-
 
 
         alertDialog1.setCanceledOnTouchOutside(false);
@@ -580,7 +486,7 @@ public class ViewImageActivity extends AppCompatActivity {
         alertDialog1.show();
     }
 
-    private void protectCar(Boolean protectCar, Boolean bookingStatus){
+    private void protectCar(Boolean protectCar, Boolean bookingStatus, String documentiDs){
         final Map<String, Object> protectdata = new HashMap<>();
         protectdata.put("protectCar", protectCar);
         protectdata.put("bookingStatus", bookingStatus);
@@ -645,22 +551,22 @@ public class ViewImageActivity extends AppCompatActivity {
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                makeAlreadyBookedAlert(true);
 
-
-                PackageManager pm = ViewImageActivity.this.getPackageManager();
-                if(isPackageInstalled()){
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                            Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
-                    startActivity(intent);
-//                    Toast.makeText(ViewImageActivity.this, "true", Toast.LENGTH_SHORT).show();
-                }else{
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                            Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
-                    startActivity(intent);
-//                    Toast.makeText(ViewImageActivity.this, "false", Toast.LENGTH_SHORT).show();
-
-
-                }
+//                PackageManager pm = ViewImageActivity.this.getPackageManager();
+//                if(isPackageInstalled()){
+//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+//                            Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
+//                    startActivity(intent);
+////                    Toast.makeText(ViewImageActivity.this, "true", Toast.LENGTH_SHORT).show();
+//                }else{
+//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+//                            Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
+//                    startActivity(intent);
+////                    Toast.makeText(ViewImageActivity.this, "false", Toast.LENGTH_SHORT).show();
+//
+//
+//                }
 
                 bottomSheetDialog.dismiss();
 
@@ -700,6 +606,110 @@ public class ViewImageActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void makeAlreadyBookedAlert(Boolean bookingRequest){
+        final FirebaseUser user = mAuth.getCurrentUser();
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    DocumentReference docRef = db.collection("users").document(mUid);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+
+                                    if(document.contains("Booking_ID")){
+                                        bookingid = document.getData();
+
+                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+
+                                        for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
+                                            Boolean value = (Boolean) bookingEntry.getValue();
+                                            if (value){
+                                                isBookedAny = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (isBookedAny){
+                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                                System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                                Boolean val = (Boolean) entry.getValue();
+                                                String values = String.valueOf(val);
+
+                                                Log.e("values", values);
+//
+                                                if (val) {
+
+//                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
+                                                    String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+                                                    popup(valuedoc,entry.getKey(),bookingRequest);
+                                                    break;
+
+//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+                                                }else{
+//                                                    Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }else{
+                                            if (bookingRequest){
+
+//                                                showBottomSheet(latitude1, longitude1);
+                                                SaveData(lat, longi, DestName);
+//                                                bookAndNavigate();
+                                            }
+
+                                        }
+                                    }
+                                    else {
+
+//                                        showBottomSheet(latitude1, longitude1);
+                                        SaveData(lat, longi, DestName);
+//                                        bookAndNavigate();
+                                    }
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+
+
+                                } else {
+//                        Log.d(TAG, "No such document");
+
+                                }
+                            } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+
+                            }
+                        }
+                    });
+
+//                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
+
+
+                } else {
+
+
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Log.w("Error", "Error adding document", e);
+                Toast.makeText(getApplicationContext(),"Login failed", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 

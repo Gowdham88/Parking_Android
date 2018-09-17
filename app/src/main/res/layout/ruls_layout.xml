@@ -29,7 +29,7 @@
             android:id="@+id/rule1_img"
             android:layout_width="7dp"
             android:layout_height="7dp"
-           android:layout_marginTop="5dp"
+           android:layout_marginTop="6dp"
             android:layout_marginLeft="17dp"
             android:src="@drawable/ellipseselcted"/>
         <TextView
@@ -58,7 +58,7 @@
             android:id="@+id/rule2_img"
             android:layout_width="7dp"
             android:layout_height="7dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="6dp"
             android:layout_marginLeft="17dp"
             android:src="@drawable/ellipseselcted"/>
         <TextView
@@ -87,7 +87,7 @@
             android:id="@+id/rule3_img"
             android:layout_width="7dp"
             android:layout_height="7dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="6dp"
             android:layout_marginLeft="17dp"
             android:src="@drawable/ellipseselcted"/>
         <TextView
@@ -114,7 +114,7 @@
             android:id="@+id/rule4_img"
             android:layout_width="7dp"
             android:layout_height="7dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="6dp"
             android:layout_marginLeft="17dp"
             android:src="@drawable/ellipseselcted"/>
         <TextView

@@ -152,6 +152,7 @@ public class HomeActivity extends AppCompatActivity
 
         contentView = findViewById(R.id.home_coordinator);
         bottomNavigationView = findViewById(R.id.navigationView);
+        bottomNavigationView.offsetTopAndBottom(0);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(

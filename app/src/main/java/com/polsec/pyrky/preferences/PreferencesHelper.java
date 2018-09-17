@@ -31,6 +31,8 @@ public class PreferencesHelper {
     public static final String PREFERENCE_CARPRO ="carprot";
     public static final String PREFERENCE_PARKINGSTATUS ="parkingstatus";
     public static final String PREFERENCE_DOCUMENTID ="docid";
+    public static final String PREFERENCE_DOCUMENTIDNEW ="docidnew";
+    public static final String PREFERENCE_DOCUMENTIDNEWONE ="docidnewone";
     public static final String PREFERENCE_POSTTIME ="posttime";
     public static final String PREFERENCE_PARKING_TYPES = "parkingtype";
     public static final String PREFERENCE_CAR_CATEGORY = "carcategory";

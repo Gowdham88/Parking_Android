@@ -8,7 +8,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -141,6 +140,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     FirebaseFirestore db;
     FirebaseAuth mAuth;
+    String docIdnew;
     Map<String, Object> bookingid = new HashMap<>();
 
     Map<String, Object> bookingid1=new HashMap<>();
@@ -770,7 +770,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                showBottomSheet(m.getPosition().latitude,m.getPosition().longitude,yourplace);
+                showBottomSheet(m.getPosition().latitude,m.getPosition().longitude, cameraid, yourplace);
                 lat= String.valueOf(m.getPosition().latitude);
                 longi= String.valueOf(m.getPosition().longitude);
 
@@ -866,7 +866,10 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                showBottomSheet(Double.parseDouble(mLat),Double.parseDouble(mLongi),place);
+                showBottomSheet(Double.parseDouble(mLat),Double.parseDouble(mLongi),place,cameraId);
+
+                Log.e("latval", String.valueOf(Double.parseDouble(mLat)));
+                Log.e("longival", String.valueOf(Double.parseDouble(mLongi)));
 //                NearestLocMapsActivity.this.lat = String.valueOf(m.getPosition().latitude);
 //                longi= String.valueOf(m.getPosition().longitude);
 
@@ -892,7 +895,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    private void SaveData(String latitude, String longitude, String yourplace) {
+    private void SaveData(double latitude, double longitude, String yourplace, String cameraid) {
 
 
         final String uid = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
@@ -910,7 +913,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         likeData.put(uid, false);
         documentID="";
 
-        Booking bookingdata = new Booking(uid,latitude,longitude,yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
+        Booking bookingdata = new Booking(uid,String.valueOf(latitude),String.valueOf(longitude),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
 
 
         db.collection("Bookings").add(bookingdata).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -918,9 +921,11 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             public void onSuccess(DocumentReference documentReference) {
 
                 documentID = documentReference.getId();
+
+                PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCUMENTIDNEWONE,documentID);
 //                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
 
-                Booking bookingdata = new Booking(uid,latitude,longitude,yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
+                Booking bookingdata = new Booking(uid,String.valueOf(latitude),String.valueOf(longitude),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
                 Map<String, Object> docID = new HashMap<>();
                 docID.put("documentID", documentID);
 
@@ -930,7 +935,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                     public void onSuccess(Void aVoid) {
 
 
-                        PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCUMENTID,documentID);
+
 
                         Map<String, Boolean> likeData1 = new HashMap<>();
                         likeData1.put( documentID, true);
@@ -974,7 +979,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     }
 //
 
-    private void showBottomSheet(double latitude, double longitude, String yourPlace) {
+    private void showBottomSheet(double latitude, double longitude, String cameraid, String yourPlace) {
 
 
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getActivity());
@@ -1000,7 +1005,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
         map.setOnClickListener(view -> {
 
-            makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+            makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid);
 
             bottomSheetDialog.dismiss();
 
@@ -1021,7 +1026,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         });
     }
 
-    private void popup(String valuedoc,String key,Boolean bookingRequest,double latitude, double longitude, String yourPlace) {
+    private void popup(String valuedoc, String key, Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace) {
         LayoutInflater factory = LayoutInflater.from(getActivity());
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
@@ -1051,14 +1056,15 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                                documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-                                PopUpprotectcar(documentIDs,bookingRequest,latitude,longitude,yourPlace);
-//                                isBookedAny = false;
-//                                if (bookingRequest){
-//                                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
-//                                }else{
-//                                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
-//                                }
+
+//                                docIdnew=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
+                                PopUpprotectcar(bookingRequest,latitude,longitude,yourPlace);
+                           isBookedAny = false;
+                                if (bookingRequest){
+                                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, cameraid);
+                                }else{
+                                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, cameraid);
+                                }
 
                             }
                         })
@@ -1123,7 +1129,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         alertDialog1.getWindow().setAttributes(lp);
     }
 
-    private void PopUpprotectcar(String documentIDs, Boolean bookingRequest, double latitude, double longitude, String yourPlace) {
+    private void PopUpprotectcar( Boolean bookingRequest, double latitude, double longitude, String yourPlace) {
 
         LayoutInflater factory = LayoutInflater.from(getActivity());
         final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
@@ -1138,14 +1144,18 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                isBookedAny = false;
-                if (bookingRequest){
-                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
-                }else{
-                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
-                }
+                bookAndNavigate(latitude, longitude);
 
-                protectCar(true,true);
+
+//                isBookedAny = false;
+//                if (bookingRequest){
+//                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, yourPlace);
+//                }else{
+//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
+//                }
+                documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEWONE);
+                Log.e("doc",documentIDs);
+                protectCar(true,false,documentIDs);
                 alertDialog1.dismiss();
             }
         });
@@ -1154,22 +1164,17 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                isBookedAny = false;
-                if (bookingRequest){
-                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
-                }else{
-                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
-                }
-
-                protectCar(false,true);
+                bookAndNavigate(latitude, longitude);
 
 //                isBookedAny = false;
+//
 //                if (bookingRequest){
-//                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
 //                }else{
-//                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
+//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
 //                }
-
+//
+//                protectCar(false,true);
                 alertDialog1.dismiss();
             }
         });
@@ -1194,7 +1199,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         alertDialog1.show();
     }
 
-    private void protectCar(Boolean protectCar,Boolean bookingStatus){
+    private void protectCar(Boolean protectCar, Boolean bookingStatus, String docIdnew){
         final Map<String, Object> protectdata = new HashMap<>();
         protectdata.put("protectCar", protectCar);
         protectdata.put("bookingStatus", bookingStatus);
@@ -1204,7 +1209,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-        db.collection("Bookings").document(documentIDs)
+        db.collection("Bookings").document(docIdnew)
                 .update(protectdata)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -1241,7 +1246,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 });
     }
 
-    private void makeAlreadyBookedAlert(Boolean bookingRequest,double latitude, double longitude, String yourPlace){
+    private void makeAlreadyBookedAlert(Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace){
         final FirebaseUser user = mAuth.getCurrentUser();
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -1276,16 +1281,14 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                                 System.out.println(entry.getKey() + " = " + entry.getValue());
 
                                                 Boolean val = (Boolean) entry.getValue();
-                                                String values = String.valueOf(val);
-
-                                                Log.e("values", values);
+//                                                                                            Log.e("values", booking_id);
 //
                                                 if (val) {
 
 //                                                Toast.makeText(getActivity(), values, Toast.LENGTH_SHORT).show();
                                                     String valuedoc=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
 
-                                                    popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace);
+                                                    popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace,cameraid);
                                                     break;
 
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
@@ -1296,8 +1299,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                     }
 
                                         else{
+
+
                                             if (bookingRequest){
-                                                bookAndNavigate(latitude,longitude,yourPlace);
+
+                                                SaveData(latitude, latitude, yourPlace,cameraid);
+//                                                bookAndNavigate(latitude,longitude,yourPlace,cameraid);
                                             }
 //                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
 
@@ -1337,9 +1344,9 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    private void bookAndNavigate(double latitude, double longitude, String yourPlace){
+    private void bookAndNavigate(double latitude, double longitude){
 //        showBottomSheet(latitude, longitude,yourPlace);
-        SaveData(lat, longi, yourPlace);
+//        SaveData(latitude, latitude, yourPlace,cameraid);
         PackageManager pm =getActivity().getPackageManager();
         if(isPackageInstalled()){
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
