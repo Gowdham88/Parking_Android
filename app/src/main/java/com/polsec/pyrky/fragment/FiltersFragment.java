@@ -180,7 +180,7 @@ public class FiltersFragment extends Fragment {
         }
 
         getFragmentManager().popBackStack();
-        Toast.makeText(getActivity(), "Disabled", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "Disabled", Toast.LENGTH_SHORT).show();
 
     }
 }

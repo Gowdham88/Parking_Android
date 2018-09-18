@@ -169,7 +169,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     ArrayList<Double> distancesmtrscurrent = new ArrayList<>();
     ArrayList<String> distancescurrentarr = new ArrayList<>();
     ArrayList<String> mCameraLocName = new ArrayList<>();
-    ArrayList<String> mrlslist = new ArrayList<>();
+    ArrayList<String> mparkingtypeist = new ArrayList<>();
     ArrayList<HashMap<String, Object>> Ruleslist = new ArrayList<HashMap<String, Object>>();
 
     ArrayList<String> mCameraID = new ArrayList<>();
@@ -524,6 +524,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             mCameraID.clear();
                             listofparkingRules.clear();
                             Ruleslist.clear();
+                            mparkingtypeist.clear();
 
 
                             for (int i = 0; i < mNearestLocationList.size(); i++) {
@@ -555,6 +556,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 mCameraID.add(mNearestLocationList.get(i).getCameraID());
 //                                    Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
                                     Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
+                                    mparkingtypeist.add(mNearestLocationList.get(i).getParkingTypes());
 
 
                                 Log.e("mCameraLat", String.valueOf(mCameraLat));
@@ -570,7 +572,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                                 mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
                                 mNearestPlaceRecycler.setHasFixedSize(true);
-                                mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName,caldis1,mCameraID,Ruleslist);
+                                mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName,caldis1,mCameraID,Ruleslist,mparkingtypeist);
                                 mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                 mNearestrecyclerAdapter.notifyDataSetChanged();
                                 mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
@@ -579,20 +581,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                                 LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
 
-                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
-                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
+
+                                    if((!mNearestLocationList.get(i).getParkingTypes().equals(null))||(!mNearestLocationList.get(i).getParkingTypes().isEmpty())){
+
+                                        if (mNearestLocationList.get(i).getParkingTypes().equals("Free street parking")) {
+                                            LatLng sydney1 = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
+//
+                                            mMap.addMarker(new MarkerOptions().position(sydney1)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
+
+                                        } else {
+                                            LatLng sydney2 = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
+//
+                                            mMap.addMarker(new MarkerOptions().position(sydney2)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
+                                        }
+
+                                    }
+
 
                                 }
                             }
                         }
-//                        Double lat = mCurrentGpsLoc.getLatitude();
-//                        Double lng = mCurrentGpsLoc.getLongitude();
-//                        LatLng locateMe = new LatLng(lat, lng);
 //
-//
-//                        float zoomLevel = 14.0f;
-//
-//                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateMe,14));
                         hideProgressDialog();
 
                     }

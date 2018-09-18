@@ -127,6 +127,7 @@ public class HomeActivity extends AppCompatActivity
         view = (View)findViewById(R.id.myview);
         view.setVisibility(View.VISIBLE);
         UsrName=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
+
 //
 //        Username=findViewById(R.id.);
 //        Username.setText(UsrName);
@@ -190,26 +191,43 @@ public class HomeActivity extends AppCompatActivity
         }
         txtProfileName.setText(UsrName);
 
+
 //        drawer.setScrimColor(Color.TRANSPARENT);
-        drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-                                     @Override
-                                     public void onDrawerSlide(View drawer, float slideOffset) {
-                                         contentView.setX(navigationView.getWidth() * slideOffset);
 
-                                         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) contentView.getLayoutParams();
-                                         lp.height = drawer.getHeight() -
-                                                 (int) (drawer.getHeight() * slideOffset * 0.3f);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
-//                                         lp.topMargin = (drawer.getHeight() - lp.height) / 2;
-                                         contentView.setLayoutParams(lp);
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                float slideX = drawerView.getWidth() * slideOffset;
+                holderView.setTranslationX(slideX);
+//                drawer.setScrimColor(Color.TRANSPARENT);
+//                holderView.setBackgroundColor(Color.TRANSPARENT);
+            }
+        };
 
-                                     }
+        drawer.addDrawerListener(actionBarDrawerToggle);
 
-                                     @Override
-                                     public void onDrawerClosed(View drawerView) {
-                                     }
-                                 }
-        );
+//        drawer.setScrimColor(Color.TRANSPARENT);
+//        drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+//                                     @Override
+//                                     public void onDrawerSlide(View drawer, float slideOffset) {
+//                                         contentView.setX(navigationView.getWidth() * slideOffset);
+//
+//                                         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) contentView.getLayoutParams();
+//                                         lp.height = drawer.getHeight() -
+//                                                 (int) (drawer.getHeight() * slideOffset * 0.3f);
+//
+////                                         lp.topMargin = (drawer.getHeight() - lp.height) / 2;
+//                                         contentView.setLayoutParams(lp);
+//
+//                                     }
+//
+//                                     @Override
+//                                     public void onDrawerClosed(View drawerView) {
+//                                     }
+//                                 }
+//        );
 
         try {
             //int currentapiVersion = android.os.Build.VERSION.SDK_INT;
@@ -225,7 +243,7 @@ public class HomeActivity extends AppCompatActivity
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
                 // finally change the color to any color with transparency
-
+//
 //                window.setStatusBarColor(getResources().getColor(R.color.transparent2));
             }
 

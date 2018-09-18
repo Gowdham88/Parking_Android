@@ -17,7 +17,7 @@
 
 <shape android:shape="rectangle"
 xmlns:android="http://schemas.android.com/apk/res/android">
-    <size android:width="550dp"
+    <size android:width="530dp"
         android:height="39dp"/>
 <corners android:bottomRightRadius="100dp"
     android:topRightRadius="100dp"

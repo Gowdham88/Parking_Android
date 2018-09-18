@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -26,7 +27,7 @@ import com.polsec.pyrky.activity.HomeActivity;
 
 public class NotificationVideoFragment extends Fragment{
 
-    ImageView BackImg;
+    RelativeLayout BackImg;
     TextView  TitlaTxt;
     VideoView videoView;
     private String urlStream;
@@ -48,7 +49,7 @@ public class NotificationVideoFragment extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_notification_video_fragment, null);
 
-        BackImg=(ImageView) view.findViewById(R.id.back_icon);
+        BackImg=(RelativeLayout) view.findViewById(R.id.back_icon);
         TitlaTxt=(TextView)view.findViewById(R.id.extra_title);
         TitlaTxt.setText("Notifications");
         BackImg.setOnClickListener(new View.OnClickListener() {

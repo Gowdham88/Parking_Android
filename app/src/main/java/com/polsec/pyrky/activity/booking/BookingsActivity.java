@@ -24,7 +24,7 @@ public class BookingsActivity extends AppCompatActivity implements  TabHost.OnTa
     CustomViewPager viewPager;
     TabLayout tabLayout;
 Toolbar toolbar;
-    ImageView mBackIcon;
+    RelativeLayout mBackIcon;
     TextView  TitlaTxt;
     RelativeLayout BackImgRelay;
     TextView tabOne,tabTwo;
@@ -38,7 +38,7 @@ Toolbar toolbar;
 //        Toast.makeText(this, Constants.SEARCH_ARRAY.get(0), Toast.LENGTH_SHORT).show();
 
         RelativeLayout parentLayout = findViewById(R.id.parent_layout);
-        mBackIcon =(ImageView)findViewById(R.id.back_icon);
+        mBackIcon =(RelativeLayout)findViewById(R.id.back_icon);
         TitlaTxt=(TextView)findViewById(R.id.extra_title);
         TitlaTxt.setText("Bookings");
 
@@ -73,7 +73,9 @@ Toolbar toolbar;
 
         tabLayout.setFocusableInTouchMode(false); //Not Working
         tabLayout.setFocusable(false);
+        tabLayout.clearFocus();
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        tabLayout.clearOnTabSelectedListeners();
         tabLayout.setOnTabSelectedListener(this);
 
         setupTabLayout();
@@ -119,6 +121,7 @@ Toolbar toolbar;
         tabOne.setText("Current Bookings");
         tabLayout.getTabAt(0).setCustomView(tabOne);
 
+
          tabTwo = (TextView) LayoutInflater.from(BookingsActivity.this).inflate(R.layout.custom_tab, null);
         tabTwo.setText("History");
         tabLayout.getTabAt(1).setCustomView(tabTwo);
@@ -141,19 +144,20 @@ Toolbar toolbar;
     public void onTabSelected(TabLayout.Tab tab) {
         viewPager.setCurrentItem(tab.getPosition());
 
-        int selectedTabPosition = tab.getPosition();
 
+        int selectedTabPosition = tab.getPosition();
+//
 //        if (selectedTabPosition == 0)
 //        { // that means first tab
-//            tabOne.setBackground(getResources().getDrawable(R.drawable.tabselectionleft));
-//            tabTwo.setBackground(getResources().getDrawable(R.drawable.notabselectionleft));
+//            tabOne.setBackground(getResources().getDrawable(R.drawable.tab_focused));
+//            tabTwo.setBackground(getResources().getDrawable(R.drawable.tab_baground));
 //
 //
 //        } else if (selectedTabPosition == 1)
 //        { // that means it's a last tab
 //
-//            tabOne.setBackground(getResources().getDrawable(R.drawable.notabselectionright));
-//            tabTwo.setBackground(getResources().getDrawable(R.drawable.tabselectionright));
+//            tabOne.setBackground(getResources().getDrawable(R.drawable.tab_baground));
+//            tabTwo.setBackground(getResources().getDrawable(R.drawable.tab_focused));
 //
 //
 //        }
