@@ -86,7 +86,9 @@ public class ForgotpasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 finish();
 //                onBackPressed();
 
@@ -94,18 +96,18 @@ public class ForgotpasswordActivity extends AppCompatActivity {
             }
         });
 
-        backBtnclose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
-                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
-                startActivity(intent);
-                finish();
-//           onBackPressed();
-
-
-            }
-        });
+//        backBtnclose.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
+//
+//                startActivity(intent);
+//                finish();
+////           onBackPressed();
+//
+//
+//            }
+//        });
         resetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -245,7 +247,17 @@ public class ForgotpasswordActivity extends AppCompatActivity {
         }
     };
 
-//    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(ForgotpasswordActivity.this,SignInActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+        finish();
+    }
+
+    //    private class DrawerItemClickListener implements ListView.OnItemClickListener {
 //
 //        @Override
 //        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

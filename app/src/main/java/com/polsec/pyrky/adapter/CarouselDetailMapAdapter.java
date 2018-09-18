@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
@@ -106,6 +107,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 
         postionval =holder.getAdapterPosition();
         if(distance>0){
+
             if(distance>0 && distance <=100 ){
                 holder.nearestPlaceDistance.setText("0 - 100m");
             }
@@ -141,10 +143,12 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
             }
 
             else {
-                holder.nearestPlaceDistance.setText("900 - 1000m");
+                holder.nearestPlaceDistance.setText("1000m above");
             }
         }
         else {
+
+
             double disval=mLocationDistancesmtrs.get(position);
             Log.e("val", String.valueOf(disval));
 
@@ -187,7 +191,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
                 }
 
                 else {
-                    holder.nearestPlaceDistance.setText("900 - 1000m");
+                    holder.nearestPlaceDistance.setText("1000m above");
                 }
             }
 

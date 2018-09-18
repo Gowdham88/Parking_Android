@@ -5,8 +5,8 @@
     android:clickable="true"
     android:focusableInTouchMode="true"
     android:focusable="true"
+    android:outlineProvider="paddedBounds"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <include
         android:id="@+id/toolbar"
@@ -19,10 +19,11 @@
         android:background="@color/search_boarder_clr" />
 
     <ScrollView
+        android:background="@color/white"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
         android:layout_below="@+id/myview"
-        android:layout_marginBottom="55dp">
+       >
     <LinearLayout
 
         android:id="@+id/scrollviewlin"

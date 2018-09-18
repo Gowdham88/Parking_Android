@@ -31,14 +31,15 @@
             android:layout_height="40dp"
             app:tabSelectedTextColor="@drawable/tab_selector"
             android:background="@drawable/tab_bagroundcorner"
-            android:foreground="?attr/selectableItemBackground"
-            android:layout_marginLeft="33dp"
-            android:layout_marginRight="33dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
             android:layout_marginTop="30dp"
             app:tabGravity="fill"
             app:tabPaddingStart="0dp"
             app:tabPaddingEnd="0dp"
             app:tabMode="fixed"
+            app:tabBackground="@null"
+            android:tabStripEnabled="false"
             app:tabIndicatorHeight="0dp"
             app:tabTextColor="@color/textColor" />
 

@@ -120,7 +120,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     private String mCurrentPhotoPath;
     private int avatarSize;
     private FirebaseAuth mAuth;
-    ImageView BackImg;
+    RelativeLayout BackImg;
     TextView  TitlaTxt;
     int mCarIcon;
      CarouselLayoutManager layoutManager;
@@ -144,7 +144,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
         ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.GONE);
 //        ((AppCompatActivity)getActivity()).getActionBar().hide();
-        BackImg=(ImageView) view.findViewById(R.id.back_icon);
+        BackImg=(RelativeLayout) view.findViewById(R.id.back_icon);
         TitlaTxt=(TextView)view.findViewById(R.id.extra_title);
         TitlaTxt.setText("Settings");
         BackImg.setOnClickListener(new View.OnClickListener() {
@@ -233,7 +233,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveUserImage(postimageurl);
+//                saveUserImage(postimageurl);
 
 //                saveUserImage(profileimg);
                 String name = NameEdt.getText().toString().trim();
@@ -495,6 +495,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), contentURI);
                         ProfileImg.setImageBitmap(bitmap);
                         selectedImagePath=getRealPathFromURI(contentURI);
+                        Picasso.with(getActivity()).load(selectedImagePath).fit().into(ProfileImg);
                         uploadImage(getRealPathFromURI(contentURI));
 
                     } catch (IOException e) {
@@ -512,6 +513,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 try {
                     InputStream ims = new FileInputStream(file);
                     ProfileImg.setImageBitmap(BitmapFactory.decodeStream(ims));
+                    Picasso.with(getActivity()).load(selectedImagePath).fit().into(ProfileImg);
                 } catch (FileNotFoundException e) {
                     return;
                 }
@@ -628,7 +630,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
 
     private void updateData(final String email, String carCategory,String userName) {
-//        showProgressDialog();
+        showProgressDialog();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
 //        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
@@ -670,7 +672,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                                         if (task.isSuccessful()) {
                                             Log.d(TAG, "User email address updated.");
                                             Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
-//                                            hideProgressDialog();
+                                            hideProgressDialog();
                                         }
                                     }
                                 });
@@ -695,7 +697,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                         if(!postimageurl.equals(null)&&!postimageurl.isEmpty()){
 
                             Picasso.with(getActivity())
-                                    .load(postimageurl)
+                                    .load(postimageurl).fit()
 //                                    .transform(new CircleTransformation())
                                     .into(ProfileImg);
 

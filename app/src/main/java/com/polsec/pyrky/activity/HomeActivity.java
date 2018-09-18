@@ -75,6 +75,7 @@ public class HomeActivity extends AppCompatActivity
     View view,holderView, contentView,contentView1;
     String profileImageUrl;
     CircleImageView profileImage;
+    NavigationView navigationView;
     String Nameval="settings";
     boolean isDrawerLocked;
 //    @Override
@@ -126,6 +127,7 @@ public class HomeActivity extends AppCompatActivity
         view = (View)findViewById(R.id.myview);
         view.setVisibility(View.VISIBLE);
         UsrName=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
+
 //
 //        Username=findViewById(R.id.);
 //        Username.setText(UsrName);
@@ -151,6 +153,7 @@ public class HomeActivity extends AppCompatActivity
 
         contentView = findViewById(R.id.home_coordinator);
         bottomNavigationView = findViewById(R.id.navigationView);
+        bottomNavigationView.offsetTopAndBottom(0);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
@@ -172,7 +175,7 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.user_name);
         profileImage = navigationView.getHeaderView(0).findViewById(R.id.user_image);
@@ -188,26 +191,43 @@ public class HomeActivity extends AppCompatActivity
         }
         txtProfileName.setText(UsrName);
 
+
 //        drawer.setScrimColor(Color.TRANSPARENT);
-        drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-                                     @Override
-                                     public void onDrawerSlide(View drawer, float slideOffset) {
-                                         contentView.setX(navigationView.getWidth() * slideOffset);
 
-                                         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) contentView.getLayoutParams();
-                                         lp.height = drawer.getHeight() -
-                                                 (int) (drawer.getHeight() * slideOffset * 0.3f);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
-//                                         lp.topMargin = (drawer.getHeight() - lp.height) / 2;
-                                         contentView.setLayoutParams(lp);
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                float slideX = drawerView.getWidth() * slideOffset;
+                holderView.setTranslationX(slideX);
+//                drawer.setScrimColor(Color.TRANSPARENT);
+//                holderView.setBackgroundColor(Color.TRANSPARENT);
+            }
+        };
 
-                                     }
+        drawer.addDrawerListener(actionBarDrawerToggle);
 
-                                     @Override
-                                     public void onDrawerClosed(View drawerView) {
-                                     }
-                                 }
-        );
+//        drawer.setScrimColor(Color.TRANSPARENT);
+//        drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+//                                     @Override
+//                                     public void onDrawerSlide(View drawer, float slideOffset) {
+//                                         contentView.setX(navigationView.getWidth() * slideOffset);
+//
+//                                         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) contentView.getLayoutParams();
+//                                         lp.height = drawer.getHeight() -
+//                                                 (int) (drawer.getHeight() * slideOffset * 0.3f);
+//
+////                                         lp.topMargin = (drawer.getHeight() - lp.height) / 2;
+//                                         contentView.setLayoutParams(lp);
+//
+//                                     }
+//
+//                                     @Override
+//                                     public void onDrawerClosed(View drawerView) {
+//                                     }
+//                                 }
+//        );
 
         try {
             //int currentapiVersion = android.os.Build.VERSION.SDK_INT;
@@ -223,7 +243,7 @@ public class HomeActivity extends AppCompatActivity
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
                 // finally change the color to any color with transparency
-
+//
 //                window.setStatusBarColor(getResources().getColor(R.color.transparent2));
             }
 
@@ -245,6 +265,8 @@ public class HomeActivity extends AppCompatActivity
                 switch (item.getItemId()){
                     case R.id.b_nav_home:
                         fragment = new HomeFragment();
+                        navigationView.setCheckedItem(R.id.b_nav_home);
+
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Home");
                         break;
@@ -258,6 +280,7 @@ public class HomeActivity extends AppCompatActivity
 
                     case R.id.b_nav_profile:
                         fragment = new ProfileFragment();
+                        navigationView.setCheckedItem(R.id.b_nav_profile);
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         toolbarText.setText("Profile");
                         break;
@@ -277,34 +300,24 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             bottomNavigationView.setSelectedItemId(R.id.b_nav_home);
-
+            navigationView.setCheckedItem(R.id.nav_home);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left);
             transaction.replace(R.id.main_frame_layout, new HomeFragment()).commit();
-//            transaction.addToBackStack(null);
-//            transaction.commit();
-//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            loadFragment(new ());
             toolbarText.setText("Home");
         } else if (id == R.id.nav_booking) {
 //
 //            loadFragment(new BookingsFragment());
+            navigationView.setCheckedItem(R.id.nav_booking);
             Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
-            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             startActivity(intent);
-//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-//            transaction.replace(R.id.main_frame_layout, new BookingsFragment());
-//            transaction.addToBackStack(null);
-//            transaction.commit();
-//            toolbarText.setText("Booking");
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
+
         } else if (id == R.id.nav_profile) {
 
-//            if(id==R.id.b_nav_profile){
-
-//            }
             bottomNavigationView.setSelectedItemId(R.id.b_nav_profile);
-
+            navigationView.setCheckedItem(R.id.nav_profile);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
             transaction.replace(R.id.main_frame_layout, new ProfileFragment()).commit();

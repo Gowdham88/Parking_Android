@@ -169,7 +169,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     ArrayList<Double> distancesmtrscurrent = new ArrayList<>();
     ArrayList<String> distancescurrentarr = new ArrayList<>();
     ArrayList<String> mCameraLocName = new ArrayList<>();
-    ArrayList<String> mrlslist = new ArrayList<>();
+    ArrayList<String> mparkingtypeist = new ArrayList<>();
     ArrayList<HashMap<String, Object>> Ruleslist = new ArrayList<HashMap<String, Object>>();
 
     ArrayList<String> mCameraID = new ArrayList<>();
@@ -359,7 +359,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                 }
                  else {
-                    Toast.makeText(getActivity(), getFirstWord(description), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), getFirstWord(description), Toast.LENGTH_SHORT).show();
 
                     NearestLocMapsActivity newFragment = new NearestLocMapsActivity();
                     Bundle args = new Bundle();
@@ -383,11 +383,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                     // Commit the transaction
                     transaction.commit();
-
 //                    Intent intent = new Intent(getActivity(), NearestLocMapsActivity.class);
 //
 //                    getActivity().startActivity(intent);
-//                    autoCompView.setText("");
+                    autoCompView.setText("");
                 }
 
             }
@@ -405,16 +404,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             public void onClick(View v) {
                 if (!isExpandableListEnabled) {
                     isExpandableListEnabled = true;
-                    Toast.makeText(getActivity(), "Filter Enabled", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), "Filter Enabled", Toast.LENGTH_SHORT).show();
                     Fragment filterFragment = new FiltersFragment();
                     transaction = getChildFragmentManager().beginTransaction();
                     transaction.add(R.id.frame_layout, filterFragment).addToBackStack(null).commit();
                     Utils.hideKeyboard(getActivity());
                 } else {
                     isExpandableListEnabled = false;
-                    Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
                     getChildFragmentManager().popBackStack();
                 }
+
+
             }
         });
 
@@ -523,6 +524,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             mCameraID.clear();
                             listofparkingRules.clear();
                             Ruleslist.clear();
+                            mparkingtypeist.clear();
 
 
                             for (int i = 0; i < mNearestLocationList.size(); i++) {
@@ -552,8 +554,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 mCameraImageUrl.add(mNearestLocationList.get(i).getCameraImageUrl());
                                 mCameraLocName.add(mNearestLocationList.get(i).getCameraLocationName());
                                 mCameraID.add(mNearestLocationList.get(i).getCameraID());
+//                                    Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
                                     Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
-//                                    mrlslist.add(mNearestLocationList.get(i).getParkingRules());
+                                    mparkingtypeist.add(mNearestLocationList.get(i).getParkingTypes());
 
 
                                 Log.e("mCameraLat", String.valueOf(mCameraLat));
@@ -569,7 +572,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                                 mNearestPlaceRecycler.setLayoutManager(carouselLayoutManager);
                                 mNearestPlaceRecycler.setHasFixedSize(true);
-                                mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName,caldis1,mCameraID,Ruleslist);
+                                mNearestrecyclerAdapter = new CarouselNearestAdapter(getActivity(), mCameraImageUrl, mCameraLat, mCameraLong, distances1, mCameraLocName,caldis1,mCameraID,Ruleslist,mparkingtypeist);
                                 mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                 mNearestrecyclerAdapter.notifyDataSetChanged();
                                 mNearestPlaceRecycler.addOnScrollListener(new CenterScrollListener());
@@ -577,32 +580,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
                                 LatLng sydney = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
-//                                    int height = 70;
-//                                    int width = 50;
-//                                    bitmapdraw =(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
-//                                    Bitmap b=bitmapdraw.getBitmap();
-//                                    Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-//                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-                                    mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
-                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
-//                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+
+                                    if((!mNearestLocationList.get(i).getParkingTypes().equals(null))||(!mNearestLocationList.get(i).getParkingTypes().isEmpty())){
+
+                                        if (mNearestLocationList.get(i).getParkingTypes().equals("Free street parking")) {
+                                            LatLng sydney1 = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
+//
+                                            mMap.addMarker(new MarkerOptions().position(sydney1)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
+
+                                        } else {
+                                            LatLng sydney2 = new LatLng(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()), Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
+//
+                                            mMap.addMarker(new MarkerOptions().position(sydney2)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
+                                        }
+
+                                    }
+
 
                                 }
-
-
-
                             }
-
-
                         }
-//                        Double lat = mCurrentGpsLoc.getLatitude();
-//                        Double lng = mCurrentGpsLoc.getLongitude();
-//                        LatLng locateMe = new LatLng(lat, lng);
 //
-//
-//                        float zoomLevel = 14.0f;
-//
-//                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateMe,14));
                         hideProgressDialog();
 
                     }
@@ -620,7 +619,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.clear();
-//        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f), 2000, null);
 
         // Helper method for smooth
         // animation
@@ -882,6 +880,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             == PackageManager.PERMISSION_GRANTED) {
 
                         //Request location updates:
+                        getCurrentLocation();
+                        loadCameraLocations();
 
                     }
 

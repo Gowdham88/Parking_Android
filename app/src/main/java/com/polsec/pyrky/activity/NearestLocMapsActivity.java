@@ -8,7 +8,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -77,6 +76,7 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -91,6 +91,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks, DiscreteScrollView.OnItemChangedListener {
 
+    private static final long DEFAULT_MARKER_LENGTH = 2000;
     Context context = getActivity();
 
     CarouselDetailMapAdapter mNearestrecyclerAdapter;
@@ -127,18 +128,19 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     LatLng laln;
     Location mLocation;
     List<Camera> datalist = new ArrayList<Camera>();
-    ImageView mBackIcon;
+    RelativeLayout mBackIcon;
     TextView TitlaTxt;
     String mLat,mLongi,PlaceName, latt,Longg,plcname,Imageurl;
     int distance;
     String Nameval="home";
-    String Nameval1="carousel",mapLat,mapLongi,cameraid;
+    String Nameval1="carousel",mapLat,mapLongi,cameraid,ParkingType;
     Camera camera;
     String parkytype,mUid,docid,CameraId;
     private InfiniteScrollAdapter infiniteAdapter;
 
     FirebaseFirestore db;
     FirebaseAuth mAuth;
+    String docIdnew;
     Map<String, Object> bookingid = new HashMap<>();
 
     Map<String, Object> bookingid1=new HashMap<>();
@@ -154,20 +156,22 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     List<Address> mCurLocAddress = null;
 
-    public static NearestLocMapsActivity newInstance(String s, String s1, String carousel, int adapterPosition, String s2, int distanceval, String s3, String s4) {
+
+    public static NearestLocMapsActivity newInstance(String latt, String longitude, String carousel, int adapterPosition, String Placename, int distanceval, String img, String mCameraID, Map<String, Object> parkingRules, String parkingTypes) {
 
         NearestLocMapsActivity home = new NearestLocMapsActivity();
 
         Bundle args = new Bundle();
-        args.putString("latt", s);
-        args.putString("longg", s1);
+        args.putString("latt", latt);
+        args.putString("longg", longitude);
         args.putString("carousel", carousel);
         args.putInt("adapterPosition", adapterPosition);
-        args.putString("place", s2);
+        args.putString("place", Placename);
         args.putInt("distance",distanceval);
-        args.putString("imgurl",s3);
-        args.putString("cameraid",s4);
-//        args.putSerializable("rulslist",stringObjectHashMap);
+        args.putString("imgurl",img);
+        args.putString("cameraid",mCameraID);
+        args.putString("parkingtype",parkingTypes);
+        args.putSerializable("rulslist",(Serializable) parkingRules);
 
         home.setArguments(args);
         return home;
@@ -204,7 +208,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         mUid = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
         docid=PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCUMENTID);
 
-        mBackIcon = (ImageView) view.findViewById(R.id.back_icon);
+        mBackIcon = (RelativeLayout) view.findViewById(R.id.back_icon);
         TitlaTxt = (TextView) view. findViewById(R.id.extra_title);
         TitlaTxt.setText("Map");
         mBackIcon.setOnClickListener(new View.OnClickListener() {
@@ -285,7 +289,8 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 distance=bundle.getInt("distance");
                 Imageurl=bundle.getString("imgurl");
                 CameraId=bundle.getString("cameraid");
-//                mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
+                mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
+                ParkingType=bundle.getString("parkingtype");
 
                 Log.e("lattitude", String.valueOf(mLat));
                  Log.e("longitude", String.valueOf(mLongi));
@@ -293,6 +298,15 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 Log.e("distance", String.valueOf(mrlslist));
 
                 mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
+
+                new Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run() {
+                        showDialog1(mrlslist,CameraId, mLat,mLongi,Imageurl,PlaceName);
+                    }
+                }, DEFAULT_MARKER_LENGTH);
+
+
 
                 getCurrentLocation(mLat,mLongi);
 
@@ -405,7 +419,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                 mAccurateDistancesString.add(String.valueOf(mAccurateDistance));
                                 Log.e("distancemap", String.valueOf(mAccurateDistancesString));
 
-//                                if (locationDistance < 1500) {
+                                if (locationDistance < 15000) {
                                     mLocationDistancesmtrs.add(locationDistance);
                                     Log.e("mLocationDistancesmtrs", String.valueOf(mLocationDistancesmtrs));
                                     mCalculateDistances.add(String.valueOf(mLocationDistances));
@@ -436,33 +450,34 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                                     onItemChanged(mCameraLat.get(0), mCameraLong.get(0), mCameraId.get(0),datalist.get(i).getParkingTypes());
 
-                if((!datalist.equals(null))||(!datalist.isEmpty())){
+                if((!datalist.get(i).getParkingTypes().equals(null))||(!datalist.get(i).getParkingTypes().isEmpty())){
 
                     if (datalist.get(i).getParkingTypes().equals("Free street parking")) {
                         LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
 //                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
-                        int height = 70;
-                        int width = 40;
-                        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
-                        Bitmap b=bitmapdraw.getBitmap();
-                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                        Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+//                        int height = 70;
+//                        int width = 40;
+//                        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
+//                        Bitmap b=bitmapdraw.getBitmap();
+//                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                        Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 //                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
-
+//                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
+                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
 
                     } else {
                         LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
 //                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
 
-                        int height = 70;
-                        int width = 50;
-                        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.paid);
-                        Bitmap b=bitmapdraw.getBitmap();
-                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                        Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+//                        int height = 70;
+//                        int width = 50;
+//                        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.paid);
+//                        Bitmap b=bitmapdraw.getBitmap();
+//                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                        Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 //                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
+//                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
+                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
                     }
 
                 }
@@ -471,7 +486,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                 }
 //
 
-//                            }
+                            }
                         }
 
                     }
@@ -530,7 +545,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                         String postalCode = mCurLocAddress.get(0).getPostalCode();
                         String knownName = mCurLocAddress.get(0).getFeatureName();
                         String address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
-                        Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
                         Log.e("address1", address1);
                         mLat= String.valueOf(mCurLocAddress.get(0).getLatitude());
                         mLongi=String.valueOf( mCurLocAddress.get(0).getLongitude());
@@ -562,25 +577,25 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
 
 //            LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
-             if (parkingType.equals("Free street parking")){
+//             if (parkingType.equals("Free street parking")){
 
-                 int height = 70;
-                 int width = 40;
-                 BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
-                 Bitmap b=bitmapdraw.getBitmap();
-                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                 Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-//              Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-            }else{
+//                 int height = 70;
+//                 int width = 40;
+//                 BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.marker);
+//                 Bitmap b=bitmapdraw.getBitmap();
+//                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                 Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+//              Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
+//            }else{
 //            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
 
-                 int height = 70;
-                 int width = 50;
-                 BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.paid);
-                 Bitmap b=bitmapdraw.getBitmap();
-                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                 Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-              }
+//                 int height = 70;
+//                 int width = 50;
+//                 BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.paid);
+//                 Bitmap b=bitmapdraw.getBitmap();
+//                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                 Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
+//              }
 //            Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
              Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,14 ));
 
@@ -639,35 +654,36 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         mLocation = location;
 //        mNearestPlaceRecycler.setVisibility(View.VISIBLE);
         LatLng latLng = new LatLng(Double.parseDouble(mLat), Double.parseDouble(mLongi));
-        Mmap.clear();
+//        Mmap.clear();
 
-//            Mmap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
-        Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15.5f));
-        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
-        Mmap.setMaxZoomPreference(20.5f);
-        Mmap.setMinZoomPreference(6.5f);
-        Mmap.getUiSettings().setMyLocationButtonEnabled(false);
+//        Mmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15.5f));
+//        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
 
     }
 
     @Override
     public void onMapReady(GoogleMap gMap) {
         Mmap = gMap;
-//        Mmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        Mmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 //        mNearestPlaceRecycler.setVisibility(View.VISIBLE);
         // Load custom marker icon
 
 
         LatLng sydney = new LatLng(Double.parseDouble(mLat),Double.parseDouble(mLongi));
-        if(Nameval1.equals(mByCarousel)){
+
+
+        if(ParkingType.equals("Free street parking")){
             Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
             Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12));
-            showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
+
+
+
+//
         }else{
-            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.defaultMarker());
+            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
             Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12));
-            showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
+//            showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
         }
 
 
@@ -676,7 +692,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                showDialog1(CameraId, mLat,mLongi,Imageurl,PlaceName);
+                showDialog1(mrlslist,CameraId, mLat,mLongi,Imageurl,PlaceName);
                 mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
                 return false;
 
@@ -765,7 +781,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                showBottomSheet(m.getPosition().latitude,m.getPosition().longitude,yourplace);
+                showBottomSheet(m.getPosition().latitude,m.getPosition().longitude, cameraid, yourplace);
                 lat= String.valueOf(m.getPosition().latitude);
                 longi= String.valueOf(m.getPosition().longitude);
 
@@ -791,7 +807,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    public void showDialog1(String cameraId, String mLat, String mLongi, String Imageurl1, String place){
+    public void showDialog1(HashMap<String, Object> mrlslist,String cameraId, String mLat, String mLongi, String Imageurl1, String place){
         mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
 
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
@@ -807,13 +823,13 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         rule2 = promptView.findViewById(R.id.rule2_txt);
         rule3 =promptView.findViewById(R.id.rule3_txt);
         rule4 =promptView.findViewById(R.id.rule4_txt);
-//
-//        if((!mrlslist.equals(null)) || (!mrlslist.isEmpty())){
-//            rule1.setText((CharSequence) mrlslist.get("0"));
-//            rule2.setText((CharSequence) mrlslist.get("1"));
-//            rule3.setText((CharSequence) mrlslist.get("2"));
-//            rule4.setText((CharSequence) mrlslist.get("3"));
-//        }
+
+        if((!mrlslist.equals(null)) || (!mrlslist.isEmpty())){
+            rule1.setText((CharSequence) mrlslist.get("0"));
+            rule2.setText((CharSequence) mrlslist.get("1"));
+            rule3.setText((CharSequence) mrlslist.get("2"));
+            rule4.setText((CharSequence) mrlslist.get("3"));
+        }
 
 
 //
@@ -861,7 +877,10 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                showBottomSheet(Double.parseDouble(mLat),Double.parseDouble(mLongi),place);
+                showBottomSheet(Double.parseDouble(mLat),Double.parseDouble(mLongi),place,cameraId);
+
+                Log.e("latval", String.valueOf(Double.parseDouble(mLat)));
+                Log.e("longival", String.valueOf(Double.parseDouble(mLongi)));
 //                NearestLocMapsActivity.this.lat = String.valueOf(m.getPosition().latitude);
 //                longi= String.valueOf(m.getPosition().longitude);
 
@@ -887,7 +906,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    private void SaveData(String latitude, String longitude, String yourplace) {
+    private void SaveData(double latitude, double longitude, String yourplace, String cameraid) {
 
 
         final String uid = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
@@ -905,7 +924,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         likeData.put(uid, false);
         documentID="";
 
-        Booking bookingdata = new Booking(uid,latitude,longitude,yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
+        Booking bookingdata = new Booking(uid,String.valueOf(latitude),String.valueOf(longitude),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
 
 
         db.collection("Bookings").add(bookingdata).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -913,9 +932,11 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             public void onSuccess(DocumentReference documentReference) {
 
                 documentID = documentReference.getId();
+
+                PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCUMENTIDNEWONE,documentID);
 //                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
 
-                Booking bookingdata = new Booking(uid,latitude,longitude,yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
+                Booking bookingdata = new Booking(uid,String.valueOf(latitude),String.valueOf(longitude),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
                 Map<String, Object> docID = new HashMap<>();
                 docID.put("documentID", documentID);
 
@@ -925,7 +946,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                     public void onSuccess(Void aVoid) {
 
 
-                        PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCUMENTID,documentID);
+
 
                         Map<String, Boolean> likeData1 = new HashMap<>();
                         likeData1.put( documentID, true);
@@ -969,7 +990,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     }
 //
 
-    private void showBottomSheet(double latitude, double longitude, String yourPlace) {
+    private void showBottomSheet(double latitude, double longitude, String cameraid, String yourPlace) {
 
 
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getActivity());
@@ -995,7 +1016,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
         map.setOnClickListener(view -> {
 
-            makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+            makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid);
 
             bottomSheetDialog.dismiss();
 
@@ -1016,7 +1037,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         });
     }
 
-    private void popup(String valuedoc,String key,Boolean bookingRequest,double latitude, double longitude, String yourPlace) {
+    private void popup(String valuedoc, String key, Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace) {
         LayoutInflater factory = LayoutInflater.from(getActivity());
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
@@ -1046,14 +1067,15 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                                documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
-                                PopUpprotectcar(documentIDs,bookingRequest,latitude,longitude,yourPlace);
-//                                isBookedAny = false;
-//                                if (bookingRequest){
-//                                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
-//                                }else{
-//                                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
-//                                }
+
+//                                docIdnew=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
+                                PopUpprotectcar(bookingRequest,latitude,longitude,yourPlace);
+                           isBookedAny = false;
+                                if (bookingRequest){
+                                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, cameraid);
+                                }else{
+                                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, cameraid);
+                                }
 
                             }
                         })
@@ -1118,7 +1140,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         alertDialog1.getWindow().setAttributes(lp);
     }
 
-    private void PopUpprotectcar(String documentIDs, Boolean bookingRequest, double latitude, double longitude, String yourPlace) {
+    private void PopUpprotectcar( Boolean bookingRequest, double latitude, double longitude, String yourPlace) {
 
         LayoutInflater factory = LayoutInflater.from(getActivity());
         final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
@@ -1133,58 +1155,18 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                isBookedAny = false;
-                if (bookingRequest){
-                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
-                }else{
-                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
-                }
-
-//                mp.start();
-                final Map<String, Object> protectdata = new HashMap<>();
-                protectdata.put("protectCar", true);
-                protectdata.put("bookingStatus", false);
+                bookAndNavigate(latitude, longitude);
 
 
-
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
-                db.collection("Bookings").document(documentIDs)
-                        .update(protectdata)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-//                            DocumentReference washingtonRef = db.collection("users").document(uid);
-//
-//                            washingtonRef
-//                                    .update("Booking_ID",likeData1)
-//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                        @Override
-//                                        public void onSuccess(Void aVoid) {
-//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-//                                        }
-//                                    })
-//                                    .addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Log.w(TAG, "Error updating document", e);
-//                                        }
-//                                    });
-
-
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+//                isBookedAny = false;
+//                if (bookingRequest){
+//                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, yourPlace);
+//                }else{
+//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
+//                }
+                documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEWONE);
+                Log.e("doc",documentIDs);
+                protectCar(true,false,documentIDs);
                 alertDialog1.dismiss();
             }
         });
@@ -1193,20 +1175,17 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                isBookedAny = false;
-                if (bookingRequest){
-                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
-                }else{
-                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
-                }
+                bookAndNavigate(latitude, longitude);
 
 //                isBookedAny = false;
+//
 //                if (bookingRequest){
-//                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace);
+//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
 //                }else{
-//                    makeAlreadyBookedAlert(false,latitude,longitude,yourPlace);
+//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
 //                }
-
+//
+//                protectCar(false,true);
                 alertDialog1.dismiss();
             }
         });
@@ -1231,7 +1210,54 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         alertDialog1.show();
     }
 
-    private void makeAlreadyBookedAlert(Boolean bookingRequest,double latitude, double longitude, String yourPlace){
+    private void protectCar(Boolean protectCar, Boolean bookingStatus, String docIdnew){
+        final Map<String, Object> protectdata = new HashMap<>();
+        protectdata.put("protectCar", protectCar);
+        protectdata.put("bookingStatus", bookingStatus);
+
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+        db.collection("Bookings").document(docIdnew)
+                .update(protectdata)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+//                            DocumentReference washingtonRef = db.collection("users").document(uid);
+//
+//                            washingtonRef
+//                                    .update("Booking_ID",likeData1)
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            Log.w(TAG, "Error updating document", e);
+//                                        }
+//                                    });
+
+
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
+
+    private void makeAlreadyBookedAlert(Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace){
         final FirebaseUser user = mAuth.getCurrentUser();
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -1266,16 +1292,14 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                                 System.out.println(entry.getKey() + " = " + entry.getValue());
 
                                                 Boolean val = (Boolean) entry.getValue();
-                                                String values = String.valueOf(val);
-
-                                                Log.e("values", values);
+//                                                                                            Log.e("values", booking_id);
 //
                                                 if (val) {
 
 //                                                Toast.makeText(getActivity(), values, Toast.LENGTH_SHORT).show();
                                                     String valuedoc=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
 
-                                                    popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace);
+                                                    popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace,cameraid);
                                                     break;
 
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
@@ -1286,8 +1310,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                     }
 
                                         else{
+
+
                                             if (bookingRequest){
-                                                bookAndNavigate(latitude,longitude,yourPlace);
+
+                                                SaveData(latitude, latitude, yourPlace,cameraid);
+//                                                bookAndNavigate(latitude,longitude,yourPlace,cameraid);
                                             }
 //                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
 
@@ -1327,9 +1355,9 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    private void bookAndNavigate(double latitude, double longitude, String yourPlace){
+    private void bookAndNavigate(double latitude, double longitude){
 //        showBottomSheet(latitude, longitude,yourPlace);
-        SaveData(lat, longi, yourPlace);
+//        SaveData(latitude, latitude, yourPlace,cameraid);
         PackageManager pm =getActivity().getPackageManager();
         if(isPackageInstalled()){
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,

@@ -194,9 +194,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
                 Intent intent = new Intent(SignupScreenActivity.this,SignInActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-                    overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
-                }
+                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
                 finish();
 
             }
@@ -824,6 +822,17 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         lp.gravity = Gravity.CENTER;
 //        lp.windowAnimations = R.style.DialogAnimation;
         alertDialog1.getWindow().setAttributes(lp);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(SignupScreenActivity.this,SignInActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+        finish();
+
     }
 
     private void athenticaationpopup(String message) {

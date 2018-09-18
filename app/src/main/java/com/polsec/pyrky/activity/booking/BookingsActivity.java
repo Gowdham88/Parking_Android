@@ -1,5 +1,6 @@
 package com.polsec.pyrky.activity.booking;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.polsec.pyrky.R;
+import com.polsec.pyrky.activity.HomeActivity;
 import com.polsec.pyrky.adapter.CustomViewPagerAdapter;
 import com.polsec.pyrky.fragment.CurrentBookingsFragment;
 import com.polsec.pyrky.fragment.HistoryFragment;
@@ -22,7 +24,7 @@ public class BookingsActivity extends AppCompatActivity implements  TabHost.OnTa
     CustomViewPager viewPager;
     TabLayout tabLayout;
 Toolbar toolbar;
-    ImageView mBackIcon;
+    RelativeLayout mBackIcon;
     TextView  TitlaTxt;
     RelativeLayout BackImgRelay;
     TextView tabOne,tabTwo;
@@ -36,7 +38,7 @@ Toolbar toolbar;
 //        Toast.makeText(this, Constants.SEARCH_ARRAY.get(0), Toast.LENGTH_SHORT).show();
 
         RelativeLayout parentLayout = findViewById(R.id.parent_layout);
-        mBackIcon =(ImageView)findViewById(R.id.back_icon);
+        mBackIcon =(RelativeLayout)findViewById(R.id.back_icon);
         TitlaTxt=(TextView)findViewById(R.id.extra_title);
         TitlaTxt.setText("Bookings");
 
@@ -46,10 +48,10 @@ Toolbar toolbar;
             @Override
             public void onClick(View view) {
                 onBackPressed();
-//                Intent intent=new Intent(getApplicationContext(),HomeActivity.class);
-//                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
-//                startActivity(intent);
-//                finish();
+                Intent intent=new Intent(getApplicationContext(),HomeActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+                finish();
             }
         });
 //        BookingsActivity.this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
@@ -71,7 +73,9 @@ Toolbar toolbar;
 
         tabLayout.setFocusableInTouchMode(false); //Not Working
         tabLayout.setFocusable(false);
+        tabLayout.clearFocus();
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        tabLayout.clearOnTabSelectedListeners();
         tabLayout.setOnTabSelectedListener(this);
 
         setupTabLayout();
@@ -117,6 +121,7 @@ Toolbar toolbar;
         tabOne.setText("Current Bookings");
         tabLayout.getTabAt(0).setCustomView(tabOne);
 
+
          tabTwo = (TextView) LayoutInflater.from(BookingsActivity.this).inflate(R.layout.custom_tab, null);
         tabTwo.setText("History");
         tabLayout.getTabAt(1).setCustomView(tabTwo);
@@ -139,19 +144,20 @@ Toolbar toolbar;
     public void onTabSelected(TabLayout.Tab tab) {
         viewPager.setCurrentItem(tab.getPosition());
 
-        int selectedTabPosition = tab.getPosition();
 
+        int selectedTabPosition = tab.getPosition();
+//
 //        if (selectedTabPosition == 0)
 //        { // that means first tab
-//            tabOne.setBackground(getResources().getDrawable(R.drawable.tabselectionleft));
-//            tabTwo.setBackground(getResources().getDrawable(R.drawable.notabselectionleft));
+//            tabOne.setBackground(getResources().getDrawable(R.drawable.tab_focused));
+//            tabTwo.setBackground(getResources().getDrawable(R.drawable.tab_baground));
 //
 //
 //        } else if (selectedTabPosition == 1)
 //        { // that means it's a last tab
 //
-//            tabOne.setBackground(getResources().getDrawable(R.drawable.notabselectionright));
-//            tabTwo.setBackground(getResources().getDrawable(R.drawable.tabselectionright));
+//            tabOne.setBackground(getResources().getDrawable(R.drawable.tab_baground));
+//            tabTwo.setBackground(getResources().getDrawable(R.drawable.tab_focused));
 //
 //
 //        }
