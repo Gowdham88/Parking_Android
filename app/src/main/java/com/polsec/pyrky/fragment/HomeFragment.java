@@ -31,6 +31,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -367,6 +368,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     args.putString("latitude", String.valueOf(Latitude).trim());
                     args.putString("longitude", String.valueOf(Longitude).trim());
                     args.putString("value", "home");
+                    args.putString("parkingtype", "Free street parking");
                     args.putString("place", description);
 //                    Log.e("strLatitude", String.valueOf(Latitude));
 //                    Log.e("strLongitude", String.valueOf(Longitude));
@@ -404,7 +406,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             public void onClick(View v) {
                 if (!isExpandableListEnabled) {
                     isExpandableListEnabled = true;
-//                    Toast.makeText(getActivity(), "Filter Enabled", Toast.LENGTH_SHORT).show();
+
+
+
+
+                    // clear FLAG_TRANSLUCENT_STATUS flag:
+//                    getActivity().setTheme(android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+//                    getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
                     Fragment filterFragment = new FiltersFragment();
                     transaction = getChildFragmentManager().beginTransaction();
                     transaction.add(R.id.frame_layout, filterFragment).addToBackStack(null).commit();

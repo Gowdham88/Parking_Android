@@ -32,7 +32,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.Interpolator;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +61,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
+import com.polsec.pyrky.activity.arnavigation.ArNavActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
 import com.polsec.pyrky.adapter.Carouselfirebaseadapter;
 import com.polsec.pyrky.fragment.HomeFragment;
@@ -116,6 +116,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     ArrayList<String> distancescurrentarrmap = new ArrayList<>();
     ArrayList<String> mCameraLocName = new ArrayList<>();
     ArrayList<String> mCameraId = new ArrayList<>();
+    ArrayList<HashMap<String, Object>> rules = new ArrayList<HashMap<String, Object>>();
     private Boolean isPopUpShowing = false;
     double mAccurateDistance;
     GoogleMap Mmap;
@@ -259,6 +260,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 mLat = bundle.getString("latitude").trim();
                 mLongi = bundle.getString("longitude").trim();
                 PlaceName= bundle.getString("place").trim();
+                ParkingType= bundle.getString("parkingtype").trim();
                 Log.e("hlattitude", String.valueOf(mLat));
                 Log.e("hlongitude", String.valueOf(mLongi));
                 Log.e("hplace", String.valueOf(PlaceName));
@@ -404,6 +406,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                             mCameraImageUrl.clear();
                             mCameraLocName.clear();
                             mCameraId.clear();
+                            rules.clear();
                             for (int i = 0; i < datalist.size(); i++) {
                                 mCurrentLoc.setLatitude(Double.parseDouble(mLat));
                                 mCurrentLoc.setLongitude(Double.parseDouble(mLongi));
@@ -414,6 +417,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                 double locationDistance = mCurrentLoc.distanceTo(mNearestLocations);
                                 mLocationDistances.add(locationDistance);
                                 Log.e("distancemtrsmap", String.valueOf(mLocationDistances));
+
 
                                 //Calculate distances by 1000 to show to the users
                                 mAccurateDistance = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
@@ -430,6 +434,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                     mCameraImageUrl.add(datalist.get(i).getCameraImageUrl());
                                     mCameraLocName.add(datalist.get(i).getCameraLocationName());
                                     mCameraId.add(datalist.get(i).getCameraID());
+                                    rules.add(datalist.get(i).getParkingRules());
 
                                     Log.e("nearlatmap", String.valueOf(mCameraLat));
                                     Log.e("nearlongmap", String.valueOf(mCameraLong));
@@ -449,7 +454,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
 
 
-                                    onItemChanged(mCameraLat.get(0), mCameraLong.get(0), mCameraId.get(0),datalist.get(i).getParkingTypes());
+//                                    onItemChanged(mCameraLat.get(0), mCameraLong.get(0), mCameraId.get(0),datalist.get(i).getParkingTypes(),rules.get(i));
 
                 if((!datalist.get(i).getParkingTypes().equals(null))||(!datalist.get(i).getParkingTypes().isEmpty())){
 
@@ -567,13 +572,13 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    private void onItemChanged(String lat, String lng, String cameraId, String parkingType) {
+    private void onItemChanged(String lat, String lng, String cameraId, String parkingType, HashMap<String, Object> rules) {
         mapLat = lat.trim();
         mapLongi = lng.trim();
         cameraid = cameraId;
         Log.e("mapLongi",mapLat);
         Log.e("mapLat",mapLongi);
-        Log.e("cameraid",cameraid);
+        Log.e("cameraid", String.valueOf(rules));
 
         LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
 
@@ -605,7 +610,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                  Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                      @Override
                      public boolean onMarkerClick(Marker marker) {
-                         showDialog(marker,cameraid,datalist.get(mNearestPlaceRecycler.getCurrentItem()).getParkingRules(),datalist.get(mNearestPlaceRecycler.getCurrentItem()).getCameraImageUrl());
+                         showDialog(marker,cameraid,rules,datalist.get(mNearestPlaceRecycler.getCurrentItem()).getCameraImageUrl());
                          mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
                          return false;
 
@@ -643,7 +648,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = adapterPosition;
-        onItemChanged(mCameraLat.get(positionInDataSet), mCameraLong.get(positionInDataSet), mCameraId.get(positionInDataSet),datalist.get(positionInDataSet).getParkingTypes());
+        onItemChanged(mCameraLat.get(positionInDataSet), mCameraLong.get(positionInDataSet), mCameraId.get(positionInDataSet),datalist.get(positionInDataSet).getParkingTypes(), rules.get(adapterPosition));
 
 
     }
@@ -710,7 +715,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    public void showDialog(Marker m, String cameraid, HashMap<String,Object> listofparkingRules, String cameraImageUrl){
+    public void showDialog(Marker m, String cameraid, HashMap<String, Object> listofparkingRules, String cameraImageUrl){
 
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View promptView = layoutInflater.inflate(R.layout.ruls_layout , null);
@@ -1026,6 +1031,11 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         pyrky.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+                Intent prkyintent=new Intent(getActivity(), ArNavActivity.class);
+                getActivity().overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
+                startActivity(prkyintent);
 
                 bottomSheetDialog.dismiss();
             }
