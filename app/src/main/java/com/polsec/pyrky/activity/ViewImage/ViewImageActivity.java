@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
@@ -424,7 +425,9 @@ public class ViewImageActivity extends AppCompatActivity {
         alertDialog.setView(deleteDialogView);
         TextView ok = deleteDialogView.findViewById(R.id.ok_button);
         TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
-//        final MediaPlayer mp = MediaPlayer.create(this, R.raw.soho);
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.parking_alert );
+
+
 
         final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {
@@ -433,7 +436,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
                     bookAndNavigate(latitude, longitude);
 
-
+                mp.start();
 //                isBookedAny = false;
 //                if (bookingRequest){
 //                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, yourPlace);
