@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -1148,7 +1149,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         alertDialog.setView(deleteDialogView);
         TextView ok = deleteDialogView.findViewById(R.id.ok_button);
         TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
-//        final MediaPlayer mp = MediaPlayer.create(this, R.raw.soho);
+        final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.parking_alert );
 
         final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {
@@ -1157,7 +1158,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                 bookAndNavigate(latitude, longitude);
 
-
+                    mp.start();
 //                isBookedAny = false;
 //                if (bookingRequest){
 //                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, yourPlace);
