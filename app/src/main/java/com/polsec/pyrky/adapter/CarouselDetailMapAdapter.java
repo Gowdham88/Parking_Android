@@ -52,7 +52,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 //    private ListAdapterListener mListener;
     private RecyclerView parentRecycler;
     int postionval;
-    int distance,distanceval;
+    int distance,distanceval1;
 
     public static final String ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button";
 
@@ -67,18 +67,19 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 //
 ////
 //    }
-    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<String> ruls, ArrayList<Double> mLocationDistancesmtrs, int distance, NearestLocMapsActivity nearestLocMapsActivity) {
+    public CarouselDetailMapAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> Placename, ArrayList<String> mCameraId, ArrayList<Double> mLocationDistancesmtrs, int distance, NearestLocMapsActivity nearestLocMapsActivity) {
         this.context = context;
         this.nearimg = nearimg;
         this.nearlat1 = nearlat1;
         this.nearlong1 = nearlong1;
-        this.distances1 = distances1;
+//        this.distances1 = distances1;
         this.Placename=Placename;
-        this.ruls=ruls;
-        this.distance=distance;
+        this.ruls=mCameraId;
         this.mLocationDistancesmtrs=mLocationDistancesmtrs;
+        this.distance=distance;
+
 //        this.mListener=mListener;
-        notifyDataSetChanged();
+
     }
 
 //    @Override
@@ -148,45 +149,40 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
         }
         else {
 
-
-            double disval=mLocationDistancesmtrs.get(position);
-            Log.e("val", String.valueOf(disval));
-
-
-            distanceval=(int) Double.parseDouble(String.valueOf(disval));
-            Log.e("distanceval", String.valueOf(distanceval));
+            distanceval1=(int) Double.parseDouble(String.valueOf(mLocationDistancesmtrs.get(position)));
+            Log.e("distanceval", String.valueOf(distanceval1));
             if(!mLocationDistancesmtrs.get(position).equals(null)){
-                if(distanceval>0 && distanceval <=100 ){
+                if(distanceval1>0 && distanceval1 <=100 ){
                     holder.nearestPlaceDistance.setText("0 - 100m");
                 }
-                else if(distanceval>100 && distanceval <=200 ){
+                else if(distanceval1>100 && distanceval1 <=200 ){
                     holder.nearestPlaceDistance.setText("100 - 200m");
                 }
-                else if(distanceval>200 && distanceval <=300 ){
+                else if(distanceval1>200 && distanceval1 <=300 ){
                     holder.nearestPlaceDistance.setText("200 - 300m");
                 }
 
-                else if(distanceval>300 && distanceval <=400 ){
+                else if(distanceval1>300 && distanceval1<=400 ){
                     holder.nearestPlaceDistance.setText("300 - 400m");
                 }
 
-                else if(distanceval>400 && distanceval <=500 ){
+                else if(distanceval1>400 && distanceval1 <=500 ){
                     holder.nearestPlaceDistance.setText("400 - 500m");
                 }
 
-                else if(distanceval>500 && distanceval <=600 ){
+                else if(distanceval1>500 && distanceval1 <=600 ){
                     holder.nearestPlaceDistance.setText("500 - 600m");
                 }
 
-                else if(distanceval>600 && distanceval <=700 ){
+                else if(distanceval1>600 && distanceval1 <=700 ){
                     holder.nearestPlaceDistance.setText("600 - 700m");
                 }
 
-                else if(distanceval>700 && distanceval <=800 ){
+                else if(distanceval1>700 && distanceval1 <=800 ){
                     holder.nearestPlaceDistance.setText("700 - 800m");
                 }
 
-                else if(distanceval>800 && distanceval <=900 ){
+                else if(distanceval1>800 && distanceval1 <=900 ){
                     holder.nearestPlaceDistance.setText("800 - 900m");
                 }
 

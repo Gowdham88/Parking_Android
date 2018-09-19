@@ -36,6 +36,8 @@
                 android:text="Free street parking"
                 android:textColor="@color/textColor"
                 android:layout_column="2"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
                 android:layout_marginStart="8dp"
                 />
         </TableRow>
@@ -60,6 +62,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Paid street parking"
+                    android:layout_gravity="center_vertical"
                     android:textColor="@color/textColor"
                     android:layout_column="2"
                     android:layout_marginStart="8dp"
@@ -86,6 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Paid parking"
+               android:layout_gravity="center_vertical"
                 android:layout_column="2"
                 android:layout_marginStart="8dp"
                 android:textColor="@color/textColor"

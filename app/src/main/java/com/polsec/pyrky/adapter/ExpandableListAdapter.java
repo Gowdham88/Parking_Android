@@ -185,17 +185,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                             case R.id.rb1:
                                 Constants.PARKING_TYPES.clear();
                                 Constants.PARKING_TYPES.add("Free street parking");
-                                Toast.makeText(context, rb1.getText(), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(context, rb1.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb2:
                                 Constants.PARKING_TYPES.clear();
                                 Constants.PARKING_TYPES.add("Paid street parking");
-                                Toast.makeText(context, rb2.getText(), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(context, rb2.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb3:
                                 Constants.PARKING_TYPES.clear();
                                 Constants.PARKING_TYPES.add("Paid parking");
-                                Toast.makeText(context, rb3.getText(), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(context, rb3.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                         }
                     }
@@ -488,27 +488,27 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                             case R.id.rb1:
                                 Constants.CAR_CATEGORY.clear();
                                 Constants.CAR_CATEGORY.add("Compact");
-                                Toast.makeText(context, rab1.getText(), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(context, rab1.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb2:
                                 Constants.CAR_CATEGORY.clear();
                                 Constants.CAR_CATEGORY.add("Small");
-                                Toast.makeText(context, rab2.getText(), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(context, rab2.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb3:
                                 Constants.CAR_CATEGORY.clear();
                                 Constants.CAR_CATEGORY.add("Mid size");
-                                Toast.makeText(context, rab3.getText(), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(context, rab3.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb4:
                                 Constants.CAR_CATEGORY.clear();
                                 Constants.CAR_CATEGORY.add("Full");
-                                Toast.makeText(context, rab4.getText(), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(context, rab4.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.rb5:
                                 Constants.CAR_CATEGORY.clear();
                                 Constants.CAR_CATEGORY.add("Van/Pick-up");
-                                Toast.makeText(context, rab5.getText(), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(context, rab5.getText(), Toast.LENGTH_SHORT).show();
                                 break;
                         }
                     }

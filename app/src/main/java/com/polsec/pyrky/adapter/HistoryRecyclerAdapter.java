@@ -198,9 +198,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         Window window = dialog.getWindow();
         window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
-        TextView Oktaxt = (TextView) dialog.findViewById(R.id.ok_txt);
+        TextView Oktaxt = (TextView) dialog.findViewById(R.id.cancel_txt);
         RatingBar ratingbar = (RatingBar) dialog.findViewById(R.id.rtbHighscr);
-        TextView canceltxt = (TextView) dialog.findViewById(R.id.cancel_txt);
+        TextView canceltxt = (TextView) dialog.findViewById(R.id.ok_txt);
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
         ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -263,12 +263,13 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                 db.collection("Reports").document(latlongi).set(reports).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        hideProgressDialog();
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
+                        hideProgressDialog();
                     }
                 });
 
@@ -280,7 +281,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         canceltxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                hideProgressDialog();
 
                 dialog.dismiss();
             }

@@ -80,6 +80,8 @@ import com.polsec.pyrky.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -368,7 +370,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     args.putString("latitude", String.valueOf(Latitude).trim());
                     args.putString("longitude", String.valueOf(Longitude).trim());
                     args.putString("value", "home");
-                    args.putString("parkingtype", "Free street parking");
+                    args.putString("parkingtype", "Free street");
                     args.putString("place", description);
 //                    Log.e("strLatitude", String.valueOf(Latitude));
 //                    Log.e("strLongitude", String.valueOf(Longitude));
@@ -475,7 +477,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             String postalCode = mCurLocAddress.get(0).getPostalCode();
                             String knownName = mCurLocAddress.get(0).getFeatureName();
                             address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
-                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
                             Log.e("address1", address1);
                             LatLng sydney = new LatLng(latt, longi);
                             mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
@@ -536,6 +538,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
                             for (int i = 0; i < mNearestLocationList.size(); i++) {
+
+//                                Collections.sort(mNearestLocationList, new Comparator<Camera>() {
+//                                    @Override
+//                                    public int compare(Camera lhs, Camera rhs) {
+//                                        return lhs.getCameraLat().compareTo(rhs.getCameraLat());
+//                                    }
+//                                });
+
+//                                Collections.sort(mNearestLocationList, new Comparator<Camera>() {
+//                                    @Override
+//                                    public int compare(Camera lhs, Camera rhs) {
+//                                        return lhs.getCameraLong().compareTo(rhs.getCameraLong());
+//                                    }
+//                                });
+
+
+
 //
                                 mCurrentLoc.setLatitude(mCurrentGpsLoc.getLatitude());
                                 mCurrentLoc.setLongitude(mCurrentGpsLoc.getLongitude());
@@ -543,10 +562,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 mNearestLocations.setLatitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()));
                                 mNearestLocations.setLongitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
 
+//                                getDistance(mCurrentGpsLoc.getLatitude(),mCurrentGpsLoc.getLongitude(),Double.parseDouble(mNearestLocationList.get(i).getCameraLat()),Double
+//                                        .parseDouble(mNearestLocationList.get(i).getCameraLong()));
+
                                 double locationDistance = mCurrentLoc.distanceTo(mNearestLocations);
                                 mLocationDistances.add(locationDistance);
 
-                                Log.e("distancemtrs1", String.valueOf(mLocationDistances));
+
+
+
+                                getDistance(mCurrentGpsLoc.getLatitude(),mCurrentGpsLoc.getLongitude(), Double.parseDouble(mNearestLocationList.get(i).getCameraLat())
+                                        ,Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
+
+
+
+                                    Log.e("distancemtrs1", String.valueOf(mLocationDistances));
 
                                 distanceval = mCurrentLoc.distanceTo(mNearestLocations) / 1000;
                                 distances1.add(String.valueOf(distanceval));
@@ -554,7 +584,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
 
-                                if (locationDistance < 1500) {
+                                if (locationDistance < 2500) {
                                 caldis1.add(locationDistance);
                                 Log.e("caldis1", String.valueOf(caldis1));
                                 mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
@@ -566,12 +596,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                     Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
                                     mparkingtypeist.add(mNearestLocationList.get(i).getParkingTypes());
 
+//
+////                                    Collections.sort(Ruleslist);
+//                                    Collections.sort(caldis1);
 
                                 Log.e("mCameraLat", String.valueOf(mCameraLat));
                                 Log.e("mCameraLong", String.valueOf(mCameraLong));
                                 Log.e("mCameraImageUrl", String.valueOf(mCameraImageUrl));
                                     Log.e("mCameraID", String.valueOf(mCameraID));
-//                                    Log.e("mCameraruls", String.valueOf(mrlslist));
+                                    Log.e("sortlist", String.valueOf(caldis1));
 
 
                                 carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
@@ -617,6 +650,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                 });
 
 
+    }
+
+    private double getDistance(double fromLat, double fromLon, double toLat, double toLon){
+        double radius = 6371;   // Earth radius in km
+        double deltaLat = Math.toRadians(toLat - fromLat);
+        double deltaLon = Math.toRadians(toLon - fromLon);
+        double lat1 = Math.toRadians(fromLat);
+        double lat2 = Math.toRadians(toLat);
+        double aVal = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) +
+                Math.sin(deltaLon/2) * Math.sin(deltaLon/2) * Math.cos(lat1) * Math.cos(lat2);
+        double cVal = 2*Math.atan2(Math.sqrt(aVal), Math.sqrt(1-aVal));
+
+        double distance = radius*cVal;
+        Log.e("distancelist","radius * angle = " +cVal);
+        return distance;
     }
     private void proceedAfterPermission() {
 

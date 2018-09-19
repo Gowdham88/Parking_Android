@@ -1,11 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="27dp"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp"
-    android:paddingEnd="27dp">
+>
+
+    <RelativeLayout
+        android:id="@+id/view_background"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:paddingStart="27dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="27dp"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/delete_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/delete_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            android:layout_toLeftOf="@id/delete_icon"
+            android:text="Delete"
+        style="@style/Nunitoregular"
+            android:textColor="@color/textColor"
+            android:textSize="12dp" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/view_foreground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="27dp"
+        android:paddingTop="5dp"
+        android:background="@color/white"
+        android:paddingEnd="27dp">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,3 +83,4 @@
         android:layout_marginTop="4dp"
         />
 </RelativeLayout>
+</FrameLayout>

@@ -1,5 +1,6 @@
 package com.polsec.pyrky.fragment;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,6 +44,7 @@ public class CurrentBookingsFragment extends Fragment {
     String uid;
     CurrentBookingRecyclerAdapter recyclerAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
+    private android.support.v7.app.AlertDialog dialog;
 
     List<Booking> BookingList = new ArrayList<Booking>();
     List<Booking> mFilteredBookingList = new ArrayList<Booking>();
@@ -134,7 +136,7 @@ public class CurrentBookingsFragment extends Fragment {
         BookingList.clear();
         BookingListId.clear();
         mFilteredBookingList.clear();
-//        showProgressDialog();
+        showProgressDialog();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Query first = db.collection("Bookings").whereEqualTo("Current_User_UID",uid);
@@ -173,6 +175,7 @@ public class CurrentBookingsFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         if(document.contains("Booking_ID")){
+                            hideProgressDialog();
 //                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         bookingid = document.getData();
 
@@ -229,5 +232,16 @@ public class CurrentBookingsFragment extends Fragment {
         });
 
     }
+    public void showProgressDialog() {
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        alertDialog.setView(R.layout.progress);
+        dialog = alertDialog.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+    }
 
+    private void hideProgressDialog(){
+        if(dialog!=null)
+            dialog.dismiss();
+    }
 }
