@@ -60,6 +60,7 @@ public class NotificationFragment extends Fragment implements RecyclerItemTouchH
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerAdapter = new NotificationAdapter(getActivity(),items,items1);
         mRecyclerView.setAdapter(mRecyclerAdapter);
+        mRecyclerAdapter.notifyDataSetChanged();
 
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
@@ -79,6 +80,7 @@ public class NotificationFragment extends Fragment implements RecyclerItemTouchH
 
             // remove the item from recycler view
             mRecyclerAdapter.removeItem(viewHolder.getAdapterPosition());
+            mRecyclerAdapter.notifyDataSetChanged();
 
             // showing snack bar with Undo option
 //            Snackbar snackbar = Snackbar

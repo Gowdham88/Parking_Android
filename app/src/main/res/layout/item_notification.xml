@@ -8,11 +8,11 @@
     <RelativeLayout
         android:id="@+id/view_background"
         android:layout_width="match_parent"
-        android:layout_height="57dp"
+        android:layout_height="50dp"
         android:paddingStart="27dp"
         android:paddingTop="5dp"
         android:paddingEnd="27dp"
-        android:background="@color/white">
+        android:background="@color/colorred">
 
         <ImageView
             android:id="@+id/delete_icon"
@@ -23,16 +23,16 @@
             android:layout_marginRight="10dp"
             android:src="@drawable/delete_icon" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="30dp"
-            android:layout_toLeftOf="@id/delete_icon"
-            android:text="Delete"
-        style="@style/Nunitoregular"
-            android:textColor="@color/textColor"
-            android:textSize="12dp" />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginRight="30dp"-->
+            <!--android:layout_toLeftOf="@id/delete_icon"-->
+            <!--android:text="Delete"-->
+        <!--style="@style/Nunitoregular"-->
+            <!--android:textColor="@color/textColor"-->
+            <!--android:textSize="12dp" />-->
 
     </RelativeLayout>
     <RelativeLayout
