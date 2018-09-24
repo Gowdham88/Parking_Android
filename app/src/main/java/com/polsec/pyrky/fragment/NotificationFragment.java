@@ -71,16 +71,19 @@ public class NotificationFragment extends Fragment implements RecyclerItemTouchH
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof NotificationAdapter.ViewHolder) {
+
+
             // get the removed item name to display it in snack bar
-            String name = items.get(position);
+//            String name = items.get(position);
 
             // backup of removed item for undo purpose
-             String deletedItem = items.get(viewHolder.getAdapterPosition());
-            final int deletedIndex = viewHolder.getAdapterPosition();
+//             String deletedItem = items.get(viewHolder.getAdapterPosition());
+//            final int deletedIndex = viewHolder.getAdapterPosition();
 
             // remove the item from recycler view
             mRecyclerAdapter.removeItem(viewHolder.getAdapterPosition());
             mRecyclerAdapter.notifyDataSetChanged();
+
 
             // showing snack bar with Undo option
 //            Snackbar snackbar = Snackbar

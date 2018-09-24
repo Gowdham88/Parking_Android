@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by czsm4 on 24/09/18.
  */
 
-public class Distance {
+public class Distance_ {
     @SerializedName("text")
     @Expose
     private String text;

@@ -46,6 +46,7 @@ import com.polsec.pyrky.helper.CameraPermissionHelper;
 import com.polsec.pyrky.network.DirectionsResponse;
 import com.polsec.pyrky.network.RetrofitInterface;
 import com.polsec.pyrky.network.model.Step;
+import com.polsec.pyrky.pojo.Example;
 import com.polsec.pyrky.utils.LocationCalc;
 
 import java.util.ArrayList;
@@ -460,6 +461,9 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
             srcLatLng=intent.getStringExtra("SRCLATLNG");
             destLatLng=intent.getStringExtra("DESTLATLNG");
 
+            Log.e("SRCLATLNG",srcLatLng);
+            Log.e("DESTLATLNG",destLatLng);
+
             Directions_call(); //HTTP Google Directions API Call
         }
     }
@@ -477,17 +481,20 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
 
         RetrofitInterface apiService =
                 retrofit.create(RetrofitInterface.class);
+        Boolean sensor=true;
 
-        final Call<DirectionsResponse> call = apiService.getDirections(srcLatLng, destLatLng,
+        final Call<Example> call = apiService.getDirections(srcLatLng, destLatLng,
                 getResources().getString(R.string.google_maps_key));
 
         Log.d(TAG, "Directions_call: srclat lng:"+srcLatLng+"\n"+"destLatlng:"+destLatLng);
 
-        call.enqueue(new Callback<DirectionsResponse>() {
+        call.enqueue(new Callback<Example>() {
             @Override
-            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+            public void onResponse(Call<Example> call, Response<Example> response) {
 
-                DirectionsResponse directionsResponse = response.body();
+                Example directionsResponse = response.body();
+                String responsvale=response.body().getStatus();
+                Log.e("response", String.valueOf(response.body().getRoutes()));
                 int step_array_size=directionsResponse.getRoutes().get(0).getLegs().get(0).getSteps().size();
 
                 dirDistance.setVisibility(View.VISIBLE);
@@ -505,12 +512,12 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
                     Log.d(TAG, "onResponse: STEP "+i+": "+steps[i].getEndLocation().getLat()
                             +" "+steps[i].getEndLocation().getLng());
                 }
-                Configure_AR();
+                Configure_AR(); 
 
             }
 
             @Override
-            public void onFailure(Call<DirectionsResponse> call, Throwable t) {
+            public void onFailure(Call<Example> call, Throwable t) {
 
                 Log.d(TAG, "onFailure: FAIL" + t.getMessage());
                 new AlertDialog.Builder(getApplicationContext()).setMessage("Fetch Failed").show();

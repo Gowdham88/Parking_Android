@@ -350,7 +350,7 @@ public class ArBeyondarGLSurfaceView extends GLSurfaceView implements OnBeyondar
 	/**
 	 * Get the distance factor.
 	 *
-	 * @return Distance factor
+	 * @return Distance1 factor
 	 */
 	public float getDistanceFactor(){
 		return mRenderer.getDistanceFactor();

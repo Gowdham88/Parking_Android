@@ -1,7 +1,11 @@
 package com.polsec.pyrky.network;
 
+import com.polsec.pyrky.pojo.Example;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 /**
@@ -10,12 +14,14 @@ import retrofit2.http.Query;
 
 public interface RetrofitInterface {
 
-    @GET("maps/api/directions/json?")
-    Call<DirectionsResponse> getDirections(
+//
+//    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @POST("/maps/api/directions/json?")
+    Call<Example> getDirections(
             @Query("origin") String origin,
             @Query("destination") String destination,
-            @Query("key") String key
-    );
+            @Query("key") String key);
+//            @Query("sensor") Boolean sensor);
 
     @GET("/maps/api/place/nearbysearch/json?")
     Call<PoiResponse> listPOI(

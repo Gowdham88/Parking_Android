@@ -12,7 +12,7 @@
         android:paddingStart="27dp"
         android:paddingTop="5dp"
         android:paddingEnd="27dp"
-        android:background="@color/colorred">
+   >
 
         <ImageView
             android:id="@+id/delete_icon"

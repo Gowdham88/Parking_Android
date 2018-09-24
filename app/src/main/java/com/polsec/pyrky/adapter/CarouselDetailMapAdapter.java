@@ -94,11 +94,6 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
         this.distance=distance;
     }
 
-//    @Override
-//    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-//        super.onAttachedToRecyclerView(recyclerView);
-//        parentRecycler = recyclerView;
-//    }
 
     @NonNull
     @Override
@@ -210,11 +205,6 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
         }
 
 
-
-//        holder.nearestPlaceAve.setText(mAve[position]);
-//        holder.nearestPlaceCity.setText(mCity[position]);
-
-//        S val= Integer.parseInt(distances1.get(position));
 
         final double latitude = Double.parseDouble(mNearestDataList.get(position).getCameraLat());
         final double  longitude = Double.parseDouble(mNearestDataList.get(position).getCameraLong());

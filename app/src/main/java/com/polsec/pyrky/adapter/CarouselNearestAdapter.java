@@ -102,11 +102,6 @@ public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         .fit()
         .into(holder.nearestPlaceImage);
 
-//        holder.nearestPlaceAve.setText(mAve[position]);
-//        holder.nearestPlaceCity.setText(mCity[position]);
-
-//        S val= Integer.parseInt(distances1.get(position));
-
     Double disval= Double.valueOf(String.valueOf(mNearestDataList.get(position).getLocationDistance().toString()));
     Log.e("val", String.valueOf(disval));
 
@@ -185,36 +180,6 @@ final double  longitude = Double.parseDouble(mNearestDataList.get(position).getC
 @Override
 public void onClick(View v) {
 
-//    NearestLocMapsActivity newFragment = new NearestLocMapsActivity();
-//    Bundle args1 = new Bundle();
-//    args1.putString("lat",nearlat1.get(position));
-//    args1.putString("lng",nearlong1.get(position));
-//    args1.putString("values","carousel");
-//    args1.putInt("listposition",holder.getAdapterPosition());
-//    args1.putString("placename",Placename.get(position));
-//
-//    newFragment.setArguments(args1);
-//
-//    FragmentManager manager=context.getFragmentManager();
-//    FragmentTransaction transaction=manager.beginTransaction();
-//    transaction.replace(R.id.dumper,fragmentB).commit();
-//
-//    // Commit the transaction
-//    transaction.commit();
-//        Intent intent = new Intent(context,NearestLocMapsActivity.class);
-//
-//        context.startActivity(intent);
-
-
-//    Bundle args1 = new Bundle();
-//    args1.putString("lat",nearlat1.get(position));
-//    args1.putString("lng",nearlong1.get(position));
-//    args1.putString("values","carousel");
-//    args1.putInt("listposition",holder.getAdapterPosition());
-//    args1.putString("placename",Placename.get(position));
-//    //set Fragmentclass Arguments
-//    ProfileFragment fragobj = new ProfileFragment();
-//    fragobj.setArguments(args1);
 
     FragmentTransaction transaction =  ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
     transaction.replace(R.id.main_frame_layout, NearestLocMapsActivity.newInstance(mNearestDataList.get(position).getCameraLat(),mNearestDataList.get(position).getCameraLong(),value,holder.getAdapterPosition(),mNearestDataList.get(position).getCameraLocationName(),distanceval,mNearestDataList.get(position).getCameraImageUrl()

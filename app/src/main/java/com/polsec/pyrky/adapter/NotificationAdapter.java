@@ -119,9 +119,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         // notify the item removed by position
         // to perform recycler view delete animations
         // NOTE: don't call notifyDataSetChanged()
-        notifyItemRemoved(position);
-        notifyDataSetChanged();
-        notifyItemRangeChanged(position, items.size());
+//        notifyItemRemoved(position);
+//        notifyDataSetChanged();
+//        notifyItemRangeChanged(position, items.size());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

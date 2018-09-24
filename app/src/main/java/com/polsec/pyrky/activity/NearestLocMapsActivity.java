@@ -161,7 +161,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     Boolean isBookedAny = false;
     String documentIDs;
     private TrackGPS mCurrentGpsLoc;
-    double mCurLocLat, mCurLocLong;
+    double mCurLocLat, mCurLocLong,curLat,curLong;
     HashMap<String, Object> mrlslist;
     List<NearestDestnetionData> mNearestDataList = new ArrayList<NearestDestnetionData>();
 
@@ -229,6 +229,16 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 getActivity().onBackPressed();
             }
         });
+
+        TrackGPS trackGps = new TrackGPS(context);
+
+        if (trackGps.canGetLocation()) {
+            curLat = trackGps.getLatitude();
+            curLong = trackGps.getLongitude();
+
+            Log.e("curLat", String.valueOf(curLat));
+            Log.e("curLong =", String.valueOf(curLong));
+        }
 
         String[] field = {"SecurityRating","parkingTypes","carCategory"};
         String[] value = {"5 stars","Paid street parking","Small"};
@@ -439,19 +449,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
 
                                 if (locationDistance < 2500) {
-//                                    mLocationDistancesmtrs.add(locationDistance);
-//                                    Log.e("mLocationDistancesmtrs", String.valueOf(mLocationDistancesmtrs));
-////                                    mCalculateDistances.add(String.valueOf(mLocationDistances));
-////                                    Log.e("mCalculateDistances", String.valueOf(mCalculateDistances));
-//                                    mCameraLat.add(datalist.get(i).getCameraLat());
-//                                    mCameraLong.add(datalist.get(i).getCameraLong());
-//                                    mCameraImageUrl.add(datalist.get(i).getCameraImageUrl());
-//                                    mCameraLocName.add(datalist.get(i).getCameraLocationName());
-//                                    mCameraId.add(datalist.get(i).getCameraID());
-//                                    rules.add(datalist.get(i).getParkingRules());
-
-
-
+//
                                     NearestDestnetionData nearestdata = new NearestDestnetionData();
                                     nearestdata.setLocationDistance(locationDistance);
                                     nearestdata.setCameraLat(datalist.get(i).getCameraLat());
@@ -477,12 +475,6 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                                         Log.e("sortlist", String.valueOf(mNearestDataList.get(j).getLocationDistance()));
 
-
-
-                                        Log.e("nearlatmap", String.valueOf(mCameraLat));
-                                        Log.e("nearlongmap", String.valueOf(mCameraLong));
-                                        Log.e("nearimgmap", String.valueOf(mCameraImageUrl));
-                                        Log.e("rulsmap", String.valueOf(mLocationDistancesmtrs));
 
                                         mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
                                         mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
@@ -512,16 +504,6 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                     } else {
                         LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
-//                        Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.paid));
-
-//                        int height = 70;
-//                        int width = 50;
-//                        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.paid);
-//                        Bitmap b=bitmapdraw.getBitmap();
-//                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-//                        Mmap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-//                        Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//                        Mmap.animateCamera(CameraUpdateFactory.zoomTo(14),2000,null);
                         Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
                     }
 
@@ -556,16 +538,6 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 //    }
 
     private void getCurrentLocation(String mLat, String mLongi) {
-        //Getting Current Location from independent class
-//        mCurrentGpsLoc = new TrackGPS(getActivity());
-//        try {
-//
-//            } else {
-//                mCurrentGpsLoc.showSettingsAlert();
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
 
             Double lat = Double.valueOf(mLat);
@@ -1080,9 +1052,23 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
+                Intent intent = new Intent(getActivity(), ArNavActivity.class);
+                try {
+                    intent.putExtra("SRC", "Current Location");
+                    intent.putExtra("DEST", "Some Destination");
+                    intent.putExtra("SRCLATLNG", curLat + "," + curLong);
+                    intent.putExtra("DESTLATLNG", latitude + "," + longitude);
+                    getActivity().overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
+                    startActivity(intent);
+                    SaveData(latitude,longitude, yourPlace,cameraid);
+                }catch (NullPointerException npe){
+
+                    Log.d(TAG, "onClick: The IntentExtras are Empty");
+                }
+
 
                 Intent prkyintent=new Intent(getActivity(), ArNavActivity.class);
-                getActivity().overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
+
                 startActivity(prkyintent);
 
                 bottomSheetDialog.dismiss();

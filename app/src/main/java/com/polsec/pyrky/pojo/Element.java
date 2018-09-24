@@ -13,10 +13,10 @@ public class Element {
 
     @SerializedName("distance")
     @Expose
-    private Distance distance;
+    private Distance1 distance;
     @SerializedName("duration")
     @Expose
-    private Duration duration;
+    private Duration1 duration;
     @SerializedName("status")
     @Expose
     private String status;
@@ -26,7 +26,7 @@ public class Element {
      * @return
      * The distance
      */
-    public Distance getDistance() {
+    public Distance1 getDistance() {
         return distance;
     }
 
@@ -35,7 +35,7 @@ public class Element {
      * @param distance
      * The distance
      */
-    public void setDistance(Distance distance) {
+    public void setDistance(Distance1 distance) {
         this.distance = distance;
     }
 
@@ -44,7 +44,7 @@ public class Element {
      * @return
      * The duration
      */
-    public Duration getDuration() {
+    public Duration1 getDuration() {
         return duration;
     }
 
@@ -53,7 +53,7 @@ public class Element {
      * @param duration
      * The duration
      */
-    public void setDuration(Duration duration) {
+    public void setDuration(Duration1 duration) {
         this.duration = duration;
     }
 

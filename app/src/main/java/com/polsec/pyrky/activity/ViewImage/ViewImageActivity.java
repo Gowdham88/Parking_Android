@@ -39,6 +39,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 
 import com.polsec.pyrky.activity.arnavigation.ArNavActivity;
+import com.polsec.pyrky.activity.signin.SignInActivity;
 import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Users;
@@ -76,6 +77,7 @@ public class ViewImageActivity extends AppCompatActivity {
     RelativeLayout relay;
     String Nameval="recyclervalue";
     String Nameval1="firebasevalue";
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,11 +97,14 @@ public class ViewImageActivity extends AppCompatActivity {
         if (trackGps.canGetLocation()) {
             curLat = trackGps.getLatitude();
             curLong = trackGps.getLongitude();
+
+            Log.e("curLat", String.valueOf(curLat));
+            Log.e("curLong =", String.valueOf(curLong));
         }
         db = FirebaseFirestore.getInstance();
 
 //        Bundle extras = getIntent().getExtras();
-
+        showProgressDialog();
         Intent bundle = ViewImageActivity.this.getIntent();
         if(bundle!=null){
 //            String Value=bundle.getStringExtra("recyclervalue");
@@ -159,12 +164,17 @@ public class ViewImageActivity extends AppCompatActivity {
 
 //        makeAlreadyBookedAlert(false);
 
+
         if(!cameraImageUrl.equals(null)|| !cameraImageUrl.isEmpty()){
+
 //
             Glide.with(ViewImageActivity.this).load(cameraImageUrl)
                    .into(cameraImage);
 
+            hideProgressDialog();
+
         }else {
+            hideProgressDialog();
 //            Close_Img.setVisibility(View.VISIBLE);
         }
 
@@ -593,7 +603,12 @@ public class ViewImageActivity extends AppCompatActivity {
                         intent.putExtra("DEST", "Some Destination");
                         intent.putExtra("SRCLATLNG", curLat + "," + curLong);
                         intent.putExtra("DESTLATLNG", latitude + "," + longitude);
+
+//                        Log.e("SRCLATLNG",curLat + "," + curLong);
+//                        Log.e("DESTLATLNG",latitude + "," + longitude);
+                       overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
                         startActivity(intent);
+                        SaveData(String.valueOf(latitude), String.valueOf(longitude), DestName);
                     }catch (NullPointerException npe){
 
                         Log.d(TAG, "onClick: The IntentExtras are Empty");
@@ -723,6 +738,19 @@ public class ViewImageActivity extends AppCompatActivity {
         return unixTime;
 
 
+    }
+
+    public void showProgressDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(ViewImageActivity.this);
+        alertDialog.setView(R.layout.progress);
+        dialog = alertDialog.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+    }
+
+    public void hideProgressDialog(){
+        if(dialog!=null)
+            dialog.dismiss();
     }
 
 }

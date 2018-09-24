@@ -559,21 +559,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                     for (int i = 0; i < mNearestLocationList.size(); i++) {
 
-//                                Collections.sort(mNearestLocationList, new Comparator<Camera>() {
-//                                    @Override
-//                                    public int compare(Camera lhs, Camera rhs) {
-//                                        return lhs.getCameraLat().compareTo(rhs.getCameraLat());
-//                                    }
-//                                });
-
-//                                Collections.sort(mNearestLocationList, new Comparator<Camera>() {
-//                                    @Override
-//                                    public int compare(Camera lhs, Camera rhs) {
-//                                        return lhs.getCameraLong().compareTo(rhs.getCameraLong());
-//                                    }
-//                                });
-
-
 //
                         mCurrentLoc.setLatitude(mCurrentGpsLoc.getLatitude());
                         mCurrentLoc.setLongitude(mCurrentGpsLoc.getLongitude());
@@ -581,18 +566,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         mNearestLocations.setLatitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLat()));
                         mNearestLocations.setLongitude(Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
 
-
-//                                getDistance(mCurrentGpsLoc.getLatitude(),mCurrentGpsLoc.getLongitude(),Double.parseDouble(mNearestLocationList.get(i).getCameraLat()),Double
-//                                        .parseDouble(mNearestLocationList.get(i).getCameraLong()));
-
                         double locationDistance = mCurrentLoc.distanceTo(mNearestLocations);
                         mLocationDistances.add(locationDistance);
                         Collections.sort(mLocationDistances);
-
-
-                        getDistance(mCurrentGpsLoc.getLatitude(), mCurrentGpsLoc.getLongitude(), Double.parseDouble(mNearestLocationList.get(i).getCameraLat())
-                                , Double.parseDouble(mNearestLocationList.get(i).getCameraLong()));
-
 
                         Log.e("distancemtrs1", String.valueOf(mLocationDistances));
 
@@ -602,16 +578,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
                         if (locationDistance < 2500) {
-
-//                                Log.e("caldis1", String.valueOf(caldis1));
-//                                mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
-//                                mCameraLong.add(mNearestLocationList.get(i).getCameraLong());
-//                                mCameraImageUrl.add(mNearestLocationList.get(i).getCameraImageUrl());
-//                                mCameraLocName.add(mNearestLocationList.get(i).getCameraLocationName());
-//                                mCameraID.add(mNearestLocationList.get(i).getCameraID());
-////                                    Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
-//                                    Ruleslist.add(mNearestLocationList.get(i).getParkingRules());
-//                                    mparkingtypeist.add(mNearestLocationList.get(i).getParkingTypes());
 
                             NearestData nearestdata = new NearestData();
                             nearestdata.setLocationDistance(locationDistance);
@@ -638,11 +604,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                                 Log.e("sortlist", String.valueOf(mNearestDataList.get(j).getLocationDistance()));
 
-
-                                Log.e("mCameraLat", String.valueOf(mCameraLat));
-                                Log.e("mCameraLong", String.valueOf(mCameraLong));
-                                Log.e("mCameraImageUrl", String.valueOf(mCameraImageUrl));
-                                Log.e("mCameraID", String.valueOf(mCameraID));
+//
 
 
                                 carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
@@ -695,22 +657,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     }
 
-    private double getDistance(double fromLat, double fromLon, double toLat, double toLon){
-        double radius = 6371;   // Earth radius in km
-        double deltaLat = Math.toRadians(toLat - fromLat);
-        double deltaLon = Math.toRadians(toLon - fromLon);
-        double lat1 = Math.toRadians(fromLat);
-        double lat2 = Math.toRadians(toLat);
-        double aVal = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) +
-                Math.sin(deltaLon/2) * Math.sin(deltaLon/2) * Math.cos(lat1) * Math.cos(lat2);
-        double cVal = 2*Math.atan2(Math.sqrt(aVal), Math.sqrt(1-aVal));
 
-        double distance = radius*cVal*1000;
-
-        distancesarray.add(String.valueOf(distance));
-        Log.e("distancelist","radius * angle = " +distancesarray);
-        return distance;
-    }
     private void proceedAfterPermission() {
 
     }
