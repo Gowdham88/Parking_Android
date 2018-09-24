@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.polsec.pyrky.R;
@@ -26,16 +27,22 @@ import com.polsec.pyrky.activity.arnavigation.ArNavActivity;
 import com.polsec.pyrky.fragment.NotificationVideoFragment;
 import com.polsec.pyrky.fragment.ProfileFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.content.ContentValues.TAG;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder>{
 
     Context context;
     String[] mMessage,mTime;
-    public NotificationAdapter( Context context,String[] mMessage, String[] mTime) {
+
+    List<String> items = new ArrayList<>();
+    List<String> items1 = new ArrayList<>();
+    public NotificationAdapter(Context context, List<String> mMessage, List<String> mTime) {
         this.context=context;
-        this.mMessage = mMessage;
-        this.mTime = mTime;
+        this.items = mMessage;
+        this.items1 = mTime;
     }
 
     @NonNull
@@ -51,8 +58,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull NotificationAdapter.ViewHolder holder, int position) {
-      holder.notificationMessage.setText(mMessage[position]);
-        holder.notificationTime.setText(mTime[position]);
+      holder.notificationMessage.setText(items.get(position));
+        holder.notificationTime.setText(items1.get(position));
         holder.requestVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,18 +111,33 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
     @Override
     public int getItemCount() {
-        return mTime.length;
+        return items.size();
+    }
+
+    public void removeItem(int position) {
+        items.remove(position);
+        // notify the item removed by position
+        // to perform recycler view delete animations
+        // NOTE: don't call notifyDataSetChanged()
+        notifyItemRemoved(position);
+        notifyDataSetChanged();
+        notifyItemRangeChanged(position, items.size());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView notificationMessage,notificationTime,requestVideo;
+        RelativeLayout Viewbackbaground;
+        public View Viewforebaground;
+
         public ViewHolder(View itemView) {
             super(itemView);
 
             notificationMessage = itemView.findViewById(R.id.notification_message);
             notificationTime = itemView.findViewById(R.id.notification_time);
             requestVideo = itemView.findViewById(R.id.request_video);
+            Viewforebaground= itemView.findViewById(R.id.view_foreground);
+            Viewbackbaground= itemView.findViewById(R.id.view_background);
         }
     }
 }

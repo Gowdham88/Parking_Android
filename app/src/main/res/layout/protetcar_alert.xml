@@ -17,7 +17,7 @@
         style="@style/Nunitoregular"
         android:textSize="18dp"
         android:textColor="@color/textColor"
-        android:text="Oops..!!"
+        android:text="Enable Protection !!"
         android:layout_width="match_parent"
         android:gravity="center"
         android:layout_gravity="center"
@@ -55,7 +55,7 @@
             android:textSize="14dp"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Ok"
+            android:text="OK"
             style="@style/Nunitoregular"/>
         <View
             android:layout_width="1dp"

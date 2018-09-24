@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -29,6 +30,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.signin.SignInActivity;
 import com.polsec.pyrky.helper.RecyclerDiffCallBack;
@@ -45,6 +47,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by thulirsoft on 7/9/18.
@@ -64,7 +68,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
     Map<String, Object> bookingid1=new HashMap<>();
     List<Camera>CameraList = new ArrayList<Camera>();
-    ArrayList<ratingval> vehList = new ArrayList<>();
+    ArrayList<ratingval> vehList = new ArrayList<ratingval>();
 
     List<Booking> bookingList = new ArrayList<Booking>();
     String Datetime;
@@ -198,9 +202,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         Window window = dialog.getWindow();
         window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
-        TextView Oktaxt = (TextView) dialog.findViewById(R.id.ok_txt);
+        TextView Oktaxt = (TextView) dialog.findViewById(R.id.cancel_txt);
         RatingBar ratingbar = (RatingBar) dialog.findViewById(R.id.rtbHighscr);
-        TextView canceltxt = (TextView) dialog.findViewById(R.id.cancel_txt);
+        TextView canceltxt = (TextView) dialog.findViewById(R.id.ok_txt);
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
         ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -235,6 +239,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                         HistoryRecyclerAdapter historyRecyclerAdapter = new HistoryRecyclerAdapter(context,bookingList,mRecyclerView);
                         mRecyclerView.setAdapter(historyRecyclerAdapter);
 
+
+
+
                         hideProgressDialog();
 
                     }
@@ -252,25 +259,32 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                         Drawable drawable = ratingBar.getProgressDrawable();
                         drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
 
+
                 ratingval vehiclePojoObject=new ratingval();
                 vehiclePojoObject.setUser_ID(uid);
                 vehiclePojoObject.setRatings(String.valueOf(currenRating));
 
                 vehList.add(vehiclePojoObject);
-
-              Reports reports=new Reports(vehList,cameraid);
-
+//
+                Reports reports=new Reports(vehList,cameraid);
+//
                 db.collection("Reports").document(latlongi).set(reports).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
+                            public void onSuccess(Void aVoid) {
+                                hideProgressDialog();
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
 
-                    }
-                });
+
+
+//
 
                 dialog.dismiss();
 
@@ -280,7 +294,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         canceltxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                hideProgressDialog();
 
                 dialog.dismiss();
             }

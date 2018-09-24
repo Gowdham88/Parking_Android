@@ -6,6 +6,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -21,10 +22,12 @@ import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
 import com.polsec.pyrky.fragment.NotificationVideoFragment;
 import com.polsec.pyrky.fragment.ProfileFragment;
+import com.polsec.pyrky.pojo.NearestData;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -54,6 +57,7 @@ private int avatarSize;
     ArrayList<String> Placename = new ArrayList<>();
     ArrayList<Double> caldis1 = new ArrayList<>();
     ArrayList<String> mCameraID = new ArrayList<>();
+    List<NearestData> mNearestDataList=new ArrayList<NearestData>();
     ArrayList<String> parkingTypes=new ArrayList<>();
     ArrayList<HashMap<String, Object>> parkingRules  = new ArrayList<HashMap<String, Object>>();
     HashMap<String, Object> mrlslist=new HashMap<String, Object>();
@@ -61,20 +65,26 @@ private int avatarSize;
     List<Address> yourAddress = null;
     String value="carousel";
     int distanceval;
-public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<Double> caldis1, ArrayList<String> mCameraID, ArrayList<HashMap<String, Object>> parkingRules, ArrayList<String> parkingTypes) {
-        this.context = context;
-        this.nearimg = nearimg;
-        this.nearlat1 = nearlat1;
-        this.nearlong1 = nearlong1;
-        this.distances1 = distances1;
-        this.Placename=Placename;
-        this.caldis1=caldis1;
-        this.mCameraID=mCameraID;
-        this.parkingRules=parkingRules;
-        this.parkingTypes=parkingTypes;
-        }
+//public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<Double> caldis1, ArrayList<String> mCameraID, ArrayList<HashMap<String, Object>> parkingRules, ArrayList<String> parkingTypes) {
+//        this.context = context;
+//        this.nearimg = nearimg;
+//        this.nearlat1 = nearlat1;
+//        this.nearlong1 = nearlong1;
+//        this.distances1 = distances1;
+//        this.Placename=Placename;
+//        this.caldis1=caldis1;
+//        this.mCameraID=mCameraID;
+//        this.parkingRules=parkingRules;
+//        this.parkingTypes=parkingTypes;
+//        }
 
-@NonNull
+    public CarouselNearestAdapter(Context context, List<NearestData> mNearestDataList) {
+
+        this.context = context;
+        this.mNearestDataList = mNearestDataList;
+    }
+
+    @NonNull
 @Override
 public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -87,21 +97,24 @@ public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 //        holder.nearestPlaceImage.setImageResource(mLocationImage[position]);
         this.avatarSize =context.getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
-
-        Picasso.with(context).load(nearimg.get(position))
+    int adapterPosition = holder.getAdapterPosition();
+        Picasso.with(context).load(mNearestDataList.get(adapterPosition).getCameraImageUrl())
         .fit()
         .into(holder.nearestPlaceImage);
+
 //        holder.nearestPlaceAve.setText(mAve[position]);
 //        holder.nearestPlaceCity.setText(mCity[position]);
 
 //        S val= Integer.parseInt(distances1.get(position));
-    double disval=caldis1.get(position);
+
+    Double disval= Double.valueOf(String.valueOf(mNearestDataList.get(position).getLocationDistance().toString()));
     Log.e("val", String.valueOf(disval));
 
 
-    distanceval=(int) Double.parseDouble(String.valueOf(disval));
+    distanceval= (int) Double.parseDouble(String.valueOf(disval));
+
     Log.e("distanceval", String.valueOf(distanceval));
-    if(!caldis1.get(position).equals(null)){
+    if(!mNearestDataList.get(position).equals(null)){
         if(distanceval>0 && distanceval <=100 ){
             holder.nearestPlaceDistance.setText("0 - 100m");
         }
@@ -145,14 +158,14 @@ public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 //        holder.nearestPlaceDistance.setText(caldis1.get(position));
 
 
-final double latitude = Double.parseDouble(nearlat1.get(position));
-final double  longitude = Double.parseDouble(nearlong1.get(position));
+final double latitude = Double.parseDouble(mNearestDataList.get(position).getCameraLat());
+final double  longitude = Double.parseDouble(mNearestDataList.get(position).getCameraLong());
 
     Geocoder geocoder;
 
     geocoder = new Geocoder(context, Locale.getDefault());
     try {
-        yourAddresses= geocoder.getFromLocation(Double.parseDouble(nearlat1.get(position)),Double.parseDouble(nearlong1.get(position)) , 1);
+        yourAddresses= geocoder.getFromLocation(Double.parseDouble(mNearestDataList.get(position).getCameraLat()),Double.parseDouble(mNearestDataList.get(position).getCameraLong()) , 1);
     } catch (IOException e) {
         e.printStackTrace();
     }
@@ -167,7 +180,7 @@ final double  longitude = Double.parseDouble(nearlong1.get(position));
     }
 
 //    Toast.makeText(context, (int) latitude, Toast.LENGTH_SHORT).show();
-    holder.nearestPlaceAve.setText(Placename.get(position));
+    holder.nearestPlaceAve.setText(mNearestDataList.get(adapterPosition).getCameraLocationName());
         holder.nearestPlaceImage.setOnClickListener(new View.OnClickListener() {
 @Override
 public void onClick(View v) {
@@ -204,17 +217,19 @@ public void onClick(View v) {
 //    fragobj.setArguments(args1);
 
     FragmentTransaction transaction =  ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-    transaction.replace(R.id.main_frame_layout, NearestLocMapsActivity.newInstance(nearlat1.get(position),nearlong1.get(position),value,holder.getAdapterPosition(),Placename.get(position),distanceval,nearimg.get(position),mCameraID.get(position),parkingRules.get(position),parkingTypes.get(position)));
+    transaction.replace(R.id.main_frame_layout, NearestLocMapsActivity.newInstance(mNearestDataList.get(position).getCameraLat(),mNearestDataList.get(position).getCameraLong(),value,holder.getAdapterPosition(),mNearestDataList.get(position).getCameraLocationName(),distanceval,mNearestDataList.get(position).getCameraImageUrl()
+            ,mNearestDataList.get(position).getCameraID(),mNearestDataList.get(position).getParkingRules(),mNearestDataList.get(position).getParkingTypes()));
     transaction.addToBackStack(null).commit();
 
-    Log.e("position", String.valueOf(holder.getAdapterPosition()));
+    Log.e("position", String.valueOf(mNearestDataList.get(position).getCameraID()));
+    Log.e("positionlatlong", String.valueOf(mNearestDataList.get(position).getCameraLat()+","+mNearestDataList.get(position).getCameraLong()));
         }
         });
         }
 
 @Override
 public int getItemCount() {
-        return nearlat1.size();
+        return mNearestDataList.size();
         }
 
 class ViewHolder extends RecyclerView.ViewHolder {
