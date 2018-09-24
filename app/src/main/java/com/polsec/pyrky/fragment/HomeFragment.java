@@ -601,7 +601,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         Log.e("distance", String.valueOf(distances1));
 
 
-                        if (locationDistance < 25000) {
+                        if (locationDistance < 2500) {
 
 //                                Log.e("caldis1", String.valueOf(caldis1));
 //                                mCameraLat.add(mNearestLocationList.get(i).getCameraLat());
