@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,8 +46,10 @@ import com.polsec.pyrky.ar.ArFragmentSupport;
 import com.polsec.pyrky.helper.CameraPermissionHelper;
 import com.polsec.pyrky.network.DirectionsResponse;
 import com.polsec.pyrky.network.RetrofitInterface;
+import com.polsec.pyrky.network.model.Route;
 import com.polsec.pyrky.network.model.Step;
 import com.polsec.pyrky.pojo.Example;
+import com.polsec.pyrky.pojo.Northeast;
 import com.polsec.pyrky.utils.LocationCalc;
 
 import java.util.ArrayList;
@@ -68,6 +71,7 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     private boolean mUserRequestedInstall = true;
     Session mSession;
     Button mArButton;
+     ImageView CloseBtn;
 
 //    @BindView(R.id.ar_source_dest)
     TextView srcDestText;
@@ -93,10 +97,19 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ar_nav);
-        mArButton = findViewById(R.id.btn_ar_enable);
-        srcDestText = findViewById(R.id.ar_source_dest);
+        CloseBtn= findViewById(R.id.close_iconimg);
+//        mArButton = findViewById(R.id.btn_ar_enable);
+
+//        srcDestText = findViewById(R.id.ar_source_dest);
         dirDistance = findViewById(R.id.ar_dir_distance);
         dirTime = findViewById(R.id.ar_dir_time);
+
+        CloseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            onBackPressed();
+            }
+        });
         // Enable AR related functionality on ARCore supported devices only.
         maybeEnableArButton();
 
@@ -120,12 +133,12 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
             }, 200);
         }
         if (availability.isSupported()) {
-            mArButton.setVisibility(View.VISIBLE);
-            mArButton.setEnabled(true);
+//            mArButton.setVisibility(View.INVISIBLE);
+//            mArButton.setEnabled(true);
             // indicator on the button.
         } else { // Unsupported or unknown.
-            mArButton.setVisibility(View.INVISIBLE);
-            mArButton.setEnabled(false);
+//            mArButton.setVisibility(View.INVISIBLE);
+//            mArButton.setEnabled(false);
         }
     }
 
@@ -457,7 +470,7 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
         if(getIntent()!=null) {
             intent = getIntent();
 
-            srcDestText.setText(intent.getStringExtra("SRC")+" -> "+intent.getStringExtra("DEST"));
+//            srcDestText.setText(intent.getStringExtra("SRC")+" -> "+intent.getStringExtra("DEST"));
             srcLatLng=intent.getStringExtra("SRCLATLNG");
             destLatLng=intent.getStringExtra("DESTLATLNG");
 
@@ -484,7 +497,7 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
         Boolean sensor=true;
 
         final Call<Example> call = apiService.getDirections(srcLatLng, destLatLng,
-                getResources().getString(R.string.google_maps_key));
+                    getResources().getString(R.string.google_maps_key));
 
         Log.d(TAG, "Directions_call: srclat lng:"+srcLatLng+"\n"+"destLatlng:"+destLatLng);
 
@@ -493,8 +506,8 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
             public void onResponse(Call<Example> call, Response<Example> response) {
 
                 Example directionsResponse = response.body();
-                String responsvale=response.body().getStatus();
-                Log.e("response", String.valueOf(response.body().getRoutes()));
+//           Northeast responsvale=  response.body().getRoutes().get(0).getBounds().getNortheast();
+                Log.e("response", String.valueOf(directionsResponse));
                 int step_array_size=directionsResponse.getRoutes().get(0).getLegs().get(0).getSteps().size();
 
                 dirDistance.setVisibility(View.VISIBLE);

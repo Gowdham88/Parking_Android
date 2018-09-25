@@ -36,9 +36,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.azoft.carousellayoutmanager.CarouselLayoutManager;
-import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
-import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -66,13 +63,11 @@ import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.activity.arnavigation.ArNavActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
-import com.polsec.pyrky.adapter.CarouselNearestAdapter;
 import com.polsec.pyrky.adapter.Carouselfirebaseadapter;
 import com.polsec.pyrky.fragment.HomeFragment;
 import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
-import com.polsec.pyrky.pojo.NearestData;
 import com.polsec.pyrky.pojo.NearestDestnetionData;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.Constants;
@@ -233,8 +228,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         TrackGPS trackGps = new TrackGPS(context);
 
         if (trackGps.canGetLocation()) {
-            curLat = trackGps.getLatitude();
-            curLong = trackGps.getLongitude();
+
 
             Log.e("curLat", String.valueOf(curLat));
             Log.e("curLong =", String.valueOf(curLong));
@@ -568,9 +562,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                         mLongi=String.valueOf( mCurLocAddress.get(0).getLongitude());
 
 
-                        Log.e("lattd", String.valueOf(mLat));
-                        Log.e("latgd", String.valueOf(mLongi));
 
+
+                        curLat = mCurLocAddress.get(0).getLatitude();
+                        curLong = mCurLocAddress.get(0).getLongitude();
+                        Log.e("curLat", String.valueOf(curLat));
+                        Log.e("curLong", String.valueOf(curLong));
 
                     }
 
@@ -1042,7 +1039,9 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
         map.setOnClickListener(view -> {
 
-            makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid);
+            String value="map";
+
+            makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
 
             bottomSheetDialog.dismiss();
 
@@ -1052,24 +1051,13 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(getActivity(), ArNavActivity.class);
-                try {
-                    intent.putExtra("SRC", "Current Location");
-                    intent.putExtra("DEST", "Some Destination");
-                    intent.putExtra("SRCLATLNG", curLat + "," + curLong);
-                    intent.putExtra("DESTLATLNG", latitude + "," + longitude);
-                    getActivity().overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
-                    startActivity(intent);
-                    SaveData(latitude,longitude, yourPlace,cameraid);
-                }catch (NullPointerException npe){
-
-                    Log.d(TAG, "onClick: The IntentExtras are Empty");
-                }
+                String value="pyrky";
+                makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
 
 
-                Intent prkyintent=new Intent(getActivity(), ArNavActivity.class);
+//                SaveData(latitude,longitude, yourPlace,cameraid);
 
-                startActivity(prkyintent);
+//
 
                 bottomSheetDialog.dismiss();
             }
@@ -1082,7 +1070,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         });
     }
 
-    private void popup(String valuedoc, String key, Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace) {
+    private void popup(String valuedoc, String key, Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace, String value) {
         LayoutInflater factory = LayoutInflater.from(getActivity());
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
@@ -1114,12 +1102,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
 
 //                                docIdnew=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
-                                PopUpprotectcar(bookingRequest,latitude,longitude,yourPlace);
+                                PopUpprotectcar(bookingRequest,latitude,longitude,yourPlace,value);
                            isBookedAny = false;
                                 if (bookingRequest){
-                                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, cameraid);
+                                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, cameraid, value);
                                 }else{
-                                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, cameraid);
+                                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, cameraid, value);
                                 }
 
                             }
@@ -1185,7 +1173,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         alertDialog1.getWindow().setAttributes(lp);
     }
 
-    private void PopUpprotectcar( Boolean bookingRequest, double latitude, double longitude, String yourPlace) {
+    private void PopUpprotectcar(Boolean bookingRequest, double latitude, double longitude, String yourPlace, String value) {
 
         LayoutInflater factory = LayoutInflater.from(getActivity());
         final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
@@ -1200,7 +1188,34 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                bookAndNavigate(latitude, longitude);
+
+
+                if(value=="map")
+                {
+
+//                    Toast.makeText(getActivity(), "map", Toast.LENGTH_SHORT).show();
+                    bookAndNavigate(latitude, longitude);
+                }
+                else {
+
+//                    Toast.makeText(getActivity(), "pyrky", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getActivity(), ArNavActivity.class);
+//                try {
+                    intent.putExtra("SRC", "Current Location");
+                    intent.putExtra("DEST", "Some Destination");
+                    intent.putExtra("SRCLATLNG", curLat + "," + curLong);
+                    intent.putExtra("DESTLATLNG", latitude + "," + longitude);
+                    getActivity().overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
+                    startActivity(intent);
+
+//                }catch (NullPointerException npe){
+//
+//                    Log.d(TAG, "onClick: The IntentExtras are Empty");
+//                }
+
+                }
+
+
 
                     mp.start();
 //                isBookedAny = false;
@@ -1220,7 +1235,37 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                bookAndNavigate(latitude, longitude);
+//                bookAndNavigate(latitude, longitude);
+
+                if(value=="map")
+                {
+
+                    Toast.makeText(getActivity(), "map", Toast.LENGTH_SHORT).show();
+                    bookAndNavigate(latitude, longitude);
+                }
+                else {
+
+                    Toast.makeText(getActivity(), "pyrky", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getActivity(), ArNavActivity.class);
+//                    try {
+                        intent.putExtra("SRC", "Current Location");
+                        intent.putExtra("DEST", "Some Destination");
+                        intent.putExtra("SRCLATLNG", curLat + "," + curLong);
+                        intent.putExtra("DESTLATLNG", latitude + "," + longitude);
+                        getActivity().overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
+                        startActivity(intent);
+//
+//                    }catch (NullPointerException npe){
+//
+//                        Log.d(TAG, "onClick: The IntentExtras are Empty");
+//                    }
+//
+//
+//                    Intent prkyintent=new Intent(getActivity(), ArNavActivity.class);
+//
+//                    startActivity(prkyintent);
+                }
+
 
 //                isBookedAny = false;
 //
@@ -1302,7 +1347,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 });
     }
 
-    private void makeAlreadyBookedAlert(Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace){
+    private void makeAlreadyBookedAlert(Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace, String value){
         final FirebaseUser user = mAuth.getCurrentUser();
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -1344,7 +1389,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 //                                                Toast.makeText(getActivity(), values, Toast.LENGTH_SHORT).show();
                                                     String valuedoc=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
 
-                                                    popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace,cameraid);
+                                                    popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace,cameraid,value);
                                                     break;
 
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();

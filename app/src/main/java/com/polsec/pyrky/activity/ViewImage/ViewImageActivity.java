@@ -39,7 +39,6 @@ import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 
 import com.polsec.pyrky.activity.arnavigation.ArNavActivity;
-import com.polsec.pyrky.activity.signin.SignInActivity;
 import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Users;
@@ -321,7 +320,7 @@ public class ViewImageActivity extends AppCompatActivity {
     }
 
 
-    private void popup(String valuedoc,String key,Boolean bookingRequest) {
+    private void popup(String valuedoc, String key, Boolean bookingRequest, String value) {
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
@@ -349,12 +348,12 @@ public class ViewImageActivity extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
 
-                                PopUpprotectcar(bookingRequest);
+                                PopUpprotectcar(bookingRequest,value);
                                 isBookedAny = false;
                                 if (bookingRequest){
-                                    makeAlreadyBookedAlert(true);
+                                    makeAlreadyBookedAlert(true, value);
                                 }else{
-                                    makeAlreadyBookedAlert(false);
+                                    makeAlreadyBookedAlert(false, value);
                                 }
 
 
@@ -427,7 +426,7 @@ public class ViewImageActivity extends AppCompatActivity {
         alertDialog1.show();
     }
 
-    private void PopUpprotectcar(Boolean bookingRequest) {
+    private void PopUpprotectcar(Boolean bookingRequest, String value) {
 
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
@@ -444,7 +443,31 @@ public class ViewImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                if(value=="map")
+                {
+
+//                    Toast.makeText(getActivity(), "map", Toast.LENGTH_SHORT).show();
                     bookAndNavigate(latitude, longitude);
+                }
+                else {
+
+//                    Toast.makeText(getActivity(), "pyrky", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ViewImageActivity.this, ArNavActivity.class);
+//                    try {
+                        intent.putExtra("SRC", "Current Location");
+                        intent.putExtra("DEST", "Some Destination");
+                        intent.putExtra("SRCLATLNG", curLat + "," + curLong);
+                        intent.putExtra("DESTLATLNG", latitude + "," + longitude);
+                        overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
+                        startActivity(intent);
+
+//                    }catch (NullPointerException npe){
+//
+//                        Log.d(TAG, "onClick: The IntentExtras are Empty");
+//                    }
+
+                }
+
 
                 mp.start();
 //                isBookedAny = false;
@@ -564,22 +587,10 @@ public class ViewImageActivity extends AppCompatActivity {
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                makeAlreadyBookedAlert(true);
 
-//                PackageManager pm = ViewImageActivity.this.getPackageManager();
-//                if(isPackageInstalled()){
-//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-//                            Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
-//                    startActivity(intent);
-////                    Toast.makeText(ViewImageActivity.this, "true", Toast.LENGTH_SHORT).show();
-//                }else{
-//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-//                            Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
-//                    startActivity(intent);
-////                    Toast.makeText(ViewImageActivity.this, "false", Toast.LENGTH_SHORT).show();
-//
-//
-//                }
+                String value="map";
+                makeAlreadyBookedAlert(true,value);
+
 
                 bottomSheetDialog.dismiss();
 
@@ -589,30 +600,10 @@ public class ViewImageActivity extends AppCompatActivity {
             pyrky.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                if (hasPermissions()) {
-//                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                    startActivityForResult(i, RC_PICK_IMAGE);
-//                } else {
-//                    EasyPermissions.requestPermissions(getActivity(), "Permissions required", PERMISSIONS_REQUEST_GALLERY, CAMERA);
-//                }
-//                Intent checkinintent = new Intent(getActivity(), CheckScreenActivity.class);
-//                startActivity(checkinintent);
-                    Intent intent = new Intent(ViewImageActivity.this, ArNavActivity.class);
-                    try {
-                        intent.putExtra("SRC", "Current Location");
-                        intent.putExtra("DEST", "Some Destination");
-                        intent.putExtra("SRCLATLNG", curLat + "," + curLong);
-                        intent.putExtra("DESTLATLNG", latitude + "," + longitude);
 
-//                        Log.e("SRCLATLNG",curLat + "," + curLong);
-//                        Log.e("DESTLATLNG",latitude + "," + longitude);
-                       overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
-                        startActivity(intent);
-                        SaveData(String.valueOf(latitude), String.valueOf(longitude), DestName);
-                    }catch (NullPointerException npe){
-
-                        Log.d(TAG, "onClick: The IntentExtras are Empty");
-                    }
+                    String value="pyrky";
+                    makeAlreadyBookedAlert(true,value);
+//
                     bottomSheetDialog.dismiss();
                 }
             });
@@ -627,7 +618,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
     }
 
-    private void makeAlreadyBookedAlert(Boolean bookingRequest){
+    private void makeAlreadyBookedAlert(Boolean bookingRequest, String value){
         final FirebaseUser user = mAuth.getCurrentUser();
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -672,7 +663,7 @@ public class ViewImageActivity extends AppCompatActivity {
 //                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
                                                     String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
 
-                                                    popup(valuedoc,entry.getKey(),bookingRequest);
+                                                    popup(valuedoc,entry.getKey(),bookingRequest,value);
                                                     break;
 
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
