@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/parent_lay"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="88dp"
+   >
+    <TextView
+        style="@style/NunitoBlackLight"
+        android:layout_width="150dp"
+        android:layout_height="18dp"
+        android:text=""
+        android:layout_marginTop="18dp"
+        android:textSize="12dp"
+        android:textColor="@color/textColor"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/place"
+        />
+
+    <TextView
+        style="@style/NunitoBlackLight"
+        android:textSize="12dp"
+        android:id="@+id/view_car_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="18dp"
+        android:textColor="@color/textColor"
+        android:text="View Car" />
+
+    <RatingBar
+        android:layout_width="200dp"
+        android:layout_height="30dp"
+        android:text="Ratings"
+        android:rating="4"
+        android:layout_alignParentRight="true"
+        android:id="@+id/ratings"
+        android:visibility="gone"
+        />
+    <TextView
+        style="@style/NunitoBlackLight"
+        android:textSize="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/date_time"
+        android:textColor="@color/textColor"
+        android:text=""
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/view_car_text"
+        android:layout_marginTop="25dp"
+        android:gravity="right"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/date_time"
+        android:background="@color/border_color"
+        />
+</RelativeLayout>
+
+<!--<RelativeLayout-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="25dp"-->
+<!--android:layout_marginTop="13dp"-->
+<!--android:layout_toRightOf="@+id/place"-->
+<!--android:layout_marginRight="5dp"-->
+<!--android:id="@+id/view_car_text_lay">-->
+<!--<TextView-->
+    <!--style="@style/NunitoBlackLight"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Ratings:"-->
+    <!--android:textSize="12dp"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:layout_toLeftOf="@+id/history_ratings"-->
+    <!--android:textColor="@color/booking_txtclr"-->
+    <!--android:visibility="visible"-->
+    <!--android:id="@+id/view_car_text"-->
+    <!--/>-->
+
+<!--<RatingBar-->
+    <!--android:id="@+id/history_ratings"-->
+    <!--style="@style/Widget.AppCompat.RatingBar.Small"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentEnd="true"-->
+    <!--android:layout_alignTop="@+id/view_car_text"-->
+    <!--android:max="5"-->
+    <!--android:isIndicator="true"-->
+    <!--android:numStars="5"-->
+    <!--android:text="" />-->
+
+<!--<TextView-->
+    <!--android:id="@+id/history_ratingsanother"-->
+    <!--style="@style/NunitoBlackLight"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentEnd="true"-->
+    <!--android:layout_alignTop="@+id/view_car_text"-->
+    <!--android:numStars="5"-->
+    <!--android:textSize="12dp"-->
+    <!--android:textColor="@color/booking_txtclr"-->
+    <!--android:visibility="gone"-->
+    <!--android:text="Rate the space" />-->
+<!--</RelativeLayout>-->

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/container"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="3dp"
+        android:elevation="3dp"
+        android:id="@+id/nearest_place_img_card">
+    <ImageView
+        android:layout_width="140dp"
+        android:layout_height="95dp"
+        android:id="@+id/nearest_place_image"
+        android:src="@mipmap/ic_launcher"
+        android:background="@drawable/carousel_background"
+        />
+
+        <LinearLayout
+            android:id="@+id/opacityFilter"
+            android:layout_width="140dp"
+            android:layout_height="95dp"
+            android:orientation="vertical"
+            android:background="#00B9AB"
+            android:alpha="0.2">
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <TextView
+        style="@style/Nunitoregular"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/nearest_place_ave"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:textSize="8sp"
+        android:text=""
+        android:singleLine="true"
+        android:textColor="#404B69"
+        android:layout_below="@id/nearest_place_img_card"
+        />
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/nearest_place_city"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:text="City 1"
+        android:textColor="#404B69"
+        android:layout_below="@id/nearest_place_ave"
+        />
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/nearest_place_city"
+    android:layout_centerHorizontal="true">
+    <!--<TextView-->
+        <!--android:id="@+id/disttxt"-->
+        <!--style="@style/Nunitoregular"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignBaseline="@+id/nearest_place_distance"-->
+        <!--android:layout_alignBottom="@+id/nearest_place_distance"-->
+        <!--android:teDistance1ance :"-->
+        <!--android:textColor="#404B69"-->
+        <!--android:textSize="8sp" />-->
+    <TextView
+        style="@style/Nunitoregular"
+        android:layout_marginStart="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nearest_place_distance"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:textColor="#404B69"
+        android:textSize="8sp"
+        android:text=""
+
+        />
+</RelativeLayout>
+</RelativeLayout>

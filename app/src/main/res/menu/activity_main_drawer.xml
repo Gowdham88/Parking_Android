@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="Home"
+            app:actionLayout="@layout/menu_item"
+            android:icon="@drawable/ic_tab_home"
+            android:iconTint="@color/colorAccent"/>
+        <item
+            android:id="@+id/nav_booking"
+            android:title="Bookings"
+            android:icon="@drawable/ic_bookings_menu"
+            android:iconTint="@color/colorAccent"/>
+        <item
+            android:id="@+id/nav_profile"
+            android:title="Profile"
+            android:icon="@drawable/ic_tab_user"
+            android:iconTint="@color/colorAccent"/>
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Logout"
+            android:icon="@drawable/ic_logout"
+            android:iconTint="@color/colorAccent"
+            />
+        <!--android:icon="@drawable/ic_menu_manage"-->
+    </group>
+
+   <!-- <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>-->
+
+</menu>

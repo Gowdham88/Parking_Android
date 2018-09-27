@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rel_parent"
+    tools:context="com.polsec.pyrky.activity.ViewImage.ViewImageActivity">
+    <!--<include-->
+        <!--android:id="@+id/toolbar"-->
+        <!--layout="@layout/nearloc_toolbar" />-->
+
+    <!--<View-->
+        <!--android:layout_below="@+id/toolbar"-->
+        <!--android:id="@+id/myview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@color/search_boarder_clr" />-->
+
+    <!--<RelativeLayout-->
+        <!--android:layout_width="40dp"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_marginRight="20dp">-->
+
+    <ImageView
+        android:id="@+id/camera_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="fitXY" />
+
+        <ImageView
+            android:id="@+id/close_iconimg"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/close_icon"
+            android:visibility="visible" />
+
+    <!--</RelativeLayout>-->
+
+
+    <TextView
+        android:id="@+id/book_btn"
+        android:background="@drawable/booknavbtnbg"
+        android:layout_width="200dp"
+        android:layout_height="37dp"
+  android:gravity="center"
+        android:layout_alignParentBottom="true"
+      android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:text="Book &amp; Navigate"
+        android:textAllCaps="false"
+        style="@style/Nunitoregular"
+        android:layout_centerInParent="true"
+        android:textColor="@color/white"
+        android:textSize="12dp"/>
+
+</RelativeLayout>

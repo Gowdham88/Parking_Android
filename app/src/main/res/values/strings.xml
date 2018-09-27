@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">pyrky_android</string>
+    <string name="app_name">Pyrky</string>
     <string name="already_have_an_account_sign_in_here">Already have an account? Sign In here</string>
     <string name="sign_up">Sign Up</string>
     <string name="email">Email</string>
@@ -7,17 +7,45 @@
     <string name="username">User name</string>
     <string name="car_category">Car Category</string>
     <string name="forget_password">Forgot Password?</string>
-    <string name="dont_have_account">Don\'t Have Account?</string>
+    <string name="dont_have_account">Don\'t have an account? Sign up here</string>
 
-
-
-
-
+    <string name="directions_base_url">https://maps.googleapis.com</string>
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <!--
         This is the name that users will see when interacting with this channel.
         It should describe the category of notifications that will be sent through this channel
      -->
-<string name="default_notification_channel_name" translatable="true">News</string>
+    <string name="default_notification_channel_name" translatable="true">News</string>
+    <string name="auth_token" />
+    <string name="nearest_parking_places_next_to_my_current_location">Nearest Parking Places Next to My Current Location</string>
+    <string name="title_activity_main">SampleDrawerActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_nearest_loc_maps">Map</string>
+    <string name="save">Save</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="enter_your_user_name">Enter your user name</string>
+    <string name="resetpass">A reset link has been sent your email</string>
+    <string name="status">Click OK to end the Previous booking</string>
+    <string name="status_txt">Please close your Previous bookings</string>
+    <string name="protect_txt">Do you want protect your car?</string>
+    <string name="notification_txt">Do you want to request a camera view\n for three seconds</string>
+    <string name="empy_txt">Username or email or password should\n not be empty</string>
+    <string name="signinempy_txt">Email or Password should not be empty</string>
+    <string name="passworderror_txt">Enter valid Password</string>
+    <string name="usernameerror_txt">Username should not be empty</string>
+    <string name="emailerror_txt">Enter valid Email</string>
+    <string name="imageerror_txt">Profile should not be empty</string>
+
+    <string-array name="navigation_drawer_items_array">
+        <item>Home</item>
+        <item>Bookings</item>
+        <item>Profile</item>
+        <item>Logout</item>
+    </string-array>
 </resources>

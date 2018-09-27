@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/nearloc_toolbar" />
+    <View
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/myview"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/search_boarder_clr" />
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/content_events"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/myview"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".activity.HomeActivity"
+        tools:showIn="@layout/activity_main">
+
+        <!--<android.support.design.widget.TabLayout-->
+        <!--android:id="@+id/simpleTabLayout"-->
+        <!--android:layout_width="310dp"-->
+        <!--app:tabTextAppearance="@style/TabWidget"-->
+        <!--android:layout_height="40dp"-->
+        <!--app:tabSelectedTextColor="@drawable/tab_selector"-->
+        <!--app:tabTextColor="#00B9AB"-->
+        <!--app:tabIndicatorColor="@color/transparent2"-->
+        <!--android:background="@drawable/tab_bagroundcorner"-->
+        <!--android:layout_marginRight="33dp"-->
+        <!--android:layout_marginLeft="33dp"-->
+        <!--android:layout_marginTop="30dp"-->
+        <!--/>-->
+        <!--<android.support.design.widget.TabLayout-->
+        <!--app:tabBackground="@android:color/transparent"-->
+        <!--android:id="@+id/simpleTabLayout"-->
+        <!--android:layout_marginTop="30dp"-->
+        <!--android:layout_marginLeft="33dp"-->
+        <!--android:layout_marginRight="33dp"-->
+        <!--android:layout_width="310dp"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_height="40dp"-->
+        <!--app:tabIndicatorHeight="0dp"-->
+        <!--android:background="@drawable/tab_bagroundcorner"-->
+        <!--app:tabSelectedTextColor="@drawable/tab_selector"-->
+        <!--app:tabTextAppearance="@style/TabWidget"-->
+        <!--app:tabTextColor="@color/booking_txtclr" />-->
+
+        <android.support.design.widget.TabLayout
+            android:hapticFeedbackEnabled="false"
+            android:id="@+id/simpleTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:tabMaxWidth="0dp"
+            app:tabSelectedTextColor="@drawable/tab_selector"
+            android:background="@drawable/tab_bagroundcorner"
+            android:layout_marginLeft="33dp"
+            android:layout_marginRight="33dp"
+            android:layout_marginTop="30dp"
+            app:tabGravity="fill"
+            app:tabIndicatorHeight="0dp"
+            app:tabTextColor="@color/textColor" />
+
+        <com.polsec.pyrky.utils.CustomViewPager
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/viewpager_events"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_below="@id/simpleTabLayout"
+            />
+    </RelativeLayout>
+</RelativeLayout>

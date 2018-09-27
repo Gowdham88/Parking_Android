@@ -3,151 +3,136 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/signin_layout"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/white"
-    >
+    android:background="@color/white">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        >
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:id="@+id/linearLayout">
         <ImageView
             android:id="@+id/sigin_logo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="68dp"
+            android:layout_height="93dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="70dp"
             android:layout_gravity="center"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@drawable/logo_icon" />
 
         <TextView
+
             android:id="@+id/tx_email"
+            style="@style/NunitoBlackLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginStart="25dp"
-            android:text="@string/email" />
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/et_email_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="25dp"
-            android:layout_marginLeft="25dp"
-            >
+            android:layout_marginTop="70dp"
+            android:text="@string/email"
+            android:textColor="@color/textColor" />
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/et_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp" />
-        </android.support.design.widget.TextInputLayout>
+        <EditText
+            android:id="@+id/et_email"
+            style="@style/NunitoBlackLight"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:backgroundTint="@color/textColor"
+            android:gravity="bottom"
+            android:hint="@string/enter_your_email"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress"
+            android:singleLine="true"
+            android:textColorHint="@color/email_txtclr"
+            android:textSize="12sp" />
+        <View
+            android:id="@+id/passline1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:focusable="false"
+            android:background="@color/textColor"/>
         <TextView
+
             android:id="@+id/tx_password"
+            style="@style/NunitoBlackLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginStart="25dp"
-            android:text="@string/password" />
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/et_password_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="25dp"
-            android:layout_marginLeft="25dp"
-            >
-
-            <android.support.design.widget.TextInputEditText
+            android:layout_above="@+id/dont_have_account"
+            android:layout_alignStart="@+id/linearLayout"
+            android:text="@string/password"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/textColor" />
+            <EditText
+                android:layout_height="25dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="bottom"
+                android:background="@null"
+                android:inputType="textPassword"
+                android:layout_marginTop="10dp"
+                style="@style/NunitoBlackLight"
                 android:id="@+id/et_password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp" />
-        </android.support.design.widget.TextInputLayout>
-        <!--<TextView-->
-            <!--android:id="@+id/tx_username"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="14dp"-->
-            <!--android:layout_marginLeft="25dp"-->
-            <!--android:layout_marginStart="25dp"-->
-            <!--android:text="@string/username" />-->
-        <!--<android.support.design.widget.TextInputLayout-->
-            <!--android:id="@+id/et_username_layout"-->
-            <!--android:layout_marginRight="25dp"-->
-            <!--android:layout_marginLeft="25dp"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
-
-            <!--<android.support.design.widget.TextInputEditText-->
-                <!--android:id="@+id/et_user_name"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:textSize="14sp" />-->
-        <!--</android.support.design.widget.TextInputLayout>-->
-        <!--<TextView-->
-            <!--android:id="@+id/tx_car_category"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="14dp"-->
-            <!--android:layout_marginLeft="25dp"-->
-            <!--android:layout_marginStart="25dp"-->
-            <!--android:text="@string/car_category" />-->
-
-        <!--<Spinner-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/car_category"-->
-            <!--android:layout_marginRight="25dp"-->
-            <!--android:layout_marginLeft="25dp"-->
-            <!--/>-->
-        <!--<android.support.design.widget.TextInputLayout-->
-        <!--android:id="@+id/et_car_category_layout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginRight="25dp"-->
-        <!--android:layout_marginLeft="25dp">-->
-
-        <!--<android.support.design.widget.TextInputEditText-->
-        <!--android:id="@+id/et_car_category"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:textSize="14sp" />-->
-        <!--</android.support.design.widget.TextInputLayout>-->
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                android:textColorHint="#B6B6B6"
+                android:imeOptions="actionDone"
+                android:ems="10"
+                android:hint="@string/enter_your_password"
+                android:textSize="12sp" />
+        <View
+            android:id="@+id/passline"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:focusable="false"
+            android:background="@color/textColor"/>
+        <TextView
+            style="@style/NunitoBlackLight"
+            android:layout_width="200dp"
+            android:layout_height="35dp"
             android:id="@+id/sign_in_button"
+            android:layout_marginStart="88dp"
+            android:layout_marginEnd="87dp"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:text="Login" />
+            android:gravity="center"
+            android:layout_marginTop="44dp"
+            android:background="@drawable/signin_bg"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:text="Sign In" />
 
         <TextView
+            style="@style/NunitoBlackLight"
             android:id="@+id/tx_forget_password"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="3dp"
+            android:gravity="center_vertical"
             android:layout_marginBottom="14dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginStart="25dp"
+            android:textColor="@color/textColor"
             android:text="@string/forget_password"
-            android:textSize="18sp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
     <TextView
+        style="@style/NunitoBlackLight"
         android:id="@+id/dont_have_account"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_height="25dp"
+        android:gravity="center"
         android:text="@string/dont_have_account"
         android:textSize="12sp"
-        android:textColorHighlight="@color/white"
-        android:visibility="visible"
-        android:layout_marginBottom="15dp"
+        android:layout_marginTop="110dp"
+        android:textColor="@color/textColor"
+         android:visibility="visible"
+        android:layout_marginBottom="16dp"
         android:layout_alignParentBottom="true"
         />
 </RelativeLayout>

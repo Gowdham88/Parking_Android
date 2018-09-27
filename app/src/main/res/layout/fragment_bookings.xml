@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/nearloc_toolbar" />
+    <View
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/myview"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/search_boarder_clr" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/content_events"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/myview"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".activity.HomeActivity"
+        tools:showIn="@layout/activity_main">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/simpleTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:tabSelectedTextColor="@drawable/tab_selector"
+            android:background="@drawable/tab_bagroundcorner"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:layout_marginTop="30dp"
+            app:tabGravity="fill"
+            app:tabPaddingStart="0dp"
+            app:tabPaddingEnd="0dp"
+            app:tabMode="fixed"
+            app:tabBackground="@null"
+            android:tabStripEnabled="false"
+            app:tabIndicatorHeight="0dp"
+            app:tabTextColor="@color/textColor" />
+
+        <com.polsec.pyrky.utils.CustomViewPager
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/viewpager_events"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_below="@id/simpleTabLayout"
+            />
+    </RelativeLayout>
+</RelativeLayout>
