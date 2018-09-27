@@ -115,8 +115,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.arnavigation.ArNavActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".fragment.NearestLocFragment"></activity>
+            android:screenOrientation="portrait"
+          />
     </application>
 
 </manifest>

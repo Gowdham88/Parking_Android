@@ -32,7 +32,7 @@ public class NotificationVideoFragment extends Fragment{
     VideoView videoView;
     private String urlStream;
     private android.support.v7.app.AlertDialog dialog;
-    private final int VIDEO_MAXIMUM_DURATION = 3000;
+    private final int VIDEO_MAXIMUM_DURATION = 40000;
 
 
     public static NotificationVideoFragment newInstance() {
@@ -63,11 +63,13 @@ public class NotificationVideoFragment extends Fragment{
 
         videoView.setMediaController(new MediaController(getActivity()));
         videoView.setVideoURI(Uri.parse("http://playertest.longtailvideo.com/adaptive/wowzaid3/playlist.m3u8"));
-        showProgressDialog();
+
+
+//        showProgressDialog();
         videoView.requestFocus();
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             public void onPrepared(MediaPlayer mp) {
-                hideProgressDialog();
+//                hideProgressDialog();
 //                mp.start();
 
                 new Handler().postDelayed(new Runnable(){
@@ -92,7 +94,7 @@ public class NotificationVideoFragment extends Fragment{
                 transaction.commit();
 
             }
-        }, 10000);
+        }, 40000);
 
 
 //

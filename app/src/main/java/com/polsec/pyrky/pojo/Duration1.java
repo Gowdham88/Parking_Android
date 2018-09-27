@@ -1,33 +1,54 @@
 package com.polsec.pyrky.pojo;
 
+/**
+ * Created by macbook on 27/07/16.
+ */
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by czsm4 on 24/09/18.
- */
 
-public class Distance {
+public class Duration1 {
+
     @SerializedName("text")
     @Expose
     private String text;
     @SerializedName("value")
     @Expose
-    private Integer value;
+    private int value;
 
+    /**
+     *
+     * @return
+     * The text
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     *
+     * @param text
+     * The text
+     */
     public void setText(String text) {
         this.text = text;
     }
 
-    public Integer getValue() {
+    /**
+     *
+     * @return
+     * The value
+     */
+    public int getValue() {
         return value;
     }
 
-    public void setValue(Integer value) {
+    /**
+     *
+     * @param value
+     * The value
+     */
+    public void setValue(int value) {
         this.value = value;
     }
 

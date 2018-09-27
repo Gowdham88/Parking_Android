@@ -554,9 +554,9 @@ public class BeyondarObjectMod implements Plugable<BeyondarObjectPlugin> {
 	}
 
 	/**
-	 * Get the Distance from the user in meters.
+	 * Get the Distance1 from the user in meters.
 	 *
-	 * @return Distance in meters.
+	 * @return Distance1 in meters.
 	 */
 	public double getDistanceFromUser() {
 		return mDistanceFromUser;
@@ -568,7 +568,7 @@ public class BeyondarObjectMod implements Plugable<BeyondarObjectPlugin> {
 	 * This method is used by the {@link ARRenderer} to set this value.
 	 *
 	 * @param distance
-	 *            Distance in meters.
+	 *            Distance1 in meters.
 	 */
 	public void setDistanceFromUser(double distance) {
 		mDistanceFromUser = distance;
