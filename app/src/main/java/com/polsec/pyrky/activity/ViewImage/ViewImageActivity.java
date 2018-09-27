@@ -519,7 +519,11 @@ public class ViewImageActivity extends AppCompatActivity {
         lp.gravity = Gravity.CENTER;
 //        lp.windowAnimations = R.style.DialogAnimation;
         alertDialog1.getWindow().setAttributes(lp);
-        alertDialog1.show();
+
+//        if(alertDialog1 != null && alertDialog1.isShowing()){
+            alertDialog1.show();
+//        }
+
     }
 
     private void protectCar(Boolean protectCar, Boolean bookingStatus, String documentiDs){

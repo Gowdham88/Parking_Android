@@ -146,6 +146,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
     protected ArSurfaceView createCameraView() {
         mCamera=getCameraInstance();
         param=mCamera.getParameters();
+        mCamera.setDisplayOrientation(90);
 
         if(param.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
             param.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
