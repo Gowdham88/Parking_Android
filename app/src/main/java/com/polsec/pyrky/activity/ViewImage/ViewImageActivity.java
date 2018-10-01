@@ -38,7 +38,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 
-import com.polsec.pyrky.activity.arnavigation.ArNavActivity;
+import com.polsec.pyrky.activity.ar.ArNavActivity;
 import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Users;

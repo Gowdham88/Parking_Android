@@ -38,6 +38,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
     private static final int CARCATEGORY = 0;
     private static final int SECURITY = 1;
     private static final int FILTER = 2;
+    private static final int[] IMAGES = new int[]{R.drawable.fivestar, R.drawable.fourstar, R.drawable.threestar, R.drawable.twostar, R.drawable.onestar};
 
 
 
@@ -270,10 +271,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                     @Override
                     public void onClick(View view) {
                         if (!checkBox5.isChecked()){
-                            Constants.SECURITY_RATINGS.add("1 star");
+                            Constants.SECURITY_RATINGS.add("1 stars");
                             checkBox5.setChecked(true);
                         }else {
-                            Constants.SECURITY_RATINGS.remove("1 star");
+                            Constants.SECURITY_RATINGS.remove("1 stars");
                             checkBox5.setChecked(false);
                         }
                     }
@@ -306,7 +307,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
 //                    @Override
 //                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
 //                        if (isChecked){
-//                            Constants.SECURITY_RATINGS.add("5 stars");
+//                            Constants.SECURITY_RATINGS.add("5 stars");\
 //                        }else {
 //                            Constants.SECURITY_RATINGS.remove("5 stars");
 //                        }

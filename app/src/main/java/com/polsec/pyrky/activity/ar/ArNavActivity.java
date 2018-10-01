@@ -1,19 +1,25 @@
-package com.polsec.pyrky.activity.arnavigation;
+package com.polsec.pyrky.activity.ar;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.hardware.Camera;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
+import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -24,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.beyondar.android.util.location.BeyondarLocationManager;
+
 import com.beyondar.android.world.GeoObject;
 import com.beyondar.android.world.World;
 import com.google.android.gms.common.ConnectionResult;
@@ -32,8 +39,14 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.ar.core.Anchor;
 import com.google.ar.core.ArCoreApk;
+import com.google.ar.core.Frame;
+import com.google.ar.core.HitResult;
+import com.google.ar.core.Plane;
+import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
+import com.google.ar.core.Trackable;
 import com.google.ar.core.exceptions.UnavailableApkTooOldException;
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
@@ -42,17 +55,20 @@ import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationExceptio
 import com.google.maps.android.PolyUtil;
 import com.google.maps.android.SphericalUtil;
 import com.polsec.pyrky.R;
-import com.polsec.pyrky.ar.ArFragmentSupport;
 import com.polsec.pyrky.helper.CameraPermissionHelper;
 import com.polsec.pyrky.network.RetrofitInterface;
 import com.polsec.pyrky.network.model.Step;
 import com.polsec.pyrky.pojo.Example;
 import com.polsec.pyrky.utils.LocationCalc;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-import butterknife.ButterKnife;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -61,10 +77,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ArScreenActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
+public class ArNavActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,LocationListener {
 
-
+    // Set to true ensures requestInstall() triggers installation if necessary.
     private boolean mUserRequestedInstall = true;
     Session mSession;
     Button mArButton;
@@ -87,18 +103,30 @@ public class ArScreenActivity extends FragmentActivity implements GoogleApiClien
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private ArFragmentSupport arFragmentSupport;
+    ArObject arobject;
+
+
+    Camera mCamera;
+    Method rotateMethod;
+
+    List<Example> mDistanceDataList = new ArrayList<Example>();
     private World world;
 
     private Intent intent;
 
+
+    float[] mRotatedProjectionMatrix;
+    GeoObject inter_polyGeoObj;
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ar_screen);
+        setContentView(R.layout.activity_ar_nav);
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         CloseBtn = findViewById(R.id.close_iconimg);
 //        mArButton = findViewById(R.id.btn_ar_enable);
-//        arFragmentSupport = (ArFragmentSupport) getSupportFragmentManager().findFragmentById(
-//                R.id.ar_cam_fragment);
+        arFragmentSupport = (ArFragmentSupport) getSupportFragmentManager().findFragmentById(
+                R.id.ar_cam_fragment);
 //        srcDestText = findViewById(R.id.ar_source_dest);
         dirDistance = findViewById(R.id.ar_dir_distance);
         dirTime = findViewById(R.id.ar_dir_time);
@@ -109,8 +137,189 @@ public class ArScreenActivity extends FragmentActivity implements GoogleApiClien
                 onBackPressed();
             }
         });
+
+        // Enable AR related functionality on ARCore supported devices only.
+//        maybeEnableArButton();
+
+        Set_googleApiClient(); //Sets the GoogleApiClient
+
+        //Configure_AR(); //Configure AR Environment
+
+//        Directions_call();
+
     }
-    private void Set_googleApiClient(){
+
+
+    void maybeEnableArButton() {
+        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
+        if (availability.isTransient()) {
+            // Re-query at 5Hz while compatibility is checked in the background.
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    maybeEnableArButton();
+                }
+            }, 200);
+        }
+        if (availability.isSupported()) {
+//            mArButton.setVisibility(View.INVISIBLE);
+//            mArButton.setEnabled(true);
+            // indicator on the button.
+        } else { // Unsupported or unknown.
+//            mArButton.setVisibility(View.INVISIBLE);
+//            mArButton.setEnabled(false);
+        }
+    }
+
+    @Override
+    public void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BeyondarLocationManager.disable();
+    }
+
+    /* @Override
+     protected void onResume() {
+         super.onResume();
+         BeyondarLocationManager.enable();
+     }*/
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        BeyondarLocationManager.enable();
+
+
+        // ARCore requires camera permission to operate.
+        if (!CameraPermissionHelper.hasCameraPermission(this)) {
+            CameraPermissionHelper.requestCameraPermission(this);
+            return;
+        }
+
+
+        // Make sure ARCore is installed and up to date.
+        try {
+            if (mSession == null) {
+                switch (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
+                    case INSTALLED:
+                        // Success, create the AR session.
+                        mSession = new Session(this);
+
+                        break;
+                    case INSTALL_REQUESTED:
+                        // Ensures next invocation of requestInstall() will either return
+                        // INSTALLED or throw an exception.
+                        mUserRequestedInstall = false;
+                        return;
+                }
+            }
+        } catch (UnavailableUserDeclinedInstallationException e) {
+            // Display an appropriate message to the user and return gracefully.
+            Toast.makeText(this, "TODO: handle exception " + e, Toast.LENGTH_LONG)
+                    .show();
+            return;
+        } catch (UnavailableArcoreNotInstalledException e) {
+            e.printStackTrace();
+        } catch (UnavailableDeviceNotCompatibleException e) {
+            e.printStackTrace();
+        } catch (UnavailableSdkTooOldException e) {
+            e.printStackTrace();
+        } catch (UnavailableApkTooOldException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] results) {
+        if (!CameraPermissionHelper.hasCameraPermission(this)) {
+            Toast.makeText(this, "Camera permission is needed to use this feature", Toast.LENGTH_LONG)
+                    .show();
+            if (!CameraPermissionHelper.shouldShowRequestPermissionRationale(this)) {
+                // Permission denied with checking "Do not ask again".
+                CameraPermissionHelper.launchPermissionSettings(this);
+            }
+            finish();
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+        } else {
+            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            String locationProvider = LocationManager.NETWORK_PROVIDER;
+
+            // mLastLocation = locationManager.getLastKnownLocation(locationProvider);
+
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+
+            if (mLastLocation != null) {
+                try {
+                    Get_intent(); //Fetch Intent Values
+                } catch (Exception e) {
+                    Log.d(TAG, "onCreate: Intent Error");
+                }
+            }
+        }
+
+        startLocationUpdates();
+    }
+
+    protected LocationRequest createLocationRequest() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(500);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return mLocationRequest;
+    }
+
+    protected void startLocationUpdates() {
+        try {
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, createLocationRequest(), this);
+
+        } catch (SecurityException e) {
+            Toast.makeText(this, "Location Permission not granted . Please Grant the permissions",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (world != null) {
+            world.setGeoPosition(location.getLatitude(), location.getLongitude());
+        }
+    }
+
+    private void Set_googleApiClient() {
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -126,6 +335,7 @@ public class ArScreenActivity extends FragmentActivity implements GoogleApiClien
         return wrappedDrawable;
     }
 
+
     private void Configure_AR(){
         List<List<LatLng>> polylineLatLng=new ArrayList<>();
 
@@ -133,17 +343,24 @@ public class ArScreenActivity extends FragmentActivity implements GoogleApiClien
 
         world.setGeoPosition(mLastLocation.getLatitude(),mLastLocation.getLongitude());
         Log.d(TAG, "Configure_AR: LOCATION"+mLastLocation.getLatitude()+" "+mLastLocation.getLongitude());
-        world.setDefaultImage(R.drawable.ar_sphere_default);
+//        world.setDefaultImage(R.drawable.ar_sphere_default);
 
-        arFragmentSupport = (ArFragmentSupport) getSupportFragmentManager().findFragmentById(
-                R.id.ar_cam_fragment);
+
+//        arFragmentSupport = (ArFragmentSupport) getSupportFragmentManager().findFragmentById(
+//                R.id.ar_cam_fragment);
 
         GeoObject signObjects[]=new GeoObject[steps.length];
 
         Log.d(TAG, "Configure_AR: STEP.LENGTH:"+steps.length);
         //TODO The given below is for rendering MAJOR STEPS LOCATIONS
         for(int i=0;i<steps.length;i++){
-            polylineLatLng.add(i, PolyUtil.decode(steps[i].getPolyline().getPoints()));
+            polylineLatLng.add(i,PolyUtil.decode(steps[i].getPolyline().getPoints()));
+
+//            arobject.setGeoPosition(mLastLocation.getLatitude(),mLastLocation.getLongitude(),mLastLocation.getAltitude());
+//
+//            Log.d(TAG, "Configure_ARlat",String.valueOf(mLastLocation.getLatitude()));
+//            arobject.setVisible(true);
+//            arobject.setImageResource(R.drawable.ar_sphere);
 
             String instructions=steps[i].getHtmlInstructions();
 
@@ -158,7 +375,7 @@ public class ArScreenActivity extends FragmentActivity implements GoogleApiClien
             if(i==steps.length-1){
                 GeoObject signObject = new GeoObject(10000+i);
                 signObject.setImageResource(R.drawable.stop);
-                LatLng latlng= SphericalUtil.computeOffset(
+                LatLng latlng=SphericalUtil.computeOffset(
                         new LatLng(steps[i].getEndLocation().getLat(),steps[i].getEndLocation().getLng()),
                         4f, SphericalUtil.computeHeading(
                                 new LatLng(steps[i].getStartLocation().getLat(),steps[i].getStartLocation().getLng()),
@@ -285,19 +502,22 @@ public class ArScreenActivity extends FragmentActivity implements GoogleApiClien
         arFragmentSupport.setWorld(world);
     }
 
-    private void Get_intent(){
-        if(getIntent()!=null) {
+    private void Get_intent() {
+        if (getIntent() != null) {
             intent = getIntent();
 
-            srcDestText.setText(intent.getStringExtra("SRC")+" -> "+intent.getStringExtra("DEST"));
-            srcLatLng=intent.getStringExtra("SRCLATLNG");
-            destLatLng=intent.getStringExtra("DESTLATLNG");
+//            srcDestText.setText(intent.getStringExtra("SRC")+" -> "+intent.getStringExtra("DEST"));
+            srcLatLng = intent.getStringExtra("SRCLATLNG");
+            destLatLng = intent.getStringExtra("DESTLATLNG");
+
+            Log.e("SRCLATLNG", srcLatLng);
+            Log.e("DESTLATLNG", destLatLng);
 
             Directions_call(); //HTTP Google Directions API Call
         }
     }
 
-    private void Directions_call(){
+    private void Directions_call() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
@@ -310,11 +530,12 @@ public class ArScreenActivity extends FragmentActivity implements GoogleApiClien
 
         RetrofitInterface apiService =
                 retrofit.create(RetrofitInterface.class);
+        Boolean sensor = true;
 
         final Call<Example> call = apiService.getDirections(srcLatLng, destLatLng,
                 getResources().getString(R.string.google_maps_key));
 
-        Log.d(TAG, "Directions_call: srclat lng:"+srcLatLng+"\n"+"destLatlng:"+destLatLng);
+        Log.d(TAG, "Directions_call: srclat lng:" + srcLatLng + "\n" + "destLatlng:" + destLatLng);
 
         call.enqueue(new Callback<Example>() {
             @Override
@@ -351,149 +572,6 @@ public class ArScreenActivity extends FragmentActivity implements GoogleApiClien
         });
     }
 
-    @Override
-    public void onStart() {
-        mGoogleApiClient.connect();
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        BeyondarLocationManager.disable();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        BeyondarLocationManager.enable();
 
 
-        // ARCore requires camera permission to operate.
-        if (!CameraPermissionHelper.hasCameraPermission(this)) {
-            CameraPermissionHelper.requestCameraPermission(this);
-            return;
-        }
-
-
-        // Make sure ARCore is installed and up to date.
-        try {
-            if (mSession == null) {
-                switch (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
-                    case INSTALLED:
-                        // Success, create the AR session.
-                        mSession = new Session(this);
-
-                        break;
-                    case INSTALL_REQUESTED:
-                        // Ensures next invocation of requestInstall() will either return
-                        // INSTALLED or throw an exception.
-                        mUserRequestedInstall = false;
-                        return;
-                }
-            }
-        } catch (UnavailableUserDeclinedInstallationException e) {
-            // Display an appropriate message to the user and return gracefully.
-            Toast.makeText(this, "TODO: handle exception " + e, Toast.LENGTH_LONG)
-                    .show();
-            return;
-        } catch (UnavailableArcoreNotInstalledException e) {
-            e.printStackTrace();
-        } catch (UnavailableDeviceNotCompatibleException e) {
-            e.printStackTrace();
-        } catch (UnavailableSdkTooOldException e) {
-            e.printStackTrace();
-        } catch (UnavailableApkTooOldException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] results) {
-        if (!CameraPermissionHelper.hasCameraPermission(this)) {
-            Toast.makeText(this, "Camera permission is needed to use this feature", Toast.LENGTH_LONG)
-                    .show();
-            if (!CameraPermissionHelper.shouldShowRequestPermissionRationale(this)) {
-                // Permission denied with checking "Do not ask again".
-                CameraPermissionHelper.launchPermissionSettings(this);
-            }
-            finish();
-        }
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-
-        }
-        else {
-            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            String locationProvider = LocationManager.NETWORK_PROVIDER;
-
-            // mLastLocation = locationManager.getLastKnownLocation(locationProvider);
-
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-
-            if (mLastLocation != null) {
-                try {
-                    Get_intent(); //Fetch Intent Values
-                }catch (Exception e){
-                    Log.d(TAG, "onCreate: Intent Error");
-                }
-            }
-        }
-
-        startLocationUpdates();
-    }
-
-    protected LocationRequest createLocationRequest() {
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(500);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        return mLocationRequest;
-    }
-
-    protected void startLocationUpdates() {
-        try {
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    mGoogleApiClient, createLocationRequest(), this);
-
-        }catch (SecurityException e){
-            Toast.makeText(this, "Location Permission not granted . Please Grant the permissions",
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        if(world!=null) {
-            world.setGeoPosition(location.getLatitude(), location.getLongitude());
-
-        }
-    }
 }

@@ -61,7 +61,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
-import com.polsec.pyrky.activity.arnavigation.ArNavActivity;
+import com.polsec.pyrky.activity.ar.ArNavActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
 import com.polsec.pyrky.adapter.Carouselfirebaseadapter;
 import com.polsec.pyrky.fragment.HomeFragment;
@@ -225,14 +225,14 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             }
         });
 
-        TrackGPS trackGps = new TrackGPS(context);
-
-        if (trackGps.canGetLocation()) {
-
-
-            Log.e("curLat", String.valueOf(curLat));
-            Log.e("curLong =", String.valueOf(curLong));
-        }
+//        TrackGPS trackGps = new TrackGPS(context);
+//
+//        if (trackGps.canGetLocation()) {
+//
+//
+//            Log.e("curLat", String.valueOf(curLat));
+//            Log.e("curLong =", String.valueOf(curLong));
+//        }
 
         String[] field = {"SecurityRating","parkingTypes","carCategory"};
         String[] value = {"5 stars","Paid street parking","Small"};
@@ -279,8 +279,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 Log.e("hplace", String.valueOf(PlaceName));
                 mNearestPlaceRecycler.setVisibility(View.VISIBLE);
 
+                getCurrentLocation(mLat,mLongi);
+
                 if (parkingTypes.size() < 1 && carCategory.size() < 1 && sRatings.size() < 1){
                     Query query = db.collection("camera");
+                    datalist.clear();
+                    mNearestDataList.clear();
                     loadCameraLocation(query);
                 }
                 else{
@@ -288,7 +292,8 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                     for (String key : field) {
 
                         for (String values : keyValue.get(key)) {
-
+                            datalist.clear();
+                            mNearestDataList.clear();
                             Query query = db.collection("camera").whereEqualTo(key, values);
                             loadCameraLocation(query);
 
@@ -342,7 +347,6 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
 
         }
-
 
 
 
@@ -414,12 +418,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                             mCameraLat.clear();
                             mLocationDistances.clear();
                             mCameraLong.clear();
-                            mLocationDistances.clear();
                             mAccurateDistancesString.clear();
                             mCameraImageUrl.clear();
                             mCameraLocName.clear();
                             mCameraId.clear();
                             rules.clear();
+
                             mNearestDataList.clear();
 
                             for (int i = 0; i < datalist.size(); i++) {
@@ -807,6 +811,8 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 showBottomSheet(m.getPosition().latitude,m.getPosition().longitude, yourplace, cameraid);
                 lat= String.valueOf(m.getPosition().latitude);
                 longi= String.valueOf(m.getPosition().longitude);
+
+
 
 //                SaveData(lat,longi,yourplace);
                 alertD.cancel();

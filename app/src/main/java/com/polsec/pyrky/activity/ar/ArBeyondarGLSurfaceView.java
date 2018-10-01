@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.polsec.pyrky.ar;
+package com.polsec.pyrky.activity.ar;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -350,7 +350,7 @@ public class ArBeyondarGLSurfaceView extends GLSurfaceView implements OnBeyondar
 	/**
 	 * Get the distance factor.
 	 *
-	 * @return Distance1 factor
+	 * @return Distance factor
 	 */
 	public float getDistanceFactor(){
 		return mRenderer.getDistanceFactor();

@@ -5,22 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activity.arnavigation.ArNavActivity">
+    tools:context=".activity.ar.ArNavActivity">
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/arcam_layout"
-    tools:context=".activity.arnavigation.ArNavActivity">
+    tools:context=".activity.ar.ArNavActivity">
 
     <fragment
         android:id="@+id/ar_cam_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.google.ar.sceneform.ux.ArFragment"
+        android:name="com.polsec.pyrky.activity.ar.ArFragmentSupport"
       >
-        <!--android:name="com.polsec.pyrky.ar.ArFragment"-->
+        <!--android:name="com.polsec.pyrky.ar.ArFragmentSupport"-->
 
     </fragment>
 

@@ -114,7 +114,7 @@
             android:name=".activity.ViewImage.ViewImageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.arnavigation.ArNavActivity"
+            android:name=".activity.ar.ArNavActivity"
             android:screenOrientation="portrait"
           />
     </application>

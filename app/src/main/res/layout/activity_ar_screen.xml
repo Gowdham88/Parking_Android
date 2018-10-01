@@ -5,7 +5,7 @@
     android:id="@+id/arcam_layout">
 
     <fragment
-        android:id="@+id/ar_cam_fragment"
+        android:id="@+id/ar_cam_fragment1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.polsec.pyrky.ar.ArfragmentSupport">

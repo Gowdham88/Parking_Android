@@ -1,4 +1,4 @@
-package com.polsec.pyrky.ar;
+package com.polsec.pyrky.activity.ar;
 
 import android.location.Location;
 
