@@ -1410,7 +1410,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                                             if (bookingRequest){
 
-                                                SaveData(latitude, latitude, yourPlace,cameraid);
+                                                SaveData(latitude, longitude, yourPlace,cameraid);
 //                                                bookAndNavigate(latitude,longitude,yourPlace,cameraid);
                                             }
 //                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
