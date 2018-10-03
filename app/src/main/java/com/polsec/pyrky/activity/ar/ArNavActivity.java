@@ -115,6 +115,7 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     private Intent intent;
 
 
+
     float[] mRotatedProjectionMatrix;
     GeoObject inter_polyGeoObj;
 
