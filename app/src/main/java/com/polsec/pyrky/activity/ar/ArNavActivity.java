@@ -1,4 +1,4 @@
-package com.polsec.pyrky.activity.arnavigation;
+package com.polsec.pyrky.activity.ar;
 
 import android.Manifest;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.hardware.Camera;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Build;
 import android.os.Handler;
@@ -51,21 +52,9 @@ import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
-import com.google.ar.sceneform.AnchorNode;
-import com.google.ar.sceneform.Node;
-import com.google.ar.sceneform.math.Quaternion;
-import com.google.ar.sceneform.math.Vector3;
-import com.google.ar.sceneform.rendering.Color;
-import com.google.ar.sceneform.rendering.MaterialFactory;
-import com.google.ar.sceneform.rendering.ModelRenderable;
-import com.google.ar.sceneform.rendering.Renderable;
-import com.google.ar.sceneform.rendering.ShapeFactory;
-import com.google.ar.sceneform.ux.ArFragment;
-import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.android.SphericalUtil;
 import com.polsec.pyrky.R;
-import com.polsec.pyrky.ar.ArFragmentSupport;
 import com.polsec.pyrky.helper.CameraPermissionHelper;
 import com.polsec.pyrky.network.RetrofitInterface;
 import com.polsec.pyrky.network.model.Step;
@@ -76,6 +65,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -111,7 +103,8 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private ArFragmentSupport arFragmentSupport;
-    ArFragment arFragment;
+    ArObject arobject;
+
 
     Camera mCamera;
     Method rotateMethod;
@@ -120,11 +113,8 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     private World world;
 
     private Intent intent;
-    Color color;
-    HitResult hitResult;
-    AnchorNode lastAnchorNode;
-    Location currentLoc;
-    Renderable arrowRenderable;
+
+
     float[] mRotatedProjectionMatrix;
     GeoObject inter_polyGeoObj;
 
@@ -135,7 +125,7 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         CloseBtn = findViewById(R.id.close_iconimg);
 //        mArButton = findViewById(R.id.btn_ar_enable);
-        arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(
+        arFragmentSupport = (ArFragmentSupport) getSupportFragmentManager().findFragmentById(
                 R.id.ar_cam_fragment);
 //        srcDestText = findViewById(R.id.ar_source_dest);
         dirDistance = findViewById(R.id.ar_dir_distance);
@@ -345,137 +335,86 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
         return wrappedDrawable;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void Configure_AR() {
-        List<List<LatLng>> polylineLatLng=new ArrayList<>();
 
+    private void Configure_AR(){
+        List<List<LatLng>> polylineLatLng=new ArrayList<>();
 
         world=new World(getApplicationContext());
 
-//        world.setGeoPosition(mLastLocation.getLatitude(),mLastLocation.getLongitude());
-//        Log.d(TAG, "Configure_AR: LOCATION"+mLastLocation.getLatitude()+" "+mLastLocation.getLongitude());
+        world.setGeoPosition(mLastLocation.getLatitude(),mLastLocation.getLongitude());
+        Log.d(TAG, "Configure_AR: LOCATION"+mLastLocation.getLatitude()+" "+mLastLocation.getLongitude());
+//        world.setDefaultImage(R.drawable.ar_sphere_default);
 
-        world = new World(getApplicationContext());
 
-        world.setGeoPosition(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getEndLocation().getLat(),
-                mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getEndLocation().getLng());
-        Log.d(TAG, "Configure_AR: LOCATION" + mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getEndLocation().getLat() + " "
-                + mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getEndLocation().getLng());
-        world.setDefaultImage(R.drawable.ar_sphere_default);
-//        polylineLatLng.add(mDistanceDataList);
-//
+//        arFragmentSupport = (ArFragmentSupport) getSupportFragmentManager().findFragmentById(
+//                R.id.ar_cam_fragment);
 
-        GeoObject signObjects[] = new GeoObject[mDistanceDataList.size()];
+        GeoObject signObjects[]=new GeoObject[steps.length];
 
-        Log.d(TAG, "Configure_AR: STEP.LENGTH:" + mDistanceDataList.size());
+        Log.d(TAG, "Configure_AR: STEP.LENGTH:"+steps.length);
         //TODO The given below is for rendering MAJOR STEPS LOCATIONS
         for(int i=0;i<steps.length;i++){
-            polylineLatLng.add(i, PolyUtil.decode(steps[i].getPolyline().getPoints()));
+            polylineLatLng.add(i,PolyUtil.decode(steps[i].getPolyline().getPoints()));
 
-            Log.d(TAG, "polylineLatLng:" + polylineLatLng);
-
-            String instructions = mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getManeuver();
-
-//                    steps[i].getHtmlInstructions();
-
+//            arobject.setGeoPosition(mLastLocation.getLatitude(),mLastLocation.getLongitude(),mLastLocation.getAltitude());
 //
+//            Log.d(TAG, "Configure_ARlat",String.valueOf(mLastLocation.getLatitude()));
+//            arobject.setVisible(true);
+//            arobject.setImageResource(R.drawable.ar_sphere);
 
-//            if(instructinstructionsions.equals("Turn")) {
-//                Log.d(TAG, "Configure_AR: " + instructions);
-//                GeoObject signObject = new GeoObject(10000+i);
-//                signObject.setImageResource(R.drawable.turn_right);
-//                signObject.setGeoPosition(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getStartLocation().getLat(),
-//                        mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getStartLocation().getLng());
-//                world.addBeyondarObject(signObject);
-//                Log.d(TAG, "Configure_AR: RIGHT SIGN:"+i);
-//            }else if(instructions.equals("Turn")){
-//                Log.d(TAG, "Configure_AR: " + instructions);
-//                GeoObject signObject = new GeoObject(10000+i);
-//                signObject.setImageResource(R.drawable.turn_left);
-//                signObject.setGeoPosition(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getStartLocation().getLat(),
-//                        mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getStartLocation().getLng());
-//                world.addBeyondarObject(signObject);
-//                Log.d(TAG, "Configure_AR: LEFT SIGN:"+i);
-//            }
+            String instructions=steps[i].getHtmlInstructions();
+
+            if(i==0){
+                GeoObject signObject = new GeoObject(10000+i);
+                signObject.setImageResource(R.drawable.start);
+                signObject.setGeoPosition(steps[i].getStartLocation().getLat(),steps[i].getStartLocation().getLng());
+                world.addBeyondarObject(signObject);
+                Log.d(TAG, "Configure_AR: START SIGN:"+i);
+            }
+
+            if(i==steps.length-1){
+                GeoObject signObject = new GeoObject(10000+i);
+                signObject.setImageResource(R.drawable.stop);
+                LatLng latlng=SphericalUtil.computeOffset(
+                        new LatLng(steps[i].getEndLocation().getLat(),steps[i].getEndLocation().getLng()),
+                        4f, SphericalUtil.computeHeading(
+                                new LatLng(steps[i].getStartLocation().getLat(),steps[i].getStartLocation().getLng()),
+                                new LatLng(steps[i].getEndLocation().getLat(),steps[i].getEndLocation().getLng())));
+                signObject.setGeoPosition(latlng.latitude,latlng.longitude);
+                world.addBeyondarObject(signObject);
+                Log.d(TAG, "Configure_AR: STOP SIGN:"+i);
+            }
+
+            if(instructions.contains("right")) {
+                Log.d(TAG, "Configure_AR: " + instructions);
+                GeoObject signObject = new GeoObject(10000+i);
+                signObject.setImageResource(R.drawable.turn_right);
+                signObject.setGeoPosition(steps[i].getStartLocation().getLat(),steps[i].getStartLocation().getLng());
+                world.addBeyondarObject(signObject);
+                Log.d(TAG, "Configure_AR: RIGHT SIGN:"+i);
+            }else if(instructions.contains("left")){
+                Log.d(TAG, "Configure_AR: " + instructions);
+                GeoObject signObject = new GeoObject(10000+i);
+                signObject.setImageResource(R.drawable.turn_left);
+                signObject.setGeoPosition(steps[i].getStartLocation().getLat(),steps[i].getStartLocation().getLng());
+                world.addBeyondarObject(signObject);
+                Log.d(TAG, "Configure_AR: LEFT SIGN:"+i);
+            }
         }
 
-        int temp_polycount = 0;
-        int temp_inter_polycount = 0;
+        int temp_polycount=0;
+        int temp_inter_polycount=0;
 
         //TODO The Given below is for rendering all the LatLng in THe polylines , which is more accurate
-        for (int j = 0; j < polylineLatLng.size(); j++) {
-            for (int k = 0; k < polylineLatLng.get(j).size(); k++) {
-//                GeoObject polyGeoObj = new GeoObject();
-
+        for(int j=0;j<polylineLatLng.size();j++){
+            for(int k=0;k<polylineLatLng.get(j).size();k++){
                 GeoObject polyGeoObj=new GeoObject(1000+temp_polycount++);
 
-//                polyGeoObj.setGeoPosition(polylineLatLng.get(j).get(k).get,
-//                        polylineLatLng.get(j).get(k).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getEndLocation().getLng());
-
-                                polyGeoObj.setGeoPosition(polylineLatLng.get(j).get(k).latitude,
-                polylineLatLng.get(j).get(k).longitude);
-
+                polyGeoObj.setGeoPosition(polylineLatLng.get(j).get(k).latitude,
+                        polylineLatLng.get(j).get(k).longitude);
                 polyGeoObj.setImageResource(R.drawable.ar_sphere_150x);
                 polyGeoObj.setName("arObj"+j+k);
 
-
-
-//                polyGeoObj.setGeoPosition(polylineLatLng.get(j).get(k).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getEndLocation().getLat(),
-//                        polylineLatLng.get(j).get(k).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getEndLocation().getLng());
-//                polyGeoObj.setImageResource(R.drawable.ar_sphere);
-//                polyGeoObj.setName("arObj" + j + k);
-
-                Log.d(TAG, "Configure_AR: polyLineLatLng ="+polylineLatLng.get(j).get(k).latitude
-                        +","+polylineLatLng.get(j).get(k).longitude);
-
-//                addObject(Uri.parse("Coffee Cup_Final.sfb"));
-//                addObject(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getPolyline().getPoints());
-
-//                Anchor anchor = ArNavActivity.this.hitResult.createAnchor();
-//                AnchorNode anchorNode = new AnchorNode();
-//
-//
-//
-//                if (lastAnchorNode != null) {
-////                    anchorNode.setParent(arFragment.getArSceneView().getScene());
-//                    Vector3 point1, point2;
-//                    point1 = lastAnchorNode.getWorldPosition();
-//                    point2 = anchorNode.getWorldPosition();
-//
-//
-//
-//
-//        /*
-//            First, find the vector extending between the two points and define a look rotation
-//            in terms of this Vector.
-//        */
-//                     Vector3 difference = Vector3.subtract(point1, point2);
-//                     Vector3 directionFromTopToBottom = difference.normalized();
-//                     Quaternion rotationFromAToB =
-//                            Quaternion.lookRotation(directionFromTopToBottom, Vector3.up());
-//                    MaterialFactory.makeOpaqueWithColor(getApplicationContext(), color)
-//                            .thenAccept(
-//                                    material -> {
-///* Then, create a rectangular prism, using ShapeFactory.makeCube() and use the difference vector
-//       to extend to the necessary length.  */
-//                                        ModelRenderable model = ShapeFactory.makeCube(
-//                                                new Vector3(.01f, .01f, difference.length()),
-//                                                Vector3.zero(), material);
-///* Last, set the world rotation of the node to the rotation calculated earlier and set the world position to
-//       the midpoint between the given points . */
-//
-//
-//
-////                                        Node node = new Node();
-////                                        node.setR
-////                                        node.setParent(anchorNode);
-////                                        node.setRenderable(model);
-////                                        node.setWorldPosition(Vector3.add(point1, point2).scaled(.5f));
-////                                        node.setWorldRotation(rotationFromAToB);
-//                                    }
-//                            );
-//                    lastAnchorNode = anchorNode;
-//                }
                 /*
                 To fill the gaps between the Poly objects as AR Objects in the AR View , add some more
                 AR Objects which are equally spaced and provide a continuous AR Object path along the route
@@ -483,22 +422,15 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
                 Haversine formula , Bearing Calculation and formula to find
                 Destination point given distance and bearing from start point is used .
                  */
-//
+
                 try {
 
+                    //Initialize distance of consecutive polyobjects
                     double dist = LocationCalc.haversine(polylineLatLng.get(j).get(k).latitude,
-                            polylineLatLng.get(j).get(k).longitude
-                            , polylineLatLng.get(j).get(k + 1).latitude,
+                            polylineLatLng.get(j).get(k).longitude, polylineLatLng.get(j).get(k + 1).latitude,
                             polylineLatLng.get(j).get(k + 1).longitude) * 1000;
 
-                    Log.d(TAG, "Configure_AR: polyLineLatLng("+j+","+k+")="+polylineLatLng.get(j).get(k).latitude+","+polylineLatLng.get(j).get(k).longitude);
-
-
-                    //Initialize distance of consecutive polyobjects
-
-//                    Toast.makeText(ArNavActivity.this, "arscreen", Toast.LENGTH_SHORT).show();
-
-
+                    //Log.d(TAG, "Configure_AR: polyLineLatLng("+j+","+k+")="+polylineLatLng.get(j).get(k).latitude+","+polylineLatLng.get(j).get(k).longitude);
                     //Log.d(TAG, "Configure_AR: polyLineLatLng("+j+","+(k+1)+")="+polylineLatLng.get(j).get(k+1).latitude+","+polylineLatLng.get(j).get(k+1).longitude);
 
                     //Check if distance between polyobjects is greater than twice the amount of space
@@ -507,7 +439,6 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
 
                         //Initialize count of ar objects to be added
                         int arObj_count = ((int) dist / 3) - 1;
-
 
                         //Log.d(TAG, "Configure_AR: Dist:" + dist + " # No of Objects: " + arObj_count + "\n --------");
 
@@ -518,25 +449,22 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
 
                         double heading = SphericalUtil.computeHeading(new LatLng(polylineLatLng.get(j).get(k).latitude,
                                         polylineLatLng.get(j).get(k).longitude),
-                                new LatLng(polylineLatLng.get(j).get(k).latitude,
-                                        polylineLatLng.get(j).get(k).longitude));
+                                new LatLng(polylineLatLng.get(j).get(k + 1).latitude,
+                                        polylineLatLng.get(j).get(k + 1).longitude));
 
                         LatLng tempLatLng = SphericalUtil.computeOffset(new LatLng(polylineLatLng.get(j).get(k).latitude,
                                         polylineLatLng.get(j).get(k).longitude)
-                                , 3f
-                                , heading);
-                    GeoObject inter_polyGeoObj = new GeoObject(5000 + temp_inter_polycount++);
+                                ,3f
+                                ,heading);
 
-                    double increment_dist = 3f;
-                    Log.d(TAG, "Configure_AR: polyLineLatLngtemp("+j+","+k+")="+tempLatLng.latitude+","+tempLatLng.longitude);
-//
-//                        //The distance to be incremented
-//
-//
+                        //The distance to be incremented
+                        double increment_dist = 3f;
+
                         for (int i = 0; i < arObj_count; i++) {
+                            GeoObject inter_polyGeoObj = new GeoObject(5000 + temp_inter_polycount++);
 
-//                            //Store the Lat,Lng details into new LatLng Objects using the functions
-//                            //in LocationCalc class.
+                            //Store the Lat,Lng details into new LatLng Objects using the functions
+                            //in LocationCalc class.
                             if (i > 0 && k < polylineLatLng.get(j).size()) {
                                 increment_dist += 3f;
 
@@ -549,9 +477,12 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
                                                 , polylineLatLng.get(j).get(k + 1).longitude)));
                             }
 
-//
-//
-                            Log.d(TAG, "Configure_AR: LOC: k="+k+" "+ inter_polyGeoObj.getLatitude() + "," + inter_polyGeoObj.getLongitude());
+                            //Set the Geoposition along with image and name
+                            inter_polyGeoObj.setGeoPosition(tempLatLng.latitude, tempLatLng.longitude);
+                            inter_polyGeoObj.setImageResource(R.drawable.ar_sphere_default_125x);
+                            inter_polyGeoObj.setName("inter_arObj" + j + k + i);
+
+                            //Log.d(TAG, "Configure_AR: LOC: k="+k+" "+ inter_polyGeoObj.getLatitude() + "," + inter_polyGeoObj.getLongitude());
 
                             //Add Intermediate ArObjects to Augmented Reality World
                             world.addBeyondarObject(inter_polyGeoObj);
@@ -568,54 +499,9 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
         }
 
         // Send to the fragment
-//        arFragmentSupport.setWorld(world);
+        arFragmentSupport.setWorld(world);
     }
-//
-//
-//    @RequiresApi(api = Build.VERSION_CODES.N)
-//    private void addObject(Uri parse) {
-//        Frame frame = arFragment.getArSceneView().getArFrame();
-////        Point point = getScreenCenter();
-//        if (frame != null) {
-//            List<HitResult> hits = frame.hitTest((float) 1, (float) 1);
-//
-//            for (int i = 0; i < hits.size(); i++) {
-//                Trackable trackable = hits.get(i).getTrackable();
-//                if (trackable instanceof Plane && ((Plane) trackable).isPoseInPolygon(hits.get(i).getHitPose())) {
-//                    placeObject(arFragment, hits.get(i).createAnchor(), parse);
-//                }
-//            }
-//        }
-//    }
-//
-//
-//    @RequiresApi(api = Build.VERSION_CODES.N)
-//    private final void placeObject(final ArFragment fragment, final Anchor createAnchor, Uri model) {
-//        ModelRenderable.builder().setSource(fragment.getContext(), model).build().thenAccept((new Consumer() {
-//            public void accept(Object var1) {
-//                this.accept((ModelRenderable) var1);
-//
-//                ArNavActivity.this.addNode(arFragment, createAnchor);
-//            }
-//
-//
-//        }));
-//    }
-//
-//    private void addNode(ArFragment fragment, Anchor createAnchor) {
-//
-//        AnchorNode anchorNode = new AnchorNode(createAnchor);
-//        TransformableNode transformableNode = new TransformableNode(fragment.getTransformationSystem());
-////        transformableNode.setRenderable(renderable);
-//        transformableNode.setParent(anchorNode);
-//        fragment.getArSceneView().getScene().addChild(anchorNode);
-//        transformableNode.select();
-//    }
 
-//    private Point getScreenCenter() {
-//        View vw = findViewById(android.R.id.content);
-//        return new Point(vw.getWidth() / 2, vw.getHeight() / 2);
-//    }
     private void Get_intent() {
         if (getIntent() != null) {
             intent = getIntent();
@@ -652,28 +538,28 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
         Log.d(TAG, "Directions_call: srclat lng:" + srcLatLng + "\n" + "destLatlng:" + destLatLng);
 
         call.enqueue(new Callback<Example>() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
 
                 Example directionsResponse = response.body();
+                int step_array_size=directionsResponse.getRoutes().get(0).getLegs().get(0).getSteps().size();
 
-                mDistanceDataList.add(directionsResponse);
-//           Northeast responsvale=  response.body().getRoutes().get(0).getBounds().getNortheast();
-                Log.e("response", String.valueOf(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getPolyline().getPoints()));
-                int step_array_size = mDistanceDataList.size();
+                dirDistance.setVisibility(View.VISIBLE);
+                dirDistance.setText(directionsResponse.getRoutes().get(0).getLegs().get(0)
+                        .getDistance().getText());
 
+                dirTime.setVisibility(View.VISIBLE);
+                dirTime.setText(directionsResponse.getRoutes().get(0).getLegs().get(0)
+                        .getDuration().getText());
 
-                steps = new Step[step_array_size];
+                steps=new Step[step_array_size];
 
-                for (int i = 0; i < mDistanceDataList.size(); i++) {
-                    steps[i] = mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(i);
-                    Log.d(TAG, "onResponse: STEP " + i + ": " + steps[i].getEndLocation().getLat()
-                            + " " + steps[i].getEndLocation().getLng());
+                for(int i=0;i<step_array_size;i++) {
+                    steps[i] = directionsResponse.getRoutes().get(0).getLegs().get(0).getSteps().get(i);
+                    Log.d(TAG, "onResponse: STEP "+i+": "+steps[i].getEndLocation().getLat()
+                            +" "+steps[i].getEndLocation().getLng());
                 }
-//                Configure_AR();
-
-                createNavigationPath(mDistanceDataList);
+                Configure_AR();
 
             }
 
@@ -681,98 +567,11 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
             public void onFailure(Call<Example> call, Throwable t) {
 
                 Log.d(TAG, "onFailure: FAIL" + t.getMessage());
-//                new AlertDialog.Builder(getApplicationContext()).setMessage("Fetch Failed").show();
+                new AlertDialog.Builder(getApplicationContext()).setMessage("Fetch Failed").show();
             }
         });
     }
 
-    public void createNavigationPath(List<Example> mDistanceDataList) {
-        // loop through the wayfinding route
-
-        for(int i=0;i<mDistanceDataList.size();i++)
-
-
-
-            dirDistance.setVisibility(View.VISIBLE);
-        dirDistance.setText(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0)
-                .getDistance().getText());
-
-        dirTime.setVisibility(View.VISIBLE);
-        dirTime.setText(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0)
-                .getDuration().getText());
-
-            // current loc
-            currentLoc = new Location("Current Location");
-            currentLoc.setLatitude(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getStartLocation().getLat());
-        currentLoc.setLongitude(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getStartLocation().getLat());
-
-            // end of wayfinding route segment
-            Location legEnd = new Location("Leg End");
-            legEnd.setLatitude(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getEndLocation().getLat());
-            legEnd.setLongitude(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getEndLocation().getLat());
-        Log.d("currentLoc:", String.valueOf(currentLoc));
-        Log.d("legEnd:", String.valueOf(legEnd));
-            // conversion from (lat,long) to camera space
-            // conversion implementation credit:
-////            // https://github.com/dat-ng/ar-location-based-android
-//            float[] currentLocationInECEF = WSG84toECEF(currentLoc);
-//            float[] pointInECEF = WSG84toECEF(legEnd);
-//        float[] pointInENU = ECEFtoENU(currentLoc, currentLocationInECEF, pointInECEF);
-
-            float[] cameraCoordinateVector = new float[4];
-        inter_polyGeoObj = new GeoObject();
-
-
-        //Set the Geoposition along with image and name
-        inter_polyGeoObj.setGeoPosition(mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getEndLocation().getLat()
-                , mDistanceDataList.get(0).getRoutes().get(0).getLegs().get(0).getSteps().get(0).getStartLocation().getLat());
-        inter_polyGeoObj.setImageResource(R.drawable.ar_sphere_150x);
-//        inter_polyGeoObj.setName("inter_arObj" + j + k + i);
-
-
-        Log.d(TAG, "Render Completed");
-//        Matrix.multiplyMV(cameraCoordinateVector, 0, mRotatedProjectionMatrix, 0, pointInENU, 0);
-
-            Frame frame = arFragment.getArSceneView().getArFrame();
-
-            // cameraCoordinateVector[2] is z, that always less than 0 to display on right position
-            // if z > 0, the point will display on the opposite
-//            if (cameraCoordinateVector[2] < 0) {
-//                float x = (0.1f - cameraCoordinateVector[0] / cameraCoordinateVector[1]) * arFragment.getArSceneView().getWidth();
-//                float y = (0.1f -  cameraCoordinateVector[1] / cameraCoordinateVector[1]) * arFragment.getArSceneView().getHeight();
-//
-//
-//
-//                // Pose pose = new Pose(new float[]{x,y,cameraCoordinateVector[2]}, new float[]{0,0,0});
-//
-////                Anchor anchor = arFragment.getArSceneView().getSession().createAnchor(frame.getCamera().getPose().compose(Pose.makeTranslation(x,y,cameraCoordinateVector[2])).extractTranslation());
-////                AnchorNode anchorNode = new AnchorNode(anchor);
-////
-////                Node tempNode = new Node();
-//////                                tempNode.setParent(inter_polyGeoObj);
-////                tempNode.setRenderable(arrowRenderable);
-//
-////                frame.getUpdatedAnchors();
-//
-//            }
-
-        arFragment.setReenterTransition(inter_polyGeoObj);
-        }
-
-//    private float[] WSG84toECEF(Location currentLoc) {
-//
-//        Log.d("lat:", String.valueOf(currentLoc));
-//
-//
-//        return new float[0];
-//    }
-//
-//    private float[] ECEFtoENU(Location currentLoc, float[] currentLocationInECEF, float[] pointInECEF) {
-//
-//
-//        Log.d("currentLocationInECEF:", String.valueOf(currentLocationInECEF));
-//        return currentLocationInECEF;
-//    }
 
 
 }

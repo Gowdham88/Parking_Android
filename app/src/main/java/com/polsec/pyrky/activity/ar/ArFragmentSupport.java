@@ -1,4 +1,4 @@
-package com.polsec.pyrky.ar;
+package com.polsec.pyrky.activity.ar;
 
 
 import android.app.Activity;
@@ -109,14 +109,16 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
         PackageManager pm = getActivity().getPackageManager();
         boolean compass = pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
         boolean accelerometer = pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER);
-        if (!accelerometer) {
+        if (!compass && !accelerometer) {
             throw new IllegalStateException(getClass().getName()
                     + " can not run without the compass and the acelerometer sensors.");
         }
 
+//
 //        else if (!compass) {
 //            throw new IllegalStateException(getClass().getName() + " can not run without the compass sensor.");
 //        }
+//
 //
         else if (!accelerometer) {
             throw new IllegalStateException(getClass().getName()
@@ -186,6 +188,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
     public ArBeyondarGLSurfaceView getGLSurfaceView() {
         return mBeyondarGLSurface;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -520,7 +523,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
     /**
      * Get the distance factor.
      *
-     * @return Distance1 factor
+     * @return Distance factor
      */
     public float getDistanceFactor(){
         return mBeyondarGLSurface.getDistanceFactor();

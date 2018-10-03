@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.polsec.pyrky.ar;
+package com.polsec.pyrky.activity.ar;
 
 import com.beyondar.android.opengl.colision.MeshCollider;
 import com.beyondar.android.opengl.colision.SquareMeshCollider;
@@ -554,9 +554,9 @@ public class BeyondarObjectMod implements Plugable<BeyondarObjectPlugin> {
 	}
 
 	/**
-	 * Get the Distance1 from the user in meters.
+	 * Get the Distance from the user in meters.
 	 *
-	 * @return Distance1 in meters.
+	 * @return Distance in meters.
 	 */
 	public double getDistanceFromUser() {
 		return mDistanceFromUser;
@@ -568,7 +568,7 @@ public class BeyondarObjectMod implements Plugable<BeyondarObjectPlugin> {
 	 * This method is used by the {@link ARRenderer} to set this value.
 	 *
 	 * @param distance
-	 *            Distance1 in meters.
+	 *            Distance in meters.
 	 */
 	public void setDistanceFromUser(double distance) {
 		mDistanceFromUser = distance;
