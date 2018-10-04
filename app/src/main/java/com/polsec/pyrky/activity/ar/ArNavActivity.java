@@ -113,6 +113,13 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     private World world;
 
     private Intent intent;
+    private static final int REQUEST_CONTACT_PERMISSIONS = 101;
+    private static final int REQUEST_CAMERA_PERMISSIONS = 102;
+    private static final int REQUEST_EXTERNAL_PERMISSIONS = 103;
+    // ===============
+
+    // Group permission request code
+    private static final int REQUEST_GROUP_PERMISSIONS = 104;
 
 
 
@@ -138,6 +145,15 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
                 onBackPressed();
             }
         });
+
+//        if ((ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED)
+//                || (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+//                || (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+//            askRequestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                    R.string.enable_permission, REQUEST_GROUP_PERMISSIONS);
+//        } else {
+//            groupPermissionEnable();
+//        }
 
         // Enable AR related functionality on ARCore supported devices only.
 //        maybeEnableArButton();
@@ -254,6 +270,21 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
             }
             finish();
         }
+    }
+
+    /**
+     * Callback when requested permission is granted. By overriding this method user can process further on permission granted.
+     *
+//     * @param requestCode The request code passed in {@link #onRequestPermissionsResult(int, String[], int[])}
+     */
+//    @Override
+//    public void onRequestPermissionsGranted(int requestCode) {
+//        groupPermissionEnable();
+//    }
+
+    private void groupPermissionEnable() {
+
+        Toast.makeText(this, "Group runtime permission enable successfully...", Toast.LENGTH_SHORT).show();
     }
 
     @Override

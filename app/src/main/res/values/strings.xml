@@ -41,6 +41,9 @@
     <string name="usernameerror_txt">Username should not be empty</string>
     <string name="emailerror_txt">Enter valid Email</string>
     <string name="imageerror_txt">Profile should not be empty</string>
+    <string name="enable_permission">Please Grant Permissions</string>
+    <string name="ok">OK</string>
+
 
     <string-array name="navigation_drawer_items_array">
         <item>Home</item>

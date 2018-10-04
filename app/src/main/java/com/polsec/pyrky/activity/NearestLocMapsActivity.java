@@ -1,5 +1,6 @@
 package com.polsec.pyrky.activity;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,15 +17,20 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +68,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.activity.ar.ArNavActivity;
+import com.polsec.pyrky.activity.ar.RuntimePermissionActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
 import com.polsec.pyrky.adapter.Carouselfirebaseadapter;
 import com.polsec.pyrky.fragment.HomeFragment;
@@ -161,6 +168,14 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     List<NearestDestnetionData> mNearestDataList = new ArrayList<NearestDestnetionData>();
 
     List<Address> mCurLocAddress = null;
+    private SparseIntArray mDeniedKeys;
+    private static final int REQUEST_CONTACT_PERMISSIONS = 101;
+    private static final int REQUEST_CAMERA_PERMISSIONS = 102;
+    private static final int REQUEST_EXTERNAL_PERMISSIONS = 103;
+    // ===============
+
+    // Group permission request code
+    private static final int REQUEST_GROUP_PERMISSIONS = 104;
 
 
     public static NearestLocMapsActivity newInstance(String latt, String longitude, String carousel, int adapterPosition, String Placename, int distanceval, String img, String mCameraID, Map<String, Object> parkingRules, String parkingTypes) {
@@ -204,6 +219,8 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mapFragment.getMapAsync(NearestLocMapsActivity.this);
+
+        mDeniedKeys = new SparseIntArray();
 
         ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.GONE);
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
@@ -1057,8 +1074,20 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
 
-                String value="pyrky";
-                makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
+                if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED)
+                        || (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                        || (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+                    askRequestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            R.string.enable_permission, REQUEST_GROUP_PERMISSIONS);
+
+
+                    String value="pyrky";
+                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
+
+                } else {
+                    groupPermissionEnable();
+                }
+
 
 
 //                SaveData(latitude,longitude, yourPlace,cameraid);
@@ -1075,6 +1104,15 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             }
         });
     }
+
+    private void groupPermissionEnable() {
+        //TODO Add your code
+        Toast.makeText(getActivity(), "Group runtime permission enable successfully...", Toast.LENGTH_SHORT).show();
+
+
+
+    }
+
 
     private void popup(String valuedoc, String key, Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace, String value) {
         LayoutInflater factory = LayoutInflater.from(getActivity());
@@ -1548,6 +1586,66 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             dialog.dismiss();
     }
 
+    public void askRequestPermissions(final String[] requestedPermissions,
+                                      final int stringId, final int requestCode) {
+        mDeniedKeys.put(requestCode, stringId);
+        int permissionCheck = PackageManager.PERMISSION_GRANTED;
+        boolean shouldShowRequestPermissionRationale = false;
+        for (String permission : requestedPermissions) {
+            permissionCheck = permissionCheck + ContextCompat.checkSelfPermission(getActivity(), permission);
+            shouldShowRequestPermissionRationale = shouldShowRequestPermissionRationale || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission);
+        }
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            if (shouldShowRequestPermissionRationale) {
+                // You can either show Snackbar or AlertDialog based on your requirement
+//                Snackbar.make(findViewById(android.R.id.content), stringId,
+//                        Snackbar.LENGTH_LONG).setActionTextColor(Color.WHITE).setAction("GRANT",
+//                        new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//
+//                            }
+//                        }).show();
 
+                ActivityCompat.requestPermissions(getActivity(), requestedPermissions, requestCode);
+            } else {
+                ActivityCompat.requestPermissions(getActivity(), requestedPermissions, requestCode);
+            }
+        } else {
+            onRequestPermissionsGranted(requestCode);
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        int permissionCheck = PackageManager.PERMISSION_GRANTED;
+        for (int permission : grantResults) {
+            permissionCheck = permissionCheck + permission;
+        }
+        if ((grantResults.length > 0) && permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            onRequestPermissionsGranted(requestCode);
+        } else {
+            openAppSetting(requestCode);
+        }
+    }
+    private void openAppSetting(int requestCode) {
+        Snackbar.make(getView().findViewById(android.R.id.content), mDeniedKeys.get(requestCode), Snackbar.LENGTH_LONG).setActionTextColor(Color.WHITE).setAction("ENABLE", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
+            }
+        }).show();
+    }
+
+    public void onRequestPermissionsGranted(int requestCode) {
+
+    }
 
 }
