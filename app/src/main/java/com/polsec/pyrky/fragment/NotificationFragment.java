@@ -45,6 +45,9 @@ public class NotificationFragment extends Fragment implements RecyclerItemTouchH
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_notification, null);
 
+        items.clear();
+        items1.clear();
+
         items.add("Hey buddy, something happened to your car");
         items.add("Hey buddy, something happened to your car");
         items.add("something happened to your car");

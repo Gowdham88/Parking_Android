@@ -238,6 +238,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
                         HistoryRecyclerAdapter historyRecyclerAdapter = new HistoryRecyclerAdapter(context,bookingList,mRecyclerView);
                         mRecyclerView.setAdapter(historyRecyclerAdapter);
+                        historyRecyclerAdapter.notifyDataSetChanged();
 
 
 

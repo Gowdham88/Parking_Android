@@ -182,6 +182,8 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         SignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 Utils.hideKeyboard(SignupScreenActivity.this);
                 createAccount(mEtEmail.getText().toString().trim(), mEtPassword.getText().toString().trim(), mEtUsername.getText().toString(),view);
                 PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_LOGGED_INPASS, mEtPassword.getText().toString().trim());
