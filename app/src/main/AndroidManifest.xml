@@ -23,6 +23,13 @@
 
     <uses-feature android:name="android.hardware.camera2" android:required="true"/>
 
+    <supports-screens android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:xlargeScreens="true"
+        android:anyDensity="true" />
+
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -122,6 +129,9 @@
             android:name=".activity.ar.ArNavActivity"
             android:screenOrientation="portrait"
           />
+
+
     </application>
+
 
 </manifest>

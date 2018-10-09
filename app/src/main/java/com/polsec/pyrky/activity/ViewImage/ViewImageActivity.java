@@ -61,7 +61,7 @@ public class ViewImageActivity extends AppCompatActivity {
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
-    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,docid,documentiDs;
+    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,docid,documentiDs,DocId;
     Boolean isBookedAny = false;
     List<Users> bookinglist = new ArrayList<Users>();
      FirebaseFirestore db;
@@ -85,7 +85,7 @@ public class ViewImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image);
         mAuth = FirebaseAuth.getInstance();
         mUid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-        docid=PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_DOCUMENTID);
+        DocId=PreferencesHelper.getPreference(ViewImageActivity.this,PreferencesHelper.PREFERENCE_DOCMENTID);
         ImageView cameraImage = findViewById(R.id.camera_image);
         relay=findViewById(R.id.rel_parent);
         Close_Img=findViewById(R.id.close_iconimg);
@@ -196,6 +196,70 @@ public class ViewImageActivity extends AppCompatActivity {
         });
     }
 
+    private void showBottomSheet(double latitude, double longitude) {
+        View bottomSheetView;
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ViewImageActivity.this);
+        LayoutInflater factory = LayoutInflater.from(ViewImageActivity.this);
+        bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
+        TextView map = bottomSheetView.findViewById(R.id.maps_title);
+        TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
+        if (Constants.IS_AR_ENABLED){
+
+        }else {
+            pyrky.setVisibility(View.GONE);
+        }
+
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent())
+                .getLayoutParams();
+        CoordinatorLayout.Behavior behavior = params.getBehavior();
+        ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
+
+//        GalleryIcon = (ImageView) bottomSheetView.findViewById(R.id.gallery_icon);
+//        CameraIcon = (ImageView) bottomSheetView.findViewById(R.id.camera_image);
+        TextView cancel = bottomSheetView.findViewById(R.id.cancel_txt);
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String value="map";
+                makeAlreadyBookedAlert(true,value);
+
+
+                bottomSheetDialog.dismiss();
+
+            }
+        });
+
+        pyrky.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String value="pyrky";
+
+//                    makeAlreadyBookedAlert(true,value);
+                Boolean bookingRequest=true;
+
+                if (bookingRequest){
+                    makeAlreadyBookedAlert(true, value);
+                }else{
+                    SaveData(lat, longi, DestName);
+                }
+//
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+
+    }
 
 
     private void bookAndNavigate(String latitude, String longitude){
@@ -243,7 +307,9 @@ public class ViewImageActivity extends AppCompatActivity {
 
                 documentID = documentReference.getId();
                 PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCUMENTIDNEW,documentID);
-//                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
+                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
+
+
 
                 Booking bookingdata = new Booking(uid,latitude,longitude,destName,getPostTime(),bookingStatus,cameraid,documentID,Double.parseDouble(parkingSpaceRating),protectCar);
                 Map<String, Object> docID = new HashMap<>();
@@ -365,14 +431,37 @@ public class ViewImageActivity extends AppCompatActivity {
                                 Log.w(TAG, "Error writing document", e);
                             }
                         });
-
-
-
-//                Map<String, Object> likeupdate = new HashMap<>();
-//                likeupdate.put( "bookingStatus", false);
+//                DocId=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCMENTID);
 //
-//                db.collection("Bookings").document(mUid)
-//                        .update(likeupdate)
+//                Log.e("docprevious",DocId);
+////                if(!DocId.equals(null)|| !DocId.isEmpty()){
+//                    final Map<String, Object> bookingstatusdata = new HashMap<>();
+//                    bookingstatusdata.put("bookingStatus", false);
+//
+//                    db.collection("Bookings").document(valuedoc)
+//                            .update(bookingstatusdata)
+//                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                @Override
+//                                public void onSuccess(Void aVoid) {
+//                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+//
+//
+//                                }
+//                            })
+//                            .addOnFailureListener(new OnFailureListener() {
+//                                @Override
+//                                public void onFailure(@NonNull Exception e) {
+//                                    Log.w(TAG, "Error writing document", e);
+//                                }
+//                            });
+////                }
+
+
+//                final Map<String, Object> bookingstatusdata = new HashMap<>();
+//                bookingstatusdata.put("bookingStatus", false);
+//
+//                db.collection("Bookings").document(DocId)
+//                        .update(bookingstatusdata)
 //                        .addOnSuccessListener(new OnSuccessListener<Void>() {
 //                            @Override
 //                            public void onSuccess(Void aVoid) {
@@ -387,13 +476,7 @@ public class ViewImageActivity extends AppCompatActivity {
 //                                Log.w(TAG, "Error writing document", e);
 //                            }
 //                        });
-//        if(!documentID.equals(null) || !documentID.isEmpty()){
-//            PopUpprotectcar(documentID);
-//            Log.e("documentID",documentID);
-
-//        }
-
-
+////
                 alertDialog1.dismiss();
             }
         });
@@ -479,7 +562,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
                 documentiDs =PreferencesHelper.getPreference(ViewImageActivity.this,PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
                 Log.e("doc",documentiDs);
-                protectCar(true,false,documentiDs);
+                protectCar(true,true,documentiDs);
                 alertDialog1.dismiss();
             }
         });
@@ -565,62 +648,6 @@ public class ViewImageActivity extends AppCompatActivity {
         }
     }
 
-    private void showBottomSheet(double latitude, double longitude) {
-        View bottomSheetView;
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ViewImageActivity.this);
-        LayoutInflater factory = LayoutInflater.from(ViewImageActivity.this);
-        bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
-        TextView map = bottomSheetView.findViewById(R.id.maps_title);
-        TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
-        if (Constants.IS_AR_ENABLED){
-
-        }else {
-            pyrky.setVisibility(View.GONE);
-        }
-
-        bottomSheetDialog.setContentView(bottomSheetView);
-        bottomSheetDialog.show();
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent())
-                .getLayoutParams();
-        CoordinatorLayout.Behavior behavior = params.getBehavior();
-        ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
-
-//        GalleryIcon = (ImageView) bottomSheetView.findViewById(R.id.gallery_icon);
-//        CameraIcon = (ImageView) bottomSheetView.findViewById(R.id.camera_image);
-        TextView cancel = bottomSheetView.findViewById(R.id.cancel_txt);
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String value="map";
-                makeAlreadyBookedAlert(true,value);
-
-
-                bottomSheetDialog.dismiss();
-
-            }
-        });
-
-            pyrky.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    String value="pyrky";
-                    makeAlreadyBookedAlert(true,value);
-//
-                    bottomSheetDialog.dismiss();
-                }
-            });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-
-
-    }
 
     private void makeAlreadyBookedAlert(Boolean bookingRequest, String value){
         final FirebaseUser user = mAuth.getCurrentUser();
@@ -665,7 +692,29 @@ public class ViewImageActivity extends AppCompatActivity {
                                                 if (val) {
 
 //                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
-                                                    String valuedoc=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+                                                    String valuedoc=entry.getKey();
+//                                                    Toast.makeText(getActivity(), valuedoc, Toast.LENGTH_SHORT).show();
+
+                                                    final Map<String, Object> bookingstatusdata = new HashMap<>();
+                                                    bookingstatusdata.put("bookingStatus", false);
+
+                                                    db.collection("Bookings").document(valuedoc)
+                                                            .update(bookingstatusdata)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.w(TAG, "Error writing document", e);
+                                                                }
+                                                            });
+
 
                                                     popup(valuedoc,entry.getKey(),bookingRequest,value);
                                                     break;
@@ -709,6 +758,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
                 } else {
+
 
 
 

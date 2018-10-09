@@ -77,6 +77,7 @@ import com.polsec.pyrky.adapter.CarouselNearestAdapter;
 import com.polsec.pyrky.adapter.PlaceArrayAdapter;
 import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.pojo.NearestData;
+import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.Utils;
 
 import java.io.IOException;
@@ -162,7 +163,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
             new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
     double Latitude, Longitude;
-    String StrLatitude, StrLongitude;
+    String StrLatitude, StrLongitude,stringcartypeval;
+        int    cartype;
     ArrayList<Double> distances = new ArrayList<>();
     ArrayList<Double> distancesmtrs = new ArrayList<>();
     ArrayList<String> caldis = new ArrayList<>();
@@ -234,8 +236,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //
 //            }
 //        }
-
-
+        mNearestLocationList.clear();
+        mNearestDataList.clear();
         if (!checkPermission()) {
 
             requestPermission();
@@ -247,11 +249,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
             getCurrentLocation();
             loadCameraLocations();
+
 //            mNearestLocationList.clear();
 //            mNearestDataList.clear();
 //            Snackbar.make(view, "Permission already granted.", Snackbar.LENGTH_LONG).show();
 
         }
+
 
 //
 //        if (sentToSettings) {
@@ -280,6 +284,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         NearLinLay = (LinearLayout) view.findViewById(R.id.nearest_locations_layout);
         HomeFragrellay = (RelativeLayout) view.findViewById(R.id.parfrag_lay);
         autoCompView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
+        cartype = Integer.parseInt(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_CAR));
+        if(cartype==0){
+            stringcartypeval="Compact";
+        }
+        else if(cartype==1){
+            stringcartypeval="Small";
+        }
+        else if(cartype==2){
+            stringcartypeval="Mid size";
+        }
+        else if(cartype==3){
+            stringcartypeval="Full";
+        }
+        else {
+            stringcartypeval="Van/Pick-up";
+        }
+
 
         //Auto Complete textview
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
@@ -296,8 +317,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         autoCompView.setDropDownVerticalOffset(7);
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
-//        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         getCurrentLocation();
+//        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
 
 //        loadCameraLocations();
 //        mNearestLocationList.clear();
@@ -423,6 +445,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     args.putString("value", "home");
                     args.putString("parkingtype", "Free street");
                     args.putString("place", description);
+                    args.putString("cartypes", stringcartypeval);
 //                    Log.e("strLatitude", String.valueOf(Latitude));
 //                    Log.e("strLongitude", String.valueOf(Longitude));
                     args.putStringArrayList("placesarray", caldis);
@@ -687,7 +710,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     if (locationAccepted && cameraAccepted){
 
 
-
+                        loadCameraLocations();
 //                        getCurrentLocation();
 
                     }
@@ -716,7 +739,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //                                                    float zoomLevel = 10 ;
 //                                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
 //                                                    getCurrentLocation();
-                                                    loadCameraLocations();
+//                                                    loadCameraLocations();
 
 
 

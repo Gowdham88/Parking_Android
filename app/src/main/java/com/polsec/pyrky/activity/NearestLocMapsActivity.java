@@ -15,6 +15,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -145,7 +146,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     String mLat,mLongi,PlaceName, latt,Longg,plcname,Imageurl;
     int distance;
     String Nameval="home";
-    String Nameval1="carousel",mapLat,mapLongi,cameraid,ParkingType;
+    String Nameval1="carousel",mapLat,mapLongi,cameraid,ParkingType,CarType;
     Camera camera;
     String parkytype,mUid,docid,CameraId;
     private InfiniteScrollAdapter infiniteAdapter;
@@ -161,7 +162,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     private GoogleApiClient mGoogleApiClient;
     private android.support.v7.app.AlertDialog dialog;
     Boolean isBookedAny = false;
-    String documentIDs;
+    String documentIDs,DocId;
     private TrackGPS mCurrentGpsLoc;
     double mCurLocLat, mCurLocLong,curLat,curLong;
     HashMap<String, Object> mrlslist;
@@ -178,7 +179,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     private static final int REQUEST_GROUP_PERMISSIONS = 104;
 
 
-    public static NearestLocMapsActivity newInstance(String latt, String longitude, String carousel, int adapterPosition, String Placename, int distanceval, String img, String mCameraID, Map<String, Object> parkingRules, String parkingTypes) {
+    public static NearestLocMapsActivity newInstance(String latt, String longitude, String carousel, int adapterPosition, String Placename, int distanceval, String img, String mCameraID, Map<String, Object> parkingRules, String parkingTypes, String stringcartypeval) {
 
         NearestLocMapsActivity home = new NearestLocMapsActivity();
 
@@ -193,6 +194,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         args.putString("cameraid",mCameraID);
         args.putString("parkingtype",parkingTypes);
         args.putSerializable("rulslist",(Serializable) parkingRules);
+        args.putString("cartype",stringcartypeval);
 
         home.setArguments(args);
         return home;
@@ -221,7 +223,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         mapFragment.getMapAsync(NearestLocMapsActivity.this);
 
         mDeniedKeys = new SparseIntArray();
-
+        showProgressDialog();
         ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.GONE);
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
         mNearestPlaceRecycler =  view.findViewById(R.id.nearest_places_recycler);
@@ -229,7 +231,9 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         mUid = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-        docid=PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCUMENTID);
+
+
+
 
         mBackIcon = (RelativeLayout) view.findViewById(R.id.back_icon);
         TitlaTxt = (TextView) view. findViewById(R.id.extra_title);
@@ -291,9 +295,11 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 mLongi = bundle.getString("longitude").trim();
                 PlaceName= bundle.getString("place").trim();
                 ParkingType= bundle.getString("parkingtype").trim();
+                CarType=bundle.getString("cartype");
                 Log.e("hlattitude", String.valueOf(mLat));
                 Log.e("hlongitude", String.valueOf(mLongi));
                 Log.e("hplace", String.valueOf(PlaceName));
+                Log.e("CarType", String.valueOf(CarType));
                 mNearestPlaceRecycler.setVisibility(View.VISIBLE);
 
                 getCurrentLocation(mLat,mLongi);
@@ -320,6 +326,8 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             }
             else if(Nameval1.equals(mByCarousel)){
 
+                hideProgressDialog();
+
                 mLat = bundle.getString("latt").trim();
                 mLongi = bundle.getString("longg").trim();
                 mListPosition = bundle.getInt("adapterPosition");
@@ -329,11 +337,13 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 CameraId=bundle.getString("cameraid");
                 mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
                 ParkingType=bundle.getString("parkingtype");
+                CarType=bundle.getString("cartypes");
 
                 Log.e("lattitude", String.valueOf(mLat));
                  Log.e("longitude", String.valueOf(mLongi));
                 Log.e("plc", String.valueOf(mListPosition));
                 Log.e("distance", String.valueOf(mrlslist));
+                Log.e("CarType", String.valueOf(CarType));
 
                 mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
 
@@ -464,7 +474,9 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
 
                                 if (locationDistance < 2500) {
+
 //
+
                                     NearestDestnetionData nearestdata = new NearestDestnetionData();
                                     nearestdata.setLocationDistance(locationDistance);
                                     nearestdata.setCameraLat(datalist.get(i).getCameraLat());
@@ -479,16 +491,17 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                     mNearestDataList.add(nearestdata);
 
                                     for (int j = 0; j < mNearestDataList.size(); j++) {
+                                        hideProgressDialog();
 
                                         Collections.sort(mNearestDataList, new Comparator<NearestDestnetionData>() {
                                             @Override
                                             public int compare(NearestDestnetionData lhs, NearestDestnetionData rhs) {
                                                 return lhs.getLocationDistance().compareTo(rhs.getLocationDistance());
+
                                             }
                                         });
 
-
-                                        Log.e("sortlist", String.valueOf(mNearestDataList.get(j).getLocationDistance()));
+//                                        Log.e("sortlist", String.valueOf(mNearestDataList.get(j).getLocationDistance()));
 
 
                                         mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
@@ -500,6 +513,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                         mNearestPlaceRecycler.setItemTransformer(new ScaleTransformer.Builder()
                                                 .setMinScale(0.8f)
                                                 .build());
+
                                     }
 
 
@@ -524,11 +538,13 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                 }
 
-                hideProgressDialog();
+
                                 }
 //
 
                             }
+
+                            hideProgressDialog();
                         }
 
                     }
@@ -837,19 +853,31 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
             }
         });
         alertD.setView(promptView);
+
         WindowManager.LayoutParams params = alertD.getWindow().getAttributes();
-        params.y = 200;
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+//        Toast.makeText(getActivity(), String.valueOf(currentapiVersion), Toast.LENGTH_SHORT).show();
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+            params.y = (int) getActivity().getResources().getDimension(R.dimen.size55);
+//            Toast.makeText(getActivity(), "marshmellow", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            params.y = (int) getActivity().getResources().getDimension(R.dimen.size92);
+//            Toast.makeText(getActivity(), "nougot", Toast.LENGTH_SHORT).show();
+        }
         alertD.getWindow().setAttributes(params);
         alertD.getWindow().setDimAmount(0.0f);
         alertD.getWindow().setGravity(Gravity.TOP);
         alertD.show();
 
-        alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                mNearestPlaceRecycler.setVisibility(View.VISIBLE);
-            }
-        });
+//
+
+            alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    mNearestPlaceRecycler.setVisibility(View.VISIBLE);
+                }
+            });
 
     }
 
@@ -937,11 +965,23 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         });
         alertD.setView(promptView);
         WindowManager.LayoutParams params = alertD.getWindow().getAttributes();
-        params.y = 200;
+
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+//        Toast.makeText(getActivity(), String.valueOf(currentapiVersion), Toast.LENGTH_SHORT).show();
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+            params.y = (int) getActivity().getResources().getDimension(R.dimen.size55);
+//            Toast.makeText(getActivity(), "marshmellow", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            params.y = (int) getActivity().getResources().getDimension(R.dimen.size92);
+//            Toast.makeText(getActivity(), "nougot", Toast.LENGTH_SHORT).show();
+        }
+
         alertD.getWindow().setAttributes(params);
         alertD.getWindow().setDimAmount(0.0f);
         alertD.getWindow().setGravity(Gravity.TOP);
         alertD.show();
+
 
         alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
@@ -949,6 +989,92 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 //                mNearestPlaceRecycler.setVisibility(View.VISIBLE);
             }
         });
+
+    }
+
+    private void showBottomSheet(double latitude, double longitude, String cameraid, String yourPlace) {
+
+
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getActivity());
+        LayoutInflater factory = LayoutInflater.from(getActivity());
+        View bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
+        TextView map = bottomSheetView.findViewById(R.id.maps_title);
+        TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
+        TextView cancel = bottomSheetView.findViewById(R.id.cancel_txt);
+
+        if (Constants.IS_AR_ENABLED){
+
+        }else{
+            pyrky.setVisibility(View.GONE);
+        }
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent())
+                .getLayoutParams();
+        CoordinatorLayout.Behavior behavior = params.getBehavior();
+        ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
+
+
+
+        map.setOnClickListener(view -> {
+
+            String value="map";
+
+            makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
+
+            bottomSheetDialog.dismiss();
+
+        });
+
+        pyrky.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED)
+                        || (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                        || (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+                    askRequestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            R.string.enable_permission, REQUEST_GROUP_PERMISSIONS);
+
+
+                    String value="pyrky";
+
+                    Boolean bookingRequest=true;
+
+                    if (bookingRequest){
+                        makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
+                    }else{
+
+                        SaveData(latitude, longitude, yourPlace,cameraid);
+                    }
+//
+
+
+                } else {
+                    groupPermissionEnable();
+                }
+
+
+
+//                SaveData(latitude,longitude, yourPlace,cameraid);
+
+//
+
+                bottomSheetDialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+    }
+    private void groupPermissionEnable() {
+        //TODO Add your code
+        Toast.makeText(getActivity(), "Group runtime permission enable successfully...", Toast.LENGTH_SHORT).show();
+
+
 
     }
 
@@ -979,8 +1105,10 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                 documentID = documentReference.getId();
 
-                PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCUMENTIDNEWONE,documentID);
-//                PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
+                PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCUMENTIDNEW,documentID);
+                PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
+
+
 
                 Booking bookingdata = new Booking(uid,String.valueOf(latitude),String.valueOf(longitude),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
                 Map<String, Object> docID = new HashMap<>();
@@ -1036,82 +1164,9 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     }
 //
 
-    private void showBottomSheet(double latitude, double longitude, String cameraid, String yourPlace) {
-
-
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getActivity());
-        LayoutInflater factory = LayoutInflater.from(getActivity());
-        View bottomSheetView = factory.inflate(R.layout.ar_pyrky_bottomsheet, null);
-        TextView map = bottomSheetView.findViewById(R.id.maps_title);
-        TextView pyrky = bottomSheetView.findViewById(R.id.pyrky_title);
-        TextView cancel = bottomSheetView.findViewById(R.id.cancel_txt);
-
-        if (Constants.IS_AR_ENABLED){
-
-        }else{
-           pyrky.setVisibility(View.GONE);
-        }
-        bottomSheetDialog.setContentView(bottomSheetView);
-        bottomSheetDialog.show();
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent())
-                .getLayoutParams();
-        CoordinatorLayout.Behavior behavior = params.getBehavior();
-        ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
 
 
 
-        map.setOnClickListener(view -> {
-
-            String value="map";
-
-            makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
-
-            bottomSheetDialog.dismiss();
-
-        });
-
-        pyrky.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED)
-                        || (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                        || (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-                    askRequestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            R.string.enable_permission, REQUEST_GROUP_PERMISSIONS);
-
-
-                    String value="pyrky";
-                    makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
-
-                } else {
-                    groupPermissionEnable();
-                }
-
-
-
-//                SaveData(latitude,longitude, yourPlace,cameraid);
-
-//
-
-                bottomSheetDialog.dismiss();
-            }
-        });
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-    }
-
-    private void groupPermissionEnable() {
-        //TODO Add your code
-        Toast.makeText(getActivity(), "Group runtime permission enable successfully...", Toast.LENGTH_SHORT).show();
-
-
-
-    }
 
 
     private void popup(String valuedoc, String key, Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace, String value) {
@@ -1134,7 +1189,6 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 likeData2.put( "Booking_ID", likeData1);
 
 
-
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -1145,7 +1199,8 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
 
-//                                docIdnew=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
+
+//                                docIdnew=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCMENTID);
                                 PopUpprotectcar(bookingRequest,latitude,longitude,yourPlace,value);
                            isBookedAny = false;
                                 if (bookingRequest){
@@ -1163,6 +1218,29 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                             }
                         });
 
+//                DocId=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCMENTID);
+//                if(!DocId.equals(null) && !DocId.isEmpty()){
+//                    final Map<String, Object> bookingstatusdata = new HashMap<>();
+//                    bookingstatusdata.put("bookingStatus", false);
+//
+//                    db.collection("Bookings").document(DocId)
+//                            .update(bookingstatusdata)
+//                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                @Override
+//                                public void onSuccess(Void aVoid) {
+//                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+//
+//
+//                                }
+//                            })
+//                            .addOnFailureListener(new OnFailureListener() {
+//                                @Override
+//                                public void onFailure(@NonNull Exception e) {
+//                                    Log.w(TAG, "Error writing document", e);
+//                                }
+//                            });
+//                }
+//
 
 //                Map<String, Object> likeupdate = new HashMap<>();
 //                likeupdate.put( "bookingStatus", false);
@@ -1268,9 +1346,10 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 //                }else{
 //                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
 //                }
-                documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEWONE);
+                documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
                 Log.e("doc",documentIDs);
-                protectCar(true,false,documentIDs);
+
+                protectCar(true,true,documentIDs);
                 alertDialog1.dismiss();
             }
         });
@@ -1344,7 +1423,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         alertDialog1.show();
     }
 
-    private void protectCar(Boolean protectCar, Boolean bookingStatus, String docIdnew){
+    private void protectCar(Boolean protectCar, Boolean bookingStatus, String documentIDs){
         final Map<String, Object> protectdata = new HashMap<>();
         protectdata.put("protectCar", protectCar);
         protectdata.put("bookingStatus", bookingStatus);
@@ -1354,7 +1433,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-        db.collection("Bookings").document(docIdnew)
+        db.collection("Bookings").document(documentIDs)
                 .update(protectdata)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -1389,6 +1468,9 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                         Log.w(TAG, "Error writing document", e);
                     }
                 });
+
+
+
     }
 
     private void makeAlreadyBookedAlert(Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace, String value){
@@ -1431,7 +1513,28 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                                 if (val) {
 
 //                                                Toast.makeText(getActivity(), values, Toast.LENGTH_SHORT).show();
-                                                    String valuedoc=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTID);
+                                                    String valuedoc=entry.getKey();
+//                                                    Toast.makeText(getActivity(), valuedoc, Toast.LENGTH_SHORT).show();
+
+                                                    final Map<String, Object> bookingstatusdata = new HashMap<>();
+                                                    bookingstatusdata.put("bookingStatus", false);
+
+                                                    db.collection("Bookings").document(valuedoc)
+                                                            .update(bookingstatusdata)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.w(TAG, "Error writing document", e);
+                                                                }
+                                                            });
 
                                                     popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace,cameraid,value);
                                                     break;
@@ -1455,6 +1558,13 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                                     }
 
+                                    }
+
+                                    else {
+
+//                                        showBottomSheet(latitude1, longitude1);
+                                        SaveData(latitude, longitude, yourPlace,cameraid);
+//                                        bookAndNavigate();
                                     }
 
                                 } else {

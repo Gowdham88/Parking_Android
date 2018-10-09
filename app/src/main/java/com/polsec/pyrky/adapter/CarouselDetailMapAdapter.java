@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
 import com.polsec.pyrky.pojo.NearestData;
@@ -109,8 +110,11 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 //        holder.nearestPlaceImage.setImageResource(mLocationImage[position]);
 //        this.avatarSize = context.getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
 
-        Picasso.with(context).load(mNearestDataList.get(position).getCameraImageUrl())
-                .fit()
+//        Picasso.with(context).load(mNearestDataList.get(position).getCameraImageUrl())
+//                .fit()
+//                .into(holder.nearestPlaceImage);
+        Glide.with(context)
+                .load(mNearestDataList.get(position).getCameraImageUrl())
                 .into(holder.nearestPlaceImage);
 
         postionval =holder.getAdapterPosition();

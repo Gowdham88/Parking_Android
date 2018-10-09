@@ -107,9 +107,9 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
 
     private void checkIfSensorsAvailable() {
         PackageManager pm = getActivity().getPackageManager();
-        boolean compass = pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
+//        boolean compass = pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
         boolean accelerometer = pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER);
-        if (!compass && !accelerometer) {
+        if (!accelerometer) {
             throw new IllegalStateException(getClass().getName()
                     + " can not run without the compass and the acelerometer sensors.");
         }

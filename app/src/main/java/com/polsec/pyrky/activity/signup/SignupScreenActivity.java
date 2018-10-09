@@ -149,9 +149,9 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         SignupBtn = findViewById(R.id.sign_up_button);
         profileImg = findViewById(R.id.profile_img);
 
-        mEtEmail.setInputType(mEtEmail.getInputType()
-                | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                | EditorInfo.TYPE_TEXT_VARIATION_FILTER);
+//        mEtEmail.setInputType(mEtEmail.getInputType()
+//                | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+//                | EditorInfo.TYPE_TEXT_VARIATION_FILTER);
         profileImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

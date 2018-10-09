@@ -126,7 +126,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         Log.e("mProfilepic", mProfilepic);
         if (mProfilepic != null && !mProfilepic.isEmpty()) {
             Picasso.with(getActivity())
-                    .load(mProfilepic).fit()
+                    .load(mProfilepic)
+//                    .resize(avatarSize,avatarSize)
                     .into(mProfileImages);
 
 

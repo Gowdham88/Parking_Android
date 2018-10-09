@@ -171,13 +171,14 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         });
 
         mAuth = FirebaseAuth.getInstance();
-        this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+        this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size2);
         Pass =PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_LOGGED_INPASS);
 
         if (mProfilepic != null && !mProfilepic.isEmpty()) {
 
             Picasso.with(getActivity())
-                    .load(mProfilepic).fit()
+                    .load(mProfilepic)
+//                    .resize(avatarSize,avatarSize)
 //                    .transform(new CircleTransformation())
                     .into(mProfileImage);
 
@@ -697,7 +698,8 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                         if(!postimageurl.equals(null)&&!postimageurl.isEmpty()){
 
                             Picasso.with(getActivity())
-                                    .load(postimageurl).fit()
+                                    .load(postimageurl)
+                                    .resize(avatarSize,avatarSize)
 //                                    .transform(new CircleTransformation())
                                     .into(ProfileImg);
 
