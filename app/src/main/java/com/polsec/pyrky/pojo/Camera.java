@@ -3,6 +3,7 @@ package com.polsec.pyrky.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,13 +24,16 @@ public class Camera {
     private String ListofcarsPosition;
     private String ListofObstacles;
     private String cameraImageUrl;
+    private HashMap<String,ArrayList<SlotTypes>> parkingSlots;
+//    private ArrayList<ParkingSlots> parkingSlots;
+
 
     public Camera() {
 
     }
 
     public Camera(String cameraLat, String cameraLong, String parkingType, String securityRatings, HashMap<String,Object> parkingRules, String cameraLocationName, String videoUrl, String roadWidth,
-                  String cameraFacingDirection, String listofcarsPosition, String listofObstacles, String cameraImageUrl, String cameraID) {
+                  String cameraFacingDirection, String listofcarsPosition, String listofObstacles, String cameraImageUrl, String cameraID,HashMap<String,ArrayList<SlotTypes>> parkingSlots) {
         this.cameraLat = cameraLat;
         this.cameraLong = cameraLong;
         this.parkingTypes = parkingType;
@@ -43,6 +47,7 @@ public class Camera {
         ListofObstacles = listofObstacles;
         this.cameraImageUrl= cameraImageUrl;
         this.cameraID= cameraID;
+        this.parkingSlots=parkingSlots;
     }
 
     public String getCameraLat() {
@@ -156,4 +161,14 @@ public class Camera {
     public void setCameraImageUrl(String cameraImageUrl) {
         this.cameraImageUrl = cameraImageUrl;
     }
+
+
+    public HashMap<String,ArrayList<SlotTypes>> getParkingSlots() {
+        return parkingSlots;
+    }
+
+    public void setParkingSlots(HashMap<String,ArrayList<SlotTypes>> parkingSlots) {
+        this.parkingSlots = parkingSlots;
+    }
+
 }

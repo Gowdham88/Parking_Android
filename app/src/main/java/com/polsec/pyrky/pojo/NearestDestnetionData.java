@@ -1,5 +1,6 @@
 package com.polsec.pyrky.pojo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -16,6 +17,7 @@ public class NearestDestnetionData {
     private HashMap<String,Object> parkingRules;
     private String cameraLocationName;
     private String cameraImageUrl;
+    private HashMap<String,ArrayList<SlotTypes>>parkingSlots;
 
     public NearestDestnetionData(){
 
@@ -23,7 +25,7 @@ public class NearestDestnetionData {
     }
 
     public NearestDestnetionData(Double LocationDistance,String cameraLat, String cameraLong, String parkingType,String cameraID, HashMap<String,Object> parkingRules,
-                       String cameraLocationName, String cameraImageUrl){
+                       String cameraLocationName, String cameraImageUrl, HashMap<String,ArrayList<SlotTypes>> parkingSlots){
         this.LocationDistance=LocationDistance;
         this.cameraLat = cameraLat;
         this.cameraLong = cameraLong;
@@ -32,6 +34,7 @@ public class NearestDestnetionData {
         this.parkingRules = parkingRules;
         this.cameraLocationName = cameraLocationName;
         this.cameraImageUrl=cameraImageUrl;
+        this.parkingSlots=parkingSlots;
 
     }
 
@@ -98,5 +101,14 @@ public class NearestDestnetionData {
     public void setLocationDistance(Double locationDistance) {
         LocationDistance = locationDistance;
     }
+
+    public HashMap<String,ArrayList<SlotTypes>> getParkingSlots() {
+        return parkingSlots;
+    }
+
+    public void setParkingSlots( HashMap<String,ArrayList<SlotTypes>> parkingSlots) {
+        this.parkingSlots = parkingSlots;
+    }
+
 
 }

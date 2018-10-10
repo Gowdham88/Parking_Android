@@ -69,14 +69,15 @@ import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.activity.ar.ArNavActivity;
-import com.polsec.pyrky.activity.ar.RuntimePermissionActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
 import com.polsec.pyrky.adapter.Carouselfirebaseadapter;
 import com.polsec.pyrky.fragment.HomeFragment;
 import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Camera;
+import com.polsec.pyrky.pojo.Compact;
 import com.polsec.pyrky.pojo.NearestDestnetionData;
+import com.polsec.pyrky.pojo.SlotTypes;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.Constants;
 import com.yarolegovich.discretescrollview.DSVOrientation;
@@ -155,6 +156,8 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     FirebaseAuth mAuth;
     String docIdnew;
     Map<String, Object> bookingid = new HashMap<>();
+    Map<String, Object> slotsid = new HashMap<>();
+    Map<String, Object> slotsid1 = new HashMap<>();
 
     Map<String, Object> bookingid1=new HashMap<>();
     Boolean val;
@@ -173,6 +176,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     private static final int REQUEST_CONTACT_PERMISSIONS = 101;
     private static final int REQUEST_CAMERA_PERMISSIONS = 102;
     private static final int REQUEST_EXTERNAL_PERMISSIONS = 103;
+    Map<String, Object> slots = new HashMap<>();
     // ===============
 
     // Group permission request code
@@ -299,7 +303,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 Log.e("hlattitude", String.valueOf(mLat));
                 Log.e("hlongitude", String.valueOf(mLongi));
                 Log.e("hplace", String.valueOf(PlaceName));
-                Log.e("CarType", String.valueOf(CarType));
+                Log.e("cartypes", String.valueOf(CarType));
                 mNearestPlaceRecycler.setVisibility(View.VISIBLE);
 
                 getCurrentLocation(mLat,mLongi);
@@ -337,7 +341,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 CameraId=bundle.getString("cameraid");
                 mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
                 ParkingType=bundle.getString("parkingtype");
-                CarType=bundle.getString("cartypes");
+                CarType=bundle.getString("cartype");
 
                 Log.e("lattitude", String.valueOf(mLat));
                  Log.e("longitude", String.valueOf(mLongi));
@@ -357,6 +361,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
 
                 getCurrentLocation(mLat,mLongi);
+
 
 //                mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
 //                mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
@@ -436,11 +441,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                             camera = document.toObject(Camera.class);
                             datalist.add(camera);
 
+
                             Log.e("dbbd", String.valueOf(document.getData()));
 //
 
 
-
+                            mNearestDataList.clear();
                             mLocationDistancesmtrs.clear();
                             mCameraLat.clear();
                             mLocationDistances.clear();
@@ -486,9 +492,11 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                                     nearestdata.setParkingRules(datalist.get(i).getParkingRules());
                                     nearestdata.setCameraLocationName(datalist.get(i).getCameraLocationName());
                                     nearestdata.setCameraImageUrl(datalist.get(i).getCameraImageUrl());
+                                    nearestdata.setParkingSlots(datalist.get(i).getParkingSlots());
 
 
                                     mNearestDataList.add(nearestdata);
+
 
                                     for (int j = 0; j < mNearestDataList.size(); j++) {
                                         hideProgressDialog();
@@ -500,8 +508,63 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                                             }
                                         });
+//                                        Log.e("sortlist", String.valueOf(mNearestDataList.get(j).getParkingSlots()));
 
-//                                        Log.e("sortlist", String.valueOf(mNearestDataList.get(j).getLocationDistance()));
+
+//                                            String  val= (String) slottype.get("compact");
+//                                        Log.e("sortliststr", String.valueOf(val));
+
+
+//                                if(!mNearestDataList.equals(null) || !mNearestDataList.isEmpty())
+//                                {
+
+
+
+
+
+
+//                                        ArrayList<HashMap<String, Object>> Slotaarray = new ArrayList<>();
+//
+//                                        Slotaarray.add(slottype);
+////                                        Log.e("sortlist", String.valueOf(Slotaarray));
+
+//                                }
+
+//                                        }
+
+
+
+
+
+
+
+//                        String count = String.valueOf(bookingid1.size());
+//                        Log.e("count", count);
+
+
+//                                    followingcount = 1;
+//                                        for (Map.Entry<String, Object> entry : slotsid1.entrySet()) {
+//                                            System.out.println(entry.getKey() + " = " + entry.getValue());
+//
+////                                            Boolean val = (Boolean) entry.getValue();
+//                                            String values = entry.getKey();
+//
+//                                            Log.e("keys", values);
+////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+//
+//                                        }
+
+//                                        for (int k = 0; k < SlotsList.size();i++){
+//                                            if(bookingid1.containsKey(SlotsList.get(i).getDocumentID())){
+//                                                Boolean value=(Boolean) bookingid1.get(SlotsList.get(i).getDocumentID());
+//
+//                                                if(value){
+//                                                    mFilteredBookingList.add(SlotsList.get(i));
+//                                                    hideProgressDialog();
+//                                                }
+//
+//                                            }
+//                                        }
 
 
                                         mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
@@ -617,13 +680,66 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    private void onItemChanged(String lat, String lng, String cameraId, String parkingType, HashMap<String, Object> rules) {
+    private void onItemChanged(String lat, String lng, String cameraId, String parkingType, HashMap<String, Object> rules, HashMap<String, ArrayList<SlotTypes>> parkingSlots) {
         mapLat = lat.trim();
         mapLongi = lng.trim();
         cameraid = cameraId;
         Log.e("mapLongi",mapLat);
         Log.e("mapLat",mapLongi);
         Log.e("cameraid", String.valueOf(rules));
+
+        if((parkingSlots !=null)){
+
+//            for(int k=0;k<parkingSlots.size();k++){
+//                Log.e("compactlat", String.valueOf(parkingSlots.get("compact").get(k).getCompact()));
+//            }
+
+//            values.add(parkingSlots.get("compact"));
+//            Log.e("compactarray", String.valueOf(values));
+//
+//            for(int k=0;k<values.size();k++){
+//                String val=values.get(k).get(k).
+//            }
+
+            Log.e("compact", String.valueOf(parkingSlots.get("compact").get(0)));
+            Log.e("full", String.valueOf(parkingSlots.get("full")));
+            Log.e("mid", String.valueOf(parkingSlots.get("mid")));
+            Log.e("small", String.valueOf(parkingSlots.get("small")));
+            Log.e("van", String.valueOf(parkingSlots.get("van")));
+        }
+        else{
+
+        }
+
+
+//    if(!parkingSlots.isEmpty()|| !parkingSlots.equals(null)){
+//    if(CarType=="compact"){
+//        Toast.makeText(getActivity(), "compact", Toast.LENGTH_SHORT).show();
+//
+//    }
+//    else if(CarType=="full"){
+//        Toast.makeText(getActivity(), "full", Toast.LENGTH_SHORT).show();
+//
+//    }
+//        }
+
+
+
+
+
+//            else if(parkingSlots.containsKey(CarType)){
+//                Toast.makeText(getActivity(), "mid", Toast.LENGTH_SHORT).show();
+//
+//            }
+//            else if(parkingSlots.containsKey(CarType)){
+//                Toast.makeText(getActivity(), "small", Toast.LENGTH_SHORT).show();
+//
+//            }
+//            else {
+//                Toast.makeText(getActivity(), "van", Toast.LENGTH_SHORT).show();
+//
+//            }
+
 
         LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
 
@@ -649,6 +765,9 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 //              }
 //            Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
              Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,14 ));
+
+
+
 
 
 
@@ -693,7 +812,10 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = adapterPosition;
-        onItemChanged(mNearestDataList.get(positionInDataSet).getCameraLat(), mNearestDataList.get(positionInDataSet).getCameraLong(), mNearestDataList.get(positionInDataSet).getCameraID(),mNearestDataList.get(positionInDataSet).getParkingTypes(), mNearestDataList.get(adapterPosition).getParkingRules());
+        onItemChanged(mNearestDataList.get(positionInDataSet).getCameraLat(), mNearestDataList.get(positionInDataSet).getCameraLong(), mNearestDataList.get(positionInDataSet).getCameraID(),mNearestDataList.get(positionInDataSet).getParkingTypes(),
+                mNearestDataList.get(adapterPosition).getParkingRules(),mNearestDataList.get(adapterPosition).getParkingSlots());
+
+
 
 
     }

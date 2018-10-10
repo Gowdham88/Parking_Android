@@ -285,6 +285,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         HomeFragrellay = (RelativeLayout) view.findViewById(R.id.parfrag_lay);
         autoCompView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
         cartype = Integer.parseInt(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_CAR));
+        Log.e("cartype", String.valueOf(cartype));
         if(cartype==0){
             stringcartypeval="Compact";
         }
@@ -300,7 +301,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         else {
             stringcartypeval="Van/Pick-up";
         }
-
+        Log.e("stringcartypeval", String.valueOf(stringcartypeval));
 
         //Auto Complete textview
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
