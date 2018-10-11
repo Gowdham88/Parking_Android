@@ -24,7 +24,8 @@ public class Camera {
     private String ListofcarsPosition;
     private String ListofObstacles;
     private String cameraImageUrl;
-    private HashMap<String,ArrayList<SlotTypes>> parkingSlots;
+//    private  ArrayList<HashMap<String, Object>>parkingSlots;
+    private HashMap<String,ArrayList<Compact>> parkingSlots;
 //    private ArrayList<ParkingSlots> parkingSlots;
 
 
@@ -33,7 +34,7 @@ public class Camera {
     }
 
     public Camera(String cameraLat, String cameraLong, String parkingType, String securityRatings, HashMap<String,Object> parkingRules, String cameraLocationName, String videoUrl, String roadWidth,
-                  String cameraFacingDirection, String listofcarsPosition, String listofObstacles, String cameraImageUrl, String cameraID,HashMap<String,ArrayList<SlotTypes>> parkingSlots) {
+                  String cameraFacingDirection, String listofcarsPosition, String listofObstacles, String cameraImageUrl, String cameraID,HashMap<String,ArrayList<Compact>> parkingSlots) {
         this.cameraLat = cameraLat;
         this.cameraLong = cameraLong;
         this.parkingTypes = parkingType;
@@ -163,11 +164,11 @@ public class Camera {
     }
 
 
-    public HashMap<String,ArrayList<SlotTypes>> getParkingSlots() {
+    public HashMap<String,ArrayList<Compact>> getParkingSlots() {
         return parkingSlots;
     }
 
-    public void setParkingSlots(HashMap<String,ArrayList<SlotTypes>> parkingSlots) {
+    public void setParkingSlots(HashMap<String,ArrayList<Compact>> parkingSlots) {
         this.parkingSlots = parkingSlots;
     }
 

@@ -236,7 +236,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //
 //            }
 //        }
-        mNearestLocationList.clear();
         mNearestDataList.clear();
         if (!checkPermission()) {
 

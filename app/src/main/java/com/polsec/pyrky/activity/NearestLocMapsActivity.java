@@ -88,6 +88,7 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -176,7 +177,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     private static final int REQUEST_CONTACT_PERMISSIONS = 101;
     private static final int REQUEST_CAMERA_PERMISSIONS = 102;
     private static final int REQUEST_EXTERNAL_PERMISSIONS = 103;
-    Map<String, Object> slots = new HashMap<>();
+//    Map<String, Object> slots = new HashMap<>();
+HashMap<String,Object> slots=new HashMap<String,Object>();
+    ArrayList<String> slotlist = new ArrayList<>();
+    ArrayList<String> latarray=new ArrayList<>();
+    ArrayList<String> longarray=new ArrayList<>();
+   List<Compact> values=new ArrayList<>();
     // ===============
 
     // Group permission request code
@@ -299,11 +305,11 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 mLongi = bundle.getString("longitude").trim();
                 PlaceName= bundle.getString("place").trim();
                 ParkingType= bundle.getString("parkingtype").trim();
-                CarType=bundle.getString("cartype");
+                CarType=bundle.getString("cartypes");
                 Log.e("hlattitude", String.valueOf(mLat));
                 Log.e("hlongitude", String.valueOf(mLongi));
                 Log.e("hplace", String.valueOf(PlaceName));
-                Log.e("cartypes", String.valueOf(CarType));
+                Log.e("cartype", String.valueOf(CarType));
                 mNearestPlaceRecycler.setVisibility(View.VISIBLE);
 
                 getCurrentLocation(mLat,mLongi);
@@ -341,13 +347,13 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                 CameraId=bundle.getString("cameraid");
                 mrlslist= (HashMap<String, Object>) bundle.getSerializable("rulslist");
                 ParkingType=bundle.getString("parkingtype");
-                CarType=bundle.getString("cartype");
+//                CarType=bundle.getString("cartype");
 
                 Log.e("lattitude", String.valueOf(mLat));
                  Log.e("longitude", String.valueOf(mLongi));
                 Log.e("plc", String.valueOf(mListPosition));
                 Log.e("distance", String.valueOf(mrlslist));
-                Log.e("CarType", String.valueOf(CarType));
+//                Log.e("CarType", String.valueOf(CarType));
 
                 mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
 
@@ -442,7 +448,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                             datalist.add(camera);
 
 
-                            Log.e("dbbd", String.valueOf(document.getData()));
+//                            Log.e("dbbd", String.valueOf(slots));
 //
 
 
@@ -456,6 +462,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
                             mCameraLocName.clear();
                             mCameraId.clear();
                             rules.clear();
+                            slots.clear();
 
                             mNearestDataList.clear();
 
@@ -508,11 +515,11 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                                             }
                                         });
-//                                        Log.e("sortlist", String.valueOf(mNearestDataList.get(j).getParkingSlots()));
+
 
 
 //                                            String  val= (String) slottype.get("compact");
-//                                        Log.e("sortliststr", String.valueOf(val));
+
 
 
 //                                if(!mNearestDataList.equals(null) || !mNearestDataList.isEmpty())
@@ -680,66 +687,14 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
     }
 
-    private void onItemChanged(String lat, String lng, String cameraId, String parkingType, HashMap<String, Object> rules, HashMap<String, ArrayList<SlotTypes>> parkingSlots) {
+    private void onItemChanged(String lat, String lng, String cameraId, String parkingType, HashMap<String, Object> rules, HashMap<String,ArrayList<Compact>> parkingSlots) {
         mapLat = lat.trim();
         mapLongi = lng.trim();
         cameraid = cameraId;
         Log.e("mapLongi",mapLat);
         Log.e("mapLat",mapLongi);
         Log.e("cameraid", String.valueOf(rules));
-
-        if((parkingSlots !=null)){
-
-//            for(int k=0;k<parkingSlots.size();k++){
-//                Log.e("compactlat", String.valueOf(parkingSlots.get("compact").get(k).getCompact()));
-//            }
-
-//            values.add(parkingSlots.get("compact"));
-//            Log.e("compactarray", String.valueOf(values));
-//
-//            for(int k=0;k<values.size();k++){
-//                String val=values.get(k).get(k).
-//            }
-
-            Log.e("compact", String.valueOf(parkingSlots.get("compact").get(0)));
-            Log.e("full", String.valueOf(parkingSlots.get("full")));
-            Log.e("mid", String.valueOf(parkingSlots.get("mid")));
-            Log.e("small", String.valueOf(parkingSlots.get("small")));
-            Log.e("van", String.valueOf(parkingSlots.get("van")));
-        }
-        else{
-
-        }
-
-
-//    if(!parkingSlots.isEmpty()|| !parkingSlots.equals(null)){
-//    if(CarType=="compact"){
-//        Toast.makeText(getActivity(), "compact", Toast.LENGTH_SHORT).show();
-//
-//    }
-//    else if(CarType=="full"){
-//        Toast.makeText(getActivity(), "full", Toast.LENGTH_SHORT).show();
-//
-//    }
-//        }
-
-
-
-
-
-//            else if(parkingSlots.containsKey(CarType)){
-//                Toast.makeText(getActivity(), "mid", Toast.LENGTH_SHORT).show();
-//
-//            }
-//            else if(parkingSlots.containsKey(CarType)){
-//                Toast.makeText(getActivity(), "small", Toast.LENGTH_SHORT).show();
-//
-//            }
-//            else {
-//                Toast.makeText(getActivity(), "van", Toast.LENGTH_SHORT).show();
-//
-//            }
-
+        Log.e("Cartype", String.valueOf(CarType));
 
         LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
 
@@ -764,11 +719,47 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 //                 Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
 //              }
 //            Mmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-             Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,14 ));
+        Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,14 ));
+
+//        Log.e("sortlist", String.valueOf(parkingSlots.get("compact")));
+        if((parkingSlots !=null)) {
+
+
+            String cartypeval = CarType;
 
 
 
+//                Iterator it = parkingSlots.entrySet().iterator();
+//                while (it.hasNext()) {
+//                    Map.Entry pairs = (Map.Entry) it.next();
+            values.clear();
+                    for (Map.Entry<String, ArrayList<Compact>> ee : parkingSlots.entrySet()) {
+//                        for (int k = 0; k < parkingSlots.size(); k++) {
 
+//                        Log.e("cartypeval", cartypeval);
+
+
+                        String key = ee.getKey();
+                        Log.e("key", key);
+                        values= ee.getValue();
+                        Log.e("cartypevallat", String.valueOf(values));
+
+
+                            for(int m=0;m<values.size();m++){
+                                Log.e("lat", values.get(m).getLatitude());
+
+
+                                LatLng sydney1 = new LatLng(Double.parseDouble(values.get(m).getLatitude()), Double.parseDouble(values.get(m).getLongitude()));
+                                Mmap.addMarker(new MarkerOptions().position(sydney1)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
+                                Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney1,24 ));
+
+                            }
+
+
+            }
+
+
+        }
 
 
                  Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -782,9 +773,12 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
                  });
 
+
 //            Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
 
             mNearestPlaceRecycler.setVisibility(View.VISIBLE);
+
+
         }
 
     private void pulseMarker(final Bitmap markerIcon, final Marker marker, final long onePulseDuration) {
@@ -993,8 +987,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         alertD.show();
 
 //
-
-            alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {
+          alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialogInterface) {
                     mNearestPlaceRecycler.setVisibility(View.VISIBLE);
@@ -1087,8 +1080,6 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
         });
         alertD.setView(promptView);
         WindowManager.LayoutParams params = alertD.getWindow().getAttributes();
-
-        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 //        Toast.makeText(getActivity(), String.valueOf(currentapiVersion), Toast.LENGTH_SHORT).show();
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
             params.y = (int) getActivity().getResources().getDimension(R.dimen.size55);

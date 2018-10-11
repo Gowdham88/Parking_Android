@@ -17,7 +17,7 @@ public class NearestDestnetionData {
     private HashMap<String,Object> parkingRules;
     private String cameraLocationName;
     private String cameraImageUrl;
-    private HashMap<String,ArrayList<SlotTypes>>parkingSlots;
+    private HashMap<String,ArrayList<Compact>> parkingSlots;
 
     public NearestDestnetionData(){
 
@@ -25,7 +25,7 @@ public class NearestDestnetionData {
     }
 
     public NearestDestnetionData(Double LocationDistance,String cameraLat, String cameraLong, String parkingType,String cameraID, HashMap<String,Object> parkingRules,
-                       String cameraLocationName, String cameraImageUrl, HashMap<String,ArrayList<SlotTypes>> parkingSlots){
+                       String cameraLocationName, String cameraImageUrl, HashMap<String,ArrayList<Compact>> parkingSlots){
         this.LocationDistance=LocationDistance;
         this.cameraLat = cameraLat;
         this.cameraLong = cameraLong;
@@ -102,11 +102,11 @@ public class NearestDestnetionData {
         LocationDistance = locationDistance;
     }
 
-    public HashMap<String,ArrayList<SlotTypes>> getParkingSlots() {
+    public HashMap<String,ArrayList<Compact>> getParkingSlots() {
         return parkingSlots;
     }
 
-    public void setParkingSlots( HashMap<String,ArrayList<SlotTypes>> parkingSlots) {
+    public void setParkingSlots(HashMap<String,ArrayList<Compact>> parkingSlots) {
         this.parkingSlots = parkingSlots;
     }
 
