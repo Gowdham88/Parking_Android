@@ -3,15 +3,13 @@ package com.polsec.pyrky.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by czsm4 on 10/10/18.
+ * Created by czsm4 on 12/10/18.
  */
 
-public class SlotTypes {
-
+public class ParkingSlots_model {
     @SerializedName("compact")
     @Expose
     private List<Compact> compact = null;
@@ -67,7 +65,5 @@ public class SlotTypes {
     public void setFull(List<Full> full) {
         this.full = full;
     }
-
-
 
 }

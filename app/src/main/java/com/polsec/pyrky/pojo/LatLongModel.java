@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by czsm4 on 11/10/18.
@@ -11,23 +12,23 @@ import java.util.HashMap;
 
 public class LatLongModel {
 
-  private HashMap<String,Object>latlong;
+  private HashMap<String,List<SlotTypes>>latlong;
 
     LatLongModel(){
 
     }
-    LatLongModel( HashMap<String,Object>latlong){
+    LatLongModel( HashMap<String,List<SlotTypes>>latlong){
         this.latlong=latlong;
 
 
     }
 
 
-    public HashMap<String, Object> getLatlong() {
+    public HashMap<String,List<SlotTypes>>latlong() {
         return latlong;
     }
 
-    public void setLatlong(HashMap<String, Object> latlong) {
+    public void setLatlong(HashMap<String,List<SlotTypes>>latlong) {
         this.latlong = latlong;
     }
 }
