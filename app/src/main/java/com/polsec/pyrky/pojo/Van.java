@@ -11,24 +11,34 @@ public class Van {
 
     @SerializedName("latitude")
     @Expose
-    private Double latitude;
+    private String  latitude;
     @SerializedName("longitude")
     @Expose
-    private Double longitude;
+    private String longitude;
+//
+//    public Van() {
+//
+//    }
+//
+//    public Van(String  latitude,String longitude) {
+//        this.latitude=latitude;
+//        this.longitude=longitude;
+//
+//    }
 
-    public Double getLatitude() {
+    public String getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public String getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
 

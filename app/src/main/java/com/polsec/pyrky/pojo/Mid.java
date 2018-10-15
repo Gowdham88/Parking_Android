@@ -8,28 +8,36 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class Mid {
-
     @SerializedName("latitude")
     @Expose
-    private Double latitude;
+    private String  latitude;
     @SerializedName("longitude")
     @Expose
-    private Double longitude;
+    private String longitude;
 
-    public Double getLatitude() {
+//    public Mid() {
+//
+//    }
+//
+//    public Mid(String  latitude,String longitude) {
+//        this.latitude=latitude;
+//        this.longitude=longitude;
+//
+//    }
+
+    public String getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public String getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
-
 }

@@ -27,7 +27,7 @@ public class Camera {
 
     private HashMap<String,Object> parkingSlots;
 //    private  ArrayList<HashMap<String, Object>>parkingSlots;
-//    private HashMap<String,List<SlotTypes>> parkingSlots;
+//    private SlotTypes parkingSlots;
 //    private ArrayList<ParkingSlots> parkingSlots;
 
 
@@ -166,11 +166,11 @@ public class Camera {
     }
 
 
-    public HashMap<String,Object>  getParkingSlots() {
+    public HashMap<String,Object> getParkingSlots() {
         return parkingSlots;
     }
 
-    public void setParkingSlots( HashMap<String,Object> parkingSlots) {
+    public void setParkingSlots(HashMap<String,Object> parkingSlots) {
         this.parkingSlots = parkingSlots;
     }
 

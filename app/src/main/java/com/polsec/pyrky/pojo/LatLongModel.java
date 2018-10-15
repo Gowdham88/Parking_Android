@@ -12,6 +12,9 @@ import java.util.List;
 
 public class LatLongModel {
 
+//    @SerializedName("latlong")
+//    @Expose
+
   private HashMap<String,List<SlotTypes>>latlong;
 
     LatLongModel(){
