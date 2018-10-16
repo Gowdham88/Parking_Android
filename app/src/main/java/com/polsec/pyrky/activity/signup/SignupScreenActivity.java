@@ -140,6 +140,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
             }
         });
+        dialog.setCanceledOnTouchOutside(false);
         signupScrlin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

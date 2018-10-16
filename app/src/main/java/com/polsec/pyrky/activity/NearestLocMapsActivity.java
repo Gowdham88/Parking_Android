@@ -494,73 +494,6 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
 
 
-//
-//                            try {
-//                                contactsitem = itemobj.getString("small");
-//                                Log.e("latarray", String.valueOf(contactsitem));
-//
-//                                JSONArray jsarray1 = new JSONArray(contactsitem);
-//                                Log.e("jsarray", String.valueOf(jsarray1));
-//
-//                                for (int m = 0; m < jsarray1.length(); m++) {
-//                                    JSONObject objrct = jsarray1.getJSONObject(m);
-//                                    latitudes = objrct.getString("latitude");
-//                                    longitudesvall  = objrct.getString("longitude");
-//                                    Log.e("latitudes", String.valueOf(latitudes));
-//
-//                                    Log.e("longitudesvall", String.valueOf(longitudesvall));
-//
-//                                }
-//
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                            try {
-//                                contactsitem = itemobj.getString("full");
-//                                Log.e("latarray", String.valueOf(contactsitem));
-//
-//                                JSONArray jsarray2 = new JSONArray(contactsitem);
-//                                Log.e("jsarray", String.valueOf(jsarray2));
-//
-//                                for (int m = 0; m < jsarray2.length(); m++) {
-//                                    JSONObject objrct = jsarray2.getJSONObject(m);
-//                                    latitudes = objrct.getString("latitude");
-//                                    longitudesvall  = objrct.getString("longitude");
-//                                    Log.e("latitudes", String.valueOf(latitudes));
-//
-//                                    Log.e("longitudesvall", String.valueOf(longitudesvall));
-//
-//                                }
-//
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//
-//                            try {
-//                                contactsitem= itemobj.getString("mid");
-//                                Log.e("latarray", String.valueOf(contactsitem));
-//
-//                                JSONArray jsarray3 = new JSONArray(contactsitem);
-//                                Log.e("jsarray", String.valueOf(jsarray3));
-//
-//                                for (int m = 0; m < jsarray3.length(); m++) {
-//                                    JSONObject objrct = jsarray3.getJSONObject(m);
-//                                    latitudes = objrct.getString("latitude");
-//                                    longitudesvall  = objrct.getString("longitude");
-//                                    Log.e("latitudes", String.valueOf(latitudes));
-//
-//                                    Log.e("longitudesvall", String.valueOf(longitudesvall));
-//
-//                                }
-//
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//
-
-
                         }
                     }
 
@@ -583,20 +516,13 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                         mNearestDataList.clear();
                         if(datalist!=null||!datalist.isEmpty()){
                             for (int i = 0; i < datalist.size(); i++) {
-//                                Compact compact=new Compact();
-//                                compact.setLatitude(datalist.get(i).getParkingSlots().get("compact").get(0).getLongitude());
-//                                values.add(compact);
-//                                mCurrentLoctype.setLatitude(Double.parseDouble(latitudes));
-//                                mCurrentLoctype.setLatitude(Double.parseDouble(longitudesvall));
+//
 
 
                                 mCurrentLoc.setLatitude(Double.parseDouble(mLat));
                                 mCurrentLoc.setLongitude(Double.parseDouble(mLongi));
 
-                                double locationDistance1 = mCurrentLoc.distanceTo(mCurrentLoctype);
-                                mCalculateDistances.add(String.valueOf(locationDistance1));
-                                Log.e("distancemtrsmap1", String.valueOf(mCalculateDistances));
-
+//
 
                                 mNearestLocations.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
                                 mNearestLocations.setLongitude(Double.parseDouble(datalist.get(i).getCameraLong()));
@@ -623,7 +549,8 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                 if (locationDistance < 2500) {
 
 //JSONObject itemobj = null;
-
+                                    mCameraId.add(datalist.get(i).getCameraID());
+                                    Log.e("mCameraId", String.valueOf(mCameraId));
 
 
                                     NearestDestnetionData nearestdata = new NearestDestnetionData();
@@ -636,10 +563,10 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                     nearestdata.setCameraLocationName(datalist.get(i).getCameraLocationName());
                                     nearestdata.setCameraImageUrl(datalist.get(i).getCameraImageUrl());
                                     nearestdata.setParkingSlots(datalist.get(i).getParkingSlots());
-
-
-                                    compactArray=datalist.get(i).getParkingSlots();
-                                    Log.e("latarray", String.valueOf(compactArray));
+                                    mNearestDataList.add(nearestdata);
+//
+//                                    compactArray=datalist.get(i).getParkingSlots();
+//                                    Log.e("latarray", String.valueOf(compactArray));
 
                                     for (Map.Entry<String, Object> entry : slotsid1.entrySet()) {
                                         System.out.println(entry.getKey() + " = " + entry.getValue());
@@ -672,11 +599,11 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                             Log.e("latitudes", String.valueOf(latitudes));
 
                                             Log.e("longitudesvall", String.valueOf(longitudesvall));
-                                            Compact compact=new Compact();
-                                            compact.setLatitude(latitudes);
-                                            compact.setLongitude(longitudesvall);
-                                            values.add(compact);
-                                            Log.e("values", String.valueOf(values));
+//                                            Compact compact=new Compact();
+//                                            compact.setLatitude(latitudes);
+//                                            compact.setLongitude(longitudesvall);
+//                                            values.add(compact);
+//                                            Log.e("values", String.valueOf(values));
 
                                         }
 
@@ -716,7 +643,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 //                                        }
 //                                    }
 
-                                    mNearestDataList.add(nearestdata);
+
 
 
                                     for (int j = 0; j < mNearestDataList.size(); j++) {
@@ -874,12 +801,13 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                         Log.e("address1", address1);
                         mLat= String.valueOf(mCurLocAddress.get(0).getLatitude());
                         mLongi=String.valueOf( mCurLocAddress.get(0).getLongitude());
-
-
-
-
                         curLat = mCurLocAddress.get(0).getLatitude();
                         curLong = mCurLocAddress.get(0).getLongitude();
+
+
+
+
+
                         Log.e("curLat", String.valueOf(curLat));
                         Log.e("curLong", String.valueOf(curLong));
 

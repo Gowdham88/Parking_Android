@@ -135,6 +135,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     String placeId, description;
     BitmapDrawable bitmapdraw;
+    TrackGPS locationTrack;
     public static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
 
@@ -197,6 +198,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     Marker marker;
     MarkerOptions makeroptions;
     CarouselLayoutManager carouselLayoutManager;
+    double longitude,latitude;
     HomeActivity parent=(HomeActivity) getActivity();
     private static final int  REQUEST_ACCESS_FINE_LOCATION = 111;
 //    public static final String TAG = "ImmersiveModeFragment";
@@ -236,6 +238,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //
 //            }
 //        }
+
+        locationTrack = new TrackGPS(getActivity());
+        if (locationTrack.canGetLocation()) {
+
+
+            longitude = locationTrack.getLongitude();
+             latitude = locationTrack.getLatitude();
+
+//            Toast.makeText(getActivity(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+        } else {
+
+//            locationTrack.showSettingsAlert();
+        }
+
         mNearestDataList.clear();
         if (!checkPermission()) {
 
@@ -246,7 +262,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
 
-            getCurrentLocation();
+
             loadCameraLocations();
 
 //            mNearestLocationList.clear();
@@ -317,40 +333,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         autoCompView.setDropDownVerticalOffset(7);
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
+
+
+
         getCurrentLocation();
-//        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-
-
-//        loadCameraLocations();
-//        mNearestLocationList.clear();
-//        mNearestDataList.clear();
-
-//        final View decorView = getActivity().getWindow().getDecorView();
-//        decorView.setOnSystemUiVisibilityChangeListener(
-//                new View.OnSystemUiVisibilityChangeListener() {
-//                    @Override
-//                    public void onSystemUiVisibilityChange(int i) {
-//                        int height = decorView.getHeight();
-//                        Log.i(TAG, "Current height: " + height);
-//                    }
-//                });
-//
-
-//        if (!checkPermission()) {
-//
-//            requestPermission();
-//
-//        } else {
-////            Toast.makeText(getActivity(), "Permission already granted.", Toast.LENGTH_SHORT).show();
-//
-//
-//            getCurrentLocation();
-//            loadCameraLocations();
-////            mNearestLocationList.clear();
-////            mNearestDataList.clear();
-////            Snackbar.make(view, "Permission already granted.", Snackbar.LENGTH_LONG).show();
-//
-//        }
 
 //
 //        toggleHideyBar();
@@ -569,8 +555,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12));
 
-                            Log.d("lattd", String.valueOf(latt));
-                            Log.d("latgd", String.valueOf(longi));
+                            LatLng locateme1 = new LatLng(longitude, latitude);
+
+                            mMap.addMarker(new MarkerOptions().position(locateme1)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
+                            float zoomLevel = 12;
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme1,zoomLevel));
+
+                            Log.d("lattd", String.valueOf(longitude));
+                            Log.d("latgd", String.valueOf(latitude));
 
 
 
@@ -618,6 +610,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         Double lat = mCurrentGpsLoc.getLatitude();
         Double lng = mCurrentGpsLoc.getLongitude();
         LatLng locateme = new LatLng(lat, lng);
+
+
 
 //        Log.d("locateme", String.valueOf(locateme));
 //        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
@@ -712,7 +706,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                         loadCameraLocations();
 //                        getCurrentLocation();
-
+                        LatLng locateme = new LatLng(latitude, longitude);
+                        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
+                                                    float zoomLevel = 10 ;
+                                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
                     }
 //                        Snackbar.make(view, "Permission Granted, Now you can access location data and camera.", Snackbar.LENGTH_LONG).show();
                     else {
@@ -728,6 +725,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                                     requestPermissions(new String[]{ACCESS_FINE_LOCATION, CAMERA},
                                                             PERMISSION_REQUEST_CODE);
+
+
 
 //                                                    Double lat = mCurrentGpsLoc.getLatitude();
 //                                                    Double lng = mCurrentGpsLoc.getLongitude();
