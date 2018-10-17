@@ -517,21 +517,21 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                         if(datalist!=null||!datalist.isEmpty()){
                             for (int i = 0; i < datalist.size(); i++) {
 //
-
-
                                 mCurrentLoc.setLatitude(Double.parseDouble(mLat));
                                 mCurrentLoc.setLongitude(Double.parseDouble(mLongi));
-
-//
-
                                 mNearestLocations.setLatitude(Double.parseDouble(datalist.get(i).getCameraLat()));
                                 mNearestLocations.setLongitude(Double.parseDouble(datalist.get(i).getCameraLong()));
 
                                 double locationDistance = mCurrentLoc.distanceTo(mNearestLocations);
 
+
+                                int str= (int) locationDistance;
+                                Log.e("distancemtrsmapsss", String.valueOf(str));
+
+
 //                            double locationDistance1=mCurrentLoctype.distanceTo(locationDistance);
                                 mLocationDistances.add(locationDistance);
-                                Log.e("distancemtrsmap", String.valueOf(mLocationDistances));
+//                                Log.e("distancemtrsmap", String.valueOf(mLocationDistances));
 
 
                                 //Calculate distances by 1000 to show to the users
@@ -539,14 +539,11 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                 mAccurateDistancesString.add(String.valueOf(mAccurateDistance));
                                 Log.e("distancemap", String.valueOf(mAccurateDistancesString));
 
-//
-//                                parking=datalist.get(i).getParkingSlots();
-//
-//                             compactArray= (HashMap<String,Object>) parking.get("full");
-//                                Log.e("compactArray", String.valueOf(compactArray));
 
 
-                                if (locationDistance < 2500) {
+
+
+                                if (str <1500) {
 
 //JSONObject itemobj = null;
                                     mCameraId.add(datalist.get(i).getCameraID());
@@ -564,19 +561,20 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                     nearestdata.setCameraImageUrl(datalist.get(i).getCameraImageUrl());
                                     nearestdata.setParkingSlots(datalist.get(i).getParkingSlots());
                                     mNearestDataList.add(nearestdata);
+
 //
 //                                    compactArray=datalist.get(i).getParkingSlots();
 //                                    Log.e("latarray", String.valueOf(compactArray));
 
-                                    for (Map.Entry<String, Object> entry : slotsid1.entrySet()) {
-                                        System.out.println(entry.getKey() + " = " + entry.getValue());
-
-//                                Boolean val = (Boolean) entry.getValue();
-                                        Carvalues  = entry.getKey();
-                                        Strarray.add(Carvalues);
-
-
-                                    }
+//                                    for (Map.Entry<String, Object> entry : slotsid1.entrySet()) {
+//                                        System.out.println(entry.getKey() + " = " + entry.getValue());
+//
+////                                Boolean val = (Boolean) entry.getValue();
+//                                        Carvalues  = entry.getKey();
+//                                        Strarray.add(Carvalues);
+//
+//
+//                                    }
 
 
 
@@ -614,38 +612,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                         e.printStackTrace();
                                     }
 
-//                                    Iterator it = compactArray.entrySet().iterator();
-//                                    while (it.hasNext()) {
-//                                        Map.Entry pairs = (Map.Entry) it.next();
-//                                        values.clear();
-//                                        for (Map.Entry<String, Object> ee : compactArray.entrySet()) {
-//                                            for (int k = 0; k < compactArray.size(); k++) {
-////
-//////                        Log.e("cartypeval", cartypeval);
-////
-////
-//                                                String key = ee.getKey();
-//                                                Log.e("key", key);
-//                                                values = (ArrayList<Compact>) ee.getValue();
-//                                                Log.e("cartypevallat", String.valueOf(values));
 //
-//
-//                                                for (int m = 0; m < values.size(); m++) {
-//                                                    Log.e("lat", values.get(m).getLatitude());
-//
-//
-//                                                }
-//
-//
-//                                            }
-//
-//
-//                                        }
-//                                    }
-
-
-
-
                                     for (int j = 0; j < mNearestDataList.size(); j++) {
                                         hideProgressDialog();
 
@@ -658,53 +625,117 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                         });
 
 
+                                        mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
+                                        mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
+                                        mNearestrecyclerAdapter = new CarouselDetailMapAdapter(getActivity(), mNearestDataList, distance, NearestLocMapsActivity.this);
+                                        mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
+                                        mNearestPlaceRecycler.scrollToPosition(mListPosition);
+                                        mNearestrecyclerAdapter.notifyDataSetChanged();
+                                        mNearestPlaceRecycler.setItemTransformer(new ScaleTransformer.Builder()
+                                                .setMinScale(0.8f)
+                                                .build());
 
 
-//                                            String  val= (String) slottype.get("compact");
+//                                            parkytype = datalist.get(i).getParkingType();
 
 
+//                                    onItemChanged(mCameraLat.get(0), mCameraLong.get(0), mCameraId.get(0),datalist.get(i).getParkingTypes(),rules.get(i));
 
-//                                if(!mNearestDataList.equals(null) || !mNearestDataList.isEmpty())
-//                                {
+                                        if ((!datalist.get(i).getParkingTypes().equals(null)) || (!datalist.get(i).getParkingTypes().isEmpty())) {
+
+                                            if (datalist.get(i).getParkingTypes().equals("Free street parking")) {
+                                                LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
+                                                Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
+
+                                            } else {
+                                                LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
+                                                Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
+                                            }
+
+                                        }
+
+                                    }
+                                }
+
+                                else if(str >= 1500 && str < 3000){
+
+                                    mCameraId.add(datalist.get(i).getCameraID());
+                                    Log.e("mCameraId", String.valueOf(mCameraId));
 
 
-//                                        ArrayList<HashMap<String, Object>> Slotaarray = new ArrayList<>();
+                                    NearestDestnetionData nearestdata = new NearestDestnetionData();
+                                    nearestdata.setLocationDistance(locationDistance);
+                                    nearestdata.setCameraLat(datalist.get(i).getCameraLat());
+                                    nearestdata.setCameraLong(datalist.get(i).getCameraLong());
+                                    nearestdata.setParkingTypes(datalist.get(i).getParkingTypes());
+                                    nearestdata.setCameraID(datalist.get(i).getCameraID());
+                                    nearestdata.setParkingRules(datalist.get(i).getParkingRules());
+                                    nearestdata.setCameraLocationName(datalist.get(i).getCameraLocationName());
+                                    nearestdata.setCameraImageUrl(datalist.get(i).getCameraImageUrl());
+                                    nearestdata.setParkingSlots(datalist.get(i).getParkingSlots());
+                                    mNearestDataList.add(nearestdata);
+
 //
-//                                        Slotaarray.add(slottype);
-////                                        Log.e("sortlist", String.valueOf(Slotaarray));
+//                                    compactArray=datalist.get(i).getParkingSlots();
+//                                    Log.e("latarray", String.valueOf(compactArray));
 
-//                                }
-
-//                                        }
-
-
-//                        String count = String.valueOf(bookingid1.size());
-//                        Log.e("count", count);
-
-
-//                                    followingcount = 1;
-//                                        for (Map.Entry<String, Object> entry : slotsid1.entrySet()) {
-//                                            System.out.println(entry.getKey() + " = " + entry.getValue());
+//                                    for (Map.Entry<String, Object> entry : slotsid1.entrySet()) {
+//                                        System.out.println(entry.getKey() + " = " + entry.getValue());
 //
-////                                            Boolean val = (Boolean) entry.getValue();
-//                                            String values = entry.getKey();
+////                                Boolean val = (Boolean) entry.getValue();
+//                                        Carvalues  = entry.getKey();
+//                                        Strarray.add(Carvalues);
 //
-//                                            Log.e("keys", values);
-////                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
 //
-//                                        }
+//                                    }
 
-//                                        for (int k = 0; k < SlotsList.size();i++){
-//                                            if(bookingid1.containsKey(SlotsList.get(i).getDocumentID())){
-//                                                Boolean value=(Boolean) bookingid1.get(SlotsList.get(i).getDocumentID());
+
+
+
+                                    itemobj = new JSONObject(slotsid1);
+
+
+                                    try {
+                                        contactsitem = itemobj.getString(CarType.toLowerCase());
+
+                                        Log.e("contactsitem", String.valueOf(contactsitem));
+
+                                        jsarray= new JSONArray(contactsitem);
+                                        Log.e("jsarray", String.valueOf(jsarray));
+
+                                        for (int m = 0; m < jsarray.length(); m++) {
+                                            JSONObject objrct = jsarray.getJSONObject(m);
+                                            latitudes = objrct.getString("latitude");
+                                            longitudesvall  = objrct.getString("longitude");
+                                            Log.e("latitudes", String.valueOf(latitudes));
+
+                                            Log.e("longitudesvall", String.valueOf(longitudesvall));
+//                                            Compact compact=new Compact();
+//                                            compact.setLatitude(latitudes);
+//                                            compact.setLongitude(longitudesvall);
+//                                            values.add(compact);
+//                                            Log.e("values", String.valueOf(values));
+
+                                        }
+
+
+
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
 //
-//                                                if(value){
-//                                                    mFilteredBookingList.add(SlotsList.get(i));
-//                                                    hideProgressDialog();
-//                                                }
-//
-//                                            }
-//                                        }
+                                    for (int j = 0; j < mNearestDataList.size(); j++) {
+                                        hideProgressDialog();
+
+                                        Collections.sort(mNearestDataList, new Comparator<NearestDestnetionData>() {
+                                            @Override
+                                            public int compare(NearestDestnetionData lhs, NearestDestnetionData rhs) {
+                                                return lhs.getLocationDistance().compareTo(rhs.getLocationDistance());
+
+                                            }
+                                        });
 
 
                                         mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
@@ -717,28 +748,30 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                                 .setMinScale(0.8f)
                                                 .build());
 
-                                    }
-
 
 //                                            parkytype = datalist.get(i).getParkingType();
 
 
 //                                    onItemChanged(mCameraLat.get(0), mCameraLong.get(0), mCameraId.get(0),datalist.get(i).getParkingTypes(),rules.get(i));
 
-                                    if ((!datalist.get(i).getParkingTypes().equals(null)) || (!datalist.get(i).getParkingTypes().isEmpty())) {
+                                        if ((!datalist.get(i).getParkingTypes().equals(null)) || (!datalist.get(i).getParkingTypes().isEmpty())) {
 
-                                        if (datalist.get(i).getParkingTypes().equals("Free street parking")) {
-                                            LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
-                                            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
+                                            if (datalist.get(i).getParkingTypes().equals("Free street parking")) {
+                                                LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
+                                                Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
 
-                                        } else {
-                                            LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
-                                            Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
+                                            } else {
+                                                LatLng sydney = new LatLng(Double.parseDouble(datalist.get(i).getCameraLat()), Double.parseDouble(datalist.get(i).getCameraLong()));
+                                                Mmap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_paid_marker));
+                                            }
+
                                         }
 
                                     }
+                                }
 
-
+                                else {
+                                    Toast.makeText(getActivity(), " ", Toast.LENGTH_SHORT).show();
                                 }
 //
 

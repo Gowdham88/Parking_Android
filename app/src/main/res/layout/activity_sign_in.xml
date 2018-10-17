@@ -129,7 +129,7 @@
         android:gravity="center"
         android:text="@string/dont_have_account"
         android:textSize="12sp"
-        android:layout_marginTop="110dp"
+        android:layout_marginTop="90dp"
         android:textColor="@color/textColor"
          android:visibility="visible"
         android:layout_marginBottom="16dp"
