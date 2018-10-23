@@ -11,9 +11,12 @@ import java.util.List;
 public class NearestDestnetionData {
     private Double LocationDistance;
 
+
     private String cameraLat;
     private String cameraLong;
     private String parkingTypes;
+
+
     private String cameraID;
     private HashMap<String,Object> parkingRules;
     private String cameraLocationName;
@@ -49,6 +52,7 @@ private HashMap<String,Object> parkingSlots;
         this.parkingSlots=parkingSlots;
         this.Slotlat=Slotlat;
         this.Slotlongi=Slotlongi;
+
 
     }
 

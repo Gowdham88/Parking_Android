@@ -586,7 +586,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             String knownName = mCurLocAddress.get(0).getFeatureName();
                             address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
                             Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
-                            Log.d("address1", address1);
+//                            Log.d("address1", address1);
 
                         }
 
@@ -680,9 +680,50 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
         Double lat = mCurrentGpsLoc.getLatitude();
         Double lng = mCurrentGpsLoc.getLongitude();
+        mCurrentGpsLoc = new LocationTrack(getActivity());
+        try {
+            if (mCurrentGpsLoc.canGetLocation()) {
+                Double lat1 = mCurrentGpsLoc.getLatitude();
+                Double lng1 = mCurrentGpsLoc.getLongitude();
+                mCurLocLat = laln.latitude;
+                mCurLocLong = laln.longitude;
+
+
+                try {
+                    Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
+                    mCurLocAddress = geo.getFromLocation(lat, lng, 1);
+                    if (mCurLocAddress.isEmpty()) {
+                    } else {
+                        if (mCurLocAddress.size() > 0) {
+                            String address = mCurLocAddress.get(0).getAddressLine(0);
+                            latt = mCurLocAddress.get(0).getLatitude();
+                            longi = mCurLocAddress.get(0).getLongitude();
+                            // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                            String city = mCurLocAddress.get(0).getLocality();
+                            String state = mCurLocAddress.get(0).getAdminArea();
+                            String country = mCurLocAddress.get(0).getCountryName();
+                            String postalCode = mCurLocAddress.get(0).getPostalCode();
+                            String knownName = mCurLocAddress.get(0).getFeatureName();
+                            address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
+                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
+                            Log.d("address1", address1);
+
+                        }
+
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                mCurrentGpsLoc.showSettingsAlert();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         LatLng locateme = new LatLng(latitude, longitude);
-//        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
+        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
         float zoomLevel = 10 ;
 //        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
 
@@ -750,6 +791,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         // animation
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+
             return;
         }else{
             // Write you code here if permission already given.
