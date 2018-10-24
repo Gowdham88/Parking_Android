@@ -414,34 +414,6 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         }
 
 
-
-
-
-//        abll
-/*
-        for (String key : field){
-
-            for (String values : keyValue.get(key)){
-                Query query = db.collection("camera").whereEqualTo(key,values);
-
-                query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-
-                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-                            Camera comment = document.toObject(Camera.class);
-                            Log.d("Response", document.toString());
-                        }
-
-                    }
-                });
-
-
-            }
-
-        }
-*/
-
         return view;
         }
 
@@ -939,7 +911,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                      public boolean onMarkerClick(Marker marker) {
 
 //                         getActivity().overridePendingTransition(anim);
-
+                         Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,-2 ));
                          showDialog(marker,cameraid,rules,mNearestDataList.get(mNearestPlaceRecycler.getCurrentItem()).getCameraImageUrl());
                          mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
                          return false;
@@ -1196,25 +1168,6 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         }
 
 
-//
-//        Geocoder geocoder;
-//////
-//        geocoder = new Geocoder(getActivity(), Locale.getDefault());
-//        try {
-//            yourAddresses= geocoder.getFromLocation(String.valueOf(mLat),mLongi) , 1);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        if (yourAddresses.size() > 0)
-//        {
-//            yourplace = yourAddresses.get(0).getAddressLine(0);
-//            String yourCity = yourAddresses.get(0).getAddressLine(1);
-//            String yourCountry = yourAddresses.get(0).getAddressLine(2);
-//
-//
-//        }
-
         ViewTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1245,12 +1198,8 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
                 Log.e("latval", String.valueOf(Double.parseDouble(mLat)));
                 Log.e("longival", String.valueOf(Double.parseDouble(mLongi)));
-//                NearestLocMapsActivity.this.lat = String.valueOf(m.getPosition().latitude);
-//                longi= String.valueOf(m.getPosition().longitude);
-
-//                SaveData(lat,longi,yourplace);
                 alertD.cancel();
-//                mNearestPlaceRecycler.setVisibility(View.VISIBLE);
+
             }
         });
         alertD.setView(promptView);
@@ -1308,7 +1257,14 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
             String value="map";
 
-            makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
+            Boolean bookingRequest=true;
+
+            if (bookingRequest){
+                makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
+            }else{
+
+                SaveData(latitude, longitude, yourPlace,cameraid);
+            }
 
             bottomSheetDialog.dismiss();
 
@@ -1342,11 +1298,6 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                     groupPermissionEnable();
                 }
 
-
-
-//                SaveData(latitude,longitude, yourPlace,cameraid);
-
-//
 
                 bottomSheetDialog.dismiss();
             }
@@ -1506,52 +1457,27 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                             }
                         });
 
-//                DocId=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCMENTID);
-//                if(!DocId.equals(null) && !DocId.isEmpty()){
-//                    final Map<String, Object> bookingstatusdata = new HashMap<>();
-//                    bookingstatusdata.put("bookingStatus", false);
-//
-//                    db.collection("Bookings").document(DocId)
-//                            .update(bookingstatusdata)
-//                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                @Override
-//                                public void onSuccess(Void aVoid) {
-//                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-//
-//
-//                                }
-//                            })
-//                            .addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception e) {
-//                                    Log.w(TAG, "Error writing document", e);
-//                                }
-//                            });
-//                }
-//
+                final Map<String, Object> bookingstatusdata = new HashMap<>();
+                bookingstatusdata.put("bookingStatus", false);
 
-//                Map<String, Object> likeupdate = new HashMap<>();
-//                likeupdate.put( "bookingStatus", false);
-//
-//                db.collection("Bookings").document(mUid)
-//                        .update(likeupdate)
-//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-//                                Log.d(TAG, "DocumentSnapshot successfully written!");
-//
-//
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Log.w(TAG, "Error writing document", e);
-//                            }
-//                        });
+                db.collection("Bookings").document(valuedoc)
+                        .update(bookingstatusdata)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
 
-//                PopUpprotectcar(documentID);
 
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+
+//
                 alertDialog1.dismiss();
             }
         });
@@ -1573,13 +1499,11 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
             e.printStackTrace();
         }
         alertDialog1.show();
-//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(alertDialog1.getWindow().getAttributes());
-//        lp.height=200dp;
-//        lp.width=228;
+
         lp.gravity = Gravity.CENTER;
-//        lp.windowAnimations = R.style.DialogAnimation;
+
         alertDialog1.getWindow().setAttributes(lp);
     }
 
@@ -1603,14 +1527,12 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                 if(value=="map")
                 {
 
-//                    Toast.makeText(getActivity(), "map", Toast.LENGTH_SHORT).show();
                     bookAndNavigate(latitude, longitude);
                 }
                 else {
 
-//                    Toast.makeText(getActivity(), "pyrky", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getActivity(), ArNavActivity.class);
-//                try {
+
                     intent.putExtra("SRC", "Current Location");
                     intent.putExtra("DEST", "Some Destination");
                     intent.putExtra("SRCLATLNG", curLat + "," + curLong);
@@ -1618,22 +1540,10 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                     getActivity().overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
                     startActivity(intent);
 
-//                }catch (NullPointerException npe){
-//
-//                    Log.d(TAG, "onClick: The IntentExtras are Empty");
-//                }
-
                 }
 
-
-
                     mp.start();
-//                isBookedAny = false;
-//                if (bookingRequest){
-//                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, yourPlace);
-//                }else{
-//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
-//                }
+
                 documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
                 Log.e("doc",documentIDs);
 
@@ -1646,7 +1556,6 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
             @Override
             public void onClick(View view) {
 
-//                bookAndNavigate(latitude, longitude);
 
                 if(value=="map")
                 {
@@ -1665,28 +1574,9 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                         intent.putExtra("DESTLATLNG", latitude + "," + longitude);
                         getActivity().overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
                         startActivity(intent);
-//
-//                    }catch (NullPointerException npe){
-//
-//                        Log.d(TAG, "onClick: The IntentExtras are Empty");
-//                    }
-//
-//
-//                    Intent prkyintent=new Intent(getActivity(), ArNavActivity.class);
-//
-//                    startActivity(prkyintent);
+
                 }
 
-
-//                isBookedAny = false;
-//
-//                if (bookingRequest){
-//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
-//                }else{
-//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
-//                }
-//
-//                protectCar(false,true);
                 alertDialog1.dismiss();
             }
         });
@@ -1727,26 +1617,6 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-//                            DocumentReference washingtonRef = db.collection("users").document(uid);
-//
-//                            washingtonRef
-//                                    .update("Booking_ID",likeData1)
-//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                        @Override
-//                                        public void onSuccess(Void aVoid) {
-//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-//                                        }
-//                                    })
-//                                    .addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Log.w(TAG, "Error updating document", e);
-//                                        }
-//                                    });
-
-
 
                     }
                 })
@@ -1796,53 +1666,29 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                                 System.out.println(entry.getKey() + " = " + entry.getValue());
 
                                                 Boolean val = (Boolean) entry.getValue();
-//                                                                                            Log.e("values", booking_id);
+
 //
                                                 if (val) {
 
-//                                                Toast.makeText(getActivity(), values, Toast.LENGTH_SHORT).show();
                                                     String valuedoc=entry.getKey();
-//                                                    Toast.makeText(getActivity(), valuedoc, Toast.LENGTH_SHORT).show();
-
-                                                    final Map<String, Object> bookingstatusdata = new HashMap<>();
-                                                    bookingstatusdata.put("bookingStatus", false);
-
-                                                    db.collection("Bookings").document(valuedoc)
-                                                            .update(bookingstatusdata)
-                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void aVoid) {
-                                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-                                                                }
-                                                            })
-                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    Log.w(TAG, "Error writing document", e);
-                                                                }
-                                                            });
+//
 
                                                     popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace,cameraid,value);
                                                     break;
 
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
+
                                                 }else{
-//                                                    Toast.makeText(getActivity(), "False value", Toast.LENGTH_SHORT).show();
+
                                                 }
                                             }
                                     }
 
                                         else{
 
-
                                             if (bookingRequest){
 
                                                 SaveData(latitude, longitude, yourPlace,cameraid);
-//                                                bookAndNavigate(latitude,longitude,yourPlace,cameraid);
                                             }
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
 
                                     }
 
@@ -1850,23 +1696,22 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
                                     else {
 
-//                                        showBottomSheet(latitude1, longitude1);
+
                                         SaveData(latitude, longitude, yourPlace,cameraid);
-//                                        bookAndNavigate();
+
                                     }
 
                                 } else {
-//                        Log.d(TAG, "No such document");
+
 
                                 }
                             } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
+
 
                             }
                         }
                     });
 
-//                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
 
 
                 } else {

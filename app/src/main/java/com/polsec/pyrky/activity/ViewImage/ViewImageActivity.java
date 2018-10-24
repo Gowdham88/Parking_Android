@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
@@ -41,41 +41,38 @@ import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ar.ArNavActivity;
 import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
-import com.polsec.pyrky.pojo.Users;
+
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.Constants;
 
-import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
 public class ViewImageActivity extends AppCompatActivity {
     TextView BookBtn;
-    TextView CloseImg;
     double curLat,curLong,latitude1,longitude1;
          String   latitude,longitude;
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
-    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,docid,documentiDs,DocId;
+    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,documentiDs,DocId;
     Boolean isBookedAny = false;
-    List<Users> bookinglist = new ArrayList<Users>();
      FirebaseFirestore db;
-    List<String> booking_ID = new ArrayList<>();
+
     FirebaseAuth mAuth;
     Map<String, Object> bookingid = new HashMap<>();
     ImageView Close_Img;
 
     Map<String, Object> bookingid1=new HashMap<>();
     private int avatarSize;
-    Bitmap bitmap;
+
     RelativeLayout relay;
-    String Nameval="recyclervalue";
-    String Nameval1="firebasevalue";
+
     private AlertDialog dialog;
 
     @Override
@@ -102,14 +99,11 @@ public class ViewImageActivity extends AppCompatActivity {
         }
         db = FirebaseFirestore.getInstance();
 
-//        Bundle extras = getIntent().getExtras();
+
         showProgressDialog();
         Intent bundle = ViewImageActivity.this.getIntent();
         if(bundle!=null){
-//            String Value=bundle.getStringExtra("recyclervalue");
-//            String Value1=bundle.getStringExtra("firebasevalue");
-//
-//            if(Nameval.equals(Value)){
+
 
                 latitude =bundle.getStringExtra("latitude");
                 longitude = bundle.getStringExtra("longitude");
@@ -126,42 +120,12 @@ public class ViewImageActivity extends AppCompatActivity {
                 Log.e("lattitudeview", String.valueOf(latitude));
                 Log.e("longitudeview", String.valueOf(longitude));
                 Log.e("place", String.valueOf(cameraImageUrl));
-//            }
-//            else if(Nameval1.equals(Value1)){
-//
-//                latitude = extras.getDouble("latitude1");
-//                longitude = extras.getDouble("longitude1");
-//                DestName = extras.getString("place1");
-//                CameraId = extras.getString("cameraid");
-//                cameraImageUrl = extras.getString("cameraImageUrl1");
-//                lat = String.valueOf(latitude);
-//                longi = String.valueOf(longitude);
-//                cameraid = String.valueOf(CameraId);
-//
-//                Log.e("lattitudeview", String.valueOf(latitude));
-//                Log.e("longitudeview", String.valueOf(longitude));
-//                Log.e("place", String.valueOf(cameraImageUrl));
-//
-////                mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
-////                mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
-////                mNearestrecyclerAdapter1 = new Carouselfirebaseadapter(getActivity(), Imageurl, latt, Longg,plcname,distance);
-////                mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter1);
-//////                                    mNearestPlaceRecycler.scrollToPosition(mListPosition);
-////                mNearestrecyclerAdapter1.notifyDataSetChanged();
-////                mNearestPlaceRecycler.setItemTransformer(new ScaleTransformer.Builder()
-////                        .setMinScale(0.8f)
-////                        .build());
-//            }
-//            else{
-//
-//            }
+
 
 
         }
 
 
-
-//        makeAlreadyBookedAlert(false);
 
 
         if(!cameraImageUrl.equals(null)|| !cameraImageUrl.isEmpty()){
@@ -174,7 +138,6 @@ public class ViewImageActivity extends AppCompatActivity {
 
         }else {
             hideProgressDialog();
-//            Close_Img.setVisibility(View.VISIBLE);
         }
 
 
@@ -184,7 +147,6 @@ public class ViewImageActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                     showBottomSheet(Double.parseDouble(latitude), Double.parseDouble(longitude));
-//                    SaveData(lat, longi, DestName);
             }
 
         });
@@ -216,15 +178,20 @@ public class ViewImageActivity extends AppCompatActivity {
         CoordinatorLayout.Behavior behavior = params.getBehavior();
         ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
 
-//        GalleryIcon = (ImageView) bottomSheetView.findViewById(R.id.gallery_icon);
-//        CameraIcon = (ImageView) bottomSheetView.findViewById(R.id.camera_image);
         TextView cancel = bottomSheetView.findViewById(R.id.cancel_txt);
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 String value="map";
-                makeAlreadyBookedAlert(true,value);
+                Boolean bookingRequest=true;
+//
+//                if (bookingRequest){
+                    makeAlreadyBookedAlert(true, value);
+//                }else{
+//                    SaveData(lat, longi, DestName);
+//                }
+//
 
 
                 bottomSheetDialog.dismiss();
@@ -238,7 +205,6 @@ public class ViewImageActivity extends AppCompatActivity {
 
                 String value="pyrky";
 
-//                    makeAlreadyBookedAlert(true,value);
                 Boolean bookingRequest=true;
 
                 if (bookingRequest){
@@ -263,19 +229,17 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
     private void bookAndNavigate(String latitude, String longitude){
-//        showBottomSheet(latitude, longitude,yourPlace);
-//        SaveData(latitude, latitude, yourPlace,cameraid);
+
         PackageManager pm =ViewImageActivity.this.getPackageManager();
         if(isPackageInstalled()){
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                     Uri.parse("http://maps.google.com/maps?saddr="+"&daddr="+latitude+","+longitude));
             startActivity(intent);
-//                    Toast.makeText(ViewImageActivity.this, "true", Toast.LENGTH_SHORT).show();
+
         }else{
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                     Uri.parse("https://www.google.co.in/maps?saddr="+"&daddr="+latitude+","+longitude));
             startActivity(intent);
-//                    Toast.makeText(ViewImageActivity.this, "false", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -289,8 +253,6 @@ public class ViewImageActivity extends AppCompatActivity {
         parkingSpaceRating= String.valueOf(0.0);
         protectCar=false;
         bookingStatus=true;
-//          locationTxt=Location_Txt.getText().toString();
-//        String photoURL = PreferencesHelper.getPreference(this, PreferencesHelper.PREFERENCE_PHOTOURL);
 
 
 
@@ -342,25 +304,6 @@ public class ViewImageActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-//                            DocumentReference washingtonRef = db.collection("users").document(uid);
-//
-//                            washingtonRef
-//                                    .update("Booking_ID",likeData1)
-//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                        @Override
-//                                        public void onSuccess(Void aVoid) {
-//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-//                                        }
-//                                    })
-//                                    .addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Log.w(TAG, "Error updating document", e);
-//                                        }
-//                                    });
-
 
 
                                     }
@@ -431,52 +374,27 @@ public class ViewImageActivity extends AppCompatActivity {
                                 Log.w(TAG, "Error writing document", e);
                             }
                         });
-//                DocId=PreferencesHelper.getPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_DOCMENTID);
-//
-//                Log.e("docprevious",DocId);
-////                if(!DocId.equals(null)|| !DocId.isEmpty()){
-//                    final Map<String, Object> bookingstatusdata = new HashMap<>();
-//                    bookingstatusdata.put("bookingStatus", false);
-//
-//                    db.collection("Bookings").document(valuedoc)
-//                            .update(bookingstatusdata)
-//                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                @Override
-//                                public void onSuccess(Void aVoid) {
-//                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-//
-//
-//                                }
-//                            })
-//                            .addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception e) {
-//                                    Log.w(TAG, "Error writing document", e);
-//                                }
-//                            });
-////                }
+
+                final Map<String, Object> bookingstatusdata = new HashMap<>();
+                bookingstatusdata.put("bookingStatus", false);
+
+                db.collection("Bookings").document(valuedoc)
+                        .update(bookingstatusdata)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
 
 
-//                final Map<String, Object> bookingstatusdata = new HashMap<>();
-//                bookingstatusdata.put("bookingStatus", false);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
 //
-//                db.collection("Bookings").document(DocId)
-//                        .update(bookingstatusdata)
-//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-//                                Log.d(TAG, "DocumentSnapshot successfully written!");
-//
-//
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Log.w(TAG, "Error writing document", e);
-//                            }
-//                        });
-////
                 alertDialog1.dismiss();
             }
         });
@@ -498,13 +416,11 @@ public class ViewImageActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(alertDialog1.getWindow().getAttributes());
-//        lp.height=200dp;
-//        lp.width=228;
+
         lp.gravity = Gravity.CENTER;
-//        lp.windowAnimations = R.style.DialogAnimation;
         alertDialog1.getWindow().setAttributes(lp);
         alertDialog1.show();
     }
@@ -529,14 +445,12 @@ public class ViewImageActivity extends AppCompatActivity {
                 if(value=="map")
                 {
 
-//                    Toast.makeText(getActivity(), "map", Toast.LENGTH_SHORT).show();
                     bookAndNavigate(latitude, longitude);
                 }
                 else {
 
-//                    Toast.makeText(getActivity(), "pyrky", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(ViewImageActivity.this, ArNavActivity.class);
-//                    try {
+
                         intent.putExtra("SRC", "Current Location");
                         intent.putExtra("DEST", "Some Destination");
                         intent.putExtra("SRCLATLNG", curLat + "," + curLong);
@@ -544,22 +458,11 @@ public class ViewImageActivity extends AppCompatActivity {
                         overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
                         startActivity(intent);
 
-//                    }catch (NullPointerException npe){
-//
-//                        Log.d(TAG, "onClick: The IntentExtras are Empty");
-//                    }
 
                 }
 
 
                 mp.start();
-//                isBookedAny = false;
-//                if (bookingRequest){
-//                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, yourPlace);
-//                }else{
-//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
-//                }
-
                 documentiDs =PreferencesHelper.getPreference(ViewImageActivity.this,PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
                 Log.e("doc",documentiDs);
                 protectCar(true,true,documentiDs);
@@ -573,15 +476,6 @@ public class ViewImageActivity extends AppCompatActivity {
 
                 bookAndNavigate(latitude, longitude);
 
-//                isBookedAny = false;
-//
-//                if (bookingRequest){
-//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
-//                }else{
-//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
-//                }
-//
-//                protectCar(false,true);
                 alertDialog1.dismiss();
             }
         });
@@ -594,18 +488,17 @@ public class ViewImageActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(alertDialog1.getWindow().getAttributes());
-//        lp.height=200dp;
-//        lp.width=228;
+
         lp.gravity = Gravity.CENTER;
-//        lp.windowAnimations = R.style.DialogAnimation;
+
         alertDialog1.getWindow().setAttributes(lp);
 
-//        if(alertDialog1 != null && alertDialog1.isShowing()){
+
             alertDialog1.show();
-//        }
+
 
     }
 
@@ -688,74 +581,45 @@ public class ViewImageActivity extends AppCompatActivity {
                                                 String values = String.valueOf(val);
 
                                                 Log.e("values", values);
-//
+
                                                 if (val) {
 
-//                                                    Toast.makeText(ViewImageActivity.this, values, Toast.LENGTH_SHORT).show();
                                                     String valuedoc=entry.getKey();
-//                                                    Toast.makeText(getActivity(), valuedoc, Toast.LENGTH_SHORT).show();
-
-                                                    final Map<String, Object> bookingstatusdata = new HashMap<>();
-                                                    bookingstatusdata.put("bookingStatus", false);
-
-                                                    db.collection("Bookings").document(valuedoc)
-                                                            .update(bookingstatusdata)
-                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void aVoid) {
-                                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-                                                                }
-                                                            })
-                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    Log.w(TAG, "Error writing document", e);
-                                                                }
-                                                            });
-
 
                                                     popup(valuedoc,entry.getKey(),bookingRequest,value);
                                                     break;
 
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
                                                 }else{
-//                                                    Toast.makeText(context, "False value", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         }else{
+
                                             if (bookingRequest){
 
-//                                                showBottomSheet(latitude1, longitude1);
                                                 SaveData(lat, longi, DestName);
-//                                                bookAndNavigate();
                                             }
+
 
                                         }
                                     }
                                     else {
 
-//                                        showBottomSheet(latitude1, longitude1);
+
                                         SaveData(lat, longi, DestName);
-//                                        bookAndNavigate();
+
                                     }
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
 
 
                                 } else {
-//                        Log.d(TAG, "No such document");
+
 
                                 }
                             } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
+
 
                             }
                         }
                     });
-
-//                    Toast.makeText(ViewImageActivity.this, "ok", Toast.LENGTH_SHORT).show();
-
 
                 } else {
 

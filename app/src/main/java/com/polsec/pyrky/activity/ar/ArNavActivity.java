@@ -4,10 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -23,7 +26,10 @@ import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,6 +45,8 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Frame;
@@ -52,6 +60,7 @@ import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.android.SphericalUtil;
 import com.polsec.pyrky.R;
@@ -59,11 +68,14 @@ import com.polsec.pyrky.helper.CameraPermissionHelper;
 import com.polsec.pyrky.network.RetrofitInterface;
 import com.polsec.pyrky.network.model.Step;
 import com.polsec.pyrky.pojo.Example;
+import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.LocationCalc;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -76,6 +88,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.content.ContentValues.TAG;
 
 public class ArNavActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,LocationListener {
@@ -96,7 +110,7 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
 
     private final static String TAG = "ArCamActivity";
     private String srcLatLng;
-    private String destLatLng;
+    private String destLatLng,documentIDs;
     private Step steps[];
 
     private LocationManager locationManager;
@@ -138,6 +152,8 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
 //        srcDestText = findViewById(R.id.ar_source_dest);
         dirDistance = findViewById(R.id.ar_dir_distance);
         dirTime = findViewById(R.id.ar_dir_time);
+        documentIDs =PreferencesHelper.getPreference(ArNavActivity.this,PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
+        Log.e("doc",documentIDs);
 
         CloseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +161,7 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
                 onBackPressed();
             }
         });
+        PopUpprotectcar();
 
 //        if ((ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED)
 //                || (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
@@ -604,6 +621,112 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
         });
     }
 
+    private void PopUpprotectcar() {
+
+        LayoutInflater factory = LayoutInflater.from(ArNavActivity.this);
+        final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
+        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(ArNavActivity.this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        final MediaPlayer mp = MediaPlayer.create(ArNavActivity.this, R.raw.parking_alert );
+
+        final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                mp.start();
+//                isBookedAny = false;
+//                if (bookingRequest){
+//                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, yourPlace);
+//                }else{
+//                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, yourPlace);
+//                }
+
+                protectCar(true,true,documentIDs);
+                alertDialog1.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                alertDialog1.dismiss();
+            }
+        });
+
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+        alertDialog1.show();
+    }
+
+    private void protectCar(Boolean protectCar, Boolean bookingStatus, String documentIDs){
+        final Map<String, Object> protectdata = new HashMap<>();
+        protectdata.put("protectCar", protectCar);
+        protectdata.put("bookingStatus", false);
+
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+        db.collection("Bookings").document(documentIDs)
+                .update(protectdata)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+//                            DocumentReference washingtonRef = db.collection("users").document(uid);
+//
+//                            washingtonRef
+//                                    .update("Booking_ID",likeData1)
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            Log.w(TAG, "Error updating document", e);
+//                                        }
+//                                    });
+
+
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+
+
+
+    }
 
 
 }

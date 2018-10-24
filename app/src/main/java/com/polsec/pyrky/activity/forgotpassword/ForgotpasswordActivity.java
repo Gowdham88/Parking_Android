@@ -90,7 +90,8 @@ public class ForgotpasswordActivity extends AppCompatActivity {
                 Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+//                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 finish();
 //                onBackPressed();
 

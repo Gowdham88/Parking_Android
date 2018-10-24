@@ -231,58 +231,52 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                 .addConnectionCallbacks(this)
                 .build();
 
-//        if (checkLocationPermission()) {
-//            if (ContextCompat.checkSelfPermission(getActivity(),
-//                    Manifest.permission.ACCESS_FINE_LOCATION)
-//                    == PackageManager.PERMISSION_GRANTED) {
+        if (checkLocationPermission()) {
+            if (ContextCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+
+                mNearestDataList.clear();
+                loadCameraLocations();
+
+            }
+        }
+
+//        locationTrack = new LocationTrack(getActivity());
+//        if (locationTrack.canGetLocation()) {
 //
-//                //Request location updates:
-//                getCurrentLocation();
-//                loadCameraLocations();
 //
-//            }
+//            longitude = locationTrack.getLongitude();
+//            latitude = locationTrack.getLatitude();
+//
+////            Toast.makeText(getActivity(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+//        } else {
+//
+////            locationTrack.showSettingsAlert();
+//        }
+//
+//
+//        if (!checkPermission()) {
+//
+//            requestPermission();
+//
+//        } else {
+////            Toast.makeText(getActivity(), "Permission already granted.", Toast.LENGTH_SHORT).show();
+//
+//
+////            loadCameraLocations();
+//            getCurrentLocation();
+//
 //        }
 
-        locationTrack = new LocationTrack(getActivity());
-        if (locationTrack.canGetLocation()) {
-
-
-            longitude = locationTrack.getLongitude();
-            latitude = locationTrack.getLatitude();
-
-//            Toast.makeText(getActivity(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
-        } else {
-
-//            locationTrack.showSettingsAlert();
-        }
-
-        mNearestDataList.clear();
-        if (!checkPermission()) {
-
-            requestPermission();
-
-        } else {
-//            Toast.makeText(getActivity(), "Permission already granted.", Toast.LENGTH_SHORT).show();
-
-
-            loadCameraLocations();
-            getCurrentLocation();
-
-//            mNearestLocationList.clear();
-//            mNearestDataList.clear();
-//            Snackbar.make(view, "Permission already granted.", Snackbar.LENGTH_LONG).show();
-
-        }
-
-
-//
 //        if (sentToSettings) {
 //            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
 //                //Got Permission
-//                getCurrentLocation();
-//                loadCameraLocations();
+//                proceedAfterPermission();
 //            }
 //        }
+
+//
     }
 
     @SuppressLint("CutPasteId")
@@ -333,9 +327,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
         locationTrack = new LocationTrack(getActivity());
-
-
-
+        mCurrentGpsLoc = new LocationTrack(getActivity());
         getCurrentLocation();
 
 //
@@ -382,32 +374,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //                        mNearestrecyclerAdapter.notifyDataSetChanged();
 
                         int scrollPosition = carouselLayoutManager.getCenterItemPosition();
-//                        if (scrollPosition == 0){
+                        if (scrollPosition == 0) {
 //
-//                            double lat = longitude;
-//                            double lng =longitude;
-//                            LatLng latLng = new LatLng(lat,lng);
-//                            mMap.addMarker(new MarkerOptions().position(latLng)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
-//                            float zoomLevel = 14 ;
-//                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoomLevel));
-////                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
-////
-////                            if (isCarouselSwiped){
-////                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
-////                            }else{
-////
-////                            }
-////
-//////                            Toast.makeText(getActivity(), "Same count", Toast.LENGTH_SHORT).show();
-////                        }else{
-////                            isCarouselSwiped = true;
-////                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
-//                        }
+                            double lat = Double.parseDouble(mNearestDataList.get(scrollPosition).getCameraLat());
+                            double lng = Double.parseDouble(mNearestDataList.get(scrollPosition).getCameraLong());
+                            LatLng latLng = new LatLng(lat, lng);
+                            if (isCarouselSwiped) {
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                            } else {
+                                isCarouselSwiped = true;
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                            }
+//
+////                            Toast.makeText(getActivity(), "Same count", Toast.LENGTH_SHORT).show();
+                        }
 
-                        double lat = Double.parseDouble(mNearestDataList.get(scrollPosition).getCameraLat());
-                        double lng = Double.parseDouble(mNearestDataList.get(scrollPosition).getCameraLong());
-                        LatLng latLng = new LatLng(lat,lng);
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+
                         //                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 //
 
@@ -585,7 +567,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             String postalCode = mCurLocAddress.get(0).getPostalCode();
                             String knownName = mCurLocAddress.get(0).getFeatureName();
                             address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
-                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
 //                            Log.d("address1", address1);
 
                         }
@@ -604,74 +586,204 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     }
 
-    private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getActivity(), ACCESS_FINE_LOCATION);
-        int result1 = ContextCompat.checkSelfPermission(getActivity(), CAMERA);
+//    private boolean checkPermission() {
+//        int result = ContextCompat.checkSelfPermission(getActivity(), ACCESS_FINE_LOCATION);
+//        int result1 = ContextCompat.checkSelfPermission(getActivity(), CAMERA);
+//
+//        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
+//
+//
+//
+//    }
+//
+//    private void requestPermission() {
+//
+//
+//
+//        ActivityCompat.requestPermissions(getActivity(), new String[]{ACCESS_FINE_LOCATION, CAMERA}, PERMISSION_REQUEST_CODE);
+//
+//    }
+//
+//       @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_REQUEST_LOCATION: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//
+//                    Toast.makeText(getActivity(), "locqation", Toast.LENGTH_SHORT).show();
+//
+//                    // permission was granted, yay! Do the
+//                    // location-related task you need to do.
+//                    if (ContextCompat.checkSelfPermission(getActivity(),
+//                            Manifest.permission. ACCESS_FINE_LOCATION)
+//                            == PackageManager.PERMISSION_GRANTED) {
+//
+//
+//
+////                        getCurrentLocation();
+////                        loadCameraLocations();
+//                        //Request location updates:
+//
+//
+//                    }
+//
+//                } else {
+//
+//
+//
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//
+//                }
+//                return;
+//            }
+//
+//        }
+//
+//
 
-        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
+    public boolean checkLocationPermission() {
 
-
-
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show an explanation to the user asynchronously -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+        return false;
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-    private void requestPermission() {
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(getActivity(),
+                            Manifest.permission. ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
 
+//                        getCurrentLocation();
+//                        loadCameraLocations();
 
+                        Toast.makeText(getActivity(), "location turn on", Toast.LENGTH_SHORT).show();
 
-        ActivityCompat.requestPermissions(getActivity(), new String[]{ACCESS_FINE_LOCATION, CAMERA}, PERMISSION_REQUEST_CODE);
+                    }
 
-    }
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                }
+                return;
+            }
+
+        }
+                    }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode)
+//        {
+//
+//            case REQUEST_ACCESS_FINE_LOCATION: {
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+//                {
+//                    Toast.makeText(getActivity(), "Permission granted.", Toast.LENGTH_SHORT).show();
+//
+//                    //reload my activity with permission granted
+//
+//                    getCurrentLocation();
+//                        loadCameraLocations();
+//
+//                } else
+//                {
+//                    Toast.makeText(getActivity(), "The app was not allowed to get your location. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//        }
+//
+//    }
+///
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE:
-                if (grantResults.length > 0) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
 
-                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-
-                    if (locationAccepted && cameraAccepted){
-
-
-                        loadCameraLocations();
-
-                        LatLng locateme1 = new LatLng(latitude, longitude);
-                        mMap.addMarker(new MarkerOptions().position(locateme1)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
-                        float zoomLevel1 = 10 ;
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme1,zoomLevel1));
-//                        getCurrentLocation();
-
-                    }
-//                        Snackbar.make(view, "Permission Granted, Now you can access location data and camera.", Snackbar.LENGTH_LONG).show();
-                    else {
-
-//                        Snackbar.make(view, "Permission Denied, You cannot access location data and camera.", Snackbar.LENGTH_LONG).show();
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
-                                showMessageOKCancel("You need to allow access to both the permissions",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, CAMERA},
-                                                            PERMISSION_REQUEST_CODE);
-//
-                                                }
-                                            }
-                                        });
-                                return;
-                            }
-                        }
-
-                    }
-                }
-
-
-                break;
         }
     }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+//        switch (requestCode) {
+//            case PERMISSION_REQUEST_CODE:
+//                if (grantResults.length > 0) {
+//
+//                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+//                    boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+//
+//                    if (locationAccepted && cameraAccepted){
+//
+////                        LatLng locateme1 = new LatLng(latitude, longitude);
+////                        mMap.addMarker(new MarkerOptions().position(locateme1)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
+////                        float zoomLevel1 = 10 ;
+////                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme1,zoomLevel1));
+////                        getCurrentLocation();
+//
+//                    }
+////                        Snackbar.make(view, "Permission Granted, Now you can access location data and camera.", Snackbar.LENGTH_LONG).show();
+//                    else {
+//
+////                        Snackbar.make(view, "Permission Denied, You cannot access location data and camera.", Snackbar.LENGTH_LONG).show();
+//
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                            if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
+//                                showMessageOKCancel("You need to allow access to both the permissions",
+//                                        new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+//                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                                                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, CAMERA},
+//                                                            PERMISSION_REQUEST_CODE);
+////
+//                                                }
+//                                            }
+//                                        });
+//                                return;
+//                            }
+//                        }
+//
+//                    }
+//                }
+//
+//
+//                break;
+//        }
+//    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -680,49 +792,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
         Double lat = mCurrentGpsLoc.getLatitude();
         Double lng = mCurrentGpsLoc.getLongitude();
-        mCurrentGpsLoc = new LocationTrack(getActivity());
-        try {
-            if (mCurrentGpsLoc.canGetLocation()) {
-                Double lat1 = mCurrentGpsLoc.getLatitude();
-                Double lng1 = mCurrentGpsLoc.getLongitude();
-                mCurLocLat = laln.latitude;
-                mCurLocLong = laln.longitude;
 
 
-                try {
-                    Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
-                    mCurLocAddress = geo.getFromLocation(lat, lng, 1);
-                    if (mCurLocAddress.isEmpty()) {
-                    } else {
-                        if (mCurLocAddress.size() > 0) {
-                            String address = mCurLocAddress.get(0).getAddressLine(0);
-                            latt = mCurLocAddress.get(0).getLatitude();
-                            longi = mCurLocAddress.get(0).getLongitude();
-                            // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                            String city = mCurLocAddress.get(0).getLocality();
-                            String state = mCurLocAddress.get(0).getAdminArea();
-                            String country = mCurLocAddress.get(0).getCountryName();
-                            String postalCode = mCurLocAddress.get(0).getPostalCode();
-                            String knownName = mCurLocAddress.get(0).getFeatureName();
-                            address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
-                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
-                            Log.d("address1", address1);
-
-                        }
-
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                mCurrentGpsLoc.showSettingsAlert();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        LatLng locateme = new LatLng(latitude, longitude);
+        LatLng locateme = new LatLng(lat, lng);
         mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
         float zoomLevel = 10 ;
 //        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
@@ -1116,79 +1188,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         return false;
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode) {
-//            case MY_PERMISSIONS_REQUEST_LOCATION: {
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//
-//                    Toast.makeText(getActivity(), "locqation", Toast.LENGTH_SHORT).show();
-//
-//                    // permission was granted, yay! Do the
-//                    // location-related task you need to do.
-//                    if (ContextCompat.checkSelfPermission(getActivity(),
-//                            Manifest.permission. ACCESS_FINE_LOCATION)
-//                            == PackageManager.PERMISSION_GRANTED) {
-//
-//
-//
-////                        getCurrentLocation();
-////                        loadCameraLocations();
-//                        //Request location updates:
-//
-//
-//                    }
-//
-//                } else {
-//
-//
-//
-//                    // permission denied, boo! Disable the
-//                    // functionality that depends on this permission.
-//
-//                }
-//                return;
-//            }
-//
-//        }
 
-
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode)
-//        {
-//
-//            case REQUEST_ACCESS_FINE_LOCATION: {
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-//                {
-//                    Toast.makeText(getActivity(), "Permission granted.", Toast.LENGTH_SHORT).show();
-//
-//                    //reload my activity with permission granted
-//
-//                } else
-//                {
-//                    Toast.makeText(getActivity(), "The app was not allowed to get your location. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//
-//        }
-//
-//    }
-///
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-
-        }
-    }
 
     private String getFirstWord(String text) {
         int index = text.indexOf(' ');
