@@ -455,6 +455,9 @@ public class ViewImageActivity extends AppCompatActivity {
                         intent.putExtra("DEST", "Some Destination");
                         intent.putExtra("SRCLATLNG", curLat + "," + curLong);
                         intent.putExtra("DESTLATLNG", latitude + "," + longitude);
+
+                    Log.e("SRCLATLNG", String.valueOf(curLat + "," + curLong));
+                    Log.e("DESTLATLNG", String.valueOf(latitude + "," + longitude));
                         overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
                         startActivity(intent);
 

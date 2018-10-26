@@ -117,7 +117,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     //Google Map
     GoogleMap mMap;
     SupportMapFragment mMapFragment;
-    private LocationTrack mCurrentGpsLoc;
+    private TrackGPS mCurrentGpsLoc;
     Location mLocation;
     LatLng laln;
     String address1;
@@ -127,7 +127,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     List<Camera> mNearestLocationList = new ArrayList<Camera>();
 
 
-    TextView mSearchButton;
+    TextView mSearchButton,PermissionTxt,PermissionTxt1;
     RelativeLayout HomeRelativeLay;
 
     AutoCompleteTextView autoCompView;
@@ -139,7 +139,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     String placeId, description;
     BitmapDrawable bitmapdraw;
-    LocationTrack locationTrack;
     public static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
 
@@ -198,7 +197,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     double distanceval;
     HashMap<String, Object> listofparkingRules = new HashMap<>();
     RelativeLayout HomeRelLayout, mParentLayout, HomeFragrellay;
-    LinearLayout NearLinLay;
+    RelativeLayout NearLinLay;
     Marker marker;
     MarkerOptions makeroptions;
     CarouselLayoutManager carouselLayoutManager;
@@ -231,50 +230,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                 .addConnectionCallbacks(this)
                 .build();
 
-        if (checkLocationPermission()) {
-            if (ContextCompat.checkSelfPermission(getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
 
-                mNearestDataList.clear();
-                loadCameraLocations();
+        if (!checkPermission()) {
 
-            }
-        }
+            requestPermission();
 
-//        locationTrack = new LocationTrack(getActivity());
-//        if (locationTrack.canGetLocation()) {
+
+        } else {
+
+
+            getCurrentLocation();
+            mNearestDataList.clear();
+            loadCameraLocations();
+
 //
-//
-//            longitude = locationTrack.getLongitude();
-//            latitude = locationTrack.getLatitude();
-//
-////            Toast.makeText(getActivity(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
-//        } else {
-//
-////            locationTrack.showSettingsAlert();
-//        }
-//
-//
-//        if (!checkPermission()) {
-//
-//            requestPermission();
-//
-//        } else {
-////            Toast.makeText(getActivity(), "Permission already granted.", Toast.LENGTH_SHORT).show();
-//
-//
-////            loadCameraLocations();
+//            loadCameraLocations();
 //            getCurrentLocation();
-//
-//        }
+//            Snackbar.make(view, "Permission already granted.", Snackbar.LENGTH_LONG).show();
 
-//        if (sentToSettings) {
-//            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-//                //Got Permission
-//                proceedAfterPermission();
-//            }
-//        }
+        }
 
 //
     }
@@ -289,14 +263,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
         mSearchButton = view.findViewById(R.id.search_btn);
         mNearestPlaceRecycler = view.findViewById(R.id.nearest_places_recycler);
-        mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mMapFragment.getMapAsync(this);
+
         HomeRelLayout = (RelativeLayout) view.findViewById(R.id.home_lay);
         mParentLayout = (RelativeLayout) view.findViewById(R.id.parent_layout);
-        NearLinLay = (LinearLayout) view.findViewById(R.id.nearest_locations_layout);
+        NearLinLay = (RelativeLayout) view.findViewById(R.id.nearest_locations_layout);
         HomeFragrellay = (RelativeLayout) view.findViewById(R.id.parfrag_lay);
         autoCompView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
+        PermissionTxt1=(TextView) view.findViewById(R.id.nearest_places_title);
         cartype = Integer.parseInt(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_CAR));
+
         Log.e("cartype", String.valueOf(cartype));
         if (cartype == 0) {
             stringcartypeval = "Compact";
@@ -310,7 +285,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             stringcartypeval = "Van";
         }
         Log.e("stringcartypeval", String.valueOf(stringcartypeval));
-
+        mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mMapFragment.getMapAsync(this);
         //Auto Complete textview
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
         mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), R.layout.drop_downlay,
@@ -326,8 +302,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         autoCompView.setDropDownVerticalOffset(7);
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
-        locationTrack = new LocationTrack(getActivity());
-        mCurrentGpsLoc = new LocationTrack(getActivity());
+        mCurrentGpsLoc = new TrackGPS(getActivity());
+
+//    Fcar
+
+
+
+
         getCurrentLocation();
 
 //
@@ -529,20 +510,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     }
 
 
-
-
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(getActivity())
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
-    }
     private void getCurrentLocation(){
 
         //Getting Current Location from independent class
-        mCurrentGpsLoc = new LocationTrack(getActivity());
+        mCurrentGpsLoc = new TrackGPS(getActivity());
         try {
             if (mCurrentGpsLoc.canGetLocation()) {
                 Double lat = mCurrentGpsLoc.getLatitude();
@@ -568,7 +539,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             String knownName = mCurLocAddress.get(0).getFeatureName();
                             address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
 //                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
-//                            Log.d("address1", address1);
+                            Log.d("address1", address1);
 
                         }
 
@@ -586,204 +557,75 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     }
 
-//    private boolean checkPermission() {
-//        int result = ContextCompat.checkSelfPermission(getActivity(), ACCESS_FINE_LOCATION);
-//        int result1 = ContextCompat.checkSelfPermission(getActivity(), CAMERA);
-//
-//        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
-//
-//
-//
-//    }
-//
-//    private void requestPermission() {
-//
-//
-//
-//        ActivityCompat.requestPermissions(getActivity(), new String[]{ACCESS_FINE_LOCATION, CAMERA}, PERMISSION_REQUEST_CODE);
-//
-//    }
-//
-//       @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode) {
-//            case MY_PERMISSIONS_REQUEST_LOCATION: {
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//
-//                    Toast.makeText(getActivity(), "locqation", Toast.LENGTH_SHORT).show();
-//
-//                    // permission was granted, yay! Do the
-//                    // location-related task you need to do.
-//                    if (ContextCompat.checkSelfPermission(getActivity(),
-//                            Manifest.permission. ACCESS_FINE_LOCATION)
-//                            == PackageManager.PERMISSION_GRANTED) {
-//
-//
-//
-////                        getCurrentLocation();
-////                        loadCameraLocations();
-//                        //Request location updates:
-//
-//
-//                    }
-//
-//                } else {
-//
-//
-//
-//                    // permission denied, boo! Disable the
-//                    // functionality that depends on this permission.
-//
-//                }
-//                return;
-//            }
-//
-//        }
-//
-//
 
-    public boolean checkLocationPermission() {
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getActivity(), ACCESS_FINE_LOCATION);
+        int result1 = ContextCompat.checkSelfPermission(getActivity(), CAMERA);
 
-        if (ActivityCompat.checkSelfPermission(getActivity(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user asynchronously -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-        return false;
+        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
     }
+
+    private void requestPermission() {
+
+        ActivityCompat.requestPermissions(getActivity(), new String[]{ACCESS_FINE_LOCATION, CAMERA}, PERMISSION_REQUEST_CODE);
+
+
+
+    }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0) {
 
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(getActivity(),
-                            Manifest.permission. ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
 
-//                        getCurrentLocation();
-//                        loadCameraLocations();
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
 
-                        Toast.makeText(getActivity(), "location turn on", Toast.LENGTH_SHORT).show();
+                    if (locationAccepted && cameraAccepted){
+//                        Snackbar.make(getView(), "Permission Granted, Now you can access location data and camera.", Snackbar.LENGTH_LONG).show();
 
                     }
 
-                } else {
+                    else {
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+//                        Snackbar.make(getView(), "Permission Denied, You cannot access location data and camera.", Snackbar.LENGTH_LONG).show();
 
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
+                                showMessageOKCancel("You need to allow access to both the permissions",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, CAMERA},
+                                                            PERMISSION_REQUEST_CODE);
+
+                                                }
+                                            }
+                                        });
+                                return;
+                            }
+                        }
+
+                    }
                 }
-                return;
-            }
 
-        }
-                    }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode)
-//        {
-//
-//            case REQUEST_ACCESS_FINE_LOCATION: {
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-//                {
-//                    Toast.makeText(getActivity(), "Permission granted.", Toast.LENGTH_SHORT).show();
-//
-//                    //reload my activity with permission granted
-//
-//                    getCurrentLocation();
-//                        loadCameraLocations();
-//
-//                } else
-//                {
-//                    Toast.makeText(getActivity(), "The app was not allowed to get your location. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//
-//        }
-//
-//    }
-///
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-
+                break;
         }
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-//        switch (requestCode) {
-//            case PERMISSION_REQUEST_CODE:
-//                if (grantResults.length > 0) {
-//
-//                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-//                    boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-//
-//                    if (locationAccepted && cameraAccepted){
-//
-////                        LatLng locateme1 = new LatLng(latitude, longitude);
-////                        mMap.addMarker(new MarkerOptions().position(locateme1)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
-////                        float zoomLevel1 = 10 ;
-////                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme1,zoomLevel1));
-////                        getCurrentLocation();
-//
-//                    }
-////                        Snackbar.make(view, "Permission Granted, Now you can access location data and camera.", Snackbar.LENGTH_LONG).show();
-//                    else {
-//
-////                        Snackbar.make(view, "Permission Denied, You cannot access location data and camera.", Snackbar.LENGTH_LONG).show();
-//
-//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                            if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
-//                                showMessageOKCancel("You need to allow access to both the permissions",
-//                                        new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, CAMERA},
-//                                                            PERMISSION_REQUEST_CODE);
-////
-//                                                }
-//                                            }
-//                                        });
-//                                return;
-//                            }
-//                        }
-//
-//                    }
-//                }
-//
-//
-//                break;
-//        }
-//    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(getActivity())
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -795,8 +637,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
         LatLng locateme = new LatLng(lat, lng);
-        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
-        float zoomLevel = 10 ;
+//        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
+//        float zoomLevel = 10 ;
 //        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
 
 //        Log.d("locateme", String.valueOf(locateme));
@@ -827,7 +669,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //        mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 
         mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
-        zoomLevel = 12;
+        float zoomLevel = 12;
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
@@ -898,21 +740,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         docRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                if (task.isSuccessful()) {
-//                DocumentSnapshot document = task.getResult();
 //
-//
-//
-//
-//                FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        Query first = db.collection("camera");
-//        first.get()
-//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onSuccess(QuerySnapshot documentSnapshots) {
                 if (queryDocumentSnapshots.getDocuments().size() < 1) {
                     return;
                 }
+                mNearestLocationList.clear();
 
                 for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
 

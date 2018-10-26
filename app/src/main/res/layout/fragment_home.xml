@@ -136,7 +136,7 @@
 
             </android.support.v7.widget.CardView>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -155,6 +155,7 @@
                 android:layout_marginStart="15dp"
                 />
             <android.support.v7.widget.RecyclerView
+                android:layout_below="@+id/nearest_places_title"
                 android:layout_width="match_parent"
                 android:layout_marginTop="5dp"
                 android:layout_height="180dp"
@@ -162,7 +163,7 @@
                 android:layout_marginRight="27dp"
                 android:id="@+id/nearest_places_recycler"
                 />
-        </LinearLayout>
+        </RelativeLayout>
         <TextView
             style="@style/NunitoBlackLight"
             android:id="@+id/search_btn"
