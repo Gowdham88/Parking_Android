@@ -17,18 +17,21 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <uses-feature android:name="android.hardware.location.gps" />
-    <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES"/>
 
+    <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES" />
 
-    <uses-feature android:name="android.hardware.camera2" android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true" />
 
-    <supports-screens android:smallScreens="true"
-        android:normalScreens="true"
+    <supports-screens
+        android:anyDensity="true"
         android:largeScreens="true"
-        android:xlargeScreens="true"
-        android:anyDensity="true" />
-
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
 
     <application
         android:name=".MyApplication"
@@ -49,7 +52,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".activity.splash.SplashActivity"
+            android:name=".activity.ar.ArExampleActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Launcher"
             android:windowSoftInputMode="adjustResize|adjustNothing|stateHidden">
@@ -127,11 +130,11 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ar.ArNavActivity"
-            android:screenOrientation="portrait"
-          />
-
-
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ar.ArActivity"
+            android:screenOrientation="portrait" />
+        <!--<activity android:name=".activity.ar.ArExampleActivity"></activity>-->
     </application>
-
 
 </manifest>

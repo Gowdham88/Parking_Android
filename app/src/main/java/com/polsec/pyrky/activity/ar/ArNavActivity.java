@@ -82,6 +82,7 @@ import com.polsec.pyrky.helper.CameraPermissionHelper;
 import com.polsec.pyrky.network.RetrofitInterface;
 import com.polsec.pyrky.network.model.Step;
 import com.polsec.pyrky.pojo.Example;
+import com.polsec.pyrky.pojo.Locationlatlong;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.LocationCalc;
 
@@ -111,7 +112,7 @@ import static java.lang.Math.floor;
 import static java.lang.Math.sin;
 
 public class ArNavActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,LocationListener {
+        GoogleApiClient.OnConnectionFailedListener,LocationListener{
 
     // Set to true ensures requestInstall() triggers installation if necessary.
     private boolean mUserRequestedInstall = true;
@@ -126,9 +127,10 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     //    @BindView(R.id.ar_dir_time)
     TextView dirTime;
     Display mDisplay;
+    int coordinates;
 
     int step_array_size;
-
+ArrayList<String>val=new ArrayList<>();
     private final static String TAG = "ArCamActivity";
     private String srcLatLng;
     private String destLatLng;
@@ -149,6 +151,9 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     Method rotateMethod;
     Iterator<Plane> planes;
 
+    float valx;
+    float valy;
+
     List<Example> mDistanceDataList = new ArrayList<Example>();
     private World world;
 
@@ -161,7 +166,9 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     // Group permission request code
     private static final int REQUEST_GROUP_PERMISSIONS = 104;
 
+    Vector3 point1, point2;
 
+    ArrayList<Locationlatlong> latlonglist=new ArrayList<>();
 
     float[] mRotatedProjectionMatrix;
     GeoObject inter_polyGeoObj;
@@ -191,7 +198,7 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
             }
         });
 
-        
+
 
 
 
@@ -426,15 +433,16 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     private void Configure_AR(){
         List<List<LatLng>> polylineLatLng=new ArrayList<>();
 
-        world=new World(getApplicationContext());
-
+        world=new World(ArNavActivity.this);
+//
         world.setGeoPosition(mLastLocation.getLatitude(),mLastLocation.getLongitude());
         Log.d(TAG, "Configure_AR: LOCATION"+mLastLocation.getLatitude()+" "+mLastLocation.getLongitude());
-//        world.setDefaultImage(R.drawable.ar_sphere_default);
+////        world.setDefaultImage(R.drawable.ar_sphere_default);
 
 
-//        arFragmentSupport = (ArFragmentSupport) getSupportFragmentManager().findFragmentById(
-//                R.id.ar_cam_fragment);
+//               polylineLatLng.add(mDistanceDataList);
+        arFragmentSupport = (ArFragment) getSupportFragmentManager().findFragmentById(
+                R.id.ar_fragment);
 
         GeoObject signObjects[]=new GeoObject[steps.length];
 
@@ -588,10 +596,6 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
         // Send to the fragment
 //        arFragmentSupport.setWorld(world);
     }
-    private Vector3 screenCenter() {
-        View vw = findViewById(android.R.id.content);
-        return new Vector3(vw.getWidth() / 2f, vw.getHeight() / 2f, 0f);
-    }
 
     private void Get_intent() {
         if (getIntent() != null) {
@@ -634,9 +638,9 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
             public void onResponse(Call<Example> call, Response<Example> response) {
 
                 Example directionsResponse = response.body();
+                mDistanceDataList.add(directionsResponse);
 
                  step_array_size=directionsResponse.getRoutes().get(0).getLegs().get(0).getSteps().size();
-
 
                 steps=new Step[step_array_size];
                 for(int i=0;i<step_array_size;i++) {
@@ -654,6 +658,18 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
                     dirTime.setText(steps[i]
                             .getDuration().getText());
 
+                    Locationlatlong locationlatlong=new Locationlatlong();
+                    locationlatlong.setStartlatitude(steps[i].getStartLocation().getLat());
+                    locationlatlong.setStartlongitude(steps[i].getStartLocation().getLng());
+                    locationlatlong.setEndlatitude(steps[i].getEndLocation().getLat());
+                    locationlatlong.setEndlongitude(steps[i].getEndLocation().getLng());
+                    latlonglist.add(locationlatlong);
+                    Log.e("latlonglist", String.valueOf(latlonglist.get(0).getStartlatitude()));
+
+
+
+//                    Configure_AR();
+
                     double lat1 = steps[i].getStartLocation().getLat()/ 180 * Math.PI;
                     double lng1 = steps[i].getStartLocation().getLng() / 180 * Math.PI;
                     double lat2 = steps[i].getEndLocation().getLat() / 180 * Math.PI;
@@ -661,8 +677,8 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
 
                     double y = sin(lng2 - lng1) * cos(lat2);
                     double x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lng2 - lng1);
-                    float valx= (float) x;
-                    float valy= (float) y;
+                     valx= (float) x;
+                     valy= (float) y;
 
 
                     Log.e("x", String.valueOf(valx));
@@ -670,171 +686,31 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
                     double tan2 = atan2(y, x);
                     double degree = tan2 * 180 / Math.PI;
 
-                    if (degree < 0) {
-                        degree = degree + 360;
+                    if (degree < 0)
+                    {
+                        coordinates = (int) (degree+360);
+                    } else {
+                        coordinates = (int) degree;
                     }
-
-
 //
-////
-////                    if (arFragmentSupport != null) {
-//                        arFragmentSupport.setOnTapArPlaneListener(
-//                                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-//
-//                                    Anchor anchor = hitResult.createAnchor();
-//                                    AnchorNode anchorNode = new AnchorNode(anchor);
-//
-//// Code to insert object probably happens here
-//
-//                                    if (lastAnchorNode != null) {
-//                                        Vector3 point1, point2;
-//                                        point1 = lastAnchorNode.getWorldPosition();
-//                                        point2 = anchorNode.getWorldPosition();
-//                                        Node line = new Node();
-//
-//    /* First, find the vector extending between the two points and define a look rotation in terms of this
-//        Vector. */
-//
-//                                        final Vector3 difference = Vector3.subtract(point1, point2);
-//                                        final Vector3 directionFromTopToBottom = difference.normalized();
-//                                        final Quaternion rotationFromAToB =
-//                                                Quaternion.lookRotation(directionFromTopToBottom, Vector3.up());
-//
-//                                        final Renderable[] lineRenderable = new Renderable[1];
-//
-//    /* Then, create a rectangular prism, using ShapeFactory.makeCube() and use the difference vector
-//       to extend to the necessary length.  */
-//
-//                                        MaterialFactory.makeOpaqueWithColor(ArNavActivity.this, new com.google.ar.sceneform.rendering.Color())
-//                                                .thenAccept(
-//                                                        material -> {
-//                                                            lineRenderable[0] = (Renderable) ShapeFactory.makeCube(new Vector3(.01f, .01f, difference.length()),
-//                                                                    Vector3.zero(), material);
-//                                                        });
-//
-//
-//
-//    /* Last, set the world rotation of the node to the rotation calculated earlier and set the world position to
-//       the midpoint between the given points . */
-//                                        line.setParent(anchorNode);
-//                                        line.setRenderable((com.google.ar.sceneform.rendering.Renderable) lineRenderable[0]);
-//                                        line.setWorldPosition(Vector3.add(point1, point2).scaled(.5f));
-//                                        line.setWorldRotation(rotationFromAToB);
-//                                    }
-//
-//                                    lastAnchorNode = anchorNode;
-//
-//                                });
-////                    }
-
-                    Frame frame = arFragmentSupport.getArSceneView().getArFrame();
-                    List<HitResult> hitTest = frame.hitTest(screenCenter().x, screenCenter().y);
-
-                    //iterate through all hits
-                    Iterator<HitResult> hitTestIterator = hitTest.iterator();
-                    while (hitTestIterator.hasNext()){
-                        HitResult hitResult = hitTestIterator.next();
-
-                        planes = frame.getUpdatedTrackables(Plane.class).iterator();
-                        Plane plane = planes.next();
-
-                        //Create an anchor at the plane hit
-                        Anchor modelAnchor = plane.createAnchor(hitResult.getHitPose());
-                        //Attach a node to this anchor with the scene as the parent
-                        AnchorNode anchorNode = new AnchorNode(modelAnchor);
-                        anchorNode.setParent(arFragmentSupport.getArSceneView().getScene());
-
-
-                        TransformableNode transformableNode = new TransformableNode(arFragmentSupport.getTransformationSystem());
-                        transformableNode.setParent(anchorNode);
-                        transformableNode.setRenderable(ArNavActivity.this.andyRenderable);
-
-//                                    float xx = modelAnchor.getPose().tx();
-//                                    float yy = modelAnchor.getPose().compose(Pose.makeTranslation(0f, 0f, 0f)).ty();
-//                                    float zz = modelAnchor.getPose().tz();
-//                                    transformableNode.setWorldPosition(new Vector3(xx,yy,zz));
-
-                        lastAnchorNode = new AnchorNode();
-                        Vector3 point1, point2;
-
-                        point2 = lastAnchorNode.getWorldPosition();
-//                                    point2 = anchorNode.getWorldPosition();
-                        point1 = new Vector3(valx,valy,-90);
-
-                        transformableNode.setWorldPosition(new Vector3(valx,valy,-90));
-
-                        polyLineCode(anchorNode,point1,point2);
-//                    Log.d("points", point1+","+point2);
-//                    lineBetweenPoints(point1,point2);
-//
-//////
-//                    if (frame != null) {
-//                        //get the trackables to ensure planes are detected
-////                        planes = frame.getUpdatedTrackables(Plane.class).iterator();
-//                        while (planes.hasNext()) {
-//
-//                            Plane plane = planes.next();
-//                            //If a planes has been detected & is being tracked by ARCore
-//                            if (plane.getTrackingState() == TrackingState.TRACKING) {
-//
-//                                //Hide the planes discovery helper animation
-//                                arFragmentSupport.getPlaneDiscoveryController().hide();
-//
-//                                //Get all added anchors to the frame
-//                                Iterator iterableAnchor = frame.getUpdatedAnchors().iterator();
-//
-//                                //place the first object only if no previous anchors were added
-//                                if (!iterableAnchor.hasNext()) {
-//
-////                                makeAr(plane,frame);
-//
-//                                    //Perform a hit test at the center of the screen to place an object without tapping
-//                                    List<HitResult> hitTest = frame.hitTest(screenCenter().x, screenCenter().y);
-//
-//                                    //iterate through all hits
-//                                    Iterator<HitResult> hitTestIterator = hitTest.iterator();
-//                                    while (hitTestIterator.hasNext()){
-//                                        HitResult hitResult = hitTestIterator.next();
-//
-//
-//                                        //Create an anchor at the plane hit
-//                                        Anchor modelAnchor = plane.createAnchor(hitResult.getHitPose());
-//                                        //Attach a node to this anchor with the scene as the parent
-//                                        AnchorNode anchorNode = new AnchorNode(modelAnchor);
-//                                        anchorNode.setParent(arFragmentSupport.getArSceneView().getScene());
-//
-//
-//                                        TransformableNode transformableNode = new TransformableNode(arFragmentSupport.getTransformationSystem());
-//                                        transformableNode.setParent(anchorNode);
-//                                        transformableNode.setRenderable(ArNavActivity.this.andyRenderable);
-//
-////                                    float xx = modelAnchor.getPose().tx();
-////                                    float yy = modelAnchor.getPose().compose(Pose.makeTranslation(0f, 0f, 0f)).ty();
-////                                    float zz = modelAnchor.getPose().tz();
-////                                    transformableNode.setWorldPosition(new Vector3(xx,yy,zz));
-//
-//                                        lastAnchorNode = new AnchorNode();
-//                                        Vector3 point1, point2;
-////
-//                                        point2 = lastAnchorNode.getWorldPosition();
-////                                    point2 = anchorNode.getWorldPosition();
-//                                        point1 = new Vector3(valx,valy,-90);
-//                    lineBetweenPoints(point1,point2);
-//
-//                                        transformableNode.setWorldPosition(new Vector3(valx,valy,-90));
-
-
-//                                    }
-//
-//
-////                                makeAr(planes, frame);
-//                                }
-//                            }
-//                        }
-                    }
-
                 }
+                lastAnchorNode = new AnchorNode();
 //
+
+                point2 = lastAnchorNode.getWorldPosition();
+
+//                                    for(int i=0;i<xvalue.size();i++){
+                point1 = new Vector3(valx,valy,-90);
+
+//                transformableNode.setWorldPosition(new Vector3(valx,valy,-90));
+//                                    }
+//                                    point2 = anchorNode.getWorldPosition();
+
+
+                polyLineCode(lastAnchorNode,point1,point2);
+
+//                makePolyLine("directionarrow.sfb",valx,valy);
+
 
             }
 
@@ -848,6 +724,75 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
     }
 
 
+    public void onUpdate(int coordinates) {
+
+
+
+        frame = arFragmentSupport.getArSceneView().getArFrame();
+
+        if (frame != null) {
+
+            for (Object o : frame.getUpdatedTrackables(Plane.class)) {
+
+                Plane plane = (Plane) o;
+
+                if (plane.getTrackingState() == TrackingState.TRACKING) {
+                    arFragmentSupport.getPlaneDiscoveryController().hide();
+
+                    Iterator iterableAnchor = frame.getUpdatedAnchors().iterator();
+
+                    if (!iterableAnchor.hasNext()) {
+                        makeAr(plane, frame,coordinates);
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void makeAr(Plane plane, Frame frame, int coordinates) {
+
+        for (int k = 0; k <10 ; k ++) {
+            if (this.coordinates >= 160 && this.coordinates <= 170) {
+                Toast.makeText(this, "walk", Toast.LENGTH_SHORT).show();
+                List<HitResult> hitTest = frame.hitTest(screenCenter().x, screenCenter().y);
+
+                Iterator hitTestIterator = hitTest.iterator();
+
+                while (hitTestIterator.hasNext()) {
+                    HitResult hitResult = (HitResult) hitTestIterator.next();
+
+                    Anchor modelAnchor = null;
+                    modelAnchor = plane.createAnchor(hitResult.getHitPose());
+
+                    AnchorNode anchorNode = new AnchorNode(modelAnchor);
+                    anchorNode.setParent(arFragmentSupport.getArSceneView().getScene());
+
+                    TransformableNode transformableNode = new TransformableNode(arFragmentSupport.getTransformationSystem());
+                    transformableNode.setParent(anchorNode);
+                    transformableNode.setRenderable(ArNavActivity.this.andyRenderable);
+
+                    float x = modelAnchor.getPose().tx();
+                    float y = modelAnchor.getPose().compose(Pose.makeTranslation(0f, 0f, 0)).ty();
+
+                    transformableNode.setWorldPosition(new Vector3(x, y, -k));
+
+                }
+            }
+        }
+    }
+
+    private Vector3 screenCenter() {
+        View vw = findViewById(android.R.id.content);
+        return new Vector3(vw.getWidth() / 2f, vw.getHeight() / 2f, 0f);
+    }
+
+
+
+
+
+
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void lineBetweenPoints(Vector3 point1, Vector3 point2) {
         Node lineNode = new Node();
@@ -859,7 +804,7 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
         final Vector3 difference = Vector3.subtract(point1, point2);
         final Vector3 directionFromTopToBottom = difference.normalized();
 
-        Log.d("MainActivity", "difference");
+        Log.d("MainActivity", String.valueOf(difference));
 
 
         final Quaternion rotationFromAToB =
@@ -874,6 +819,8 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
                         material -> {
                               lineRenderable = ShapeFactory.makeCube(new Vector3(.01f, .01f, difference.length()),
                                     Vector3.zero(), material);
+
+
                         });
 
    /* Last, set the local rotation of the node to the rotation calculated earlier and set the local position to
@@ -886,69 +833,176 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
 
         lastAnchorNode = anchorNode;
 
+
+
     }
 
-    private void addLineBetweenHits(HitResult hitResult, Plane plane, MotionEvent motionEvent) {
-        anchor = hitResult.createAnchor();
-        AnchorNode anchorNode = new AnchorNode(anchor);
-        lastAnchorNode = new AnchorNode();
-        if (lastAnchorNode != null) {
-            anchorNode.setParent(arFragmentSupport.getArSceneView().getScene());
-            Vector3 point1, point2;
-            point1 = lastAnchorNode.getWorldPosition();
-            point2 = anchorNode.getWorldPosition();
-            Log.d("points", point1+","+point2);
+//    private void addLineBetweenHits(HitResult hitResult, Plane plane, MotionEvent motionEvent) {
+//        anchor = hitResult.createAnchor();
+//        AnchorNode anchorNode = new AnchorNode(anchor);
+//        lastAnchorNode = new AnchorNode();
+//        if (lastAnchorNode != null) {
+//            anchorNode.setParent(arFragmentSupport.getArSceneView().getScene());
+//            Vector3 point1, point2;
+//            point1 = lastAnchorNode.getWorldPosition();
+//            point2 = anchorNode.getWorldPosition();
+//            Log.d("points", point1+","+point2);
+//
+//        /*
+//            First, find the vector extending between the two points and define a look rotation
+//            in terms of this Vector.
+//        */
+//            final Vector3 difference = Vector3.subtract(point1, point2);
+//            final Vector3 directionFromTopToBottom = difference.normalized();
+//            final Quaternion rotationFromAToB =
+//                    Quaternion.lookRotation(directionFromTopToBottom, Vector3.up());
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                MaterialFactory.makeOpaqueWithColor(getApplicationContext(), new com.google.ar.sceneform.rendering.Color())
+//                        .thenAccept(
+//                                material -> {
+//    /* Then, create a rectangular prism, using ShapeFactory.makeCube() and use the difference vector
+//           to extend to the necessary length.  */
+//                                    ModelRenderable model = ShapeFactory.makeCube(
+//                                            new Vector3(.01f, .01f, difference.length()),
+//                                            Vector3.zero(), material);
+//    /* Last, set the world rotation of the node to the rotation calculated earlier and set the world position to
+//           the midpoint between the given points . */
+////                                    Node node = new Node();
+////                                    node.setParent(anchorNode);
+////                                    node.setRenderable(model);
+////                                    node.setWorldPosition(Vector3.add(point1, point2).scaled(.5f));
+////                                    node.setWorldRotation(rotationFromAToB);
+//
+//                                    Anchor anchor = hitResult.createAnchor();
+//                                    AnchorNode anchorNode1 = new AnchorNode(anchor);
+//                                    anchorNode.setParent(arFragmentSupport.getArSceneView().getScene());
+//
+//                                    // Create the transformable andy and add it to the anchor.
+//                                    TransformableNode andy = new TransformableNode(arFragmentSupport.getTransformationSystem());
+//                                    andy.setParent(anchorNode1);
+//                                    andy.setRenderable(andyRenderable);
+//                                    andy.select();
+//                                }
+//                        );
+//            }
+//            lastAnchorNode = anchorNode;
+//        }
+//    }
 
-        /*
-            First, find the vector extending between the two points and define a look rotation
-            in terms of this Vector.
-        */
-            final Vector3 difference = Vector3.subtract(point1, point2);
-            final Vector3 directionFromTopToBottom = difference.normalized();
-            final Quaternion rotationFromAToB =
-                    Quaternion.lookRotation(directionFromTopToBottom, Vector3.up());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                MaterialFactory.makeOpaqueWithColor(getApplicationContext(), new com.google.ar.sceneform.rendering.Color())
-                        .thenAccept(
-                                material -> {
-    /* Then, create a rectangular prism, using ShapeFactory.makeCube() and use the difference vector
-           to extend to the necessary length.  */
-                                    ModelRenderable model = ShapeFactory.makeCube(
-                                            new Vector3(.01f, .01f, difference.length()),
-                                            Vector3.zero(), material);
-    /* Last, set the world rotation of the node to the rotation calculated earlier and set the world position to
-           the midpoint between the given points . */
-//                                    Node node = new Node();
-//                                    node.setParent(anchorNode);
-//                                    node.setRenderable(model);
-//                                    node.setWorldPosition(Vector3.add(point1, point2).scaled(.5f));
-//                                    node.setWorldRotation(rotationFromAToB);
 
-                                    Anchor anchor = hitResult.createAnchor();
-                                    AnchorNode anchorNode1 = new AnchorNode(anchor);
+
+    private void makePolyLine(String direction, float valx, float valy) {
+        Log.e("valx", String.valueOf(this.valx));
+        //Create the arrow renderable
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ModelRenderable.builder()
+                    //get the context of the ARFragment and pass the name of your .sfb file
+                    .setSource(ArNavActivity.this, Uri.parse(direction))
+                    .build()
+                    .thenAcceptAsync(modelRenderable -> andyRenderable = modelRenderable);
+            Toast.makeText(ArNavActivity.this, direction, Toast.LENGTH_SHORT).show();
+//                    .exceptionally(throwable -> {Toast toast = Toast.makeText(this,"Unable to load renderable ", Toast.LENGTH_LONG);
+//                        toast.setGravity(Gravity.CENTER, 0, 0);
+//                        toast.show();});
+            //I accepted the CompletableFuture using Async since I created my model on creation of the activity. You could simply use .thenAccept too.
+            //Use the returned modelRenderable and save it to a global variable of the same name
+        }
+
+        arFragmentSupport.getArSceneView().getScene().addOnUpdateListener(new Scene.OnUpdateListener() {
+            @Override
+            public void onUpdate(FrameTime frameTime) {
+
+
+
+                //get the frame from the scene for shorthand
+                Frame frame = arFragmentSupport.getArSceneView().getArFrame();
+
+                if (frame != null) {
+                    //get the trackables to ensure planes are detected
+                    planes = frame.getUpdatedTrackables(Plane.class).iterator();
+
+                    while (planes.hasNext()) {
+
+                        Plane plane = planes.next();
+                        //If a planes has been detected & is being tracked by ARCore
+                        if (plane.getTrackingState() == TrackingState.TRACKING) {
+
+                            //Hide the planes discovery helper animation
+                            arFragmentSupport.getPlaneDiscoveryController().hide();
+
+                            //Get all added anchors to the frame
+                            Iterator iterableAnchor = frame.getUpdatedAnchors().iterator();
+
+                            //place the first object only if no previous anchors were added
+                            if (!iterableAnchor.hasNext()) {
+
+//                                makeAr(plane,frame);
+
+                                //Perform a hit test at the center of the screen to place an object without tapping
+                                List<HitResult> hitTest = frame.hitTest(screenCenter().x, screenCenter().y);
+
+                                //iterate through all hits
+                                Iterator<HitResult> hitTestIterator = hitTest.iterator();
+                                while (hitTestIterator.hasNext()){
+                                    HitResult hitResult = hitTestIterator.next();
+
+
+                                    //Create an anchor at the plane hit
+                                    Anchor modelAnchor = plane.createAnchor(hitResult.getHitPose());
+                                    //Attach a node to this anchor with the scene as the parent
+                                    AnchorNode anchorNode = new AnchorNode(modelAnchor);
                                     anchorNode.setParent(arFragmentSupport.getArSceneView().getScene());
 
-                                    // Create the transformable andy and add it to the anchor.
-                                    TransformableNode andy = new TransformableNode(arFragmentSupport.getTransformationSystem());
-                                    andy.setParent(anchorNode1);
-                                    andy.setRenderable(andyRenderable);
-                                    andy.select();
+
+                                    TransformableNode transformableNode = new TransformableNode(arFragmentSupport.getTransformationSystem());
+                                    transformableNode.setParent(anchorNode);
+                                    transformableNode.setRenderable(ArNavActivity.this.andyRenderable);
+
+//                                    float xx = modelAnchor.getPose().tx();
+//                                    float yy = modelAnchor.getPose().compose(Pose.makeTranslation(0f, 0f, 0f)).ty();
+//                                    float zz = modelAnchor.getPose().tz();
+//                                    transformableNode.setWorldPosition(new Vector3(xx,yy,zz));
+
+                                    lastAnchorNode = new AnchorNode();
+
+
+                                    point2 = lastAnchorNode.getWorldPosition();
+
+//                                    for(int i=0;i<xvalue.size();i++){
+                                    point1 = new Vector3(valx,valy,-90);
+
+//                                    transformableNode.setWorldPosition(new Vector3(valx,valy,-90));
+//                                    }
+//                                    point2 = anchorNode.getWorldPosition();
+
+
+                                    polyLineCode(anchorNode,point1,point2);
+
                                 }
-                        );
+
+
+//                                makeAr(planes, frame);
+                            }
+                        }
+                    }
+                }
+//                Toast.makeText(context, "Wait for surface detection", Toast.LENGTH_SHORT).show();
+
             }
-            lastAnchorNode = anchorNode;
-        }
+        });
+
+
     }
 
     private void polyLineCode(AnchorNode anchorNode, Vector3 point1, Vector3 point2){
 
-        if (!isLineDrawn){
+//        if (!isLineDrawn){
 
             final Vector3 difference = Vector3.subtract(point1, point2);
             final Vector3 directionFromTopToBottom = difference.negated();
             final Quaternion rotationFromAToB = Quaternion.lookRotation(directionFromTopToBottom, Vector3.left());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                MaterialFactory.makeOpaqueWithColor(getApplicationContext(), new com.google.ar.sceneform.rendering.Color(android.graphics.Color.BLUE))
+                MaterialFactory.makeOpaqueWithColor(getApplicationContext(), new com.google.ar.sceneform.rendering.Color(Color.BLACK))
                         .thenAccept(
                                 material -> {
     /* Then, create a rectangular prism, using ShapeFactory.makeCube() and use the difference vector
@@ -965,7 +1019,7 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
                                     node.setWorldPosition(Vector3.add(point1, point2).scaled(.15f));
 //                                node.setWorldRotation(rotationFromAToB);
 
-                                    isLineDrawn = true;
+//                                    isLineDrawn = true;
 
 
                                 }
@@ -975,25 +1029,10 @@ public class ArNavActivity extends FragmentActivity implements GoogleApiClient.C
             lastAnchorNode = anchorNode;
         }
 
-    }
+//    }
 
-    private void makePolyLine(String direction) {
 
-        //Create the arrow renderable
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            ModelRenderable.builder()
-                    //get the context of the ARFragment and pass the name of your .sfb file
-                    .setSource(ArNavActivity.this, Uri.parse(direction))
-                    .build()
-                    .thenAcceptAsync(modelRenderable -> andyRenderable = modelRenderable);
-            Toast.makeText(ArNavActivity.this, direction, Toast.LENGTH_SHORT).show();
-//                    .exceptionally(throwable -> {Toast toast = Toast.makeText(this,"Unable to load renderable ", Toast.LENGTH_LONG);
-//                        toast.setGravity(Gravity.CENTER, 0, 0);
-//                        toast.show();});
-            //I accepted the CompletableFuture using Async since I created my model on creation of the activity. You could simply use .thenAccept too.
-            //Use the returned modelRenderable and save it to a global variable of the same name
-        }
-    }
+
 
 
     private void PopUpprotectcar() {
