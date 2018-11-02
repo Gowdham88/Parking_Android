@@ -403,17 +403,17 @@ public class ArExampleActivity extends AppCompatActivity implements GLSurfaceVie
         MaterialFactory.makeOpaqueWithColor(this,new com.google.ar.sceneform.rendering.Color())
                 .thenAccept(
                         material -> {
-                            lineRenderable = ShapeFactory.makeCube(new Vector3(.01f, .01f, difference.length()),
-                                    Vector3.zero(), material);
+//                            lineRenderable = ShapeFactory.makeCube(new Vector3(.01f, .01f, difference.length()),
+//                                    Vector3.zero(), material);
 
-
+                            ModelRenderable boxo = ShapeFactory.makeCube(new Vector3(1f, 1f, 1f), new Vector3(1f, 1f, 1f), material);
+                            lineNode.setRenderable(boxo);
                         });
 
    /* Last, set the local rotation of the node to the rotation calculated earlier and set the local position to
        the midpoint between the given points . */
 
         lineNode.setParent(anchorNode);
-        lineNode.setRenderable(lineRenderable);
         lineNode.setLocalPosition(Vector3.add(point1, point2).scaled(.5f));
         lineNode.setLocalRotation(rotationFromAToB);
 
