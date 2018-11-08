@@ -196,6 +196,7 @@ public class HistoryFragment extends Fragment {
 
                                     if(!value){
                                         mFilteredBookingList.add(BookingList.get(i));
+                                        hideProgressDialog();
                                     }
 
                                 }
@@ -206,11 +207,11 @@ public class HistoryFragment extends Fragment {
 
                         }
                         else{
-
+                            hideProgressDialog();
                         }
 
                     } else {
-
+                        hideProgressDialog();
                     }
                 } else {
 

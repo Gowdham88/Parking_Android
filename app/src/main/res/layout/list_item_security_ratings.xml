@@ -25,16 +25,32 @@
         android:focusable="true"
         android:layout_column="1"
             android:layout_marginStart="3dp" />
-            <TextView
-                android:id="@+id/cb1_text"
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="5 stars"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/textColor"
-                android:layout_column="2"
-                android:layout_marginStart="8dp"
-                />
+                android:layout_height="match_parent"
+
+                >
+
+                <ImageView
+                    android:id="@+id/cb11_text"
+                    android:layout_width="55dp"
+                    android:layout_height="20dp"
+                    android:layout_column="2"
+                    android:src="@drawable/fivestar"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                 />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/cb1_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:layout_gravity="center_vertical"
+                    android:text="1 star" />
+            </RelativeLayout>
 
         </TableRow>
 
@@ -53,16 +69,32 @@
         android:focusable="true"
         android:layout_column="1"
         />
-            <TextView
-                android:id="@+id/cb2_text"
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="4 stars"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/textColor"
-                android:layout_column="2"
-                android:layout_marginStart="8dp"
-                />
+                android:layout_height="match_parent"
+                >
+
+                <ImageView
+                    android:id="@+id/cb21_text"
+                    android:layout_width="55dp"
+                    android:layout_height="20dp"
+                    android:layout_column="2"
+                    android:src="@drawable/fourstar"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                 />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/cb2_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:layout_gravity="center_vertical"
+                    android:text="1 star"
+                    />
+            </RelativeLayout>
         </TableRow>
 
         <TableRow
@@ -80,16 +112,32 @@
         android:layout_marginStart="3dp"
         android:layout_column="1"
         />
-            <TextView
-                android:id="@+id/cb3_text"
+
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="3 stars"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/textColor"
-                android:layout_column="2"
-                android:layout_marginStart="8dp"
-                />
+                android:layout_height="match_parent"
+                >
+
+                <ImageView
+                    android:id="@+id/cb31_text"
+                    android:layout_width="55dp"
+                    android:layout_height="20dp"
+                    android:layout_column="2"
+                    android:src="@drawable/threestar"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/cb3_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:layout_gravity="center_vertical"
+                    android:text="1 star" />
+            </RelativeLayout>
         </TableRow>
         <TableRow android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -106,16 +154,31 @@
         android:layout_column="1"
         />
 
-        <TextView
-            android:id="@+id/cb4_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="2 stars"
-            android:textColor="@color/textColor"
-            android:layout_column="2"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="8dp"
-            />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <ImageView
+                    android:id="@+id/cb41_text"
+                    android:layout_width="55dp"
+                    android:layout_height="20dp"
+                    android:layout_column="2"
+                    android:src="@drawable/twostar"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                     />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/cb4_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:layout_gravity="center_vertical"
+                    android:text="1 star"
+               />
+            </RelativeLayout>
     </TableRow>
 
         <TableRow android:layout_width="match_parent"
@@ -133,16 +196,30 @@
         android:layout_marginStart="3dp"
         />
 
-        <TextView
-            android:id="@+id/cb5_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="1 star"
-            android:layout_gravity="center_vertical"
-            android:textColor="@color/textColor"
-            android:layout_marginStart="8dp"
-            android:layout_column="2"
-            />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <ImageView
+                    android:id="@+id/cb51_text"
+                    android:layout_width="55dp"
+                    android:layout_height="20dp"
+                    android:layout_column="2"
+                    android:src="@drawable/onestar"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                   />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/cb5_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:layout_gravity="center_vertical"
+                    android:text="1 star" />
+            </RelativeLayout>
     </TableRow>
 
     </TableLayout>

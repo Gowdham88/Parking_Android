@@ -1,20 +1,14 @@
 package com.polsec.pyrky.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +16,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.polsec.pyrky.R;
-import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
-import com.polsec.pyrky.activity.arnavigation.ArNavActivity;
 import com.polsec.pyrky.fragment.NotificationVideoFragment;
-import com.polsec.pyrky.fragment.ProfileFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder>{
 

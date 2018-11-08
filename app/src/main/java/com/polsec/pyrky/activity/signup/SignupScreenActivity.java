@@ -140,6 +140,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
             }
         });
+//        dialog.setCanceledOnTouchOutside(false);
         signupScrlin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,9 +150,9 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         SignupBtn = findViewById(R.id.sign_up_button);
         profileImg = findViewById(R.id.profile_img);
 
-        mEtEmail.setInputType(mEtEmail.getInputType()
-                | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                | EditorInfo.TYPE_TEXT_VARIATION_FILTER);
+//        mEtEmail.setInputType(mEtEmail.getInputType()
+//                | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+//                | EditorInfo.TYPE_TEXT_VARIATION_FILTER);
         profileImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -182,6 +183,8 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         SignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 Utils.hideKeyboard(SignupScreenActivity.this);
                 createAccount(mEtEmail.getText().toString().trim(), mEtPassword.getText().toString().trim(), mEtUsername.getText().toString(),view);
                 PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_LOGGED_INPASS, mEtPassword.getText().toString().trim());
@@ -448,7 +451,9 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
                             } else {
 
-                                athenticaationpopup(task.getException().getMessage());
+                                String str="Oops! This email id is already exists";
+
+                                athenticaationpopup(str);
 //                                Toast.makeText(getApplicationContext(), "Authentication Error:"+ task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                 hideProgressDialog();
                             }
@@ -843,7 +848,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         alertDialog.setView(deleteDialogView);
         TextView AthuntTxt=(TextView)deleteDialogView.findViewById(R.id.txt_authent);
         TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
-        AthuntTxt.setText("Authentication Error:"+message);
+        AthuntTxt.setText(message);
 
         final AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {

@@ -16,7 +16,7 @@ public interface RetrofitInterface {
 
 //
 //    @Headers("Content-Type: application/x-www-form-urlencoded")
-    @POST("/maps/api/directions/json?")
+    @GET("/maps/api/directions/json?")
     Call<Example> getDirections(
             @Query("origin") String origin,
             @Query("destination") String destination,

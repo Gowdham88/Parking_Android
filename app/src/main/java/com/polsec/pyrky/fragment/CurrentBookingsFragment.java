@@ -205,6 +205,7 @@ public class CurrentBookingsFragment extends Fragment {
 
                                     if(value){
                                         mFilteredBookingList.add(BookingList.get(i));
+                                        hideProgressDialog();
                                     }
 
                                 }
@@ -213,14 +214,14 @@ public class CurrentBookingsFragment extends Fragment {
 
                         }
                         else{
-
+                            hideProgressDialog();
                         }
 //                        recyclerAdapter.notifyDataSetChanged();
 
 
                     } else {
 //                        Log.d(TAG, "No such document");
-
+                        hideProgressDialog();
                     }
                 } else {
 //                    Log.d(TAG, "get failed with ", task.getException());

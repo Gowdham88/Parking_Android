@@ -13,6 +13,7 @@
         <ImageView
             android:layout_width="140dp"
             android:layout_height="95dp"
+            android:scaleType="fitXY"
             android:background="@drawable/carousel_background"
             android:id="@+id/nearest_place_image"
             android:src="@mipmap/ic_launcher"

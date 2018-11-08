@@ -23,6 +23,7 @@ import com.polsec.pyrky.activity.NearestLocMapsActivity;
 import com.polsec.pyrky.fragment.NotificationVideoFragment;
 import com.polsec.pyrky.fragment.ProfileFragment;
 import com.polsec.pyrky.pojo.NearestData;
+import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -63,8 +64,8 @@ private int avatarSize;
     HashMap<String, Object> mrlslist=new HashMap<String, Object>();
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
-    String value="carousel";
-    int distanceval;
+    String value="carousel",stringcartypeval ;
+    int distanceval,cartype;
 //public CarouselNearestAdapter(Context context, ArrayList<String> nearimg, ArrayList<String> nearlat1, ArrayList<String> nearlong1, ArrayList<String> distances1, ArrayList<String> Placename, ArrayList<Double> caldis1, ArrayList<String> mCameraID, ArrayList<HashMap<String, Object>> parkingRules, ArrayList<String> parkingTypes) {
 //        this.context = context;
 //        this.nearimg = nearimg;
@@ -105,7 +106,22 @@ public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
     Double disval= Double.valueOf(String.valueOf(mNearestDataList.get(position).getLocationDistance().toString()));
     Log.e("val", String.valueOf(disval));
 
-
+    cartype = Integer.parseInt(PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_PROFILE_CAR));
+    if(cartype==0){
+        stringcartypeval="Compact";
+    }
+    else if(cartype==1){
+        stringcartypeval="Small";
+    }
+    else if(cartype==2){
+        stringcartypeval="Mid size";
+    }
+    else if(cartype==3){
+        stringcartypeval="Full";
+    }
+    else {
+        stringcartypeval="Van/Pick-up";
+    }
     distanceval= (int) Double.parseDouble(String.valueOf(disval));
 
     Log.e("distanceval", String.valueOf(distanceval));
@@ -183,7 +199,7 @@ public void onClick(View v) {
 
     FragmentTransaction transaction =  ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
     transaction.replace(R.id.main_frame_layout, NearestLocMapsActivity.newInstance(mNearestDataList.get(position).getCameraLat(),mNearestDataList.get(position).getCameraLong(),value,holder.getAdapterPosition(),mNearestDataList.get(position).getCameraLocationName(),distanceval,mNearestDataList.get(position).getCameraImageUrl()
-            ,mNearestDataList.get(position).getCameraID(),mNearestDataList.get(position).getParkingRules(),mNearestDataList.get(position).getParkingTypes()));
+            ,mNearestDataList.get(position).getCameraID(),mNearestDataList.get(position).getParkingRules(),mNearestDataList.get(position).getParkingTypes(),stringcartypeval));
     transaction.addToBackStack(null).commit();
 
     Log.e("position", String.valueOf(mNearestDataList.get(position).getCameraID()));

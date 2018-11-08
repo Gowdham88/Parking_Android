@@ -84,6 +84,7 @@
     <dimen name="size80">88.00dp</dimen>
     <dimen name="size85">93.50dp</dimen>
     <dimen name="size90">99.00dp</dimen>
+    <dimen name="size92">101.00dp</dimen>
     <dimen name="size95">104.50dp</dimen>
     <dimen name="size100">110.00dp</dimen>
     <dimen name="size105">115.50dp</dimen>
@@ -127,6 +128,7 @@
     <dimen name="size390">429.00dp</dimen>
     <dimen name="size400">440.00dp</dimen>
     <dimen name="user_profile_avatar_size">88dp</dimen>
+    <dimen name="user_profile_avatar_size2">88dp</dimen>
     <dimen name="user_profile_avatar_size1">488dp</dimen>
 
 </resources>

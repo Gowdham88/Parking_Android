@@ -36,22 +36,24 @@
         android:layout_height="wrap_content"
         android:textColor="@color/textColor"
         android:text="@string/email" />
-            <EditText
-                style="@style/NunitoBlackLight"
-                android:background="@null"
-                android:gravity="bottom"
-                android:id="@+id/et_email"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="10dp"
-                android:textColorHint="@color/email_txtclr"
-                android:drawableBottom="@color/textColor"
-                android:textSize="12sp"
-                android:inputType="textEmailAddress"
-                android:hint="@string/enter_your_email"
-                android:imeOptions="actionNext"
-                android:focusable="auto"/>
+
+
+        <EditText
+            android:id="@+id/et_email"
+            style="@style/NunitoBlackLight"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:backgroundTint="@color/textColor"
+            android:gravity="bottom"
+            android:hint="@string/enter_your_email"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress"
+            android:singleLine="true"
+            android:textColorHint="@color/email_txtclr"
+            android:textSize="12sp" />
         <View
             android:id="@+id/passlineemail"
             android:layout_width="match_parent"
@@ -183,9 +185,9 @@
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:gravity="center"
+        android:layout_marginTop="8dp"
         android:text="@string/already_have_an_account_sign_in_here"
         android:textSize="12sp"
-        android:layout_marginTop="20dp"
         android:textColor="@color/textColor"
         android:visibility="visible"
         android:layout_marginBottom="13dp"
