@@ -73,6 +73,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.ViewImage.ViewImageActivity;
 import com.polsec.pyrky.activity.ar.ArActivity;
+import com.polsec.pyrky.activity.ar.ArExampleActivity;
 import com.polsec.pyrky.activity.ar.ArNavActivity;
 import com.polsec.pyrky.adapter.CarouselDetailMapAdapter;
 import com.polsec.pyrky.adapter.Carouselfirebaseadapter;
@@ -1564,7 +1565,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                 }
                 else {
 
-                    Intent intent = new Intent(getActivity(), ArNavActivity.class);
+                    Intent intent = new Intent(getActivity(), ArExampleActivity.class);
 
                     intent.putExtra("SRC", "Current Location");
                     intent.putExtra("DEST", "Some Destination");
@@ -1602,7 +1603,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                 else {
 
                     Toast.makeText(getActivity(), "pyrky", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getActivity(), ArNavActivity.class);
+                    Intent intent = new Intent(getActivity(), ArExampleActivity.class);
 //                    try {
                         intent.putExtra("SRC", "Current Location");
                         intent.putExtra("DEST", "Some Destination");

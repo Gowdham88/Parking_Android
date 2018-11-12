@@ -718,7 +718,7 @@ ArrayList<String>val=new ArrayList<>();
             public void onFailure(Call<Example> call, Throwable t) {
 
                 Log.d(TAG, "onFailure: FAIL" + t.getMessage());
-                new AlertDialog.Builder(getApplicationContext()).setMessage("Fetch Failed").show();
+//                new AlertDialog.Builder(getApplicationContext()).setMessage("Fetch Failed").show();
             }
         });
     }

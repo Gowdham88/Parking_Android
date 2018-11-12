@@ -2,6 +2,16 @@ package com.polsec.pyrky.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.polsec.pyrky.pojo.NearestData;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by thulirsoft on 7/3/18.
@@ -37,6 +47,7 @@ public class PreferencesHelper {
     public static final String PREFERENCE_PARKING_TYPES = "parkingtype";
     public static final String PREFERENCE_CAR_CATEGORY = "carcategory";
     public static final String PREFERENCE_SECURITY_RATINGS = "securityratings";
+    public static final ArrayList PREFERENCE_DATA = new ArrayList();
 //    public static final String PREFERENCE_PARKINGSTATUS ="parkingstatus";
     //End Region
 
@@ -61,7 +72,12 @@ public class PreferencesHelper {
 
         editor.apply();
     }
-
+//
+     public static void setPreference(Context context, ArrayList preference_names, List<NearestData> details){
+    SharedPreferences.Editor editor = getEditor(context);
+        editor.putString(String.valueOf(preference_names), String.valueOf(details));
+        editor.apply();
+}
     public static void setPreference(Context context,String preference_name,String details){
         SharedPreferences.Editor editor = getEditor(context);
         editor.putString(preference_name,details);
@@ -79,6 +95,31 @@ public class PreferencesHelper {
         return preferences.getString(name, "");
     }
 
+//    public static List<NearestData> getPreference(Context context, List<NearestData> details) {
+//        SharedPreferences preferences = getSharedPreferences(context);
+//        return preferences.getString(details,);
+//    }
+//
+
+
+
+    public static void saveArrayList(Context context,ArrayList preference_names,ArrayList<String> list, String key){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(key, json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
+
+    public ArrayList<String> getArrayList(Context context,String key){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+//
     public static boolean getPreferenceBoolean(Context context, String name) {
         SharedPreferences preferences = getSharedPreferences(context);
         return preferences.getBoolean(name, false);
@@ -92,7 +133,6 @@ public class PreferencesHelper {
     private static SharedPreferences getSharedPreferences(Context context) {
         return context.getSharedPreferences(USER_PREFERENCES, Context.MODE_PRIVATE);
     }
-
 
 
     // endregion

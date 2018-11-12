@@ -17,6 +17,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -68,11 +69,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 
+import com.google.common.reflect.TypeToken;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.Query.Direction;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.HomeActivity;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
@@ -84,12 +87,15 @@ import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.Utils;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.DoubleBinaryOperator;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -142,7 +148,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     public static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
 
-    SharedPreferences sharedPreferences;
+
     private static final int MY_PERMISSIONS_REQUEST_READ_FINE_LOCATION = 100;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final int REQUEST_CALL_PHONE = 100;
@@ -190,6 +196,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     ArrayList<ArrayList<Double>> mNeawdislist = new ArrayList<ArrayList<Double>>();
     ArrayList<HashMap<String, Object>> Ruleslist = new ArrayList<HashMap<String, Object>>();
     List<NearestData> mNearestDataList = new ArrayList<NearestData>();
+    List<NearestData> mNearestDataList1 = new ArrayList<NearestData>();
+    String mNearestDataListdata,Preferencename;
 
     ArrayList<String> mCameraID = new ArrayList<>();
     HashMap<String, Object> popupruls = new HashMap<String, Object>();
@@ -204,6 +212,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     double longitude, latitude;
     HomeActivity parent = (HomeActivity) getActivity();
     private static final int REQUEST_ACCESS_FINE_LOCATION = 111;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    Set countSet = new HashSet();
+
+
 
 //    public static final String TAG = "ImmersiveModeFragment";
 
@@ -270,6 +283,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         HomeFragrellay = (RelativeLayout) view.findViewById(R.id.parfrag_lay);
         autoCompView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
         PermissionTxt1=(TextView) view.findViewById(R.id.nearest_places_title);
+
+        sharedPreferences =getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        // Opening sharedPreferences in edit mode using editor.
+        editor = sharedPreferences.edit();
+
+        // Opening sharedPreferences in Private mode.
+
+
+        // Opening sharedPreferences in edit mode using editor.
+
         cartype = Integer.parseInt(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_CAR));
 
         Log.e("cartype", String.valueOf(cartype));
@@ -791,7 +815,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         Log.e("distance", String.valueOf(distances1));
 
 
-                        if (locationDistance < 2500) {
+                        if (locationDistance < 5000) {
 
                             NearestData nearestdata = new NearestData();
                             nearestdata.setLocationDistance(locationDistance);
@@ -816,10 +840,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 });
 
 
-                                Log.e("sortlist", String.valueOf(mNearestDataList.get(j).getLocationDistance()));
 
+//                                countSet.addAll(mNearestDataList);
 //
+//                                editor.putStringSet(getResources().getString(R.string.Count_List_Key), countSet);
+//
+//                                editor.apply();
+//
+//                                Set<String> countsSet = sharedPreferences.getStringSet(getResources().getString(R.string.Count_List_Key), null);
+//
+//                                Log.e("countsSet", String.valueOf(countSet));
 
+//                            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//                                SharedPreferences.Editor editor = sharedPrefs.edit();
+//                                Gson gson = new Gson();
+//
+//                                String json = gson.toJson(mNearestDataList);
+//
+//                                editor.putString(TAG, json);
+//                                editor.commit();
+//
+//                                SharedPreferences sharedPrefs1 = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//                                Gson gson1 = new Gson();
+//                                String json1 = sharedPrefs1.getString(TAG, "");
+//                                Type type = new TypeToken<List<NearestData>>() {}.getType();
+//                                List<NearestData> arrayList = gson1.fromJson(json1, type);
+//                                Log.e("locationname", String.valueOf(arrayList.get(0).getCameraLocationName()));
 
                                 carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
                                 carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
