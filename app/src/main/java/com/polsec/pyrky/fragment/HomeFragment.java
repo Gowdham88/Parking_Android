@@ -390,12 +390,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 isCarouselSwiped = true;
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                             }
-//
+ mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 ////                            Toast.makeText(getActivity(), "Same count", Toast.LENGTH_SHORT).show();
                         }
 
 
-                        //                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
 //
 
 
@@ -655,7 +655,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     public void onMapReady(GoogleMap googleMap) {
         mMap =googleMap;
         mMap.clear();
-
+//        marker.setRotation(5);
         Double lat = mCurrentGpsLoc.getLatitude();
         Double lng = mCurrentGpsLoc.getLongitude();
 
@@ -724,6 +724,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         mLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.clear();
+
+
 
         // Helper method for smooth
         // animation
