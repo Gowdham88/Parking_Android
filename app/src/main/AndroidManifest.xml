@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.polsec.pyrky">
 
-    <uses-sdk android:minSdkVersion="14" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -110,10 +108,10 @@
         <!-- android:name="com.google.android.geo.API_KEY" -->
         <!-- android:value="@string/google_maps_key" /> -->
 
-        <activity
-            android:name=".activity.NearestLocMapsActivity"
-            android:label="@string/title_activity_nearest_loc_maps"
-            android:screenOrientation="portrait" />
+        <!--<activity-->
+            <!--android:name=".activity.NearestLocMapsActivity"-->
+            <!--android:label="@string/title_activity_nearest_loc_maps"-->
+            <!--android:screenOrientation="portrait" />-->
         <activity
             android:name=".activity.booking.BookingsActivity"
             android:screenOrientation="portrait" />
