@@ -106,6 +106,8 @@ public class HistoryFragment extends Fragment {
 
     private void setupFeed() {
 
+        hideProgressDialog();
+
         recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),mFilteredBookingList,bookingid1,CameraList,recyclerAdapter,mRecyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setHasFixedSize(true);
@@ -214,7 +216,7 @@ public class HistoryFragment extends Fragment {
                         hideProgressDialog();
                     }
                 } else {
-
+                    hideProgressDialog();
                 }
 
                 setupFeed();

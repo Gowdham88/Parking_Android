@@ -160,43 +160,43 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 
                 Log.e("distanceval", String.valueOf(distanceval1));
                 if(!mNearestDataList.get(position).equals(null)){
-                    if(distanceval1>0 && distanceval1 <=100 ){
-                        holder.nearestPlaceDistance.setText("0 - 100m");
-                    }
-                    else if(distanceval1>100 && distanceval1 <=200 ){
-                        holder.nearestPlaceDistance.setText("100 - 200m");
-                    }
-                    else if(distanceval1>200 && distanceval1 <=300 ){
-                        holder.nearestPlaceDistance.setText("200 - 300m");
-                    }
-
-                    else if(distanceval1>300 && distanceval1<=400 ){
-                        holder.nearestPlaceDistance.setText("300 - 400m");
-                    }
-
-                    else if(distanceval1>400 && distanceval1 <=500 ){
-                        holder.nearestPlaceDistance.setText("400 - 500m");
-                    }
-
-                    else if(distanceval1>500 && distanceval1 <=600 ){
-                        holder.nearestPlaceDistance.setText("500 - 600m");
-                    }
-
-                    else if(distanceval1>600 && distanceval1 <=700 ){
-                        holder.nearestPlaceDistance.setText("600 - 700m");
-                    }
-
-                    else if(distanceval1>700 && distanceval1 <=800 ){
-                        holder.nearestPlaceDistance.setText("700 - 800m");
-                    }
-
-                    else if(distanceval1>800 && distanceval1 <=900 ){
-                        holder.nearestPlaceDistance.setText("800 - 900m");
-                    }
-
-                    else {
-                        holder.nearestPlaceDistance.setText("1000m above");
-                    }
+//                    if(distanceval1>0 && distanceval1 <=100 ){
+                        holder.nearestPlaceDistance.setText(String.valueOf(distanceval1)+"m");
+//                    }
+//                    else if(distanceval1>100 && distanceval1 <=200 ){
+//                        holder.nearestPlaceDistance.setText("100 - 200m");
+//                    }
+//                    else if(distanceval1>200 && distanceval1 <=300 ){
+//                        holder.nearestPlaceDistance.setText("200 - 300m");
+//                    }
+//
+//                    else if(distanceval1>300 && distanceval1<=400 ){
+//                        holder.nearestPlaceDistance.setText("300 - 400m");
+//                    }
+//
+//                    else if(distanceval1>400 && distanceval1 <=500 ){
+//                        holder.nearestPlaceDistance.setText("400 - 500m");
+//                    }
+//
+//                    else if(distanceval1>500 && distanceval1 <=600 ){
+//                        holder.nearestPlaceDistance.setText("500 - 600m");
+//                    }
+//
+//                    else if(distanceval1>600 && distanceval1 <=700 ){
+//                        holder.nearestPlaceDistance.setText("600 - 700m");
+//                    }
+//
+//                    else if(distanceval1>700 && distanceval1 <=800 ){
+//                        holder.nearestPlaceDistance.setText("700 - 800m");
+//                    }
+//
+//                    else if(distanceval1>800 && distanceval1 <=900 ){
+//                        holder.nearestPlaceDistance.setText("800 - 900m");
+//                    }
+//
+//                    else {
+//                        holder.nearestPlaceDistance.setText("1000m above");
+//                    }
             }
 
 

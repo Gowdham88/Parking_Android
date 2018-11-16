@@ -136,7 +136,7 @@ public class CurrentBookingsFragment extends Fragment {
         BookingList.clear();
         BookingListId.clear();
         mFilteredBookingList.clear();
-        showProgressDialog();
+//        showProgressDialog();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Query first = db.collection("Bookings").whereEqualTo("Current_User_UID",uid);
@@ -172,10 +172,12 @@ public class CurrentBookingsFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
+
+
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         if(document.contains("Booking_ID")){
-                            hideProgressDialog();
+                            showProgressDialog();
 //                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         bookingid = document.getData();
 
@@ -205,13 +207,13 @@ public class CurrentBookingsFragment extends Fragment {
 
                                     if(value){
                                         mFilteredBookingList.add(BookingList.get(i));
-                                        hideProgressDialog();
+
                                     }
 
                                 }
                             }
 
-
+                            hideProgressDialog();
                         }
                         else{
                             hideProgressDialog();
@@ -229,6 +231,7 @@ public class CurrentBookingsFragment extends Fragment {
                 }
 
                 setupFeed();
+
             }
         });
 

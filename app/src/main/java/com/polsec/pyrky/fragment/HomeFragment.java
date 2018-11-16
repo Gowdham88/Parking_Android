@@ -121,15 +121,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     RelativeLayout mFilterRelativeLayout;
 
     //Google Map
-    GoogleMap mMap;
+
     SupportMapFragment mMapFragment;
-    private TrackGPS mCurrentGpsLoc;
+     TrackGPS mCurrentGpsLoc;
+    GoogleMap mMap;
     Location mLocation;
     LatLng laln;
-    String address1;
+
     double mCurLocLat, mCurLocLong;
+
     double latitu, longitu;
     double latt, longi;
+    String address1;
     List<Camera> mNearestLocationList = new ArrayList<Camera>();
 
 

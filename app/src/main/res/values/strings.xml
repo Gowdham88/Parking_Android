@@ -38,10 +38,11 @@
     <string name="notification_txt">Do you want to request a camera view\n for three seconds</string>
     <string name="empy_txt">Username or email or password should\n not be empty</string>
     <string name="signinempy_txt">Email or Password should not be empty</string>
-    <string name="passworderror_txt">Enter valid Password</string>
+    <string name="passworderror_txt">Password should not br empty</string>
+    <string name="passwordch_txt">The Password must be atleast 6 characters long</string>
     <string name="usernameerror_txt">Username should not be empty</string>
     <string name="emailerror_txt">Enter valid Email</string>
-    <string name="imageerror_txt">Profile should not be empty</string>
+    <string name="imageerror_txt">Profile picture should be uploaded</string>
     <string name="enable_permission">Please Grant Permissions</string>
     <string name="ok">OK</string>
 

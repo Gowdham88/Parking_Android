@@ -95,7 +95,8 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class SettingsFragment extends Fragment  implements EasyPermissions.PermissionCallbacks{
 
-    EditText NameEdt,EmailEdt;
+    EditText EmailEdt;
+    TextView  NameEdt;
     ImageView ProfileImg;
     TextView Camera,Gallery,cancel,save;
  ImageView mProfileImage;
@@ -140,6 +141,8 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         mName = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME);
         mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         mUid= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+
+//        Toast.makeText(getActivity(), mUid, Toast.LENGTH_SHORT).show();
         mCarIcon = Integer.parseInt(PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR));
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
         ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.GONE);
@@ -270,6 +273,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                     public void onClick(View view) {
                         String Str=EdtPfl.getText().toString();
                         if(!Str.isEmpty()||!Str.equals(null)){
+                            NameEdt.setText(Str);
                             saveUserName(Str,alertDialog1);
                         }else{
                             Toast.makeText(getActivity(), "Please edit the name", Toast.LENGTH_SHORT).show();
