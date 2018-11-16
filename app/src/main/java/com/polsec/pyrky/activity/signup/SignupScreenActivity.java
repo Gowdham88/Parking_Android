@@ -140,6 +140,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
             }
         });
+//        dialog.setCanceledOnTouchOutside(false);
         signupScrlin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,9 +150,9 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         SignupBtn = findViewById(R.id.sign_up_button);
         profileImg = findViewById(R.id.profile_img);
 
-        mEtEmail.setInputType(mEtEmail.getInputType()
-                | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                | EditorInfo.TYPE_TEXT_VARIATION_FILTER);
+//        mEtEmail.setInputType(mEtEmail.getInputType()
+//                | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+//                | EditorInfo.TYPE_TEXT_VARIATION_FILTER);
         profileImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -182,6 +183,8 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         SignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 Utils.hideKeyboard(SignupScreenActivity.this);
                 createAccount(mEtEmail.getText().toString().trim(), mEtPassword.getText().toString().trim(), mEtUsername.getText().toString(),view);
                 PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_LOGGED_INPASS, mEtPassword.getText().toString().trim());
@@ -401,9 +404,17 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 //            Toast.makeText(this, "Enter valid e-mail address", Toast.LENGTH_SHORT).show();
 
         }
-        else if (TextUtils.isEmpty(password) || password.length()<6) {
+        else if (TextUtils.isEmpty(password)) {
 
             alertPasswordpopup();
+
+//            Toast.makeText(this, "Password should have minimum 6 characters", Toast.LENGTH_SHORT).show();
+
+        }
+
+        else if (password.length()<6) {
+
+            alertPasswordcharpopup();
 //            Toast.makeText(this, "Password should have minimum 6 characters", Toast.LENGTH_SHORT).show();
 
         }
@@ -448,7 +459,9 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
                             } else {
 
-                                athenticaationpopup(task.getException().getMessage());
+                                String str="Oops! This email id is already exists";
+
+                                athenticaationpopup(str);
 //                                Toast.makeText(getApplicationContext(), "Authentication Error:"+ task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                 hideProgressDialog();
                             }
@@ -759,6 +772,41 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 //        lp.windowAnimations = R.style.DialogAnimation;
         alertDialog1.getWindow().setAttributes(lp);
     }
+
+
+    private void alertPasswordcharpopup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.pass_charecter_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
     private void alertusernamepopup() {
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.username_alert, null);
@@ -843,7 +891,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
         alertDialog.setView(deleteDialogView);
         TextView AthuntTxt=(TextView)deleteDialogView.findViewById(R.id.txt_authent);
         TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
-        AthuntTxt.setText("Authentication Error:"+message);
+        AthuntTxt.setText(message);
 
         final AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {

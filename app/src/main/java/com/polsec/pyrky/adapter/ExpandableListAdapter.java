@@ -295,7 +295,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                             case "2 stars":
                                 checkBox4.setChecked(true);
                                 break;
-                            case "1 star":
+                            case "1 stars":
                                 checkBox5.setChecked(true);
                                 break;
                         }

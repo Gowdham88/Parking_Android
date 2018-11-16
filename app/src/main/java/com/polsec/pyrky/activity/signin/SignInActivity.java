@@ -188,8 +188,8 @@ public class SignInActivity extends AppCompatActivity {
 
                                 } else {
                                     // If sign in fails, display a message to the user.
-
-                                    athenticaationpopup(task.getException().getMessage());
+                                    String str1="Oops! Enter valid Password";
+                                    athenticaationpopup(str1);
 //                                    Toast.makeText(SignInActivity.this, "Registration failed! " + "\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                     hideProgressDialog();
                                 }
@@ -332,7 +332,7 @@ public class SignInActivity extends AppCompatActivity {
         alertDialog.setView(deleteDialogView);
         TextView AthuntTxt=(TextView)deleteDialogView.findViewById(R.id.txt_authent);
         TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
-        AthuntTxt.setText("Authentication Error:"+message);
+        AthuntTxt.setText(message);
 
         final AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(new View.OnClickListener() {

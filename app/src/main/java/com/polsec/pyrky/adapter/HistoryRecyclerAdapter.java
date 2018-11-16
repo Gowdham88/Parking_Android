@@ -238,6 +238,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
                         HistoryRecyclerAdapter historyRecyclerAdapter = new HistoryRecyclerAdapter(context,bookingList,mRecyclerView);
                         mRecyclerView.setAdapter(historyRecyclerAdapter);
+                        historyRecyclerAdapter.notifyDataSetChanged();
 
 
 
@@ -260,27 +261,27 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
                         drawable.setColorFilter(Color.parseColor("#00B9AB"), PorterDuff.Mode.SRC_ATOP);
 
 
-                ratingval vehiclePojoObject=new ratingval();
-                vehiclePojoObject.setUser_ID(uid);
-                vehiclePojoObject.setRatings(String.valueOf(currenRating));
-
-                vehList.add(vehiclePojoObject);
+//                ratingval vehiclePojoObject=new ratingval();
+//                vehiclePojoObject.setUser_ID(uid);
+//                vehiclePojoObject.setRatings(String.valueOf(currenRating));
 //
-                Reports reports=new Reports(vehList,cameraid);
+//                vehList.add(vehiclePojoObject);
+////
+//                Reports reports=new Reports(vehList,cameraid);
+////
+//                db.collection("Reports").document(latlongi).set(reports).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                            public void onSuccess(Void aVoid) {
+//                                hideProgressDialog();
 //
-                db.collection("Reports").document(latlongi).set(reports).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                            public void onSuccess(Void aVoid) {
-                                hideProgressDialog();
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.w(TAG, "Error writing document", e);
+//                            }
+//                        });
 
 
 

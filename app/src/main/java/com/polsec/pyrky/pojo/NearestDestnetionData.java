@@ -1,6 +1,8 @@
 package com.polsec.pyrky.pojo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by czsm4 on 20/09/18.
@@ -9,13 +11,28 @@ import java.util.HashMap;
 public class NearestDestnetionData {
     private Double LocationDistance;
 
+
     private String cameraLat;
     private String cameraLong;
     private String parkingTypes;
+
+
     private String cameraID;
     private HashMap<String,Object> parkingRules;
     private String cameraLocationName;
+
+
     private String cameraImageUrl;
+
+
+    private String Slotlat;
+    private String Slotlongi;
+
+
+    //    private HashMap<String,List<latExample>> parkingSlots;
+private HashMap<String,Object> parkingSlots;
+
+//    parkingSlots<Map<String, List<Education>>> genericTypeIndicator
 
     public NearestDestnetionData(){
 
@@ -23,7 +40,7 @@ public class NearestDestnetionData {
     }
 
     public NearestDestnetionData(Double LocationDistance,String cameraLat, String cameraLong, String parkingType,String cameraID, HashMap<String,Object> parkingRules,
-                       String cameraLocationName, String cameraImageUrl){
+                       String cameraLocationName, String cameraImageUrl,HashMap<String,Object> parkingSlots, String Slotlat,String Slotlongi){
         this.LocationDistance=LocationDistance;
         this.cameraLat = cameraLat;
         this.cameraLong = cameraLong;
@@ -32,6 +49,10 @@ public class NearestDestnetionData {
         this.parkingRules = parkingRules;
         this.cameraLocationName = cameraLocationName;
         this.cameraImageUrl=cameraImageUrl;
+        this.parkingSlots=parkingSlots;
+        this.Slotlat=Slotlat;
+        this.Slotlongi=Slotlongi;
+
 
     }
 
@@ -98,5 +119,28 @@ public class NearestDestnetionData {
     public void setLocationDistance(Double locationDistance) {
         LocationDistance = locationDistance;
     }
+    public HashMap<String,Object> getParkingSlots() {
+        return parkingSlots;
+    }
+
+    public void setParkingSlots(HashMap<String,Object> parkingSlots) {
+        this.parkingSlots = parkingSlots;
+    }
+    public String getSlotlat() {
+        return Slotlat;
+    }
+
+    public void setSlotlat(String slotlat) {
+        Slotlat = slotlat;
+    }
+
+    public String getSlotlongi() {
+        return Slotlongi;
+    }
+
+    public void setSlotlongi(String slotlongi) {
+        Slotlongi = slotlongi;
+    }
+
 
 }

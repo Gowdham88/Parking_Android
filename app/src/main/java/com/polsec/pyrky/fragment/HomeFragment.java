@@ -3,6 +3,7 @@ package com.polsec.pyrky.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,11 +14,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -52,6 +56,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -64,11 +69,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 
+import com.google.common.reflect.TypeToken;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.Query.Direction;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.HomeActivity;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
@@ -76,16 +83,24 @@ import com.polsec.pyrky.adapter.CarouselNearestAdapter;
 import com.polsec.pyrky.adapter.PlaceArrayAdapter;
 import com.polsec.pyrky.pojo.Camera;
 import com.polsec.pyrky.pojo.NearestData;
+import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.Utils;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.function.DoubleBinaryOperator;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.CONTROL_LOCATION_UPDATES;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -103,24 +118,29 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     //Filter
     Boolean isExpandableListEnabled = false;
     Button mFilterButton;
+    RelativeLayout mFilterRelativeLayout;
 
     //Google Map
-    GoogleMap mMap;
+
     SupportMapFragment mMapFragment;
-    private TrackGPS mCurrentGpsLoc;
+     TrackGPS mCurrentGpsLoc;
+    GoogleMap mMap;
     Location mLocation;
     LatLng laln;
-    String address1;
+
     double mCurLocLat, mCurLocLong;
+
     double latitu, longitu;
     double latt, longi;
+    String address1;
     List<Camera> mNearestLocationList = new ArrayList<Camera>();
 
 
-    TextView mSearchButton;
+    TextView mSearchButton,PermissionTxt,PermissionTxt1;
     RelativeLayout HomeRelativeLay;
 
     AutoCompleteTextView autoCompView;
+    private static final int PERMISSION_REQUEST_CODE = 200;
 
 
     Location mCurrentLoc = new Location("");
@@ -131,7 +151,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     public static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
 
-    SharedPreferences sharedPreferences;
+
     private static final int MY_PERMISSIONS_REQUEST_READ_FINE_LOCATION = 100;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final int REQUEST_CALL_PHONE = 100;
@@ -140,7 +160,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     private SharedPreferences permissionStatus;
 
     private android.support.v7.app.AlertDialog dialog;
-    HomeFragment mcontext=HomeFragment.this;
+    HomeFragment mcontext = HomeFragment.this;
 
 //            @Override
 //            public void onAttach(Context context) {
@@ -156,7 +176,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
             new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
     double Latitude, Longitude;
-    String StrLatitude, StrLongitude;
+    String StrLatitude, StrLongitude, stringcartypeval;
+    int cartype;
     ArrayList<Double> distances = new ArrayList<>();
     ArrayList<Double> distancesmtrs = new ArrayList<>();
     ArrayList<String> caldis = new ArrayList<>();
@@ -178,18 +199,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     ArrayList<ArrayList<Double>> mNeawdislist = new ArrayList<ArrayList<Double>>();
     ArrayList<HashMap<String, Object>> Ruleslist = new ArrayList<HashMap<String, Object>>();
     List<NearestData> mNearestDataList = new ArrayList<NearestData>();
+    List<NearestData> mNearestDataList1 = new ArrayList<NearestData>();
+    String mNearestDataListdata,Preferencename;
 
     ArrayList<String> mCameraID = new ArrayList<>();
- HashMap<String, Object> popupruls = new HashMap<String, Object>();
+    HashMap<String, Object> popupruls = new HashMap<String, Object>();
     List<Address> mCurLocAddress = null;
     double distanceval;
-    HashMap<String,Object> listofparkingRules=new HashMap<>();
+    HashMap<String, Object> listofparkingRules = new HashMap<>();
     RelativeLayout HomeRelLayout, mParentLayout, HomeFragrellay;
-    LinearLayout NearLinLay;
+    RelativeLayout NearLinLay;
     Marker marker;
     MarkerOptions makeroptions;
     CarouselLayoutManager carouselLayoutManager;
-    HomeActivity parent=(HomeActivity) getActivity();
+    double longitude, latitude;
+    HomeActivity parent = (HomeActivity) getActivity();
+    private static final int REQUEST_ACCESS_FINE_LOCATION = 111;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    Set countSet = new HashSet();
+
+
+
 //    public static final String TAG = "ImmersiveModeFragment";
 
     @Override
@@ -209,31 +240,33 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //        mNearestrecyclerAdapter.notifyDataSetChanged();
 
 
-
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Places.GEO_DATA_API)
                 .enableAutoManage(getActivity(), 0, this)
                 .addConnectionCallbacks(this)
                 .build();
 
-        if (checkLocationPermission()) {
-            if (ContextCompat.checkSelfPermission(getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
 
-                //Request location updates:
-//                getCurrentLocation();
-//                loadCameraLocations();
+        if (!checkPermission()) {
 
-            }
+            requestPermission();
+
+
+        } else {
+
+
+            getCurrentLocation();
+            mNearestDataList.clear();
+            loadCameraLocations();
+
+//
+//            loadCameraLocations();
+//            getCurrentLocation();
+//            Snackbar.make(view, "Permission already granted.", Snackbar.LENGTH_LONG).show();
+
         }
 
-        if (sentToSettings) {
-            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-                //Got Permission
-                proceedAfterPermission();
-            }
-        }
+//
     }
 
     @SuppressLint("CutPasteId")
@@ -246,17 +279,44 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
         mSearchButton = view.findViewById(R.id.search_btn);
         mNearestPlaceRecycler = view.findViewById(R.id.nearest_places_recycler);
-        mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mMapFragment.getMapAsync(this);
+
         HomeRelLayout = (RelativeLayout) view.findViewById(R.id.home_lay);
         mParentLayout = (RelativeLayout) view.findViewById(R.id.parent_layout);
-        NearLinLay = (LinearLayout) view.findViewById(R.id.nearest_locations_layout);
+        NearLinLay = (RelativeLayout) view.findViewById(R.id.nearest_locations_layout);
         HomeFragrellay = (RelativeLayout) view.findViewById(R.id.parfrag_lay);
         autoCompView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
+        PermissionTxt1=(TextView) view.findViewById(R.id.nearest_places_title);
 
+        sharedPreferences =getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        // Opening sharedPreferences in edit mode using editor.
+        editor = sharedPreferences.edit();
+
+        // Opening sharedPreferences in Private mode.
+
+
+        // Opening sharedPreferences in edit mode using editor.
+
+        cartype = Integer.parseInt(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_CAR));
+
+        Log.e("cartype", String.valueOf(cartype));
+        if (cartype == 0) {
+            stringcartypeval = "Compact";
+        } else if (cartype == 1) {
+            stringcartypeval = "Small";
+        } else if (cartype == 2) {
+            stringcartypeval = "Mid";
+        } else if (cartype == 3) {
+            stringcartypeval = "Full";
+        } else {
+            stringcartypeval = "Van";
+        }
+        Log.e("stringcartypeval", String.valueOf(stringcartypeval));
+        mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mMapFragment.getMapAsync(this);
         //Auto Complete textview
         autoCompView.setOnItemClickListener(mAutocompleteClickListener);
-        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(),R.layout.drop_downlay,
+        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), R.layout.drop_downlay,
                 BOUNDS_MOUNTAIN_VIEW, null);
 //        autoCompView.setDropDownWidth(ViewGroup.LayoutParams.MATCH_PARENT);
 //        autoCompView.setDropDownWidth(850);
@@ -269,18 +329,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         autoCompView.setDropDownVerticalOffset(7);
         autoCompView.setAdapter(mPlaceArrayAdapter);
         autoCompView.setThreshold(1);
-//        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        mCurrentGpsLoc = new TrackGPS(getActivity());
+
+//    Fcar
 
 
-//        final View decorView = getActivity().getWindow().getDecorView();
-//        decorView.setOnSystemUiVisibilityChangeListener(
-//                new View.OnSystemUiVisibilityChangeListener() {
-//                    @Override
-//                    public void onSystemUiVisibilityChange(int i) {
-//                        int height = decorView.getHeight();
-//                        Log.i(TAG, "Current height: " + height);
-//                    }
-//                });
+
+
+        getCurrentLocation();
+
 //
 //        toggleHideyBar();
         HomeRelLayout.setOnClickListener(new View.OnClickListener() {
@@ -313,10 +370,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         });
 
-        getCurrentLocation();
-        loadCameraLocations();
-        mNearestLocationList.clear();
-        mNearestDataList.clear();
+
 
 //
 
@@ -328,23 +382,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 //                        mNearestrecyclerAdapter.notifyDataSetChanged();
 
                         int scrollPosition = carouselLayoutManager.getCenterItemPosition();
-                        double lat = Double.parseDouble(mNearestDataList.get(scrollPosition).getCameraLat());
-                        double lng = Double.parseDouble(mNearestDataList.get(scrollPosition).getCameraLong());
-                        LatLng latLng = new LatLng(lat,lng);
-                        //                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        if (scrollPosition == 0){
-
-                            if (isCarouselSwiped){
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
-                            }else{
-
+                        if (scrollPosition == 0) {
+//
+                            double lat = Double.parseDouble(mNearestDataList.get(scrollPosition).getCameraLat());
+                            double lng = Double.parseDouble(mNearestDataList.get(scrollPosition).getCameraLong());
+                            LatLng latLng = new LatLng(lat, lng);
+                            if (isCarouselSwiped) {
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                            } else {
+                                isCarouselSwiped = true;
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                             }
-
-//                            Toast.makeText(getActivity(), "Same count", Toast.LENGTH_SHORT).show();
-                        }else{
-                            isCarouselSwiped = true;
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+ mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+////                            Toast.makeText(getActivity(), "Same count", Toast.LENGTH_SHORT).show();
                         }
+
+
+
+//
 
 
                     }
@@ -377,6 +432,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                     args.putString("value", "home");
                     args.putString("parkingtype", "Free street");
                     args.putString("place", description);
+                    args.putString("cartypes", stringcartypeval);
 //                    Log.e("strLatitude", String.valueOf(Latitude));
 //                    Log.e("strLongitude", String.valueOf(Longitude));
                     args.putStringArrayList("placesarray", caldis);
@@ -403,8 +459,33 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
         mFilterButton = (Button) view.findViewById(R.id.filter_button);
+        mFilterRelativeLayout=(RelativeLayout) view.findViewById(R.id.filter_lay);
 
         mFilterButton.setVisibility(View.VISIBLE);
+        mFilterRelativeLayout.setOnClickListener(new View.OnClickListener() {
+            FragmentTransaction transaction;
+            @Override
+            public void onClick(View view) {
+                if (!isExpandableListEnabled) {
+                    isExpandableListEnabled = true;
+
+
+
+
+                    // clear FLAG_TRANSLUCENT_STATUS flag:
+//                    getActivity().setTheme(android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+//                    getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                    Fragment filterFragment = new FiltersFragment();
+                    transaction = getChildFragmentManager().beginTransaction();
+                    transaction.add(R.id.frame_layout, filterFragment).addToBackStack(null).commit();
+                    Utils.hideKeyboard(getActivity());
+                } else {
+                    isExpandableListEnabled = false;
+//                    Toast.makeText(getActivity(), "Filter Disabled", Toast.LENGTH_SHORT).show();
+                    getChildFragmentManager().popBackStack();
+                }
+            }
+        });
 
         mFilterButton.setOnClickListener(new View.OnClickListener() {
             FragmentTransaction transaction;
@@ -450,12 +531,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         });
 //
-        permissionStatus = getActivity().getSharedPreferences("permissionStatus", MODE_PRIVATE);
+//        permissionStatus = getActivity().getSharedPreferences("permissionStatus", MODE_PRIVATE);
 
         return view;
     }
 
+
     private void getCurrentLocation(){
+
         //Getting Current Location from independent class
         mCurrentGpsLoc = new TrackGPS(getActivity());
         try {
@@ -483,15 +566,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                             String knownName = mCurLocAddress.get(0).getFeatureName();
                             address1 = (address + "," + city + "," + state + "," + country + "," + postalCode);
 //                            Toast.makeText(getActivity(), address1, Toast.LENGTH_SHORT).show();
-                            Log.e("address1", address1);
-                            LatLng sydney = new LatLng(latt, longi);
-                            mMap.addMarker(new MarkerOptions().position(sydney)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_free_marker));
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,8));
-
-                            Log.e("lattd", String.valueOf(latt));
-                            Log.e("latgd", String.valueOf(longi));
-
-
+                            Log.d("address1", address1);
 
                         }
 
@@ -509,6 +584,184 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     }
 
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getActivity(), ACCESS_FINE_LOCATION);
+        int result1 = ContextCompat.checkSelfPermission(getActivity(), CAMERA);
+
+        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission() {
+
+        ActivityCompat.requestPermissions(getActivity(), new String[]{ACCESS_FINE_LOCATION, CAMERA}, PERMISSION_REQUEST_CODE);
+
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0) {
+
+
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                    if (locationAccepted && cameraAccepted){
+//                        Snackbar.make(getView(), "Permission Granted, Now you can access location data and camera.", Snackbar.LENGTH_LONG).show();
+
+                    }
+
+                    else {
+
+//                        Snackbar.make(getView(), "Permission Denied, You cannot access location data and camera.", Snackbar.LENGTH_LONG).show();
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
+                                showMessageOKCancel("You need to allow access to both the permissions",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, CAMERA},
+                                                            PERMISSION_REQUEST_CODE);
+
+                                                }
+                                            }
+                                        });
+                                return;
+                            }
+                        }
+
+                    }
+                }
+
+
+                break;
+        }
+    }
+
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(getActivity())
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap =googleMap;
+        mMap.clear();
+//        marker.setRotation(5);
+        Double lat = mCurrentGpsLoc.getLatitude();
+        Double lng = mCurrentGpsLoc.getLongitude();
+
+
+        LatLng locateme = new LatLng(lat, lng);
+//        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
+//        float zoomLevel = 10 ;
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
+
+//        Log.d("locateme", String.valueOf(locateme));
+//        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
+//        float zoomLevel = 10 ;
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
+
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+
+            return;
+        }else{
+
+
+
+            // Write you code here if permission already given.
+        }
+        mMap.setMyLocationEnabled(false);
+
+//        int height = 95;
+//        int width = 95;
+//
+//        bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.currentlocationicon);
+//
+//        Bitmap b=bitmapdraw.getBitmap();
+//        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//        mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+
+        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
+        float zoomLevel = 12;
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+
+                if(mCurrentGpsLoc.canGetLocation()) {
+                    Double lat = mCurrentGpsLoc.getLatitude();
+                    Double lng = mCurrentGpsLoc.getLongitude();
+                    LatLng locateme = new LatLng(lat, lng);
+                    handlenewlocation(locateme);
+
+                }
+                else
+                {
+                    Toast.makeText(getActivity(),"SORRY WE COULDN`T TRACK YOUR LOCATION",Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        });
+
+    }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+
+        mLocation = location;
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.clear();
+
+
+
+        // Helper method for smooth
+        // animation
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+
+            return;
+        }else{
+            // Write you code here if permission already given.
+        }
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+//
+    }
+
+    public void handlenewlocation(final LatLng laln)
+    {
+        mMap.clear();
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,13.5f));
+
+        latitu=laln.latitude;
+        longitu=laln.longitude;
+
+
+
+    }
+
+
+
+
     private void loadCameraLocations(){
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -516,21 +769,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         docRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                if (task.isSuccessful()) {
-//                DocumentSnapshot document = task.getResult();
 //
-//
-//
-//
-//                FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        Query first = db.collection("camera");
-//        first.get()
-//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onSuccess(QuerySnapshot documentSnapshots) {
                 if (queryDocumentSnapshots.getDocuments().size() < 1) {
                     return;
                 }
+                mNearestLocationList.clear();
 
                 for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
 
@@ -577,7 +820,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         Log.e("distance", String.valueOf(distances1));
 
 
-                        if (locationDistance < 2500) {
+                        if (locationDistance < 5000) {
 
                             NearestData nearestdata = new NearestData();
                             nearestdata.setLocationDistance(locationDistance);
@@ -602,10 +845,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 });
 
 
-                                Log.e("sortlist", String.valueOf(mNearestDataList.get(j).getLocationDistance()));
 
+//                                countSet.addAll(mNearestDataList);
 //
+//                                editor.putStringSet(getResources().getString(R.string.Count_List_Key), countSet);
+//
+//                                editor.apply();
+//
+//                                Set<String> countsSet = sharedPreferences.getStringSet(getResources().getString(R.string.Count_List_Key), null);
+//
+//                                Log.e("countsSet", String.valueOf(countSet));
 
+//                            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//                                SharedPreferences.Editor editor = sharedPrefs.edit();
+//                                Gson gson = new Gson();
+//
+//                                String json = gson.toJson(mNearestDataList);
+//
+//                                editor.putString(TAG, json);
+//                                editor.commit();
+//
+//                                SharedPreferences sharedPrefs1 = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//                                Gson gson1 = new Gson();
+//                                String json1 = sharedPrefs1.getString(TAG, "");
+//                                Type type = new TypeToken<List<NearestData>>() {}.getType();
+//                                List<NearestData> arrayList = gson1.fromJson(json1, type);
+//                                Log.e("locationname", String.valueOf(arrayList.get(0).getCameraLocationName()));
 
                                 carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
                                 carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
@@ -660,97 +925,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
     private void proceedAfterPermission() {
 
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mLocation = location;
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.clear();
-
-        // Helper method for smooth
-        // animation
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
-//
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap =googleMap;
-        mMap.clear();
-        Double lat = mCurrentGpsLoc.getLatitude();
-        Double lng = mCurrentGpsLoc.getLongitude();
-        LatLng locateme = new LatLng(lat, lng);
-
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-
-        mMap.setMyLocationEnabled(false);
-
-//        int height = 95;
-//        int width = 95;
-//
-//        bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.currentlocationicon);
-//
-//        Bitmap b=bitmapdraw.getBitmap();
-//        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-//        mMap.addMarker(new MarkerOptions().position(locateme).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-
-        mMap.addMarker(new MarkerOptions().position(locateme)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
-        float zoomLevel = 12;
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locateme,zoomLevel));
-        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-            @Override
-            public boolean onMyLocationButtonClick() {
-
-                if(mCurrentGpsLoc.canGetLocation()) {
-                    Double lat = mCurrentGpsLoc.getLatitude();
-                    Double lng = mCurrentGpsLoc.getLongitude();
-                    LatLng locateme = new LatLng(lat, lng);
-                    handlenewlocation(locateme);
-
-                }
-                else
-                {
-                    Toast.makeText(getActivity(),"SORRY WE COULDN`T TRACK YOUR LOCATION",Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            }
-        });
-
-    }
-
-    public void handlenewlocation(final LatLng laln)
-    {
-        mMap.clear();
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(laln,13.5f));
-
-        latitu=laln.latitude;
-        longitu=laln.longitude;
-
+//        getCurrentLocation();
+//        loadCameraLocations();
+//        mNearestLocationList.clear();
+//        mNearestDataList.clear();
 
 
     }
 
-    public void markCurrentLocation(){
 
-
-    }
     public AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -890,102 +1073,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
 
 
-    public boolean checkLocationPermission() {
-
-        if (ActivityCompat.checkSelfPermission(getActivity(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-        return false;
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(getActivity(),
-                            Manifest.permission. ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-
-                        //Request location updates:
-                        getCurrentLocation();
-                        loadCameraLocations();
-
-                    }
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
-                }
-                return;
-            }
-
-        }
-        if (requestCode == REQUEST_CALL_PHONE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //The External Storage Write Permission is granted to you... Continue your left job...
-                proceedAfterPermission();
-            } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)) {
-                    //Show Information about why you need the permission
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Need phone Permission");
-                    builder.setMessage("This app needs phone permission");
-                    builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-
-                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
-
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
-                } else {
-                    Toast.makeText(getActivity(),"Unable to get Permission",Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_PERMISSION_SETTING) {
-            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-                //Got Permission
-                proceedAfterPermission();
-            }
-        }
-    }
-
     private String getFirstWord(String text) {
         int index = text.indexOf(' ');
         if (index > -1) { // Check if there is more than one word.
@@ -1115,4 +1202,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     public void onCenterItemChanged(int adapterPosition) {
         Toast.makeText(getActivity(), "click", Toast.LENGTH_SHORT).show();
     }
+
+
 }

@@ -55,7 +55,7 @@ public class ForgotpasswordActivity extends AppCompatActivity {
     EditText mEmail;
     TextView resetBtn,resetbutton1;
     RelativeLayout LinLay;
-    TextView Txt_error;
+    TextView Txt_error,Txt_error1;
     private AlertDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +66,12 @@ public class ForgotpasswordActivity extends AppCompatActivity {
         cancelbtnrel=(RelativeLayout)findViewById(R.id.btncancel);
         resetBtn=(TextView)findViewById(R.id.sinin_edt);
         Txt_error = (TextView)findViewById(R.id.tx_error);
+        Txt_error1 = (TextView)findViewById(R.id.tx_error1);
         LinLay=(RelativeLayout)findViewById(R.id.const_lay);
         backBtnclose=(ImageView)findViewById(R.id.close_img);
 //
         Txt_error.setVisibility(View.GONE);
+        Txt_error1.setVisibility(View.GONE);
         mEmail.addTextChangedListener(mTextWatcher);
         mEmail.setInputType(mEmail.getInputType()
                 | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
@@ -88,7 +90,8 @@ public class ForgotpasswordActivity extends AppCompatActivity {
                 Intent intent = new Intent(ForgotpasswordActivity.this, SignInActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+//                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_righ);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 finish();
 //                onBackPressed();
 
@@ -116,6 +119,7 @@ public class ForgotpasswordActivity extends AppCompatActivity {
 //                if (validateForm()) {
                     if (emailAddress.isEmpty() || !emailAddress.contains("@") || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
                         Txt_error.setVisibility(View.VISIBLE);
+                        Txt_error1.setVisibility(View.GONE);
 //                    showerror("invalid email address");
 //                        showalert();
 //                        Toast.makeText(ForgotpasswordActivity.this, "inavalid email", Toast.LENGTH_SHORT).show();
@@ -136,8 +140,9 @@ public class ForgotpasswordActivity extends AppCompatActivity {
 //                                            Toast.makeText(getContext(), "Reset Successsfully", Toast.LENGTH_SHORT).show();
 //                                            Log.d(TAG, "Email sent.");
                                         } else {
+                                            Txt_error1.setVisibility(View.VISIBLE);
 //                                        showerror("Reset password failed.");
-                                            Toast.makeText(ForgotpasswordActivity.this, "Reset password failed.", Toast.LENGTH_SHORT).show();
+//                                            Toast.makeText(ForgotpasswordActivity.this, "Reset password failed.", Toast.LENGTH_SHORT).show();
                                             hideProgressDialog();
 
                                         }

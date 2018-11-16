@@ -112,15 +112,9 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
         if (!compass && !accelerometer) {
             throw new IllegalStateException(getClass().getName()
                     + " can not run without the compass and the acelerometer sensors.");
-        }
-
-//
-//        else if (!compass) {
-//            throw new IllegalStateException(getClass().getName() + " can not run without the compass sensor.");
-//        }
-//
-//
-        else if (!accelerometer) {
+        } else if (!compass) {
+            throw new IllegalStateException(getClass().getName() + " can not run without the compass sensor.");
+        } else if (!accelerometer) {
             throw new IllegalStateException(getClass().getName()
                     + " can not run without the acelerometer sensor.");
         }
@@ -188,7 +182,6 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
     public ArBeyondarGLSurfaceView getGLSurfaceView() {
         return mBeyondarGLSurface;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -2,9 +2,7 @@ package com.polsec.pyrky.adapter;
 
 import android.content.Context;
 import android.location.Address;
-import android.location.Geocoder;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,18 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.NearestLocMapsActivity;
-import com.polsec.pyrky.pojo.NearestData;
-import com.polsec.pyrky.pojo.NearestDestnetionData;
-import com.squareup.picasso.Picasso;
+import com.polsec.pyrky.pojo.SlotsData;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by czsm4 on 09/08/18.
@@ -53,7 +47,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     List<Address> yourAddresses;
     List<Address> yourAddress = null;
 
-    List<NearestDestnetionData> mNearestDataList=new ArrayList<NearestDestnetionData>();
+    List<SlotsData> mNearestDataList=new ArrayList<SlotsData>();
 //    private ListAdapterListener mListener;
     private RecyclerView parentRecycler;
     int postionval;
@@ -87,7 +81,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 //
 //    }
 
-    public CarouselDetailMapAdapter(Context context, List<NearestDestnetionData> mNearestDataList, int distance, NearestLocMapsActivity nearestLocMapsActivity) {
+    public CarouselDetailMapAdapter(Context context, List<SlotsData> mNearestDataList, int distance, NearestLocMapsActivity nearestLocMapsActivity) {
 
         this.context = context;
         this.mNearestDataList=mNearestDataList;
@@ -109,8 +103,11 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 //        holder.nearestPlaceImage.setImageResource(mLocationImage[position]);
 //        this.avatarSize = context.getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
 
-        Picasso.with(context).load(mNearestDataList.get(position).getCameraImageUrl())
-                .fit()
+//        Picasso.with(context).load(mNearestDataList.get(position).getCameraImageUrl())
+//                .fit()
+//                .into(holder.nearestPlaceImage);
+        Glide.with(context)
+                .load(mNearestDataList.get(position).getCameraImageUrl())
                 .into(holder.nearestPlaceImage);
 
         postionval =holder.getAdapterPosition();
@@ -155,77 +152,80 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
             }
         }
         else {
+            if(!mNearestDataList.get(position).getLocationDistance().toString().equals(null)){
+                Double disval= Double.valueOf(String.valueOf(mNearestDataList.get(position).getLocationDistance().toString()));
+                Log.e("val", String.valueOf(disval));
 
-            Double disval= Double.valueOf(String.valueOf(mNearestDataList.get(position).getLocationDistance().toString()));
-            Log.e("val", String.valueOf(disval));
+                distanceval1= (int) Double.parseDouble(String.valueOf(disval));
 
-            distanceval1= (int) Double.parseDouble(String.valueOf(disval));
+                Log.e("distanceval", String.valueOf(distanceval1));
+                if(!mNearestDataList.get(position).equals(null)){
+//                    if(distanceval1>0 && distanceval1 <=100 ){
+                        holder.nearestPlaceDistance.setText(String.valueOf(distanceval1)+"m");
+//                    }
+//                    else if(distanceval1>100 && distanceval1 <=200 ){
+//                        holder.nearestPlaceDistance.setText("100 - 200m");
+//                    }
+//                    else if(distanceval1>200 && distanceval1 <=300 ){
+//                        holder.nearestPlaceDistance.setText("200 - 300m");
+//                    }
+//
+//                    else if(distanceval1>300 && distanceval1<=400 ){
+//                        holder.nearestPlaceDistance.setText("300 - 400m");
+//                    }
+//
+//                    else if(distanceval1>400 && distanceval1 <=500 ){
+//                        holder.nearestPlaceDistance.setText("400 - 500m");
+//                    }
+//
+//                    else if(distanceval1>500 && distanceval1 <=600 ){
+//                        holder.nearestPlaceDistance.setText("500 - 600m");
+//                    }
+//
+//                    else if(distanceval1>600 && distanceval1 <=700 ){
+//                        holder.nearestPlaceDistance.setText("600 - 700m");
+//                    }
+//
+//                    else if(distanceval1>700 && distanceval1 <=800 ){
+//                        holder.nearestPlaceDistance.setText("700 - 800m");
+//                    }
+//
+//                    else if(distanceval1>800 && distanceval1 <=900 ){
+//                        holder.nearestPlaceDistance.setText("800 - 900m");
+//                    }
+//
+//                    else {
+//                        holder.nearestPlaceDistance.setText("1000m above");
+//                    }
+            }
 
-            Log.e("distanceval", String.valueOf(distanceval1));
-            if(!mNearestDataList.get(position).equals(null)){
-                if(distanceval1>0 && distanceval1 <=100 ){
-                    holder.nearestPlaceDistance.setText("0 - 100m");
-                }
-                else if(distanceval1>100 && distanceval1 <=200 ){
-                    holder.nearestPlaceDistance.setText("100 - 200m");
-                }
-                else if(distanceval1>200 && distanceval1 <=300 ){
-                    holder.nearestPlaceDistance.setText("200 - 300m");
-                }
 
-                else if(distanceval1>300 && distanceval1<=400 ){
-                    holder.nearestPlaceDistance.setText("300 - 400m");
-                }
-
-                else if(distanceval1>400 && distanceval1 <=500 ){
-                    holder.nearestPlaceDistance.setText("400 - 500m");
-                }
-
-                else if(distanceval1>500 && distanceval1 <=600 ){
-                    holder.nearestPlaceDistance.setText("500 - 600m");
-                }
-
-                else if(distanceval1>600 && distanceval1 <=700 ){
-                    holder.nearestPlaceDistance.setText("600 - 700m");
-                }
-
-                else if(distanceval1>700 && distanceval1 <=800 ){
-                    holder.nearestPlaceDistance.setText("700 - 800m");
-                }
-
-                else if(distanceval1>800 && distanceval1 <=900 ){
-                    holder.nearestPlaceDistance.setText("800 - 900m");
-                }
-
-                else {
-                    holder.nearestPlaceDistance.setText("1000m above");
-                }
             }
 
         }
 
 
 
-        final double latitude = Double.parseDouble(mNearestDataList.get(position).getCameraLat());
-        final double  longitude = Double.parseDouble(mNearestDataList.get(position).getCameraLong());
-
-        Geocoder geocoder;
-
-        geocoder = new Geocoder(context, Locale.getDefault());
-        try {
-            yourAddresses= geocoder.getFromLocation(Double.parseDouble(mNearestDataList.get(position).getCameraLat()),Double.parseDouble(mNearestDataList.get(position).getCameraLong()) , 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (yourAddresses.size() > 0)
-        {
-            String yourAddress = yourAddresses.get(0).getAddressLine(0);
-            String yourCity = yourAddresses.get(0).getAddressLine(1);
-            String yourCountry = yourAddresses.get(0).getAddressLine(2);
-
-
-        }
+//        final double latitude = Double.parseDouble(mNearestDataList.get(position).getCameraLat());
+//        final double  longitude = Double.parseDouble(mNearestDataList.get(position).getCameraLong());
+//
+//        Geocoder geocoder;
+//
+//        geocoder = new Geocoder(context, Locale.getDefault());
+//        try {
+//            yourAddresses= geocoder.getFromLocation(Double.parseDouble(mNearestDataList.get(position).getCameraLat()),Double.parseDouble(mNearestDataList.get(position).getCameraLong()) , 1);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        if (yourAddresses.size() > 0)
+//        {
+//            String yourAddress = yourAddresses.get(0).getAddressLine(0);
+//            String yourCity = yourAddresses.get(0).getAddressLine(1);
+//            String yourCountry = yourAddresses.get(0).getAddressLine(2);
+//
+//
+//        }
 
 //    Toast.makeText(context, (int) latitude, Toast.LENGTH_SHORT).show();
         holder.nearestPlaceAve.setText(mNearestDataList.get(position).getCameraLocationName());

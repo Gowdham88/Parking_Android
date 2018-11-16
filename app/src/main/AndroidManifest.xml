@@ -18,6 +18,21 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <uses-feature android:name="android.hardware.location.gps" />
+
+    <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES" />
+
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true" />
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -115,8 +130,15 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ar.ArNavActivity"
-            android:screenOrientation="portrait"
-          />
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ar.ArActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.ar.ArExampleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ar.ArCamActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

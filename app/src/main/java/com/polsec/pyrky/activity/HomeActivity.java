@@ -93,9 +93,12 @@ public class HomeActivity extends AppCompatActivity
 
         checkWhetherArEnabled();
 
-        String parkType = PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_PARKING_TYPES);
-        String secRatings = PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_SECURITY_RATINGS);
-        String carCategory = PreferencesHelper.getPreference(context,PreferencesHelper.PREFERENCE_CAR_CATEGORY);
+        String parkType = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PARKING_TYPES);
+        String secRatings = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_SECURITY_RATINGS);
+        String carCategory = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_CAR_CATEGORY);
+        Log.e("parkType",parkType);
+        Log.e("secRatings",secRatings);
+        Log.e("carCategory",carCategory);
 
         if (!parkType.equals("")&&!secRatings.equals("")&&!carCategory.equals("")){
 
