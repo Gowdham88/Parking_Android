@@ -59,7 +59,7 @@
             android:textColor="@color/textColor"
             android:layout_marginTop="19dp"
             android:gravity="bottom"
-            android:textSize="12sp" />
+            android:textSize="12dp" />
         <TextView
             style="@style/NunitoBlackLight"
             android:id="@+id/tx_email"

@@ -121,13 +121,24 @@ public class SignInActivity extends AppCompatActivity {
 
             if (TextUtils.isEmpty(email1) && TextUtils.isEmpty(password1)) {
                 alertpopup();
-            }  else if((email1.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email1).matches()))
+            }
+            else if((email1.isEmpty()))
             {
 
                 alertEmailpopup();
 //            Toast.makeText(this, "Enter valid e-mail address", Toast.LENGTH_SHORT).show();
 
-            } else if (TextUtils.isEmpty(password1) || password1.length()<6) {
+            }
+            else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email1).matches())
+            {
+
+                alertEmailmatchpopup();
+//            Toast.makeText(this, "Enter valid e-mail address", Toast.LENGTH_SHORT).show();
+
+            }
+
+
+            else if (TextUtils.isEmpty(password1)) {
 
                 alertPasswordpopup();
 //            Toast.makeText(this, "Password should have minimum 6 characters", Toast.LENGTH_SHORT).show();
@@ -261,6 +272,40 @@ public class SignInActivity extends AppCompatActivity {
     private void alertEmailpopup() {
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.signinempty_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
+
+    private void alertEmailmatchpopup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.emailmatch, null);
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setView(deleteDialogView);
         TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);

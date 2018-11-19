@@ -111,6 +111,7 @@ public class CurrentBookingsFragment extends Fragment {
 
 
     private void retrieveContents() {
+        hideProgressDialog();
         loadPost(ACTION_SHOW_LOADING_ITEM);
 //        loadPostval(ACTION_SHOW_LOADING_ITEM);
 //        recyclerAdapter.notifyDataSetChanged();
@@ -118,7 +119,7 @@ public class CurrentBookingsFragment extends Fragment {
     }
 
     private void setupFeed() {
-
+hideProgressDialog();
         recyclerAdapter= new CurrentBookingRecyclerAdapter(getActivity(),mFilteredBookingList,bookingid1);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setHasFixedSize(true);
@@ -157,6 +158,7 @@ public class CurrentBookingsFragment extends Fragment {
                             Booking comment = document.toObject(Booking.class);
                             BookingList.add(comment);
                             BookingListId.add(document.getId());
+                            hideProgressDialog();
 
                         }
                         loadPostval(ACTION_SHOW_LOADING_ITEM);
@@ -197,6 +199,7 @@ public class CurrentBookingsFragment extends Fragment {
                             String values = String.valueOf(val);
 
                             Log.e("valuesh", values);
+                            hideProgressDialog();
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
 
                         }
@@ -207,6 +210,7 @@ public class CurrentBookingsFragment extends Fragment {
 
                                     if(value){
                                         mFilteredBookingList.add(BookingList.get(i));
+                                        hideProgressDialog();
 
                                     }
 

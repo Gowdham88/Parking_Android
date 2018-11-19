@@ -79,7 +79,7 @@ private int avatarSize;
 //        this.parkingTypes=parkingTypes;
 //        }
 
-    public CarouselNearestAdapter(Context context, List<NearestData> mNearestDataList) {
+    public  CarouselNearestAdapter(Context context, List<NearestData> mNearestDataList) {
 
         this.context = context;
         this.mNearestDataList = mNearestDataList;

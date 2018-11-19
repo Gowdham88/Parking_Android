@@ -393,7 +393,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                 isCarouselSwiped = true;
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                             }
- mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+// mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 ////                            Toast.makeText(getActivity(), "Same count", Toast.LENGTH_SHORT).show();
                         }
 

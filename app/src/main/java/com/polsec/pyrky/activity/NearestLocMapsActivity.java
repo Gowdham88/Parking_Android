@@ -2,6 +2,7 @@ package com.polsec.pyrky.activity;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +35,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -234,6 +236,9 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
     ArrayList<String> yvalue=new ArrayList<>();
     ArrayList<String> zvalue=new ArrayList<>();
     String coordinates;
+     AlertDialog alertD;
+    Boolean validation=false;
+
     // ===============
 
     // Group permission request code
@@ -303,7 +308,9 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
             @Override
             public void onClick(View view) {
 //                refreshActivity();
-                getActivity().onBackPressed();
+               getActivity().onBackPressed();
+
+
             }
         });
 
@@ -1071,9 +1078,10 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View promptView = layoutInflater.inflate(R.layout.ruls_layout , null);
-        final AlertDialog alertD = new AlertDialog.Builder(getActivity()).create();
+        alertD   = new AlertDialog.Builder(getActivity()).create();
 
-            TextView ViewTxt,NavigateTxt,rule1,rule2,rule3,rule4;
+
+        TextView ViewTxt,NavigateTxt,rule1,rule2,rule3,rule4;
 
         ViewTxt=promptView.findViewById(R.id.view_txt);
         NavigateTxt=promptView.findViewById(R.id.navi_txt);
@@ -1168,11 +1176,17 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         alertD.getWindow().setGravity(Gravity.TOP);
         alertD.show();
 
+        alertD.setCancelable(true);
+
 //
-          alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+
+
+        alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialogInterface) {
                     mNearestPlaceRecycler.setVisibility(View.VISIBLE);
+
                 }
             });
 
@@ -1183,7 +1197,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View promptView = layoutInflater.inflate(R.layout.ruls_layout , null);
-        final AlertDialog alertD = new AlertDialog.Builder(getActivity()).create();
+        alertD = new AlertDialog.Builder(getActivity()).create();
 
         TextView ViewTxt,NavigateTxt,rule1,rule2,rule3,rule4;
 
@@ -1253,16 +1267,32 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         alertD.getWindow().setDimAmount(0.0f);
         alertD.getWindow().setGravity(Gravity.TOP);
         alertD.show();
+        alertD.setCancelable(true);
+//        alertD.setOnKeyListener(new Dialog.OnKeyListener() {
+//
+//            @Override
+//            public boolean onKey(DialogInterface arg0, int keyCode,
+//                                 KeyEvent event) {
+//                // TODO Auto-generated method stub
+//                if (keyCode == KeyEvent.KEYCODE_BACK) {
+//                    getActivity().finish();
+//                    dialog.dismiss();
+//                }
+//                return true;
+//            }
+//        });
 
 
         alertD.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
+                alertD.dismiss();
 //                mNearestPlaceRecycler.setVisibility(View.VISIBLE);
             }
         });
 
     }
+
 
     private void showBottomSheet(double latitude, double longitude, String cameraid, String yourPlace) {
 
@@ -1285,7 +1315,6 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                 .getLayoutParams();
         CoordinatorLayout.Behavior behavior = params.getBehavior();
         ((View) bottomSheetView.getParent()).setBackgroundColor(Color.TRANSPARENT);
-
 
 
         map.setOnClickListener(view -> {
@@ -2042,5 +2071,13 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
     public void onRequestPermissionsGranted(int requestCode) {
 
     }
+
+//    public void onBackPressed() {
+//        if(dialog.isShowing()){
+//            validation=false;
+//            dialog.dismiss();
+//        }
+//        getActivity().finish();
+//    }
 
 }

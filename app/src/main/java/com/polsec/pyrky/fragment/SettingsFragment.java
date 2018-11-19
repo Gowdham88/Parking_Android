@@ -52,9 +52,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -64,6 +69,7 @@ import com.google.firebase.storage.UploadTask;
 import com.polsec.pyrky.BuildConfig;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.HomeActivity;
+import com.polsec.pyrky.activity.signup.SignupScreenActivity;
 import com.polsec.pyrky.adapter.CarouselAdapter;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.CircleTransformation;
@@ -153,6 +159,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hideSoftKeyboard(getActivity());
                 getActivity().onBackPressed();
             }
         });
@@ -636,54 +643,85 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
     private void updateData(final String email, String carCategory,String userName) {
         showProgressDialog();
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
-//        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
-        contact.update("email", email);
-        contact.update("username",userName);
-        contact.update("profileImageURL",mProfilepic);
-        contact.update("carCategory", carCategory)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+
+
+        mAuth.createUserWithEmailAndPassword(email, Pass)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            user.getIdToken(true)
+                                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                                        public void onComplete(@NonNull Task<GetTokenResult> task) {
+                                            if (task.isSuccessful()) {
+//                                                final FirebaseUser user = mAuth.getCurrentUser();
+                                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                // Get auth credentials from the user for re-authentication
+                                                AuthCredential credential = EmailAuthProvider
+                                                        .getCredential(user.getEmail(),Pass); // Current Login Credentials \\
+                                                // Prompt the user to re-provide their sign-in credentials
+                                                user.reauthenticate(credential)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                Log.d(TAG, "User re-authenticated.");
+                                                                //Now change your email address \\
+                                                                //----------------Code for Changing Email Address----------\\
+                                                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                                user.updateEmail(email)
+                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    Log.d(TAG, "User email address updated.");
+                                                                                    Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
+                                                                                    hideProgressDialog();
+
+                                                                                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                                                                    DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
+//        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
+                                                                                    contact.update("email", email);
+                                                                                    contact.update("username",userName);
+                                                                                    contact.update("profileImageURL",mProfilepic);
+                                                                                    contact.update("carCategory", carCategory)
+                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void aVoid) {
 //                        hideProgressDialog();
-                        PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_EMAIL,email);
-                        PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(carCategory));
+                                                                                                    PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_EMAIL,email);
+                                                                                                    PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(carCategory));
 //                        Toast.makeText(getActivity(), "Updated Successfully",
 //                                Toast.LENGTH_SHORT).show();
 
 //                        getActivity().finish();
 //                        startActivity(getActivity().getIntent());
+                                                                                                }
+                                                                                            });
+
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                //----------------------------------------------------------\\
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                    });
+
+
+                        } else {
+
+                            String str="Oops! This email id is already exists";
+                                Toast.makeText(getActivity(),str, Toast.LENGTH_LONG).show();
+                            hideProgressDialog();
+                        }
                     }
+
                 });
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        // Get auth credentials from the user for re-authentication
-        AuthCredential credential = EmailAuthProvider
-                .getCredential(user.getEmail(),Pass); // Current Login Credentials \\
-        // Prompt the user to re-provide their sign-in credentials
-        user.reauthenticate(credential)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.d(TAG, "User re-authenticated.");
-                        //Now change your email address \\
-                        //----------------Code for Changing Email Address----------\\
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        user.updateEmail(email)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Log.d(TAG, "User email address updated.");
-                                            Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
-                                            hideProgressDialog();
-                                        }
-                                    }
-                                });
-                        //----------------------------------------------------------\\
-                    }
-                });
+
 
 
     }
