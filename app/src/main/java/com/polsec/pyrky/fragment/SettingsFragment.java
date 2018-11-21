@@ -644,18 +644,37 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     private void updateData(final String email, String carCategory,String userName) {
         showProgressDialog();
 
-
-
-        mAuth.createUserWithEmailAndPassword(email, Pass)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
+//        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
+        contact.update("email", email);
+        contact.update("username",userName);
+        contact.update("profileImageURL",mProfilepic);
+        contact.update("carCategory", carCategory)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            user.getIdToken(true)
-                                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                                        public void onComplete(@NonNull Task<GetTokenResult> task) {
-                                            if (task.isSuccessful()) {
+                    public void onSuccess(Void aVoid) {
+//                        hideProgressDialog();
+                        PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_EMAIL,email);
+                        PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(carCategory));
+//                        Toast.makeText(getActivity(), "Updated Successfully",
+//                                Toast.LENGTH_SHORT).show();
+
+//                        getActivity().finish();
+//                        startActivity(getActivity().getIntent());
+                    }
+                });
+
+//        mAuth.createUserWithEmailAndPassword(email, Pass)
+//                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            FirebaseUser user = mAuth.getCurrentUser();
+//                            user.getIdToken(true)
+//                                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+//                                        public void onComplete(@NonNull Task<GetTokenResult> task) {
+//                                            if (task.isSuccessful()) {
 //                                                final FirebaseUser user = mAuth.getCurrentUser();
                                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                                 // Get auth credentials from the user for re-authentication
@@ -679,26 +698,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                                                                                     Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
                                                                                     hideProgressDialog();
 
-                                                                                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                                                                    DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
-//        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
-                                                                                    contact.update("email", email);
-                                                                                    contact.update("username",userName);
-                                                                                    contact.update("profileImageURL",mProfilepic);
-                                                                                    contact.update("carCategory", carCategory)
-                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                @Override
-                                                                                                public void onSuccess(Void aVoid) {
-//                        hideProgressDialog();
-                                                                                                    PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_EMAIL,email);
-                                                                                                    PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(carCategory));
-//                        Toast.makeText(getActivity(), "Updated Successfully",
-//                                Toast.LENGTH_SHORT).show();
 
-//                        getActivity().finish();
-//                        startActivity(getActivity().getIntent());
-                                                                                                }
-                                                                                            });
 
                                                                                 }
                                                                             }
@@ -706,20 +706,20 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                                                                 //----------------------------------------------------------\\
                                                             }
                                                         });
-                                            }
-                                        }
-                                    });
-
-
-                        } else {
-
-                            String str="Oops! This email id is already exists";
-                                Toast.makeText(getActivity(),str, Toast.LENGTH_LONG).show();
-                            hideProgressDialog();
-                        }
-                    }
-
-                });
+//                                            }
+//                                        }
+//                                    });
+//
+//
+//                        } else {
+//
+//                            String str="Oops! This email id is already exists";
+//                                Toast.makeText(getActivity(),str, Toast.LENGTH_LONG).show();
+//                            hideProgressDialog();
+//                        }
+//                    }
+//
+//                });
 
 
 

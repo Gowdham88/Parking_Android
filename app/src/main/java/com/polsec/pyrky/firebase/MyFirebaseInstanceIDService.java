@@ -17,9 +17,11 @@
 package com.polsec.pyrky.firebase;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.polsec.pyrky.preferences.PreferencesHelper;
 
 
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
@@ -37,6 +39,8 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Refreshed token: " + refreshedToken);
+//        Toast.makeText(this, refreshedToken, Toast.LENGTH_SHORT).show();
+        PreferencesHelper.setPreference(this,PreferencesHelper.PREF_FIREBASE_TOKEN,refreshedToken);
 
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the

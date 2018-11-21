@@ -200,7 +200,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
     ArrayList<HashMap<String, Object>> Ruleslist = new ArrayList<HashMap<String, Object>>();
     List<NearestData> mNearestDataList = new ArrayList<NearestData>();
     List<NearestData> mNearestDataList1 = new ArrayList<NearestData>();
-    String mNearestDataListdata,Preferencename;
+    String mNearestDataListdata,Preferencename,token;
 
     ArrayList<String> mCameraID = new ArrayList<>();
     HashMap<String, Object> popupruls = new HashMap<String, Object>();
@@ -288,6 +288,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
         PermissionTxt1=(TextView) view.findViewById(R.id.nearest_places_title);
 
         sharedPreferences =getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        token= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREF_FIREBASE_TOKEN);
+        Log.e("token",token);
 
         // Opening sharedPreferences in edit mode using editor.
         editor = sharedPreferences.edit();

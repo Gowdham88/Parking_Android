@@ -60,7 +60,7 @@ public class ViewImageActivity extends AppCompatActivity {
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
-    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,documentiDs,DocId;
+    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,documentiDs,DocId,token;
     Boolean isBookedAny = false;
      FirebaseFirestore db;
 
@@ -83,6 +83,7 @@ public class ViewImageActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mUid = PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
         DocId=PreferencesHelper.getPreference(ViewImageActivity.this,PreferencesHelper.PREFERENCE_DOCMENTID);
+        token= PreferencesHelper.getPreference(ViewImageActivity.this, PreferencesHelper.PREF_FIREBASE_TOKEN);
         ImageView cameraImage = findViewById(R.id.camera_image);
         relay=findViewById(R.id.rel_parent);
         Close_Img=findViewById(R.id.close_iconimg);
@@ -375,25 +376,25 @@ public class ViewImageActivity extends AppCompatActivity {
                             }
                         });
 
-                final Map<String, Object> bookingstatusdata = new HashMap<>();
-                bookingstatusdata.put("bookingStatus", false);
-
-                db.collection("Bookings").document(valuedoc)
-                        .update(bookingstatusdata)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+//                final Map<String, Object> bookingstatusdata = new HashMap<>();
+//                bookingstatusdata.put("bookingStatus", false);
+//
+//                db.collection("Bookings").document(valuedoc)
+//                        .update(bookingstatusdata)
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Log.d(TAG, "DocumentSnapshot successfully written!");
+//
+//
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.w(TAG, "Error writing document", e);
+//                            }
+//                        });
 //
                 alertDialog1.dismiss();
             }
@@ -468,7 +469,7 @@ public class ViewImageActivity extends AppCompatActivity {
                 mp.start();
                 documentiDs =PreferencesHelper.getPreference(ViewImageActivity.this,PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
                 Log.e("doc",documentiDs);
-                protectCar(true,true,documentiDs);
+                protectCar(true,false,documentiDs);
                 alertDialog1.dismiss();
             }
         });
@@ -509,6 +510,7 @@ public class ViewImageActivity extends AppCompatActivity {
         final Map<String, Object> protectdata = new HashMap<>();
         protectdata.put("protectCar", protectCar);
         protectdata.put("bookingStatus", bookingStatus);
+        protectdata.put("fcmToken", token);
 
 
 

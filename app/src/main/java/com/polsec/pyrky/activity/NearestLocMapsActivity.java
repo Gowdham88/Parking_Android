@@ -178,7 +178,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     String Nameval="home";
     String Nameval1="carousel",mapLat,mapLongi,cameraid,ParkingType,CarType,CamId;
     Camera camera;
-    String parkytype,mUid,docid,CameraId;
+    String parkytype,mUid,docid,CameraId,token;
     private InfiniteScrollAdapter infiniteAdapter;
 
     FirebaseFirestore db;
@@ -297,6 +297,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         mUid = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+        token= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREF_FIREBASE_TOKEN);
 
       anim = AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
 
@@ -933,42 +934,42 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
     }
 
-    private void onItemChanged(String lat, String lng, String cameraId, String parkingType, HashMap<String, Object> rules) {
-        mapLat = lat.trim();
-        mapLongi = lng.trim();
-        cameraid = cameraId;
-        Log.e("mapLongi",mapLat);
-        Log.e("mapLat",mapLongi);
-        Log.e("cameraid", String.valueOf(rules));
-        Log.e("Cartype", String.valueOf(CarType));
-
-        LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
-
-        Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,18 ));
-
-
-
-                 Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                     @Override
-                     public boolean onMarkerClick(Marker marker) {
-
-//                         getActivity().overridePendingTransition(anim);
-                         Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,-2 ));
-                         showDialog(marker,cameraid,rules,mNearestDataList.get(mNearestPlaceRecycler.getCurrentItem()).getCameraImageUrl());
-                         mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
-                         return false;
-
-                     }
-
-                 });
-
-
-//            Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
-
-            mNearestPlaceRecycler.setVisibility(View.VISIBLE);
-
-
-        }
+//    private void onItemChanged(String lat, String lng, String cameraId, String parkingType, HashMap<String, Object> rules) {
+//        mapLat = lat.trim();
+//        mapLongi = lng.trim();
+//        cameraid = cameraId;
+//        Log.e("mapLongi",mapLat);
+//        Log.e("mapLat",mapLongi);
+//        Log.e("cameraid", String.valueOf(rules));
+//        Log.e("Cartype", String.valueOf(CarType));
+//
+//        LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
+//
+//        Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,18 ));
+//
+//
+//
+//                 Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//                     @Override
+//                     public boolean onMarkerClick(Marker marker) {
+//
+////                         getActivity().overridePendingTransition(anim);
+//                         Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,-2 ));
+//                         showDialog(marker,cameraid,rules,mNearestDataList.get(mNearestPlaceRecycler.getCurrentItem()).getCameraImageUrl());
+//                         mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
+//                         return false;
+//
+//                     }
+//
+//                 });
+//
+//
+////            Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+//
+//            mNearestPlaceRecycler.setVisibility(View.VISIBLE);
+//
+//
+//        }
 
     private void pulseMarker(final Bitmap markerIcon, final Marker marker, final long onePulseDuration) {
         final Handler handler = new Handler();
@@ -996,13 +997,48 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = adapterPosition;
         onItemChanged(mNearestDataList1.get(positionInDataSet).getCameraLat(),mNearestDataList1.get(positionInDataSet).getCameraLong(), mNearestDataList1.get(positionInDataSet).getCameraID(),mNearestDataList1.get(positionInDataSet).getParkingTypes(),
-                mNearestDataList1.get(positionInDataSet).getParkingRules());
+                mNearestDataList1.get(positionInDataSet).getParkingRules(),mNearestDataList1.get(positionInDataSet).getCameraImageUrl());
 
 
 
 
     }
 
+    private void onItemChanged(String cameraLat, String cameraLong, String cameraID, String parkingTypes, HashMap<String, Object> parkingRules, String cameraImageUrl) {
+
+        mapLat = cameraLat.trim();
+        mapLongi = cameraLong.trim();
+        cameraid = cameraID;
+        Log.e("mapLongi",mapLat);
+        Log.e("mapLat",mapLongi);
+        Log.e("cameraid", String.valueOf(rules));
+        Log.e("Cartype", String.valueOf(CarType));
+
+        LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
+
+        Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,18 ));
+
+
+
+                 Mmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                     @Override
+                     public boolean onMarkerClick(Marker marker) {
+
+//                         getActivity().overridePendingTransition(anim);
+                         Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,12 ));
+                         showDialog(marker,cameraid,parkingRules,cameraImageUrl);
+                         mNearestPlaceRecycler.setVisibility(View.INVISIBLE);
+                         return false;
+
+                     }
+
+                 });
+
+
+//            Mmap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+
+            mNearestPlaceRecycler.setVisibility(View.VISIBLE);
+    }
 
 
     @Override
@@ -1521,25 +1557,25 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                             }
                         });
 
-                final Map<String, Object> bookingstatusdata = new HashMap<>();
-                bookingstatusdata.put("bookingStatus", false);
-
-                db.collection("Bookings").document(valuedoc)
-                        .update(bookingstatusdata)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+//                final Map<String, Object> bookingstatusdata = new HashMap<>();
+//                bookingstatusdata.put("bookingStatus", true);
+//
+//                db.collection("Bookings").document(valuedoc)
+//                        .update(bookingstatusdata)
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Log.d(TAG, "DocumentSnapshot successfully written!");
+//
+//
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.w(TAG, "Error writing document", e);
+//                            }
+//                        });
 
 //
                 alertDialog1.dismiss();
@@ -1614,7 +1650,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                 documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
                 Log.e("doc",documentIDs);
 
-                protectCar(true,true,documentIDs);
+                protectCar(true,false,documentIDs);
                 alertDialog1.dismiss();
             }
         });
@@ -1786,6 +1822,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         final Map<String, Object> protectdata = new HashMap<>();
         protectdata.put("protectCar", protectCar);
         protectdata.put("bookingStatus", bookingStatus);
+        protectdata.put("fcmToken", token);
 
 
 
@@ -1907,7 +1944,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
             public void onFailure(@NonNull Exception e) {
 
                 Log.w("Error", "Error adding document", e);
-                Toast.makeText(getActivity(),"Login failed", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(),"Login failed", Toast.LENGTH_SHORT).show();
             }
         });
 

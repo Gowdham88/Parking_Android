@@ -126,42 +126,42 @@ public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
     Log.e("distanceval", String.valueOf(distanceval));
     if(!mNearestDataList.get(position).equals(null)){
-        if(distanceval>0 && distanceval <=100 ){
-            holder.nearestPlaceDistance.setText("0 - 100m");
+        if(distanceval>0 && distanceval <=1000 ){
+            holder.nearestPlaceDistance.setText("0 - 1000m");
         }
-        else if(distanceval>100 && distanceval <=200 ){
-            holder.nearestPlaceDistance.setText("100 - 200m");
+        else if(distanceval>1000 && distanceval <=2000 ){
+            holder.nearestPlaceDistance.setText("1000 - 2000m");
         }
-        else if(distanceval>200 && distanceval <=300 ){
-            holder.nearestPlaceDistance.setText("200 - 300m");
-        }
-
-        else if(distanceval>300 && distanceval <=400 ){
-            holder.nearestPlaceDistance.setText("300 - 400m");
+        else if(distanceval>2000 && distanceval <=3000 ){
+            holder.nearestPlaceDistance.setText("2000 - 3000m");
         }
 
-        else if(distanceval>400 && distanceval <=500 ){
-            holder.nearestPlaceDistance.setText("400 - 500m");
+        else if(distanceval>3000 && distanceval <=4000 ){
+            holder.nearestPlaceDistance.setText("3000 - 4000m");
         }
 
-        else if(distanceval>500 && distanceval <=600 ){
-            holder.nearestPlaceDistance.setText("500 - 600m");
+        else if(distanceval>4000 && distanceval <=5000 ){
+            holder.nearestPlaceDistance.setText("4000 - 5000m");
         }
 
-        else if(distanceval>600 && distanceval <=700 ){
-            holder.nearestPlaceDistance.setText("600 - 700m");
+        else if(distanceval>5000 && distanceval <=6000 ){
+            holder.nearestPlaceDistance.setText("5000 - 6000m");
         }
 
-        else if(distanceval>700 && distanceval <=800 ){
-            holder.nearestPlaceDistance.setText("700 - 800m");
+        else if(distanceval>6000 && distanceval <=7000 ){
+            holder.nearestPlaceDistance.setText("6000 - 7000m");
         }
 
-        else if(distanceval>800 && distanceval <=900 ){
+        else if(distanceval>7000 && distanceval <=8000 ){
+            holder.nearestPlaceDistance.setText("7000 - 8000m");
+        }
+
+        else if(distanceval>8000 && distanceval <=9000 ){
             holder.nearestPlaceDistance.setText("800 - 900m");
         }
 
         else {
-            holder.nearestPlaceDistance.setText("1000m and above");
+            holder.nearestPlaceDistance.setText("10000m and above");
         }
     }
 
