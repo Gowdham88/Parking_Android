@@ -114,9 +114,10 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     boolean isPhotoValid = false;
     private String mCurrentPhotoPath;
     int mCarouselCount = 0;
-    String[] mCarCategory = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
+    String[] mCarCategory = { getResources().getString(R.string.Compact),getResources().getString(R.string.Small)
+            ,getResources().getString(R.string.Midsize ),getResources().getString(R.string.Full),getResources().getString(R.string.VanPickup) };
     String[] mCarCategoryId = {"0", "1", "2", "3", "4" };
-    String[] mCarranze = { "3.5 - 4.5m", "2.5 - 3.5m", "4 -5m", "5 - 5.5m", "5.5 - 6.5m" };
+    String[] mCarranze = { "3.5m - 4.5m", "2.5m - 3.5m", "4m -5m", "5m - 5.5m", "5.5m - 6.5m" };
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     LinearLayout signupScrlin;
     Button imageUpload;

@@ -105,7 +105,7 @@
             android:background="@drawable/signin_bg"
             android:textSize="14sp"
             android:textColor="@color/white"
-            android:text="Sign In" />
+            android:text="@string/signin" />
 
         <TextView
             style="@style/NunitoBlackLight"

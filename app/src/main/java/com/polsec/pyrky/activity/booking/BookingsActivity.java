@@ -40,7 +40,7 @@ Toolbar toolbar;
         RelativeLayout parentLayout = findViewById(R.id.parent_layout);
         mBackIcon =(RelativeLayout)findViewById(R.id.back_icon);
         TitlaTxt=(TextView)findViewById(R.id.extra_title);
-        TitlaTxt.setText("Bookings");
+        TitlaTxt.setText(R.string.bookings);
 
 
 
@@ -118,12 +118,12 @@ Toolbar toolbar;
 
     private void setupTabLayout() {
          tabOne = (TextView) LayoutInflater.from(BookingsActivity.this).inflate(R.layout.custom_tab, null);
-        tabOne.setText("Current Bookings");
+        tabOne.setText(R.string.CurrentBookings);
         tabLayout.getTabAt(0).setCustomView(tabOne);
 
 
          tabTwo = (TextView) LayoutInflater.from(BookingsActivity.this).inflate(R.layout.custom_tab, null);
-        tabTwo.setText("History");
+        tabTwo.setText(R.string.History);
         tabLayout.getTabAt(1).setCustomView(tabTwo);
 
 

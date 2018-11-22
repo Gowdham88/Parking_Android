@@ -376,25 +376,25 @@ public class ViewImageActivity extends AppCompatActivity {
                             }
                         });
 
-//                final Map<String, Object> bookingstatusdata = new HashMap<>();
-//                bookingstatusdata.put("bookingStatus", false);
-//
-//                db.collection("Bookings").document(valuedoc)
-//                        .update(bookingstatusdata)
-//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-//                                Log.d(TAG, "DocumentSnapshot successfully written!");
-//
-//
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Log.w(TAG, "Error writing document", e);
-//                            }
-//                        });
+                final Map<String, Object> bookingstatusdata = new HashMap<>();
+                bookingstatusdata.put("bookingStatus", false);
+
+                db.collection("Bookings").document(valuedoc)
+                        .update(bookingstatusdata)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
 //
                 alertDialog1.dismiss();
             }
@@ -469,7 +469,7 @@ public class ViewImageActivity extends AppCompatActivity {
                 mp.start();
                 documentiDs =PreferencesHelper.getPreference(ViewImageActivity.this,PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
                 Log.e("doc",documentiDs);
-                protectCar(true,false,documentiDs);
+                protectCar(true,true,documentiDs);
                 alertDialog1.dismiss();
             }
         });

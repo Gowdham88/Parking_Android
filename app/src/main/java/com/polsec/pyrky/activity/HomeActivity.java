@@ -271,13 +271,13 @@ public class HomeActivity extends AppCompatActivity
                         navigationView.setCheckedItem(R.id.b_nav_home);
 
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        toolbarText.setText("Home");
+                        toolbarText.setText(R.string.homepage);
                         break;
 
                     case R.id.b_nav_notification:
                         fragment = new NotificationFragment();
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        toolbarText.setText("Notification");
+                        toolbarText.setText(R.string.Notification);
 
                         break;
 
@@ -285,7 +285,7 @@ public class HomeActivity extends AppCompatActivity
                         fragment = new ProfileFragment();
                         navigationView.setCheckedItem(R.id.b_nav_profile);
 //                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        toolbarText.setText("Profile");
+                        toolbarText.setText(R.string.Profile);
                         break;
                 }
                 return loadFragment(fragment);
@@ -293,7 +293,7 @@ public class HomeActivity extends AppCompatActivity
         });
 //        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         loadFragment(new HomeFragment());
-        toolbarText.setText("Home");
+        toolbarText.setText(R.string.homepage);
     }
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -307,7 +307,7 @@ public class HomeActivity extends AppCompatActivity
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left);
             transaction.replace(R.id.main_frame_layout, new HomeFragment()).commit();
-            toolbarText.setText("Home");
+            toolbarText.setText(R.string.homepage);
         } else if (id == R.id.nav_booking) {
 //
 //            loadFragment(new BookingsFragment());
@@ -326,7 +326,7 @@ public class HomeActivity extends AppCompatActivity
             transaction.replace(R.id.main_frame_layout, new ProfileFragment()).commit();
 //            transaction.addToBackStack(null);
 //            transaction.commit();
-            toolbarText.setText("Profile");
+            toolbarText.setText(R.string.Profile);
 
 //
         } else if (id == R.id.nav_logout) {

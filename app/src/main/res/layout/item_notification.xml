@@ -72,7 +72,7 @@
         android:textColor="#00B9AB"
         android:textSize="12sp"
         android:layout_alignParentEnd="true"
-        android:text="Request Video"
+        android:text="@string/Requestvideo"
         android:layout_below="@id/notification_message"
         />
     <View

@@ -1,0 +1,129 @@
+<resources>
+    <string name="app_name">Pyrky</string>
+    <string name="already_have_an_account_sign_in_here">Já possui uma conta ? Entre aqui</string>
+    <string name="sign_up">Inscreva-se</string>
+    <string name="email">Email</string>
+    <string name="password">Senha</string>
+    <string name="username">Usuário</string>
+    <string name="car_category">Categoria do carro</string>
+    <string name="forget_password">Esqueci minha senha</string>
+    <string name="dont_have_account">Não tem uma conta ? Inscreva-se aqui</string>
+    <string name="Count_List_Key">Count_List_Key</string>
+
+    <string name="signin">Entrar</string>
+    <string name="entervalidpass">Digite uma senha válida</string>
+    <string name="Loginfailed">Falha na autenticação</string>
+    <string name="invaliduser">Usuário inválido </string>
+    <string name="forgotpassword">Esqueci minha senha</string>
+    <string name="ResetPassword">Redefinir senha</string>
+    <string name="EnterEmailid">Digite seu email id</string>
+    <string name="Resetpasswordfailed">Redefinir senha falhou</string>
+
+    <string name="Compact">Compacto </string>
+    <string name="Small">Pequeno</string>
+    <string name="Midsize">Médio</string>
+    <string name="Full">Grande</string>
+    <string name="VanPickup">Van</string>
+
+    <string name="Destination">Destino</string>
+    <string name="Searchdestination">Pesquise seu destino</string>
+    <string name="Search">Procurar</string>
+    <string name="Pleaseenteradestination">Favor entrar o local de destino</string>
+
+    <string name="directions_base_url">https://maps.googleapis.com</string>
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <!--
+        This is the name that users will see when interacting with this channel.
+        It should describe the category of notifications that will be sent through this channel
+     -->
+    <string name="default_notification_channel_name" translatable="true">News</string>
+    <string name="auth_token" />
+    <string name="nearest_parking_places_next_to_my_current_location">Locais de estacionamento mais próximos da minha localização atual</string>
+    <string name="title_activity_main">SampleDrawerActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Definições</string>
+    <string name="title_activity_nearest_loc_maps">Map</string>
+    <string name="save">Salvar</string>
+    <string name="enter_your_email">Digite seu email</string>
+    <string name="enter_your_password">Digite sua senha</string>
+    <string name="enter_your_user_name">Digite seu usuário</string>
+    <string name="resetpass">Um link para redefinir sua senha foi enviado no seu email</string>
+    <string name="status">Click OK to end the Previous booking</string>
+    <string name="status_txt">Deseja fechar reserva anterior ?</string>
+    <string name="protect_txt">Deseja proteger seru carro?</string>
+    <string name="notification_txt">Você quer solicitar uma visão da câmera por três segundos ?</string>
+    <string name="empy_txt">Campos de usuário ou email ou senha não podem estar vazios</string>
+    <string name="signinempy_txt">Campos de Email &amp; senha não podem estar vazios</string>
+    <string name="email_txt">Endereço de email não é valido</string>
+    <string name="passworderror_txt">senha não podem estar vazios</string>
+    <string name="passwordch_txt">Sua senha deve ter no mínimo 6 carcteres</string>
+    <string name="usernameerror_txt">Username should not be empty</string>
+    <string name="emailerror_txt">Enter valid Email</string>
+    <string name="imageerror_txt">Você deve inserir uma foto de perfi</string>
+    <string name="enable_permission">Please Grant Permissions</string>
+    <string name="oops">Ops !!</string>
+    <string name="ok">ok</string>
+
+    <string name="Yes">Sim</string>
+    <string name="No">Não</string>
+
+
+    <string name="rationale_camera">This app needs access to your camera so you can take pictures.</string>
+    <string name="rationale_location_contacts">This app needs access to your location and contacts to know where and who you are.</string>
+    <string name="rationale_sms">This app needs access to your sms to read all your great messages.</string>
+    <string name="returned_from_app_settings_to_activity">
+        Returned from app settings to MainActivity with the following permissions:
+        \n\nCamera: %s
+        \nLocation &amp; Contacts: %s
+        \nSMS: %s
+    </string>
+    <string name="camera">Camera</string>
+    <string name="location_and_contacts">Location and Contacts</string>
+    <string name="sms">SMS</string>
+
+    <string name="homepage">Pagina Inicial</string>
+    <string name="Notification">Notificação</string>
+    <string name="Profile">Perfil</string>
+    <string name="bookings">Reservas</string>
+    <string name="logout">Sair</string>
+    <string name="Settings">Definições</string>
+    <string name="map">Mapa</string>
+
+    <string name="ParkingRules">Regras de estacionamento</string>
+    <string name="ViewImage">Visualizar imagem</string>
+    <string name="Navigate">Navegar</string>
+    <string name="CurrentBookings">Reservas atuais</string>
+    <string name="History">Histórico</string>
+    <string name="ViewCar">Visualizar carro</string>
+    <string name="Ratethespace">Avalie a vaga</string>
+    <string name="Ratings">Classificações:</string>
+    <string name="okay">Okay</string>
+    <string name="cancel">Cancelar</string>
+    <string name="Requestvideo">Solicitar vídeo</string>
+
+
+
+    <string-array name="navigation_drawer_items_array">
+        <item>Home</item>
+        <item>Bookings</item>
+        <item>Profile</item>
+        <item>Logout</item>
+    </string-array>
+
+
+
+    <!--<filter>-->
+
+    <string name="Freestreet">Estacionamento de rua gratuito</string>
+    <string name="Paidstreet">Estacionamento de rua pago</string>
+    <string name="Paidparking">Estacionamento privado pago</string>
+
+    <string name="Security">Classificações de segurança</string>
+    <string name="CarCategory">Categoria do Carro</string>
+    <string name="Filter">Filtro</string>
+
+</resources>

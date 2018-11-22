@@ -418,7 +418,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                 if (autoCompView.getText().toString().isEmpty() || description == null) {
 
-                    String str="Please enter the search location";
+                    String str=getResources().getString(R.string.Pleaseenteradestination);
                     athenticaationpopup(str);
 
 

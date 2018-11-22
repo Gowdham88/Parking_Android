@@ -106,7 +106,7 @@ public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
     Double disval= Double.valueOf(String.valueOf(mNearestDataList.get(position).getLocationDistance().toString()));
     Log.e("val", String.valueOf(disval));
 
-    cartype = Integer.parseInt(PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_PROFILE_CAR));
+    cartype = Integer.parseInt(String.valueOf(PreferencesHelper.getPreference(context, PreferencesHelper.PREFERENCE_PROFILE_CAR)));
     if(cartype==0){
         stringcartypeval="Compact";
     }
@@ -172,23 +172,23 @@ public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 final double latitude = Double.parseDouble(mNearestDataList.get(position).getCameraLat());
 final double  longitude = Double.parseDouble(mNearestDataList.get(position).getCameraLong());
 
-    Geocoder geocoder;
-
-    geocoder = new Geocoder(context, Locale.getDefault());
-    try {
-        yourAddresses= geocoder.getFromLocation(Double.parseDouble(mNearestDataList.get(position).getCameraLat()),Double.parseDouble(mNearestDataList.get(position).getCameraLong()) , 1);
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-
-    if (yourAddresses.size() > 0)
-    {
-        String yourAddress = yourAddresses.get(0).getAddressLine(0);
-        String yourCity = yourAddresses.get(0).getAddressLine(1);
-        String yourCountry = yourAddresses.get(0).getAddressLine(2);
-
-
-    }
+//    Geocoder geocoder;
+//
+//    geocoder = new Geocoder(context, Locale.getDefault());
+//    try {
+//        yourAddresses= geocoder.getFromLocation(Double.parseDouble(mNearestDataList.get(position).getCameraLat()),Double.parseDouble(mNearestDataList.get(position).getCameraLong()) , 1);
+//    } catch (IOException e) {
+//        e.printStackTrace();
+//    }
+//
+//    if (yourAddresses.size() > 0)
+//    {
+//        String yourAddress = yourAddresses.get(0).getAddressLine(0);
+//        String yourCity = yourAddresses.get(0).getAddressLine(1);
+//        String yourCountry = yourAddresses.get(0).getAddressLine(2);
+//
+//
+//    }
 
 //    Toast.makeText(context, (int) latitude, Toast.LENGTH_SHORT).show();
     holder.nearestPlaceAve.setText(mNearestDataList.get(adapterPosition).getCameraLocationName());

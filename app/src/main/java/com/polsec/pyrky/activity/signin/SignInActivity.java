@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
@@ -186,7 +187,7 @@ public class SignInActivity extends AppCompatActivity {
 
                                             } else {
 
-                                                String userstr="User doesn't exits";
+                                                String userstr=getResources().getString(R.string.invaliduser);
                                                 nouser(userstr);
 //                                                Toast.makeText(SignInActivity.this, "No user exits", Toast.LENGTH_LONG).show();
                                                 hideProgressDialog();
@@ -198,7 +199,7 @@ public class SignInActivity extends AppCompatActivity {
                                         public void onFailure(@NonNull Exception e) {
 
                                             Log.w("Error", "Error adding document", e);
-                                                    String str="Login failed";
+                                                    String str=getResources().getString(R.string.Loginfailed);
                                             failathenticaationpopup(str);
 //                                            Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_SHORT).show();
                                             hideProgressDialog();
@@ -207,7 +208,7 @@ public class SignInActivity extends AppCompatActivity {
 
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    String str1="Oops! Enter valid Password";
+                                    String str1=getResources().getString(R.string.entervalidpass);
                                     athenticaationpopup(str1);
 //                                    Toast.makeText(SignInActivity.this, "Registration failed! " + "\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                     hideProgressDialog();

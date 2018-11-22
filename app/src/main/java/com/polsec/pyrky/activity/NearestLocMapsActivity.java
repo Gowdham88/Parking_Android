@@ -122,6 +122,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.ContentValues.TAG;
+import com.polsec.pyrky.R;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -304,7 +305,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
         mBackIcon = (RelativeLayout) view.findViewById(R.id.back_icon);
         TitlaTxt = (TextView) view. findViewById(R.id.extra_title);
-        TitlaTxt.setText("Map");
+        TitlaTxt.setText(R.string.map);
         mBackIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -996,7 +997,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = adapterPosition;
-        onItemChanged(mNearestDataList1.get(positionInDataSet).getCameraLat(),mNearestDataList1.get(positionInDataSet).getCameraLong(), mNearestDataList1.get(positionInDataSet).getCameraID(),mNearestDataList1.get(positionInDataSet).getParkingTypes(),
+        onItemChanged(Slotlat1.get(positionInDataSet),Slotlong.get(positionInDataSet), mNearestDataList1.get(positionInDataSet).getCameraID(),mNearestDataList1.get(positionInDataSet).getParkingTypes(),
                 mNearestDataList1.get(positionInDataSet).getParkingRules(),mNearestDataList1.get(positionInDataSet).getCameraImageUrl());
 
 
@@ -1016,7 +1017,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
         LatLng sydney = new LatLng(Double.parseDouble(mapLat), Double.parseDouble(mapLongi));
 
-        Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,18 ));
+        Mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,25 ));
 
 
 
@@ -1449,6 +1450,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
 
 
+
                 Booking bookingdata = new Booking(uid,String.valueOf(latitude),String.valueOf(longitude),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
                 Map<String, Object> docID = new HashMap<>();
                 docID.put("documentID", documentID);
@@ -1521,6 +1523,8 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
             @Override
             public void onClick(View view) {
 
+                Log.e("valuedoc",valuedoc);
+
                 Map<String, Boolean> likeData1 = new HashMap<>();
                 likeData1.put( key, false);
 
@@ -1557,25 +1561,25 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                             }
                         });
 
-//                final Map<String, Object> bookingstatusdata = new HashMap<>();
-//                bookingstatusdata.put("bookingStatus", true);
-//
-//                db.collection("Bookings").document(valuedoc)
-//                        .update(bookingstatusdata)
-//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-//                                Log.d(TAG, "DocumentSnapshot successfully written!");
-//
-//
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Log.w(TAG, "Error writing document", e);
-//                            }
-//                        });
+                final Map<String, Object> bookingstatusdata = new HashMap<>();
+                bookingstatusdata.put("bookingStatus", false);
+
+                db.collection("Bookings").document(valuedoc)
+                        .update(bookingstatusdata)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
 
 //
                 alertDialog1.dismiss();
@@ -1650,7 +1654,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                 documentIDs =PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
                 Log.e("doc",documentIDs);
 
-                protectCar(true,false,documentIDs);
+                protectCar(true,true,documentIDs);
                 alertDialog1.dismiss();
             }
         });

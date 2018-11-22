@@ -10,6 +10,28 @@
     <string name="dont_have_account">Don\'t have an account? Sign up here</string>
     <string name="Count_List_Key">Count_List_Key</string>
 
+    <string name="signin">Sign In</string>
+    <string name="entervalidpass">Enter valid Password</string>
+    <string name="Loginfailed">Login failed</string>
+    <string name="invaliduser">Invalid user </string>
+    <string name="forgotpassword">Forgot password</string>
+    <string name="ResetPassword">Reset Password</string>
+    <string name="EnterEmailid">Enter Email id</string>
+    <string name="Resetpasswordfailed">Reset password failed</string>
+
+    <string name="Compact">Compact</string>
+    <string name="Small">Small</string>
+    <string name="Midsize">Mid size</string>
+    <string name="Full">Full</string>
+    <string name="VanPickup">Van/Pick-up</string>
+
+    <string name="Destination">Destination</string>
+
+    <string name="Searchdestination">Search your destination</string>
+    <string name="Search">Search</string>
+    <string name="Pleaseenteradestination">Please enter a destination place</string>
+
+
     <string name="directions_base_url">https://maps.googleapis.com</string>
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
@@ -38,18 +60,22 @@
     <string name="notification_txt">Do you want to request a camera view\n for three seconds</string>
     <string name="empy_txt">Username or email or password should\n not be empty</string>
     <string name="signinempy_txt">Email or Password should not be empty</string>
-    <string name="email_txt">Enter the correct email</string>
-    <string name="passworderror_txt">Password should not br empty</string>
+    <string name="email_txt">Email address is not valid</string>
+    <string name="passworderror_txt">Password should not be empty</string>
     <string name="passwordch_txt">The Password must be atleast 6 characters long</string>
     <string name="usernameerror_txt">Username should not be empty</string>
     <string name="emailerror_txt">Enter valid Email</string>
-    <string name="imageerror_txt">Profile picture should be uploaded</string>
+    <string name="imageerror_txt">Your profile image cannot be empty</string>
     <string name="enable_permission">Please Grant Permissions</string>
+
+    <string name="oops">Oops !!</string>
     <string name="ok">OK</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
 
 
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
+
+
 
     <string name="rationale_camera">This app needs access to your camera so you can take pictures.</string>
     <string name="rationale_location_contacts">This app needs access to your location and contacts to know where and who you are.</string>
@@ -62,7 +88,27 @@
     </string>
     <string name="camera">Camera</string>
     <string name="location_and_contacts">Location and Contacts</string>
-    <string name="sms">SMS</string>
+    <!--<string name="sms">SMS</string>-->
+
+    <string name="homepage">Home</string>
+    <string name="Notification">Notification</string>
+    <string name="Profile">Profile</string>
+    <string name="bookings">Bookings</string>
+    <string name="logout">Logout</string>
+    <string name="Settings">Settings</string>
+    <string name="map">Map</string>
+    <string name="ParkingRules">Parking Rules</string>
+    <string name="ViewImage">View Image</string>
+    <string name="Navigate">Navigate</string>
+    <string name="CurrentBookings">Current Bookings</string>
+    <string name="History">History</string>
+    <string name="ViewCar">View Car</string>
+    <string name="Ratethespace">Rate the space</string>
+    <string name="Ratings">Ratings:</string>
+    <string name="okay">Okay</string>
+    <string name="cancel">Cancel</string>
+    <string name="Requestvideo">Request video </string>
+
 
 
     <string-array name="navigation_drawer_items_array">
@@ -71,4 +117,19 @@
         <item>Profile</item>
         <item>Logout</item>
     </string-array>
+
+
+
+    <!--<filter>-->
+
+    <string name="Freestreet">Free street parking </string>
+    <string name="Paidstreet">Paid street parking </string>
+    <string name="Paidparking">Paid parking</string>
+
+    <string name="Security">Security ratings</string>
+    <string name="CarCategory">Car Category</string>
+    <string name="Filter">Filter</string>
+
+
+
 </resources>

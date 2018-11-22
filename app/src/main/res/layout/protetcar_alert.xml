@@ -55,7 +55,7 @@
             android:textSize="14dp"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="OK"
+            android:text="@string/Yes"
             style="@style/Nunitoregular"/>
         <View
             android:layout_width="1dp"
@@ -67,7 +67,7 @@
             android:textColor="@color/colorAccent"
             android:id="@+id/cancel_button"
             android:textSize="14dp"
-            android:text="Cancel"
+            android:text="@string/No"
             android:gravity="center"
             android:layout_toRightOf="@+id/ok_button"
             android:layout_width="160dp"

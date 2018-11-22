@@ -102,7 +102,7 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 public class SettingsFragment extends Fragment  implements EasyPermissions.PermissionCallbacks{
 
     EditText EmailEdt;
-    TextView  NameEdt;
+    EditText NameEdt;
     ImageView ProfileImg;
     TextView Camera,Gallery,cancel,save;
  ImageView mProfileImage;
@@ -155,7 +155,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 //        ((AppCompatActivity)getActivity()).getActionBar().hide();
         BackImg=(RelativeLayout) view.findViewById(R.id.back_icon);
         TitlaTxt=(TextView)view.findViewById(R.id.extra_title);
-        TitlaTxt.setText("Settings");
+        TitlaTxt.setText(R.string.Settings);
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -233,13 +233,13 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                     }
                 });
 
-        NameEdt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopUp();
-
-            }
-        });
+//        NameEdt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                PopUp();
+//
+//            }
+//        });
         String profileimg= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,9 +281,9 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                         String Str=EdtPfl.getText().toString();
                         if(!Str.isEmpty()||!Str.equals(null)){
                             NameEdt.setText(Str);
-                            saveUserName(Str,alertDialog1);
+                            saveUserName(Str);
                         }else{
-                            Toast.makeText(getActivity(), "Please edit the name", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), "Please edit the name", Toast.LENGTH_SHORT).show();
                         }
 //                Intent intent = new Intent(UserProfileActivity.this,LoginScreen.class);
 //                startActivity(intent);
@@ -314,33 +314,10 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         alertDialog1.getWindow().setAttributes(lp);
 
     }
-    public void saveUserName(final String name, final AlertDialog dialog) {
+    public void saveUserName(final String name) {
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference ref = db.collection("users").document(mUid);
 
-
-        ref.update("username", name)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-//                        NameEdt .setText(name);
-//                        Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
-                        PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME, name);
-                        dialog.dismiss();
-                    }
-
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG, "Error updating document", e);
-                Toast.makeText(getActivity(),"Update failed",Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            }
-
-        });
 
     }
     private void showBottomSheet() {
@@ -654,9 +631,37 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+
+                        NameEdt.setText(userName);
+
 //                        hideProgressDialog();
                         PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_EMAIL,email);
                         PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(carCategory));
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        DocumentReference ref = db.collection("users").document(mUid);
+
+
+                        ref.update("username", userName)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+//                        NameEdt .setText(name);
+//                        Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
+                                        PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME, userName);
+//                                        dialog.dismiss();
+                                    }
+
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error updating document", e);
+                                Toast.makeText(getActivity(),"Update failed",Toast.LENGTH_SHORT).show();
+//                                dialog.dismiss();
+                            }
+
+                        });
 //                        Toast.makeText(getActivity(), "Updated Successfully",
 //                                Toast.LENGTH_SHORT).show();
 

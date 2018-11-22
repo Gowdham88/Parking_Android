@@ -27,9 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/destination_title"
-            android:text="Destination"
+            android:text="@string/Destination"
             style="@style/Nunitoregular"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textColor="#404B69"
             android:layout_marginTop="10dp"
             android:layout_marginStart="15dp"
@@ -75,7 +75,7 @@
                          android:background="@null"
                          android:elevation="0dp"
                          android:ems="10"
-                         android:hint="Search your destination"
+                         android:hint="@string/Searchdestination"
                          android:paddingLeft="40dp"
                          android:paddingRight="40dp"
                          android:singleLine="true"
@@ -147,7 +147,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/nearest_places_title"
-                android:textSize="14sp"
+                android:textSize="13dp"
                 android:textColor="#404B69"
                 android:text="@string/nearest_parking_places_next_to_my_current_location"
                 android:layout_marginTop="15dp"
@@ -177,7 +177,7 @@
             android:textSize="14sp"
             android:layout_marginBottom="22dp"
             android:layout_below="@id/nearest_locations_layout"
-            android:text="Search"
+            android:text="@string/Search"
             />
                 </RelativeLayout>
             </FrameLayout>
