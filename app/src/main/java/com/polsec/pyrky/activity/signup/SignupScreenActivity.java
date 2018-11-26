@@ -2,6 +2,7 @@ package com.polsec.pyrky.activity.signup;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -114,10 +115,15 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     boolean isPhotoValid = false;
     private String mCurrentPhotoPath;
     int mCarouselCount = 0;
-    String[] mCarCategory = { getResources().getString(R.string.Compact),getResources().getString(R.string.Small)
-            ,getResources().getString(R.string.Midsize ),getResources().getString(R.string.Full),getResources().getString(R.string.VanPickup) };
-    String[] mCarCategoryId = {"0", "1", "2", "3", "4" };
-    String[] mCarranze = { "3.5m - 4.5m", "2.5m - 3.5m", "4m -5m", "5m - 5.5m", "5.5m - 6.5m" };
+
+     Context context;
+    android.content.res.Resources res;
+    String[] mCarCategory;
+
+//    String mCarCategory[] = {getResources().getString(R.string.Compact), String.valueOf(R.string.Small)
+//            ,String.valueOf(R.string.Midsize ),String.valueOf(R.string.Full),String.valueOf(R.string.VanPickup) };
+    String mCarCategoryId[] = {"0", "1", "2", "3", "4" };
+    String mCarranze[] = { "3.5m - 4.5m", "2.5m - 3.5m", "4m -5m", "5m - 5.5m", "5.5m - 6.5m" };
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     LinearLayout signupScrlin;
     Button imageUpload;
@@ -125,7 +131,8 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
+        res = getResources();
+        mCarCategory =res.getStringArray(R.array.cartypes);
         mEtEmail = findViewById(R.id.et_email);
         mEtUsername = findViewById(R.id.et_user_name);
         mEtPassword = findViewById(R.id.et_password);
@@ -588,7 +595,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
                     hideProgressDialog();
 
-                    Toast.makeText(getApplicationContext(),"Success", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(),"Success", Toast.LENGTH_SHORT).show();
 
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, mEtEmail.getText().toString());
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME, mEtUsername.getText().toString());
@@ -598,6 +605,12 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
                     PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(mCarouselCount));
                     PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
+
+                    PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_SECURITY, String.valueOf(R.string.Security));
+
+                    Toast.makeText(SignupScreenActivity.this, String.valueOf(R.string.Security), Toast.LENGTH_SHORT).show();
+//                    PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_FILTERS,S);
+//                    PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_CARRATINGS,true);
                         Intent mainIntent = new Intent(SignupScreenActivity.this, HomeActivity.class);
                         startActivity(mainIntent);
                         finish();

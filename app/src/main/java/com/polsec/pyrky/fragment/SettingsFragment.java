@@ -110,9 +110,13 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     LinearLayout cancelLay;
     int mCarouselCount;
     String mEmail,mName,mProfilepic,mUid,userName;
-    String[] mCarCategory = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
+
+//    String[] mCarCategory = { getResources().getString(R.string.Compact),getResources().getString(R.string.Small)
+//            ,getResources().getString(R.string.Midsize ),getResources().getString(R.string.Full),getResources().getString(R.string.VanPickup) };
+android.content.res.Resources res;
+    String[] mCarCategory;
     String[] mCarCategoryId = {"0", "1", "2", "3", "4" };
-    String[] mCarranze = { "3.5 - 4.5m", "2.5 - 3.5m", "4 -5m", "5 - 5.5m", "5.5 - 6.5m" };
+    String[] mCarranze = { "3.5m - 4.5m", "2.5m - 3.5m", "4m -5m", "5m - 5.5m", "5.5m - 6.5m" };
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     private static final int PERMISSIONS_REQUEST_CAMERA = 1888;
     private static final int PERMISSIONS_REQUEST_GALLERY = 1889;
@@ -134,6 +138,8 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     String Pass;
     LinearLayout LinLay;
 
+
+
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
     }
@@ -147,7 +153,8 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         mName = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME);
         mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         mUid= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-
+        res = getResources();
+        mCarCategory =res.getStringArray(R.array.cartypes);
 //        Toast.makeText(getActivity(), mUid, Toast.LENGTH_SHORT).show();
         mCarIcon = Integer.parseInt(PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR));
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();

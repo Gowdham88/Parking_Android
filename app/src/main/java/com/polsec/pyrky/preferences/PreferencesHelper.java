@@ -3,7 +3,6 @@ package com.polsec.pyrky.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -47,6 +46,9 @@ public class PreferencesHelper {
     public static final String PREFERENCE_PARKING_TYPES = "parkingtype";
     public static final String PREFERENCE_CAR_CATEGORY = "carcategory";
     public static final String PREFERENCE_SECURITY_RATINGS = "securityratings";
+    public static final String PREFERENCE_SECURITY = "securityratings";
+    public static final String PREFERENCE_FILTERS = "securityratings";
+    public static final String PREFERENCE_CARRATINGS = "securityratings";
     public static final ArrayList PREFERENCE_DATA = new ArrayList();
 //    public static final String PREFERENCE_PARKINGSTATUS ="parkingstatus";
     //End Region

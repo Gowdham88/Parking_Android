@@ -1,11 +1,13 @@
 package com.polsec.pyrky.fragment;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +28,12 @@ import com.polsec.pyrky.utils.Constants;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by thulirsoft on 7/19/18.
@@ -44,6 +49,7 @@ public class FiltersFragment extends Fragment {
     Boolean isExpandableListEnabled = false;
     RelativeLayout mHomeRelaLay;
     Button mEnableButton;
+    String[] parentHeaders;
     private List<Boolean> setValueForSeletedFilter;
 
     public FiltersFragment() {
@@ -72,6 +78,11 @@ public class FiltersFragment extends Fragment {
 //        Constants.PARKING_TYPES.clear();
 //        Constants.SECURITY_RATINGS.clear();
 
+//        Locale locale = new Locale("pt");
+//        Configuration config = getActivity().getResources().getConfiguration();
+//        config.locale = locale;
+//        getActivity().getResources().updateConfiguration(config, getActivity().getResources().getDisplayMetrics());
+
         mEnableButton = view.findViewById(R.id.enable_button);
         mEnableButton.setVisibility(View.GONE);
         mExpandableListView = view.findViewById(R.id.expandableListView);
@@ -84,9 +95,16 @@ public class FiltersFragment extends Fragment {
                 getFragmentManager().popBackStack();
             }
         });
+
+        parentHeaders = getResources().getStringArray(R.array.filtertypes);
        mExpandableListDetail = ExpandableListData.getData();
+//        mExpandableListTitle = new ArrayList<String>(Arrays.asList(parentHeaders));
         mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
+
+//        mExpandableListTitle.add(String.valueOf(mExpandableListDetail));
         Collections.reverse(mExpandableListTitle);
+
+        Log.e("mExpandableListTitle", String.valueOf(mExpandableListTitle.toString()));
         mExpandableListAdapter = new ExpandableListAdapter(getActivity(), mExpandableListTitle, mExpandableListDetail);
         mExpandableListView.setAdapter(mExpandableListAdapter);
 
@@ -98,8 +116,11 @@ public class FiltersFragment extends Fragment {
                     isExpandableListEnabled = true;
                     mExpandableListView.setVisibility(View.VISIBLE);
                     mExpandableListDetail = ExpandableListData.getData();
-                    mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
+//                    mExpandableListTitle = new ArrayList<String>(Arrays.asList(parentHeaders));
                     mExpandableListAdapter = new ExpandableListAdapter(getActivity(), mExpandableListTitle, mExpandableListDetail);
+
+//                    Log.e("mExpandableListTitle1",mExpandableListTitle.get(1));
+//                    Log.e("mExpandableListTitle1",mExpandableListTitle.get(2));
 
                     mExpandableListView.setAdapter(mExpandableListAdapter);
                 } else {

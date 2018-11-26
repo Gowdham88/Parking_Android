@@ -25,6 +25,14 @@
     <string name="Full">Grande</string>
     <string name="VanPickup">Van</string>
 
+    <string-array name="cartypes">
+        <item>Compacto</item>
+        <item>Pequeno</item>
+        <item>Médio</item>
+        <item>Grande</item>
+        <item>Van</item>
+    </string-array>
+
     <string name="Destination">Destino</string>
     <string name="Searchdestination">Pesquise seu destino</string>
     <string name="Search">Procurar</string>
@@ -114,7 +122,13 @@
         <item>Logout</item>
     </string-array>
 
+    <string name="booknavigate">Reservar &amp; Navegar</string>
 
+    <!--<string-array name = "headers">-->
+        <!--<item>@string/Classificações de segurança</item>-->
+        <!--<item>@string/Categoria do Carro</item>-->
+        <!--<item>@string/Filtro</item>-->
+    <!--</string-array>-->
 
     <!--<filter>-->
 
@@ -125,5 +139,12 @@
     <string name="Security">Classificações de segurança</string>
     <string name="CarCategory">Categoria do Carro</string>
     <string name="Filter">Filtro</string>
+    <string name="five">5 Stars</string>
 
+    <string-array name="filtertypes">
+        <item>Classificações de segurança</item>
+        <item>Categoria do Carro</item>
+        <item>Filtro</item>
+
+    </string-array>
 </resources>

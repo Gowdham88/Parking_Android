@@ -25,6 +25,14 @@
     <string name="Full">Full</string>
     <string name="VanPickup">Van/Pick-up</string>
 
+    <string-array name="cartypes">
+        <item>Compact</item>
+        <item>Small</item>
+        <item>Mid size</item>
+        <item>Full</item>
+        <item>Van/Pick-up</item>
+    </string-array>
+
     <string name="Destination">Destination</string>
 
     <string name="Searchdestination">Search your destination</string>
@@ -73,7 +81,11 @@
     <string name="Yes">Yes</string>
     <string name="No">No</string>
 
-
+    <!--<string-array name = "headers">-->
+        <!--<item>@string/Security ratings</item>-->
+        <!--<item>@string/Car Category</item>-->
+        <!--<item>@string/Filter</item>-->
+    <!--</string-array>-->
 
 
 
@@ -117,7 +129,7 @@
         <item>Profile</item>
         <item>Logout</item>
     </string-array>
-
+    <string name="booknavigate">Book &amp; Navigate </string>
 
 
     <!--<filter>-->
@@ -129,7 +141,12 @@
     <string name="Security">Security ratings</string>
     <string name="CarCategory">Car Category</string>
     <string name="Filter">Filter</string>
-
+    <string name="five">5 Stars</string>
+    <string-array name="filtertypes">
+        <item>Security ratings</item>
+        <item>Car Category</item>
+        <item>Filter</item>
+    </string-array>
 
 
 </resources>

@@ -313,6 +313,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                getActivity().onBackPressed();
 
 
+
             }
         });
 

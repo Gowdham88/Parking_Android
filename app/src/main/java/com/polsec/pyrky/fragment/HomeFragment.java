@@ -615,7 +615,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
 
                     if (locationAccepted && cameraAccepted){
 //                        Snackbar.make(getView(), "Permission Granted, Now you can access location data and camera.", Snackbar.LENGTH_LONG).show();
-
+                        hideProgressDialog();
                     }
 
                     else {
@@ -631,6 +631,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                                     requestPermissions(new String[]{ACCESS_FINE_LOCATION, CAMERA},
                                                             PERMISSION_REQUEST_CODE);
+                                                  hideProgressDialog();
 
                                                 }
                                             }
