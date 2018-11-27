@@ -2,6 +2,7 @@ package com.polsec.pyrky.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.utils.Constants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -37,14 +39,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
     private static final int SECURITY = 1;
     private static final int FILTER = 2;
     private static final int[] IMAGES = new int[]{R.drawable.fivestar, R.drawable.fourstar, R.drawable.threestar, R.drawable.twostar, R.drawable.onestar};
+    String[] mCarCategory;
+    android.content.res.Resources res;
+
+    public ExpandableListAdapter(Context context, ArrayList<String> headersList, HashMap<String, List<String>> allChildItems) {
 
 
 
-    public ExpandableListAdapter(Context context, List<String> expandableListTitle,
-                                 HashMap<String, List<String>> expandableListDetail) {
+//    public ExpandableListAdapter(Context context, List<String> expandableListTitle,
+////                                 HashMap<String, List<String>> expandableListDetail) {
         this.context = context;
-        this.expandableListTitle = expandableListTitle;
-        this.expandableListDetail = expandableListDetail;
+        this.expandableListTitle = headersList;
+        this.expandableListDetail = allChildItems;
     }
 
     @Override
@@ -81,6 +87,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+
+//        res = context.getResources();
+//        mCarCategory =res.getStringArray(R.array.cartypes);
         String listTitle = (String) getGroup(groupPosition);
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.

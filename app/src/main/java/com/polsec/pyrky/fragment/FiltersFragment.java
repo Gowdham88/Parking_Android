@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by thulirsoft on 7/19/18.
@@ -51,6 +52,9 @@ public class FiltersFragment extends Fragment {
     Button mEnableButton;
     String[] parentHeaders;
     private List<Boolean> setValueForSeletedFilter;
+    String[] parent1;
+    ArrayList<String> headersList;
+    List<String> list;
 
     public FiltersFragment() {
 
@@ -97,15 +101,27 @@ public class FiltersFragment extends Fragment {
         });
 
         parentHeaders = getResources().getStringArray(R.array.filtertypes);
-       mExpandableListDetail = ExpandableListData.getData();
-//        mExpandableListTitle = new ArrayList<String>(Arrays.asList(parentHeaders));
-        mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
+//       mExpandableListDetail = ExpandableListData.getData();
+       parent1 = getResources().getStringArray(R.array.filtertypes);
+
+        list = new ArrayList<String>(Arrays.asList(parent1));
+
+        headersList = new ArrayList<>();
+        String[] parentHeaders = getResources().getStringArray(R.array.filtertypes);
+        List<String> parentHeaderss = new ArrayList<String>(Arrays.asList(parentHeaders));
+        headersList.addAll(parentHeaderss);
+
+        HashMap<String, List<String>> allChildItems = returnGroupedChildItems();
+//        mExpandableListDetail.put("list",list);
+
+//        mExpandableListTitle = new ArrayList<String>(list);
+//        mExpandableListTitle = new ArrayList<String>(mExpandableListDetail.keySet());
 
 //        mExpandableListTitle.add(String.valueOf(mExpandableListDetail));
-        Collections.reverse(mExpandableListTitle);
+//        Collections.reverse(mExpandableListTitle);
 
-        Log.e("mExpandableListTitle", String.valueOf(mExpandableListTitle.toString()));
-        mExpandableListAdapter = new ExpandableListAdapter(getActivity(), mExpandableListTitle, mExpandableListDetail);
+        Log.e("mExpandableListTitle", String.valueOf(allChildItems));
+        mExpandableListAdapter = new ExpandableListAdapter(getActivity(), headersList, allChildItems);
         mExpandableListView.setAdapter(mExpandableListAdapter);
 
 
@@ -115,9 +131,10 @@ public class FiltersFragment extends Fragment {
                 if (!isExpandableListEnabled) {
                     isExpandableListEnabled = true;
                     mExpandableListView.setVisibility(View.VISIBLE);
-                    mExpandableListDetail = ExpandableListData.getData();
+//                    mExpandableListDetail = ExpandableListData.getData();
+//                    mExpandableListTitle = new ArrayList<String>(list);
 //                    mExpandableListTitle = new ArrayList<String>(Arrays.asList(parentHeaders));
-                    mExpandableListAdapter = new ExpandableListAdapter(getActivity(), mExpandableListTitle, mExpandableListDetail);
+                    mExpandableListAdapter = new ExpandableListAdapter(getActivity(), headersList, allChildItems);
 
 //                    Log.e("mExpandableListTitle1",mExpandableListTitle.get(1));
 //                    Log.e("mExpandableListTitle1",mExpandableListTitle.get(2));
@@ -178,6 +195,34 @@ public class FiltersFragment extends Fragment {
         return view;
     }
 
+    private HashMap<String,List<String>> returnGroupedChildItems() {
+
+        {
+            HashMap<String, List<String>> childList = new HashMap<String, List<String>>();
+
+            List<String> parent1 = new ArrayList<String>();
+            String[] child1 = getResources().getStringArray(R.array.parent1);
+            List<String> childHeaders1 = new ArrayList<String>(Arrays.asList(child1));
+            parent1.addAll(childHeaders1);
+
+            List<String> parent2 = new ArrayList<String>();
+            String[] child2 = getResources().getStringArray(R.array.parent2);
+            List<String> childHeaders2 = new ArrayList<String>(Arrays.asList(child2));
+            parent2.addAll(childHeaders2);
+
+            List<String> parent3 = new ArrayList<String>();
+            String[] child3 = getResources().getStringArray(R.array.parent3);
+            List<String> childHeaders3 = new ArrayList<String>(Arrays.asList(child3));
+            parent3.addAll(childHeaders3);
+//
+            childList.put(headersList.get(0), parent1);
+            childList.put(headersList.get(1), parent2);
+            childList.put(headersList.get(2), parent3);
+
+            return childList;
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -200,7 +245,7 @@ public class FiltersFragment extends Fragment {
             PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_SECURITY_RATINGS,securityRatingsData);
         }
 
-        getFragmentManager().popBackStack();
+//        getFragmentManager().popBackStack();
 //        Toast.makeText(getActivity(), "Disabled", Toast.LENGTH_SHORT).show();
 
     }

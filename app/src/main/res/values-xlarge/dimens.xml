@@ -132,7 +132,7 @@
     <dimen name="user_profile_avatar_size1">488dp</dimen>
 
 
-    <dimen name = "buttom_width_small">45dp</dimen>
+    <dimen name = "buttom_width_small">70dp</dimen>
 
     <!-- Medium Dimensions -->
     <!--<dimen name = "buttom_width_medium">70</dimen>-->

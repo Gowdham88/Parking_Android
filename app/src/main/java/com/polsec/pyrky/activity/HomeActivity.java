@@ -112,7 +112,7 @@ public class HomeActivity extends AppCompatActivity
             Constants.CAR_CATEGORY = restoreData3;
 
             if (restoreData1.size() >0 && restoreData2.size() >0 && restoreData3.size() >0){
-//                Toast.makeText(context, restoreData1.get(0)+restoreData2.get(0)+restoreData3.get(0), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, restoreData1.get(0)+restoreData2.get(0)+restoreData3.get(0), Toast.LENGTH_LONG).show();
             }
         }
 

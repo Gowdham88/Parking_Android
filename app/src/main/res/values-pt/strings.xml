@@ -142,9 +142,32 @@
     <string name="five">5 Stars</string>
 
     <string-array name="filtertypes">
+        <item>Filtro</item>
         <item>Classificações de segurança</item>
         <item>Categoria do Carro</item>
-        <item>Filtro</item>
 
+
+    </string-array>
+
+
+    <string-array name = "parent1">
+        <item>child1_1</item>
+        <item>child1_2</item>
+        <item>child1_3</item>
+        <item>child1_4</item>
+    </string-array>
+
+    <string-array name = "parent2">
+        <item>child1_1</item>
+        <item>child1_2</item>
+        <item>child1_3</item>
+        <item>child1_4</item>
+    </string-array>
+
+    <string-array name = "parent3">
+        <item>child1_1</item>
+        <item>child1_2</item>
+        <item>child1_3</item>
+        <item>child1_4</item>
     </string-array>
 </resources>

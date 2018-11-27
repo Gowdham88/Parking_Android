@@ -39,6 +39,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -998,8 +999,11 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = adapterPosition;
-        onItemChanged(Slotlat1.get(positionInDataSet),Slotlong.get(positionInDataSet), mNearestDataList1.get(positionInDataSet).getCameraID(),mNearestDataList1.get(positionInDataSet).getParkingTypes(),
-                mNearestDataList1.get(positionInDataSet).getParkingRules(),mNearestDataList1.get(positionInDataSet).getCameraImageUrl());
+        if(Slotlat1!=null || !Slotlat1.isEmpty() || mNearestDataList1.get(positionInDataSet).getParkingRules()!=null || !mNearestDataList1.get(positionInDataSet).getParkingRules().isEmpty() || !mNearestDataList1.isEmpty()){
+            onItemChanged(Slotlat1.get(positionInDataSet),Slotlong.get(positionInDataSet), mNearestDataList1.get(positionInDataSet).getCameraID(),mNearestDataList1.get(positionInDataSet).getParkingTypes(),
+                    mNearestDataList1.get(positionInDataSet).getParkingRules(),mNearestDataList1.get(positionInDataSet).getCameraImageUrl());
+        }
+
 
 
 
@@ -1129,7 +1133,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         rule3 =promptView.findViewById(R.id.rule3_txt);
         rule4 =promptView.findViewById(R.id.rule4_txt);
 
-        if((!listofparkingRules.equals(null)) || (!listofparkingRules.isEmpty())){
+        if((listofparkingRules!=null) || (!listofparkingRules.isEmpty())){
             rule1.setText((CharSequence) listofparkingRules.get("0"));
             rule2.setText((CharSequence) listofparkingRules.get("1"));
             rule3.setText((CharSequence) listofparkingRules.get("2"));
@@ -1143,6 +1147,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         geocoder = new Geocoder(getActivity(), Locale.getDefault());
         try {
             yourAddresses= geocoder.getFromLocation(Double.parseDouble(String.valueOf(m.getPosition().latitude)),Double.parseDouble(String.valueOf(m.getPosition().longitude)) , 1);
+            Log.e("add", String.valueOf(yourAddresses));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1199,11 +1204,23 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         alertD.setView(promptView);
 
         WindowManager.LayoutParams params = alertD.getWindow().getAttributes();
-        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-//        Toast.makeText(getActivity(), String.valueOf(currentapiVersion), Toast.LENGTH_SHORT).show();
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+//        params.y = (int) getActivity().getResources().getDimension(R.dimen.buttom_width_small);
+//        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+////        Toast.makeText(getActivity(), String.valueOf(currentapiVersion), Toast.LENGTH_SHORT).show();
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            params.y = (int) getActivity().getResources().getDimension(R.dimen.size50);
+//            Toast.makeText(getActivity(), "marshmellow", Toast.LENGTH_SHORT).show();
+        }
+       else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
             params.y = (int) getActivity().getResources().getDimension(R.dimen.size55);
 //            Toast.makeText(getActivity(), "marshmellow", Toast.LENGTH_SHORT).show();
+        }
+        else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+            params.y = (int) getActivity().getResources().getDimension(R.dimen.size55);
+//            Toast.makeText(getActivity(), "marshmellow", Toast.LENGTH_SHORT).show();
+        }
+        else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O){
+            params.y = (int) getActivity().getResources().getDimension(R.dimen.size85);
         }
         else {
             params.y = (int) getActivity().getResources().getDimension(R.dimen.size92);
@@ -1291,10 +1308,24 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         });
         alertD.setView(promptView);
         WindowManager.LayoutParams params = alertD.getWindow().getAttributes();
+//        params.y = (int) getActivity().getResources().getDimension(R.dimen.buttom_width_small);
+//        Window window = alertD.getWindow();
+//        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
 //        Toast.makeText(getActivity(), String.valueOf(currentapiVersion), Toast.LENGTH_SHORT).show();
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            params.y = (int) getActivity().getResources().getDimension(R.dimen.size50);
+//            Toast.makeText(getActivity(), "marshmellow", Toast.LENGTH_SHORT).show();
+        }
+        else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
             params.y = (int) getActivity().getResources().getDimension(R.dimen.size55);
 //            Toast.makeText(getActivity(), "marshmellow", Toast.LENGTH_SHORT).show();
+        }
+        else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+            params.y = (int) getActivity().getResources().getDimension(R.dimen.size55);
+//            Toast.makeText(getActivity(), "marshmellow", Toast.LENGTH_SHORT).show();
+        }
+        else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O){
+            params.y = (int) getActivity().getResources().getDimension(R.dimen.size85);
         }
         else {
             params.y = (int) getActivity().getResources().getDimension(R.dimen.size92);
