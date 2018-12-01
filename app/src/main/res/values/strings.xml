@@ -75,6 +75,7 @@
     <string name="emailerror_txt">Enter valid Email</string>
     <string name="imageerror_txt">Your profile image cannot be empty</string>
     <string name="enable_permission">Please Grant Permissions</string>
+    <string name="region">There is no parking space in the region you searched</string>
 
     <string name="oops">Oops !!</string>
     <string name="ok">OK</string>
@@ -120,6 +121,14 @@
     <string name="okay">Okay</string>
     <string name="cancel">Cancel</string>
     <string name="Requestvideo">Request video </string>
+    <string name="gallery">Gallery</string>
+    <string name="Camera">Camera</string>
+
+    <string name="pyrkynavigation">Pykry Navigation</string>
+    <string name="checkmail">Please check your email</string>
+    <string name="success">Success</string>
+    <string name="error">Error</string>
+
 
 
 

@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.polsec.pyrky.activity.booking.BookingsActivity;
@@ -100,6 +101,11 @@ public class HomeActivity extends AppCompatActivity
         Log.e("secRatings",secRatings);
         Log.e("carCategory",carCategory);
 
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        Log.e("Refreshed token: ", refreshedToken);
+//        Toast.makeText(this, refreshedToken, Toast.LENGTH_SHORT).show();
+        PreferencesHelper.setPreference(this,PreferencesHelper.PREF_FIREBASE_TOKEN,refreshedToken);
+
         if (!parkType.equals("")&&!secRatings.equals("")&&!carCategory.equals("")){
 
             Type type = new TypeToken<List<String>>() { }.getType();
@@ -112,7 +118,7 @@ public class HomeActivity extends AppCompatActivity
             Constants.CAR_CATEGORY = restoreData3;
 
             if (restoreData1.size() >0 && restoreData2.size() >0 && restoreData3.size() >0){
-                Toast.makeText(context, restoreData1.get(0)+restoreData2.get(0)+restoreData3.get(0), Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, restoreData1.get(0)+restoreData2.get(0)+restoreData3.get(0), Toast.LENGTH_LONG).show();
             }
         }
 

@@ -9,14 +9,14 @@
     <TextView
         android:id="@+id/text_view1"
         style="@style/NunitoBlackLight"
-        android:textSize="15dp"
-        android:textColor="@color/textColor"
-        android:text=""
         android:layout_width="212dp"
-        android:gravity="center"
-        android:textStyle="bold"
+        android:layout_height="30dp"
         android:layout_gravity="center"
-        android:layout_height="30dp" />
+        android:gravity="center"
+        android:text="@string/error"
+        android:textColor="@color/textColor"
+        android:textSize="15dp"
+        android:textStyle="bold" />
 
 
     <!--<ImageView-->
@@ -30,7 +30,7 @@
         style="@style/Nunitoregular"
         android:textSize="14dp"
         android:textColor="@color/textColor"
-        android:text=""
+        android:text="@string/region"
         android:layout_width="212dp"
         android:gravity="center"
         android:layout_gravity="center"

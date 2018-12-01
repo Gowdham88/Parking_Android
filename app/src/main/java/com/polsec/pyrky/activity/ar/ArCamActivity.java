@@ -282,7 +282,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
         }
 
         // Send to the fragment
-        arFragmentSupport.setWorld(world);
+//        arFragmentSupport.setWorld(world);
     }
 
     private void Get_intent(){

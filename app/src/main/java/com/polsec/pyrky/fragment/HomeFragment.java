@@ -824,7 +824,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Locati
                         Log.e("distance", String.valueOf(distances1));
 
 
-                        if (locationDistance < 5000) {
+                        if (locationDistance < 1500) {
 
                             NearestData nearestdata = new NearestData();
                             nearestdata.setLocationDistance(locationDistance);

@@ -61,7 +61,7 @@
     <string name="enter_your_user_name">Digite seu usuário</string>
     <string name="resetpass">Um link para redefinir sua senha foi enviado no seu email</string>
     <string name="status">Click OK to end the Previous booking</string>
-    <string name="status_txt">Deseja fechar reserva anterior ?</string>
+    <string name="status_txt">Por favor suas reservas antigas</string>
     <string name="protect_txt">Deseja proteger seru carro?</string>
     <string name="notification_txt">Você quer solicitar uma visão da câmera por três segundos ?</string>
     <string name="empy_txt">Campos de usuário ou email ou senha não podem estar vazios</string>
@@ -73,6 +73,8 @@
     <string name="emailerror_txt">Enter valid Email</string>
     <string name="imageerror_txt">Você deve inserir uma foto de perfi</string>
     <string name="enable_permission">Please Grant Permissions</string>
+
+    <string name="region">Não tem vagas vazias na região que você procurou</string>
     <string name="oops">Ops !!</string>
     <string name="ok">ok</string>
 
@@ -113,7 +115,14 @@
     <string name="cancel">Cancelar</string>
     <string name="Requestvideo">Solicitar vídeo</string>
 
+    <string name="gallery">Galeria</string>
+    <string name="Camera">Câmera</string>
 
+    <string name="pyrkynavigation">Navegação Pyrky</string>
+    <string name="checkmail">Por favor confira o seu email</string>
+
+    <string name="success">Sucesso</string>
+    <string name="error">Erro</string>
 
     <string-array name="navigation_drawer_items_array">
         <item>Home</item>
@@ -132,8 +141,8 @@
 
     <!--<filter>-->
 
-    <string name="Freestreet">Estacionamento de rua gratuito</string>
-    <string name="Paidstreet">Estacionamento de rua pago</string>
+    <string name="Freestreet">Vaga de rua gratuita</string>
+    <string name="Paidstreet">Vaga de rua paga</string>
     <string name="Paidparking">Estacionamento privado pago</string>
 
     <string name="Security">Classificações de segurança</string>
@@ -151,10 +160,9 @@
 
 
     <string-array name = "parent1">
-        <item>child1_1</item>
-        <item>child1_2</item>
-        <item>child1_3</item>
-        <item>child1_4</item>
+        <item>Vaga de rua gratuita</item>
+        <item>Vaga de rua paga</item>
+        <item>Estacionamento privado pago</item>
     </string-array>
 
     <string-array name = "parent2">

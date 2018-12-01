@@ -39,7 +39,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="5dp"
             android:gravity="center"
-            android:text="Camera"
+            android:text="@string/Camera"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/textColor"
             android:textSize="14sp" />
@@ -73,7 +73,7 @@
             android:layout_alignStart="@+id/camera_title"
             android:layout_below="@+id/camera_title"
             android:gravity="center"
-            android:text="Gallery"
+            android:text="@string/gallery"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/textColor"
             android:textSize="14sp" />
@@ -102,7 +102,7 @@
             android:layout_height="50dp"
             android:layout_below="@+id/gallery_title"
             android:gravity="center"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:textColor="@color/colorred"
             android:textSize="14sp" />
 </LinearLayout>
