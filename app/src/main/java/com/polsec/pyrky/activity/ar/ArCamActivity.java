@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -11,18 +13,23 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,19 +42,35 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.android.SphericalUtil;
 import com.polsec.pyrky.R;
-import com.polsec.pyrky.network.DirectionsResponse;
+import com.polsec.pyrky.activity.HomeActivity;
+import com.polsec.pyrky.fragment.HomeFragment;
 import com.polsec.pyrky.network.RetrofitInterface;
 import com.polsec.pyrky.network.model.Step;
+import com.polsec.pyrky.pojo.Booking;
 import com.polsec.pyrky.pojo.Example;
+import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.LocationCalc;
 import com.polsec.pyrky.utils.UtilsCheck;
 
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,6 +82,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by Amal Krishnan on 27-03-2017.
  */
@@ -66,12 +91,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ArCamActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,LocationListener,SensorEventListener {
 
-//    @BindView(R.id.ar_source_dest)
-//    TextView srcDestText;
-    @BindView(R.id.ar_dir_distance)
-    TextView dirDistance;
-    @BindView(R.id.ar_dir_time)
-    TextView dirTime;
+    @BindView(R.id.parkybutton)
+    Button prkyBtn;
+    @BindView(R.id.done)
+    Button Donebtn;
+//    @BindView(R.id.ar_dir_time)
+//    TextView dirTime;
 
     private final static String TAG="ArCamActivity";
     private String srcLatLng;
@@ -87,6 +112,21 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
     private Intent intent;
     private SensorManager mSensorManager;
     private float currentDegree = 0f;
+     double  deslat,destlong;
+    String deslat1,destlong1;
+
+    String yourplace,cameraid,mUid,token,documentID,value,documentIDs;
+    FirebaseAuth mAuth;
+    FirebaseFirestore db;
+
+    double parkingSpaceRating;
+    Boolean protectCar,bookingStatus;
+
+
+    Map<String, Object> bookingid=new HashMap<>();
+
+    Map<String, Object> bookingid1=new HashMap<>();
+    Boolean isBookedAny = false;
 
 
 
@@ -96,18 +136,526 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_ar_camera);
         ButterKnife.bind(this);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        mUid = PreferencesHelper.getPreference(ArCamActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+        token= PreferencesHelper.getPreference(ArCamActivity.this, PreferencesHelper.PREF_FIREBASE_TOKEN);
         Set_googleApiClient();
-
+        Donebtn.setVisibility(View.GONE);
+        prkyBtn.setVisibility(View.VISIBLE);
         if(!UtilsCheck.isNetworkConnected(this)){
             Toast.makeText(ArCamActivity.this, "Turn Internet On", Toast.LENGTH_SHORT).show();
         }
 
+        if(getIntent()!=null) {
+            intent = getIntent();
 
+//            srcDestText.setText(intent.getStringExtra("SRC")+" -> "+intent.getStringExtra("DEST"));
+            srcLatLng=intent.getStringExtra("SRCLATLNG");
+            destLatLng=intent.getStringExtra("DESTLATLNG");
+            deslat1=intent.getStringExtra("deslat");
+            destlong1=intent.getStringExtra("deslong");
+            deslat= Double.parseDouble(String.valueOf(deslat));
+            destlong= Double.parseDouble(String.valueOf(destlong));
+            yourplace=intent.getStringExtra("place");
+            cameraid=intent.getStringExtra("cameraid");
+            value=intent.getStringExtra("value");
+
+            Directions_call(); //HTTP Google Directions API Call
+        }
+        prkyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                    Boolean bookingRequest=true;
+//
+                    if (bookingRequest){
+                        makeAlreadyBookedAlert(true,deslat,destlong,yourplace,cameraid,value);
+                    }else{
+
+                        SaveData(deslat, destlong, yourplace,cameraid);
+                    }
+
+            }
+        });
+        Donebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                endpop();
+            }
+        });
 
         //Configure_AR(); //Configure AR Environment
 
 //        Directions_call();
+    }
+
+    private void endpop() {
+
+        LayoutInflater factory = LayoutInflater.from(ArCamActivity.this);
+        final View deleteDialogView = factory.inflate(R.layout.bookingend_alert, null);
+        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(ArCamActivity.this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        final MediaPlayer mp = MediaPlayer.create(ArCamActivity.this, R.raw.parking_alert );
+
+        final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left);
+//                transaction.replace(R.id.main_frame_layout, new HomeFragment()).commit();
+
+                Intent okintent=new Intent(ArCamActivity.this, HomeActivity.class);
+                startActivity(okintent);
+
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                alertDialog1.dismiss();
+            }
+        });
+
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+        alertDialog1.show();
+    }
+
+    private void makeAlreadyBookedAlert(Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace, String value){
+        final FirebaseUser user = mAuth.getCurrentUser();
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    DocumentReference docRef = db.collection("users").document(mUid);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    if(document.contains("Booking_ID")){
+                                        bookingid = document.getData();
+
+                                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+
+                                        for (Map.Entry<String, Object> bookingEntry : bookingid1.entrySet()){
+                                            Boolean value = (Boolean) bookingEntry.getValue();
+                                            if (value){
+                                                isBookedAny = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (isBookedAny){
+                                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                                                System.out.println(entry.getKey() + " = " + entry.getValue());
+
+                                                Boolean val = (Boolean) entry.getValue();
+
+//
+                                                if (val) {
+
+                                                    String valuedoc=entry.getKey();
+//
+
+                                                    popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace,cameraid,value);
+                                                    break;
+
+
+                                                }else{
+
+                                                }
+                                            }
+                                        }
+
+                                        else{
+
+                                            if (bookingRequest){
+
+                                                SaveData(latitude, longitude, yourPlace,cameraid);
+                                            }
+
+                                        }
+
+                                    }
+
+                                    else {
+
+
+                                        SaveData(latitude, longitude, yourPlace,cameraid);
+
+                                    }
+
+                                } else {
+
+
+                                }
+                            } else {
+
+
+                            }
+                        }
+                    });
+
+
+
+                } else {
+
+
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Log.w("Error", "Error adding document", e);
+//                Toast.makeText(getActivity(),"Login failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+
+
+    private void SaveData(double latitude, double longitude, String yourplace, String cameraid) {
+
+
+        final String uid = PreferencesHelper.getPreference(ArCamActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+
+
+        parkingSpaceRating=0;
+        protectCar=false;
+        bookingStatus=true;
+//          locationTxt=Location_Txt.getText().toString();
+//        String photoURL = PreferencesHelper.getPreference(this, PreferencesHelper.PREFERENCE_PHOTOURL);
+
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        final Map<String, Boolean> likeData = new HashMap<>();
+        likeData.put(uid, false);
+        documentID="";
+
+        Booking bookingdata = new Booking(uid,String.valueOf(latitude),String.valueOf(longitude),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
+
+
+        db.collection("Bookings").add(bookingdata).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+
+                documentID = documentReference.getId();
+
+                PreferencesHelper.setPreference(ArCamActivity.this, PreferencesHelper.PREFERENCE_DOCUMENTIDNEW,documentID);
+                PreferencesHelper.setPreference(ArCamActivity.this, PreferencesHelper.PREFERENCE_DOCMENTID, documentID);
+
+
+
+
+                Booking bookingdata = new Booking(uid,String.valueOf(latitude),String.valueOf(longitude),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
+                Map<String, Object> docID = new HashMap<>();
+                docID.put("documentID", documentID);
+
+
+                db.collection("Bookings").document(documentID).update(docID).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+
+
+
+                        Map<String, Boolean> likeData1 = new HashMap<>();
+                        likeData1.put( documentID, true);
+
+                        Map<String, Map<String, Boolean>> likeData2 = new HashMap<>();
+                        likeData2.put( "Booking_ID", likeData1);
+
+
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                        db.collection("users").document(uid)
+                                .set(likeData2, SetOptions.merge())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully written!");
+
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error writing document", e);
+                                    }
+                                });
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+//
+
+
+            }
+        });
+    }
+
+
+    private void popup(String valuedoc, String key, Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace, String value) {
+        LayoutInflater factory = LayoutInflater.from(ArCamActivity.this);
+        final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
+        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(ArCamActivity.this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
+
+        final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.e("valuedoc",valuedoc);
+
+                Map<String, Boolean> likeData1 = new HashMap<>();
+                likeData1.put( key, false);
+
+                Map<String, Map<String, Boolean>> likeData2 = new HashMap<>();
+                likeData2.put( "Booking_ID", likeData1);
+
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                db.collection("users").document(mUid)
+                        .set(likeData2, SetOptions.merge())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+//                                docIdnew=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCMENTID);
+//                                PopUpprotectcar(bookingRequest,latitude,longitude,yourPlace,value);
+                                
+                                Successpop(bookingRequest,latitude,longitude,yourPlace,value);
+                                isBookedAny = false;
+                                if (bookingRequest){
+                                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, cameraid, ArCamActivity.this.value);
+                                }else{
+                                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, cameraid, ArCamActivity.this.value);
+                                }
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+
+                final Map<String, Object> bookingstatusdata = new HashMap<>();
+                bookingstatusdata.put("bookingStatus", false);
+
+                db.collection("Bookings").document(valuedoc)
+                        .update(bookingstatusdata)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+
+//
+                alertDialog1.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                alertDialog1.dismiss();
+            }
+        });
+
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+
+        lp.gravity = Gravity.CENTER;
+
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
+    private void Successpop(Boolean bookingRequest, double latitude, double longitude, String yourPlace, String value) {
+
+        LayoutInflater factory = LayoutInflater.from(ArCamActivity.this);
+        final View deleteDialogView = factory.inflate(R.layout.success_alert, null);
+        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(ArCamActivity.this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+
+        final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                prkyBtn.setVisibility(View.GONE);
+                Donebtn.setVisibility(View.VISIBLE);
+
+                PopUpprotectcar(bookingRequest,latitude,longitude,yourPlace,value);
+                alertDialog1.dismiss();
+            }
+        });
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+        alertDialog1.show();
+    }
+
+    private void PopUpprotectcar(Boolean bookingRequest, double latitude, double longitude, String yourPlace, String value) {
+
+        LayoutInflater factory = LayoutInflater.from(ArCamActivity.this);
+        final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);
+        final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(ArCamActivity.this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = deleteDialogView.findViewById(R.id.ok_button);
+        TextView cancel = deleteDialogView.findViewById(R.id.cancel_button);
+        final MediaPlayer mp = MediaPlayer.create(ArCamActivity.this, R.raw.parking_alert );
+
+        final android.support.v7.app.AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                documentIDs =PreferencesHelper.getPreference(ArCamActivity.this,PreferencesHelper.PREFERENCE_DOCUMENTIDNEW);
+                Log.e("doc",documentIDs);
+
+                protectCar(true,true,documentIDs);
+                alertDialog1.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                alertDialog1.dismiss();
+            }
+        });
+
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+        alertDialog1.show();
+    }
+
+    private void protectCar(Boolean protectCar, Boolean bookingStatus, String documentIDs){
+        final Map<String, Object> protectdata = new HashMap<>();
+        protectdata.put("protectCar", protectCar);
+        protectdata.put("bookingStatus", bookingStatus);
+        protectdata.put("fcmToken", token);
+
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+        db.collection("Bookings").document(documentIDs)
+                .update(protectdata)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+
+
+
     }
 
     private void Set_googleApiClient(){
@@ -286,15 +834,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
     }
 
     private void Get_intent(){
-        if(getIntent()!=null) {
-            intent = getIntent();
 
-//            srcDestText.setText(intent.getStringExtra("SRC")+" -> "+intent.getStringExtra("DEST"));
-            srcLatLng=intent.getStringExtra("SRCLATLNG");
-            destLatLng=intent.getStringExtra("DESTLATLNG");
-
-            Directions_call(); //HTTP Google Directions API Call
-        }
     }
 
     private void Directions_call(){
@@ -323,13 +863,13 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
                 Example directionsResponse = response.body();
                 int step_array_size=directionsResponse.getRoutes().get(0).getLegs().get(0).getSteps().size();
 
-                dirDistance.setVisibility(View.VISIBLE);
-                dirDistance.setText(directionsResponse.getRoutes().get(0).getLegs().get(0)
-                        .getDistance().getText());
-
-                dirTime.setVisibility(View.VISIBLE);
-                dirTime.setText(directionsResponse.getRoutes().get(0).getLegs().get(0)
-                        .getDuration().getText());
+//                dirDistance.setVisibility(View.VISIBLE);
+//                dirDistance.setText(directionsResponse.getRoutes().get(0).getLegs().get(0)
+//                        .getDistance().getText());
+//
+//                dirTime.setVisibility(View.VISIBLE);
+//                dirTime.setText(directionsResponse.getRoutes().get(0).getLegs().get(0)
+//                        .getDuration().getText());
 
                 steps=new Step[step_array_size];
 
@@ -479,6 +1019,15 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+
+    public double getPostTime() {
+
+        Date currentDate = new Date();
+        long unixTime = currentDate.getTime() / 1000;
+        return unixTime;
+
 
     }
 }

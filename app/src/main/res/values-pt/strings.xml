@@ -122,6 +122,7 @@
     <string name="checkmail">Por favor confira o seu email</string>
 
     <string name="success">Sucesso</string>
+    <string name="successtxt">Sucesso...!!!</string>
     <string name="error">Erro</string>
 
     <string-array name="navigation_drawer_items_array">

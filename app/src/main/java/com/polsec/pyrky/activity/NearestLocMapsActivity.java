@@ -167,7 +167,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     String documentID;
     double parkingSpaceRating;
     Boolean protectCar,bookingStatus;
-    String lat,longi;
+    double lat,longi;
     String mBySearch, mByCarousel;
     LatLng laln;
     Location mLocation;
@@ -1171,8 +1171,18 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
             public void onClick(View view) {
 
                 showBottomSheet(m.getPosition().latitude,m.getPosition().longitude, yourplace, cameraid);
-                lat= String.valueOf(m.getPosition().latitude);
-                longi= String.valueOf(m.getPosition().longitude);
+                lat= Double.parseDouble(String.valueOf(m.getPosition().latitude));
+                longi= Double.parseDouble(String.valueOf(m.getPosition().longitude));
+//                if(value=="map")
+//                {
+//
+//                    bookAndNavigate(lat, longi);
+//                }
+//                else {
+
+
+
+//                }
 
 
 
@@ -1272,6 +1282,8 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
         NavigateTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
 
                 showBottomSheet(Double.parseDouble(mLat),Double.parseDouble(mLongi),place,cameraId);
 
@@ -1378,20 +1390,36 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
 
                     String value="pyrky";
-
-                    Boolean bookingRequest=true;
-
-                    if (bookingRequest){
-                        makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
-                    }else{
-
-                        SaveData(latitude, longitude, yourPlace,cameraid);
-                    }
 //
+//                    Boolean bookingRequest=true;
+//
+//                    if (bookingRequest){
+//                        makeAlreadyBookedAlert(true,latitude,longitude,yourPlace,cameraid,value);
+//                    }else{
+//
+//                        SaveData(latitude, longitude, yourPlace,cameraid);
+//                    }
+////
+//
+//
+//                } else {
+//                    groupPermissionEnable();
 
+                    Intent intent = new Intent(getActivity(), ArCamActivity.class);
 
-                } else {
-                    groupPermissionEnable();
+                    intent.putExtra("SRC", "Current Location");
+                    intent.putExtra("DEST", "Some Destination");
+                    intent.putExtra("SRCLATLNG", curLat + "," + curLong);
+                    intent.putExtra("DESTLATLNG", latitude + "," + longitude);
+
+                    intent.putExtra("deslat", latitude);
+                    intent.putExtra("deslong", longitude);
+                    intent.putExtra("place", yourPlace);
+                    intent.putExtra("cameraid", cameraid);
+                    intent.putExtra("value", value);
+                    getActivity().overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
+                    startActivity(intent);
+
                 }
 
 

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@drawable/dialog_background"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text_view1"
+        style="@style/NunitoBlackLight"
+        android:textSize="15dp"
+        android:textColor="@color/textColor"
+        android:text="@string/successtxt"
+        android:layout_width="212dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content" />
+
+
+    <!--<ImageView-->
+    <!--android:layout_gravity="center_horizontal"-->
+    <!--android:layout_width="120dp"-->
+    <!--android:layout_height="80dp"-->
+    <!--android:src="@drawable/notification"-->
+    <!--android:contentDescription="@string/app_name" />-->
+    <TextView
+        android:id="@+id/text_view"
+        style="@style/Nunitoregular"
+        android:textSize="14dp"
+        android:textColor="@color/textColor"
+        android:text="@string/successtxt1"
+        android:layout_width="212dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"/>
+
+
+    <View
+        android:id="@+id/passlineemail"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="center"
+        android:focusable="false"
+        android:background="@color/border_color"/>
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:text="OK"
+        android:textStyle="bold"
+        android:id="@+id/ok_button"
+        style="@style/NunitoBlackLight"
+        android:textColor="@color/colorAccent"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_width="86dp"
+        android:textSize="15dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="4dp"
+        />
+
+</LinearLayout>
