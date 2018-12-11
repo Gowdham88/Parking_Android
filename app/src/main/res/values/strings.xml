@@ -64,7 +64,7 @@
     <string name="resetpass">A reset link has been sent your email</string>
     <string name="status">Click OK to end the Previous booking</string>
     <string name="status_txt">Please close your Previous bookings</string>
-    <string name="end_txt">Do you want to end\n booking now</string>
+    <string name="end_txt">Do you want to end\n booking now?</string>
     <string name="protect_txt">Do you want protect your car?</string>
     <string name="notification_txt">Do you want to request a camera view\n for three seconds</string>
     <string name="empy_txt">Username or email or password should\n not be empty</string>
@@ -131,7 +131,7 @@
     <string name="successtxt">Success...!!!</string>
     <string name="successtxt1">Parking slot booked successfully</string>
     <string name="error">Error</string>
-    <string name="pyrkynow">Pyrky Now</string>
+    <string name="pyrkynow">Park Now</string>
     <string name="done">Done</string>
 
 

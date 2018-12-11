@@ -153,10 +153,10 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
 //            srcDestText.setText(intent.getStringExtra("SRC")+" -> "+intent.getStringExtra("DEST"));
             srcLatLng=intent.getStringExtra("SRCLATLNG");
             destLatLng=intent.getStringExtra("DESTLATLNG");
-            deslat1=intent.getStringExtra("deslat");
-            destlong1=intent.getStringExtra("deslong");
-            deslat= Double.parseDouble(String.valueOf(deslat));
-            destlong= Double.parseDouble(String.valueOf(destlong));
+            deslat1=intent.getStringExtra("desltval");
+            destlong1=intent.getStringExtra("deslgval");
+            deslat= Double.parseDouble(String.valueOf(deslat1));
+            destlong= Double.parseDouble(String.valueOf(destlong1));
             yourplace=intent.getStringExtra("place");
             cameraid=intent.getStringExtra("cameraid");
             value=intent.getStringExtra("value");
@@ -244,7 +244,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
         alertDialog1.show();
     }
 
-    private void makeAlreadyBookedAlert(Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace, String value){
+    private void makeAlreadyBookedAlert(Boolean bookingRequest, double deslat, double destlong, String cameraid, String yourPlace, String value){
         final FirebaseUser user = mAuth.getCurrentUser();
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -286,7 +286,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
                                                     String valuedoc=entry.getKey();
 //
 
-                                                    popup(valuedoc,entry.getKey(),bookingRequest,latitude,longitude,yourPlace,cameraid,value);
+                                                    popup(valuedoc,entry.getKey(),bookingRequest,deslat,destlong,yourPlace,cameraid,value);
                                                     break;
 
 
@@ -300,7 +300,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
 
                                             if (bookingRequest){
 
-                                                SaveData(latitude, longitude, yourPlace,cameraid);
+                                                SaveData(deslat, destlong, yourPlace,cameraid);
                                             }
 
                                         }
@@ -310,7 +310,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
                                     else {
 
 
-                                        SaveData(latitude, longitude, yourPlace,cameraid);
+                                        SaveData(deslat, destlong, yourPlace,cameraid);
 
                                     }
 
@@ -347,7 +347,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
 
 
 
-    private void SaveData(double latitude, double longitude, String yourplace, String cameraid) {
+    private void SaveData(double deslat, double destlong, String yourplace, String cameraid) {
 
 
         final String uid = PreferencesHelper.getPreference(ArCamActivity.this, PreferencesHelper.PREFERENCE_FIREBASE_UUID);
@@ -365,7 +365,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
         likeData.put(uid, false);
         documentID="";
 
-        Booking bookingdata = new Booking(uid,String.valueOf(latitude),String.valueOf(longitude),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
+        Booking bookingdata = new Booking(uid,String.valueOf(deslat),String.valueOf(destlong),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
 
 
         db.collection("Bookings").add(bookingdata).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -380,7 +380,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
 
 
 
-                Booking bookingdata = new Booking(uid,String.valueOf(latitude),String.valueOf(longitude),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
+                Booking bookingdata = new Booking(uid,String.valueOf(deslat),String.valueOf(destlong),yourplace,getPostTime(),bookingStatus,cameraid,documentID,parkingSpaceRating,protectCar);
                 Map<String, Object> docID = new HashMap<>();
                 docID.put("documentID", documentID);
 
@@ -434,7 +434,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
     }
 
 
-    private void popup(String valuedoc, String key, Boolean bookingRequest, double latitude, double longitude, String cameraid, String yourPlace, String value) {
+    private void popup(String valuedoc, String key, Boolean bookingRequest, double deslat, double destlong, String cameraid, String yourPlace, String value) {
         LayoutInflater factory = LayoutInflater.from(ArCamActivity.this);
         final View deleteDialogView = factory.inflate(R.layout.status_alert_lay, null);
         final android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(ArCamActivity.this);
@@ -470,12 +470,12 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
 //                                docIdnew=PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_DOCMENTID);
 //                                PopUpprotectcar(bookingRequest,latitude,longitude,yourPlace,value);
                                 
-                                Successpop(bookingRequest,latitude,longitude,yourPlace,value);
+                                Successpop(bookingRequest,deslat,destlong,yourPlace,value);
                                 isBookedAny = false;
                                 if (bookingRequest){
-                                    makeAlreadyBookedAlert(true,latitude,longitude, yourPlace, cameraid, ArCamActivity.this.value);
+                                    makeAlreadyBookedAlert(true,deslat,destlong, yourPlace, cameraid, ArCamActivity.this.value);
                                 }else{
-                                    makeAlreadyBookedAlert(false,latitude,longitude, yourPlace, cameraid, ArCamActivity.this.value);
+                                    makeAlreadyBookedAlert(false,deslat,destlong, yourPlace, cameraid, ArCamActivity.this.value);
                                 }
 
                             }
@@ -537,7 +537,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
         alertDialog1.getWindow().setAttributes(lp);
     }
 
-    private void Successpop(Boolean bookingRequest, double latitude, double longitude, String yourPlace, String value) {
+    private void Successpop(Boolean bookingRequest, double deslat, double destlong, String yourPlace, String value) {
 
         LayoutInflater factory = LayoutInflater.from(ArCamActivity.this);
         final View deleteDialogView = factory.inflate(R.layout.success_alert, null);
@@ -552,7 +552,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
                 prkyBtn.setVisibility(View.GONE);
                 Donebtn.setVisibility(View.VISIBLE);
 
-                PopUpprotectcar(bookingRequest,latitude,longitude,yourPlace,value);
+                PopUpprotectcar(bookingRequest,deslat,destlong,yourPlace,value);
                 alertDialog1.dismiss();
             }
         });
@@ -575,7 +575,7 @@ public class ArCamActivity extends FragmentActivity implements GoogleApiClient.C
         alertDialog1.show();
     }
 
-    private void PopUpprotectcar(Boolean bookingRequest, double latitude, double longitude, String yourPlace, String value) {
+    private void PopUpprotectcar(Boolean bookingRequest, double deslat, double destlong, String yourPlace, String value) {
 
         LayoutInflater factory = LayoutInflater.from(ArCamActivity.this);
         final View deleteDialogView = factory.inflate(R.layout.protetcar_alert, null);

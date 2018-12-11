@@ -38,6 +38,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.polsec.pyrky.R;
 
+import com.polsec.pyrky.activity.ar.ArCamActivity;
 import com.polsec.pyrky.activity.ar.ArNavActivity;
 import com.polsec.pyrky.fragment.TrackGPS;
 import com.polsec.pyrky.pojo.Booking;
@@ -60,7 +61,7 @@ public class ViewImageActivity extends AppCompatActivity {
     Context context = this;
     String parkingSpaceRating,documentID;
     Boolean protectCar,bookingStatus;
-    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,documentiDs,DocId,token;
+    String DestName,lat,longi,mUid,CameraId,cameraImageUrl,cameraid,documentiDs,DocId,token,srcLatLngs,destLatLngs,curlat,curlong;
     Boolean isBookedAny = false;
      FirebaseFirestore db;
 
@@ -90,14 +91,14 @@ public class ViewImageActivity extends AppCompatActivity {
         Close_Img.setVisibility(View.VISIBLE);
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size1);
         TrackGPS trackGps = new TrackGPS(context);
-
-        if (trackGps.canGetLocation()) {
-            curLat = trackGps.getLatitude();
-            curLong = trackGps.getLongitude();
-
-            Log.e("curLat", String.valueOf(curLat));
-            Log.e("curLong =", String.valueOf(curLong));
-        }
+//
+//        if (trackGps.canGetLocation()) {
+//            curLat = trackGps.getLatitude();
+//            curLong = trackGps.getLongitude();
+//
+//            Log.e("curLat", String.valueOf(curLat));
+//            Log.e("curLong =", String.valueOf(curLong));
+//        }
         db = FirebaseFirestore.getInstance();
 
 
@@ -110,7 +111,10 @@ public class ViewImageActivity extends AppCompatActivity {
                 longitude = bundle.getStringExtra("longitude");
             latitude1= Double.parseDouble(latitude);
             longitude1= Double.parseDouble(longitude);
-
+            srcLatLngs=bundle.getStringExtra("SRCLATLNG");
+            destLatLngs=bundle.getStringExtra("DESTLATLNG");
+            curlat=bundle.getStringExtra("curLat");
+            curlong=bundle.getStringExtra("curLong");
                 DestName = bundle.getStringExtra("place");
                 CameraId = bundle.getStringExtra("cameraid");
                 cameraImageUrl = bundle.getStringExtra("cameraImageUrl");
@@ -118,8 +122,8 @@ public class ViewImageActivity extends AppCompatActivity {
                 longi = String.valueOf(longitude);
                 cameraid = String.valueOf(CameraId);
 
-                Log.e("lattitudeview", String.valueOf(latitude));
-                Log.e("longitudeview", String.valueOf(longitude));
+                Log.e("lattitudeview", String.valueOf(curlat));
+                Log.e("longitudeview", String.valueOf(curlong));
                 Log.e("place", String.valueOf(cameraImageUrl));
 
 
@@ -206,14 +210,32 @@ public class ViewImageActivity extends AppCompatActivity {
 
                 String value="pyrky";
 
-                Boolean bookingRequest=true;
 
-                if (bookingRequest){
-                    makeAlreadyBookedAlert(true, value);
-                }else{
-                    SaveData(lat, longi, DestName);
-                }
+                Intent intent = new Intent(ViewImageActivity.this, ArCamActivity.class);
+
+                intent.putExtra("SRC", "Current Location");
+                intent.putExtra("DEST", "Some Destination");
+                intent.putExtra("SRCLATLNG", curlat + "," + curlong);
+                intent.putExtra("DESTLATLNG", latitude + "," + longitude);
+
+                intent.putExtra("desltval", String.valueOf(latitude));
+                intent.putExtra("deslgval", String.valueOf(longitude));
+                intent.putExtra("place", DestName);
+                intent.putExtra("cameraid", cameraid);
+                intent.putExtra("value", value);
+                overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
+                startActivity(intent);
+                Log.e("deslat", String.valueOf(latitude));
+                Log.e("deslong", String.valueOf(longitude));
+
+//                Boolean bookingRequest=true;
 //
+//                if (bookingRequest){
+//                    makeAlreadyBookedAlert(true, value);
+//                }else{
+//                    SaveData(lat, longi, DestName);
+//                }
+////
                 bottomSheetDialog.dismiss();
             }
         });

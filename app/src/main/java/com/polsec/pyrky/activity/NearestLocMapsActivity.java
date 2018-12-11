@@ -546,7 +546,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
 
 
-                                if (str <1500) {
+                                if (str <10000) {
 
                                     alertflag=false;
 
@@ -1267,6 +1267,10 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                 intent.putExtra("cameraid",cameraId);
                 intent.putExtra("cameraImageUrl",Imageurl1);
                 intent.putExtra("place",place);
+                intent.putExtra("curLat",String.valueOf(curLat));
+                intent.putExtra("curLong",String.valueOf(curLong));
+                intent.putExtra("SRCLATLNG", curLat + "," + curLong);
+                intent.putExtra("DESTLATLNG", mLat + "," + mLongi);
 //                intent.putExtra("recycler","firebasevalue");
 //
                 Log.e("lattitude", String.valueOf(mLat));
@@ -1414,11 +1418,16 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
                     intent.putExtra("deslat", latitude);
                     intent.putExtra("deslong", longitude);
+
+                    intent.putExtra("desltval", String.valueOf(latitude));
+                    intent.putExtra("deslgval", String.valueOf(longitude));
                     intent.putExtra("place", yourPlace);
                     intent.putExtra("cameraid", cameraid);
                     intent.putExtra("value", value);
                     getActivity().overridePendingTransition(R.anim.enter_from_right,R.anim.exit_to_left);
                     startActivity(intent);
+                    Log.e("deslat", String.valueOf(latitude));
+                    Log.e("deslong", String.valueOf(longitude));
 
                 }
 
