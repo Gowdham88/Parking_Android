@@ -144,7 +144,7 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
 
 
     Location mCurrentLoc = new Location("");
-    Location mCurrentLoctype = new Location("");
+    Location mCurrentsubLoc = new Location("");
     Location mNearestLocations = new Location("");
 
     ArrayList<String> mAccurateDistancesString = new ArrayList<>();
@@ -158,9 +158,11 @@ public class NearestLocMapsActivity extends Fragment implements OnMapReadyCallba
     ArrayList<String> distancescurrentarrmap = new ArrayList<>();
     ArrayList<String> mCameraLocName = new ArrayList<>();
     ArrayList<String> mCameraId = new ArrayList<>();
+    ArrayList<String> mAccuratesubDistancesString = new ArrayList<>();
     ArrayList<HashMap<String, Object>> rules = new ArrayList<HashMap<String, Object>>();
     private Boolean isPopUpShowing = false;
-    double mAccurateDistance;
+    double mAccurateDistance,mAccuratesubDistance;
+
     GoogleMap Mmap;
     List<Address> yourAddresses;
     String yourplace,area;
@@ -519,6 +521,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
                     mNearestDataList1.clear();
                         mNearestDataList.clear();
+                    mAccuratesubDistancesString.clear();
                         if(datalist!=null||!datalist.isEmpty()){
 
 
@@ -612,8 +615,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                                                         Log.e("jsarray", String.valueOf(jsarray));
                                                                         Slotlat1.clear();
                                                                         Slotlong.clear();
-
-
+                                                                        mAccuratesubDistancesString.clear();
                                                                         for (int m = 0; m < jsarray.length(); m++) {
                                                                             JSONObject objrct = jsarray.getJSONObject(m);
                                                                             latitudes = Double.parseDouble(objrct.getString("latitude"));
@@ -622,15 +624,23 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
                                                                             Log.e("longitudesvall", String.valueOf(longitudesvall));
 
+                                                                            mCurrentLoc.setLatitude(Double.parseDouble(mLat));
+                                                                            mCurrentLoc.setLongitude(Double.parseDouble(mLongi));
 
                                                                             mNearestLocations.setLatitude(Double.parseDouble(String.valueOf(latitudes)));
                                                                             mNearestLocations.setLongitude(Double.parseDouble(String.valueOf(longitudesvall)));
                                                                             double locationDistance1 = mCurrentLoc.distanceTo(mNearestLocations);
 
+
+                                                                            mAccuratesubDistancesString.add(String.valueOf(locationDistance1));
+                                                                            Log.e("str1", String.valueOf(mAccuratesubDistancesString));
+
+
                                                                             Slotlat1.add(String.valueOf(latitudes));
                                                                             Slotlong.add(String.valueOf(longitudesvall));
 
                                                                             mNearestDataList1.clear();
+
                                                                             if(Slotlat1!=null || Slotlat1.isEmpty()) {
 
 
@@ -652,7 +662,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
                                                                                     mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
                                                                                     mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
-                                                                                    mNearestrecyclerAdapter = new CarouselDetailMapAdapter(getActivity(), mNearestDataList1, distance, NearestLocMapsActivity.this);
+                                                                                    mNearestrecyclerAdapter = new CarouselDetailMapAdapter(getActivity(), mNearestDataList1, distance, NearestLocMapsActivity.this,mAccuratesubDistancesString);
                                                                                     mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                                                                     mNearestPlaceRecycler.scrollToPosition(mListPosition);
                                                                                     mNearestrecyclerAdapter.notifyDataSetChanged();
@@ -769,7 +779,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                                                                     Log.e("jsarray", String.valueOf(jsarray));
                                                                                     Slotlat1.clear();
                                                                                     Slotlong.clear();
-
+                                                                                    mAccuratesubDistancesString.clear();
 
                                                                                     for (int m = 0; m < jsarray.length(); m++) {
                                                                                         JSONObject objrct = jsarray.getJSONObject(m);
@@ -783,6 +793,10 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
                                                                                         mNearestLocations.setLatitude(Double.parseDouble(String.valueOf(latitudes)));
                                                                                         mNearestLocations.setLongitude(Double.parseDouble(String.valueOf(longitudesvall)));
                                                                                         double locationDistance1 = mCurrentLoc.distanceTo(mNearestLocations);
+
+
+                                                                                        mAccuratesubDistancesString.add(String.valueOf(locationDistance1));
+                                                                                        Log.e("str1", String.valueOf(mAccuratesubDistancesString));
 
                                                                                         Slotlat1.add(String.valueOf(latitudes));
                                                                                         Slotlong.add(String.valueOf(longitudesvall));
@@ -806,7 +820,7 @@ HashMap<String,Object> slots=new HashMap<String,Object>();
 
                                                                                                 mNearestPlaceRecycler.setOrientation(DSVOrientation.HORIZONTAL);
                                                                                                 mNearestPlaceRecycler.addOnItemChangedListener(NearestLocMapsActivity.this);
-                                                                                                mNearestrecyclerAdapter = new CarouselDetailMapAdapter(getActivity(), mNearestDataList1, distance, NearestLocMapsActivity.this);
+                                                                                                mNearestrecyclerAdapter = new CarouselDetailMapAdapter(getActivity(), mNearestDataList1, distance, NearestLocMapsActivity.this,mAccuratesubDistancesString);
                                                                                                 mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);
                                                                                                 mNearestPlaceRecycler.scrollToPosition(mListPosition);
                                                                                                 mNearestrecyclerAdapter.notifyDataSetChanged();

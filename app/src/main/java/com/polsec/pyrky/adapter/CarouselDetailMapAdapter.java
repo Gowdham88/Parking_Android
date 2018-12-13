@@ -52,6 +52,7 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
     private RecyclerView parentRecycler;
     int postionval;
     int distance,distanceval1;
+    ArrayList<String> mAccuratesubDistancesString = new ArrayList<>();
 
     public static final String ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button";
 
@@ -81,11 +82,12 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
 //
 //    }
 
-    public CarouselDetailMapAdapter(Context context, List<SlotsData> mNearestDataList, int distance, NearestLocMapsActivity nearestLocMapsActivity) {
+    public CarouselDetailMapAdapter(Context context, List<SlotsData> mNearestDataList, int distance, NearestLocMapsActivity nearestLocMapsActivity, ArrayList<String> mAccuratesubDistancesString) {
 
         this.context = context;
         this.mNearestDataList=mNearestDataList;
         this.distance=distance;
+        this.mAccuratesubDistancesString=mAccuratesubDistancesString;
     }
 
 
@@ -152,8 +154,8 @@ public class CarouselDetailMapAdapter extends RecyclerView.Adapter<CarouselDetai
             }
         }
         else {
-            if(!mNearestDataList.get(position).getLocationDistance().toString().equals(null)){
-                Double disval= Double.valueOf(String.valueOf(mNearestDataList.get(position).getLocationDistance().toString()));
+            if(!mAccuratesubDistancesString.get(position).toString().equals(null)){
+                Double disval= Double.valueOf(String.valueOf(mAccuratesubDistancesString.get(position)));
                 Log.e("val", String.valueOf(disval));
 
                 distanceval1= (int) Double.parseDouble(String.valueOf(disval));
