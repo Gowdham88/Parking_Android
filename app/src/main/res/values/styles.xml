@@ -102,6 +102,11 @@
         <item name="android:background">@drawable/bottom_sheet_transparent</item>
     </style>
 
+
+    <style name="dialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <!--<style name="FontAvenirLight">-->
         <!--<item name="fontPath">fonts/Avenir-Light.ttf</item>-->
     <!--</style>-->

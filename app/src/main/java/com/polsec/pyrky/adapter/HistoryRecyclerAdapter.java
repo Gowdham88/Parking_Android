@@ -148,8 +148,8 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
 
         cameraid=bookingList.get(position).getCameraId();
-        lat=bookingList.get(position).getDestLat();
-        longi=bookingList.get(position).getDestLong();
+        lat=String.valueOf(bookingList.get(position).getDestLat());
+        longi=String.valueOf(bookingList.get(position).getDestLong());
         String latlong=lat+","+longi;
         ratingBar.setRating((int) bookingList.get(position).getParkingSpaceRating());
 

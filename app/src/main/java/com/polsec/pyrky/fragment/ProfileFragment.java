@@ -231,6 +231,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
             transaction.replace(R.id.main_frame_layout, SettingsFragment.newInstance());
             transaction.addToBackStack(null);
             transaction.commit();
+            getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             return true;
         }
         return super.onOptionsItemSelected(item);

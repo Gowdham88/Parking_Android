@@ -93,7 +93,7 @@ public class ArExampleActivity extends AppCompatActivity implements GLSurfaceVie
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         getLocation();
-        String address = "(" + origin_latitude.substring(0, 8)  + ", " + origin_longitude.substring(0, 8) + ")";
+//        String address = "(" + origin_latitude.substring(0, 8)  + ", " + origin_longitude.substring(0, 8) + ")";
 
         String url = createRequestURL();
         Log.e("url",url);

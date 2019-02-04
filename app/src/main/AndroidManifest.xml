@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.polsec.pyrky">
 
     <uses-sdk android:minSdkVersion="14" />
@@ -40,7 +41,8 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/logoicon_png"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <meta-data
             android:name="com.google.ar.core"
             android:value="optional" />
@@ -56,11 +58,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Launcher"
             android:windowSoftInputMode="adjustResize|adjustNothing|stateHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activity.signup.SignupScreenActivity"
@@ -82,7 +80,9 @@
         <activity
             android:name=".activity.signin.SignInActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeSignup" />
+            android:theme="@style/AppThemeSignup">
+
+        </activity>
         <activity
             android:name=".activity.HomeActivity"
             android:screenOrientation="portrait"
@@ -113,7 +113,8 @@
         <activity
             android:name=".activity.NearestLocMapsActivity"
             android:label="@string/title_activity_nearest_loc_maps"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.booking.BookingsActivity"
             android:screenOrientation="portrait" />
@@ -121,9 +122,19 @@
             android:name=".activity.forgotpassword.ForgotpasswordActivity"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".activity.splash.SplashActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="941d1bd16bc6b7e98066de5acdd5eabab024ed2f" />
+
 
         <activity
             android:name=".activity.ViewImage.ViewImageActivity"
@@ -134,6 +145,9 @@
         <activity
             android:name=".activity.ar.ArActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".location.LocationActivity">
+        </activity>
         <!--<activity android:name=".activity.ar.ArExampleActivity"></activity>-->
     </application>
 

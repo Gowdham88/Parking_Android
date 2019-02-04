@@ -28,12 +28,15 @@ public class TrackGPS extends Service implements LocationListener {
     final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1;
     final long MIN_TIME_BW_UPDATES = 10000;
     LocationManager locationManager;
+
     public TrackGPS() {
     }
+
     public TrackGPS(Context mContext) {
         this.mContext = mContext;
         getLocation();
     }
+
     private Location getLocation() {
 
         try {

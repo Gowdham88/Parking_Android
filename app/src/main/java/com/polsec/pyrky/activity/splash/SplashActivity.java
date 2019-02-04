@@ -21,44 +21,25 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        mWindow = getWindow();
-        mWindow.getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
-//        setLightStatusBar(mWindow,SplashActivity.this);
-        new Handler().postDelayed(new Runnable(){
-            @Override
-            public void run() {
-                /* Create an Intent that will start the Menu-Activity. */
-                boolean isLoggedIn = PreferencesHelper.getPreferenceBoolean(SplashActivity.this, PreferencesHelper.PREFERENCE_ISLOGGEDIN);
-                if (isLoggedIn) {
+        new Handler().postDelayed(() -> {
+            /* Create an Intent that will start the Menu-Activity. */
+            boolean isLoggedIn = PreferencesHelper.getPreferenceBoolean(SplashActivity.this, PreferencesHelper.PREFERENCE_ISLOGGEDIN);
+            if (isLoggedIn) {
 
-                    Intent mainIntent = new Intent(SplashActivity.this,HomeActivity.class);
-                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(mainIntent);
-                    SplashActivity.this.finish();
+                Intent mainIntent = new Intent(SplashActivity.this,HomeActivity.class);
+                mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(mainIntent);
+                SplashActivity.this.finish();
 
-                } else {
-                    Intent in = new Intent(SplashActivity.this, SignInActivity.class);
-                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(in);
-                    SplashActivity.this.finish();
-                }
+            } else {
+                Intent in = new Intent(SplashActivity.this, SignInActivity.class);
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(in);
+                SplashActivity.this.finish();
             }
         }, SPLASH_DISPLAY_LENGTH);
     }
 
-//    public static void setLightStatusBar(Window view, Activity activity){
-//
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//
-//            int flags = view.getSystemUiVisibility();
-//            flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-//            view.setSystemUiVisibility(flags);
-//            activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
-//        }
-//    }
 
 }

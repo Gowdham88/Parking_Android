@@ -53,56 +53,38 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.Retrofit;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-                    BottomNavigationView.OnNavigationItemSelectedListener {
-    Context context = this;
-    @Inject
-    Retrofit retrofit;
-    Boolean isRunning = true;
-    BottomNavigationView bottomNavigationView;
-    Toolbar toolbar;
-    ActionBar actionbar;
-    ActionBarDrawerToggle toggle;
-    TextView textview;
-    TextView toolbarText,Username;
-    RelativeLayout.LayoutParams layoutparams;
-    String UsrName;
-    private FirebaseAuth mAuth;
+        BottomNavigationView.OnNavigationItemSelectedListener {
+    private Context context = this;
+    private BottomNavigationView bottomNavigationView;
+    private ActionBarDrawerToggle toggle;
+    private TextView toolbarText;
     private int avatarSize;
-    View view,holderView, contentView,contentView1;
-    String profileImageUrl;
-    CircleImageView profileImage;
-    NavigationView navigationView;
-    String Nameval="settings";
-    boolean isDrawerLocked;
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        ((MyApplication )getApplication()).getNetComponent().inject(this);
-//    }
+    private View holderView;
+    private String profileImageUrl;
+    private CircleImageView profileImage;
+    private NavigationView navigationView;
+    public static boolean IS_LOCATION_LOADING_REQUIRED = false;
 
     @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkWhetherArEnabled();
+        //checkWhetherArEnabled();
+        IS_LOCATION_LOADING_REQUIRED = true;
+        Log.d("parkType---", "fdjkfjfh");
+        String parkType = PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_PARKING_TYPES);
+        String secRatings = PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_SECURITY_RATINGS);
+        String carCategory = PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_CAR_CATEGORY);
 
-        String parkType = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PARKING_TYPES);
-        String secRatings = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_SECURITY_RATINGS);
-        String carCategory = PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_CAR_CATEGORY);
-        Log.e("parkType",parkType);
-        Log.e("secRatings",secRatings);
-        Log.e("carCategory",carCategory);
+        if (!parkType.equals("") && !secRatings.equals("") && !carCategory.equals("")) {
 
-        if (!parkType.equals("")&&!secRatings.equals("")&&!carCategory.equals("")){
-
-            Type type = new TypeToken<List<String>>() { }.getType();
+            Type type = new TypeToken<List<String>>() {
+            }.getType();
             List<String> restoreData1 = new Gson().fromJson(parkType, type);
             List<String> restoreData2 = new Gson().fromJson(secRatings, type);
             List<String> restoreData3 = new Gson().fromJson(carCategory, type);
@@ -110,51 +92,22 @@ public class HomeActivity extends AppCompatActivity
             Constants.PARKING_TYPES = restoreData1;
             Constants.SECURITY_RATINGS = restoreData2;
             Constants.CAR_CATEGORY = restoreData3;
-
-            if (restoreData1.size() >0 && restoreData2.size() >0 && restoreData3.size() >0){
-//                Toast.makeText(context, restoreData1.get(0)+restoreData2.get(0)+restoreData3.get(0), Toast.LENGTH_LONG).show();
-            }
         }
+        Log.d("toolbar---", "fdjkfjfh");
 
-
-
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionbar = getSupportActionBar();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        mAuth = FirebaseAuth.getInstance();
-//        actionbar.setTitle("Home");
 
         toolbarText = findViewById(R.id.toolbar_text);
-        setSupportActionBar(toolbar);
-        view = (View)findViewById(R.id.myview);
+        View view = (View) findViewById(R.id.myview);
         view.setVisibility(View.VISIBLE);
-        UsrName=PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
+        String usrName = PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_USER_NAME);
 
-//
-//        Username=findViewById(R.id.);
-//        Username.setText(UsrName);
-//        startActivity(getIntent());
-//        Intent chatIntent = getIntent();
-//        if(chatIntent!=null){
-//            String Value=chatIntent.getStringExtra("name");
-//
-//            if(Nameval.equals(Value)){
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-//                transaction.replace(R.id.main_frame_layout, new SettingsFragment());
-//                transaction.addToBackStack(null);
-//                transaction.commit();
-//            }
-//
-//            }
-//            else {
-//
-//            }
-        checkWhetherArEnabled();
+        // checkWhetherArEnabled();
         holderView = findViewById(R.id.holder);
 
-        contentView = findViewById(R.id.home_coordinator);
+        View contentView = findViewById(R.id.home_coordinator);
         bottomNavigationView = findViewById(R.id.navigationView);
         bottomNavigationView.offsetTopAndBottom(0);
 
@@ -170,7 +123,6 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
 
         toggle.setToolbarNavigationClickListener(v -> {
-//                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
@@ -182,7 +134,7 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.user_name);
         profileImage = navigationView.getHeaderView(0).findViewById(R.id.user_image);
-        profileImageUrl= PreferencesHelper.getPreference(HomeActivity.this,PreferencesHelper.PREFERENCE_PROFILE_PIC);
+        profileImageUrl = PreferencesHelper.getPreference(HomeActivity.this, PreferencesHelper.PREFERENCE_PROFILE_PIC);
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
             Picasso.with(HomeActivity.this)
@@ -192,10 +144,7 @@ public class HomeActivity extends AppCompatActivity
                     .transform(new CircleTransformation())
                     .into(profileImage);
         }
-        txtProfileName.setText(UsrName);
-
-
-//        drawer.setScrimColor(Color.TRANSPARENT);
+        txtProfileName.setText(usrName);
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
@@ -204,97 +153,40 @@ public class HomeActivity extends AppCompatActivity
                 super.onDrawerSlide(drawerView, slideOffset);
                 float slideX = drawerView.getWidth() * slideOffset;
                 holderView.setTranslationX(slideX);
-//                drawer.setScrimColor(Color.TRANSPARENT);
-//                holderView.setBackgroundColor(Color.TRANSPARENT);
             }
         };
 
         drawer.addDrawerListener(actionBarDrawerToggle);
 
-//        drawer.setScrimColor(Color.TRANSPARENT);
-//        drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-//                                     @Override
-//                                     public void onDrawerSlide(View drawer, float slideOffset) {
-//                                         contentView.setX(navigationView.getWidth() * slideOffset);
-//
-//                                         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) contentView.getLayoutParams();
-//                                         lp.height = drawer.getHeight() -
-//                                                 (int) (drawer.getHeight() * slideOffset * 0.3f);
-//
-////                                         lp.topMargin = (drawer.getHeight() - lp.height) / 2;
-//                                         contentView.setLayoutParams(lp);
-//
-//                                     }
-//
-//                                     @Override
-//                                     public void onDrawerClosed(View drawerView) {
-//                                     }
-//                                 }
-//        );
 
-        try {
-            //int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-                // Do something for lollipop and above versions
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            Fragment fragment = null;
 
-                Window window = getWindow();
+            switch (item.getItemId()) {
+                case R.id.b_nav_home:
+                    fragment = new HomeFragment();
+                    navigationView.setCheckedItem(R.id.b_nav_home);
+                    toolbarText.setText("Home");
+                    break;
 
-                // clear FLAG_TRANSLUCENT_STATUS flag:
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                case R.id.b_nav_notification:
+                    fragment = new NotificationFragment();
+                    toolbarText.setText("Notification");
 
-                // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    break;
 
-                // finally change the color to any color with transparency
-//
-//                window.setStatusBarColor(getResources().getColor(R.color.transparent2));
+                case R.id.b_nav_profile:
+                    fragment = new ProfileFragment();
+                    navigationView.setCheckedItem(R.id.b_nav_profile);
+                    toolbarText.setText("Profile");
+                    break;
             }
-
-        } catch (Exception e) {
-
-            Crashlytics.logException(e);
-
-        }
-
-//        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
-//        drawer.setScrimColor(getResources().getColor(android.R.color.transparent));
-//         isDrawerLocked= true;
-//        drawer.setScrimColor(getResources().getColor(android.R.color.transparent));
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment = null;
-
-                switch (item.getItemId()){
-                    case R.id.b_nav_home:
-                        fragment = new HomeFragment();
-                        navigationView.setCheckedItem(R.id.b_nav_home);
-
-//                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        toolbarText.setText("Home");
-                        break;
-
-                    case R.id.b_nav_notification:
-                        fragment = new NotificationFragment();
-//                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        toolbarText.setText("Notification");
-
-                        break;
-
-                    case R.id.b_nav_profile:
-                        fragment = new ProfileFragment();
-                        navigationView.setCheckedItem(R.id.b_nav_profile);
-//                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        toolbarText.setText("Profile");
-                        break;
-                }
-                return loadFragment(fragment);
-            }
+            return loadFragment(fragment);
         });
-//        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         loadFragment(new HomeFragment());
         toolbarText.setText("Home");
     }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -309,10 +201,8 @@ public class HomeActivity extends AppCompatActivity
             transaction.replace(R.id.main_frame_layout, new HomeFragment()).commit();
             toolbarText.setText("Home");
         } else if (id == R.id.nav_booking) {
-//
-//            loadFragment(new BookingsFragment());
             navigationView.setCheckedItem(R.id.nav_booking);
-            Intent intent=new Intent(HomeActivity.this, BookingsActivity.class);
+            Intent intent = new Intent(HomeActivity.this, BookingsActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
@@ -324,8 +214,6 @@ public class HomeActivity extends AppCompatActivity
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
             transaction.replace(R.id.main_frame_layout, new ProfileFragment()).commit();
-//            transaction.addToBackStack(null);
-//            transaction.commit();
             toolbarText.setText("Profile");
 
 //
@@ -335,15 +223,16 @@ public class HomeActivity extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("EXIT", true);
-//            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             startActivity(intent);
             PreferencesHelper.signOut(HomeActivity.this);
+
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
             mAuth.signOut();
             HomeActivity.this.finish();
 
-        }else if (id == R.id.profile_img){
+        } else if (id == R.id.profile_img) {
             Toast.makeText(context, "Image selected", Toast.LENGTH_SHORT).show();
-        }else if (id == R.id.profile_name){
+        } else if (id == R.id.profile_name) {
             Toast.makeText(context, "Image title", Toast.LENGTH_SHORT).show();
         }
 
@@ -352,6 +241,7 @@ public class HomeActivity extends AppCompatActivity
 
         return true;
     }
+
     private boolean loadFragment(Fragment fragment) {
         //switching fragment
         if (fragment != null) {
@@ -381,17 +271,9 @@ public class HomeActivity extends AppCompatActivity
     }
 
 
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isRunning = false;
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        isRunning = true;
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
             Picasso.with(HomeActivity.this)
                     .load(profileImageUrl)
@@ -421,6 +303,18 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 2) {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame_layout);
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        IS_LOCATION_LOADING_REQUIRED = false;
+        super.onDestroy();
+    }
 }

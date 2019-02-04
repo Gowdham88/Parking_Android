@@ -30,7 +30,7 @@ public class RecyclerDiffCallBack extends DiffUtil.Callback {
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
 
-        return mOldBookingList.get(oldItemPosition).getDestLat().equals(mNewBookingList.get(newItemPosition).getDestLat());
+        return String.valueOf(mOldBookingList.get(oldItemPosition).getDestLat()).equals(String.valueOf(mNewBookingList.get(newItemPosition).getDestLat()));
 
     }
 
