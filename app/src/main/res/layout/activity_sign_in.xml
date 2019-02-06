@@ -18,6 +18,7 @@
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:id="@+id/linearLayout">
+
         <ImageView
             android:id="@+id/sigin_logo"
             android:layout_width="68dp"
@@ -54,12 +55,14 @@
             android:singleLine="true"
             android:textColorHint="@color/email_txtclr"
             android:textSize="12sp" />
+
         <View
             android:id="@+id/passline1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:focusable="false"
-            android:background="@color/textColor"/>
+            android:background="@color/textColor" />
+
         <TextView
 
             android:id="@+id/tx_password"
@@ -71,27 +74,30 @@
             android:text="@string/password"
             android:layout_marginTop="10dp"
             android:textColor="@color/textColor" />
-            <EditText
-                android:layout_height="25dp"
-                android:layout_marginBottom="5dp"
-                android:gravity="bottom"
-                android:background="@null"
-                android:inputType="textPassword"
-                android:layout_marginTop="10dp"
-                style="@style/NunitoBlackLight"
-                android:id="@+id/et_password"
-                android:layout_width="match_parent"
-                android:textColorHint="#B6B6B6"
-                android:imeOptions="actionDone"
-                android:ems="10"
-                android:hint="@string/enter_your_password"
-                android:textSize="12sp" />
+
+        <EditText
+            android:layout_height="25dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="bottom"
+            android:background="@null"
+            android:inputType="textPassword"
+            android:layout_marginTop="10dp"
+            style="@style/NunitoBlackLight"
+            android:id="@+id/et_password"
+            android:layout_width="match_parent"
+            android:textColorHint="#B6B6B6"
+            android:imeOptions="actionDone"
+            android:ems="10"
+            android:hint="@string/enter_your_password"
+            android:textSize="12sp" />
+
         <View
             android:id="@+id/passline"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:focusable="false"
-            android:background="@color/textColor"/>
+            android:background="@color/textColor" />
+
         <TextView
             style="@style/NunitoBlackLight"
             android:layout_width="200dp"
@@ -105,7 +111,7 @@
             android:background="@drawable/signin_bg"
             android:textSize="14sp"
             android:textColor="@color/white"
-            android:text="Sign In" />
+            android:text="@string/signin" />
 
         <TextView
             style="@style/NunitoBlackLight"
@@ -121,6 +127,7 @@
             android:textSize="12sp" />
 
     </LinearLayout>
+
     <TextView
         style="@style/NunitoBlackLight"
         android:id="@+id/dont_have_account"
@@ -131,8 +138,7 @@
         android:textSize="12sp"
         android:layout_marginTop="90dp"
         android:textColor="@color/textColor"
-         android:visibility="visible"
+        android:visibility="visible"
         android:layout_marginBottom="16dp"
-        android:layout_alignParentBottom="true"
-        />
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

@@ -1,5 +1,4 @@
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
@@ -19,37 +18,34 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
+
         <RelativeLayout
             android:id="@+id/back_icon"
             android:layout_width="40dp"
             android:layout_height="match_parent">
 
-        <ImageView
+            <ImageView
 
-            android:layout_width="23dp"
-            android:layout_marginLeft="10dp"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/backbtn" />
-    </RelativeLayout>
+                android:layout_width="23dp"
+                android:layout_marginLeft="10dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/backbtn" />
+        </RelativeLayout>
 
         <TextView
-       style="@style/Nunitoregular"
+            style="@style/Nunitoregular"
             android:id="@+id/extra_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:text=""
-          android:layout_centerInParent="true"
+            android:layout_centerInParent="true"
             android:textColor="@color/colorAccent"
             android:textSize="18dp" />
-
-
-
 
 
     </RelativeLayout>

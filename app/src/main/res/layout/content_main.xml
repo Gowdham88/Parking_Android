@@ -65,6 +65,7 @@
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="5dp"
                     android:background="@drawable/ic_ham_menu" />
+
                 <Button
                     android:id="@+id/back_button"
                     android:layout_width="50dp"
@@ -137,16 +138,16 @@
         </RelativeLayout>
     </FrameLayout>
     <!--<android.support.design.widget.BottomNavigationView-->
-        <!--android:id="@+id/navigationView"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="55dp"-->
-        <!--android:layout_marginEnd="0dp"-->
-        <!--android:layout_marginStart="0dp"-->
-        <!--android:paddingTop="10dp"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:background="?android:attr/windowBackground"-->
-        <!--app:menu="@menu/bottom_navigation"-->
-        <!--app:itemIconTint="@drawable/bottom_nav_selector"-->
+    <!--android:id="@+id/navigationView"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="55dp"-->
+    <!--android:layout_marginEnd="0dp"-->
+    <!--android:layout_marginStart="0dp"-->
+    <!--android:paddingTop="10dp"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:background="?android:attr/windowBackground"-->
+    <!--app:menu="@menu/bottom_navigation"-->
+    <!--app:itemIconTint="@drawable/bottom_nav_selector"-->
     <!--/>-->
     <!--app:itemIconTint="@drawable/bottom_nav_selector"-->
     <!--app:itemTextColor="@drawable/bottom_nav_selector"-->

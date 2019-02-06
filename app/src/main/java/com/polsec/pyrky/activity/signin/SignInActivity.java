@@ -101,13 +101,21 @@ public class SignInActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(email1) && TextUtils.isEmpty(password1)) {
             alertpopup();
-        } else if ((email1.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email1).matches())) {
+        } else if ((email1.isEmpty())) {
 
             alertEmailpopup();
 
-        } else if (TextUtils.isEmpty(password1) || password1.length() < 6) {
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email1).matches()) {
+
+            alertEmailmatchpopup();
+
+        } else if (TextUtils.isEmpty(password1)) {
 
             alertPasswordpopup();
+
+        } else if ((password1.length() < 6)) {
+
+            alertPasswordcharpopup();
 
         } else {
 
@@ -179,14 +187,6 @@ public class SignInActivity extends AppCompatActivity {
     }
 
 
-    public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager =
-                (InputMethodManager) activity.getSystemService(
-                        Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(
-                activity.getCurrentFocus().getWindowToken(), 0);
-    }
-
     private void alertpopup() {
 
         LayoutInflater factory = LayoutInflater.from(this);
@@ -237,6 +237,36 @@ public class SignInActivity extends AppCompatActivity {
         alertDialog1.getWindow().setAttributes(lp);
     }
 
+    private void alertEmailmatchpopup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.emailmatch, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = (TextView) deleteDialogView.findViewById(R.id.ok_txt);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+        lp.gravity = Gravity.CENTER;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
+
     private void alertPasswordpopup() {
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.password_alert, null);
@@ -246,6 +276,35 @@ public class SignInActivity extends AppCompatActivity {
 
         final AlertDialog alertDialog1 = alertDialog.create();
         ok.setOnClickListener(view -> alertDialog1.dismiss());
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+        lp.gravity = Gravity.CENTER;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
+    private void alertPasswordcharpopup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.pass_charecter_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = (TextView) deleteDialogView.findViewById(R.id.ok_txt);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
 
 
         alertDialog1.setCanceledOnTouchOutside(false);

@@ -179,6 +179,7 @@ public class CurrentBookingsFragment extends Fragment {
 
     }
 
+
     public void showProgressDialog() {
         android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
         alertDialog.setView(R.layout.progress);

@@ -7,18 +7,19 @@
     android:focusable="true"
     android:background="#40000000"
     xmlns:tools="http://schemas.android.com/tools">
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/filter_frame">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/enable_button"
-        android:layout_alignParentTop="true"
-        android:text="enable"
-        android:visibility="gone"
-        />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/enable_button"
+            android:layout_alignParentTop="true"
+            android:text="enable"
+            android:visibility="gone" />
 
         <ExpandableListView
             android:id="@+id/expandableListView"

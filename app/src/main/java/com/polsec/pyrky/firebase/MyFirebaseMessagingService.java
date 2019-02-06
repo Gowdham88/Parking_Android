@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 
 import com.polsec.pyrky.R;
@@ -66,6 +67,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        if (remoteMessage.getNotification() != null) {
 ////            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
 //        }
+
+        String notificationTitle = null, notificationBody = null,notificationid=null;
+
+        // Check if message contains a notification payload.
+        if (remoteMessage.getNotification() != null) {
+            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            notificationTitle = remoteMessage.getNotification().getTitle();
+            notificationBody = remoteMessage.getNotification().getBody();
+
+//            notificationid=remoteMessage.getNotification().get
+
+        }
+
+        // Also if you intend on generating your own notifications as a result of a received FCM
       sendNotification( remoteMessage.getNotification().getBody());
 
                 // Also if you intend on generating your own notifications as a result of a received FCM

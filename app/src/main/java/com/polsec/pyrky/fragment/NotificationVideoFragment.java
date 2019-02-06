@@ -32,7 +32,7 @@ public class NotificationVideoFragment extends Fragment{
     VideoView videoView;
     private String urlStream;
     private android.support.v7.app.AlertDialog dialog;
-    private final int VIDEO_MAXIMUM_DURATION = 40000;
+    private final int VIDEO_MAXIMUM_DURATION = 50000;
 
 
     public static NotificationVideoFragment newInstance() {
@@ -88,13 +88,13 @@ public class NotificationVideoFragment extends Fragment{
             @Override
             public void run() {
 
-                FragmentTransaction transaction =getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction transaction =((AppCompatActivity)getActivity()).getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left);
                 transaction.replace(R.id.main_frame_layout, new NotificationFragment());
                 transaction.commit();
 
             }
-        }, 40000);
+        }, 50000);
 
 
 //

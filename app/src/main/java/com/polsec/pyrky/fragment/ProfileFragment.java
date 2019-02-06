@@ -145,27 +145,27 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
        if(mCarIcon==0){
            carIcon.setImageResource(R.drawable.compactcar_icon);
            carSize.setText("Compact");
-           carDimension.setText("[3.5 - 4.5m]");
+           carDimension.setText("[3.5m - 4.5m]");
        }
        else if(mCarIcon==1){
            carIcon.setImageResource(R.drawable.smallcar_icon);
            carSize.setText("Small");
-           carDimension.setText("[2.5 - 3.5m]");
+           carDimension.setText("[2.5m - 3.5m]");
        }
        else if(mCarIcon==2){
            carIcon.setImageResource(R.drawable.midsizecar_icon);
            carSize.setText("Mid size");
-           carDimension.setText("[4 - 5m]");
+           carDimension.setText("[4m - 5m]");
         }
        else if(mCarIcon==3){
            carIcon.setImageResource(R.drawable.fullcar_icon);
            carSize.setText("Full");
-           carDimension.setText("[5 - 5.5m]");
+           carDimension.setText("[5m - 5.5m]");
        }
        else {
            carIcon.setImageResource(R.drawable.vanpickupcar_icon);
            carSize.setText("Van/Pick-up");
-           carDimension.setText("[5.5 - 6.5m]");
+           carDimension.setText("[5.5m - 6.5m]");
        }
 
 //        SettingsImg=view.findViewById(R.id.action_settings);

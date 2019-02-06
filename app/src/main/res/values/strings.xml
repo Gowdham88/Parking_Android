@@ -8,6 +8,37 @@
     <string name="car_category">Car Category</string>
     <string name="forget_password">Forgot Password?</string>
     <string name="dont_have_account">Don\'t have an account? Sign up here</string>
+    <string name="Count_List_Key">Count_List_Key</string>
+
+    <string name="signin">Sign In</string>
+    <string name="entervalidpass">Enter valid Password</string>
+    <string name="Loginfailed">Login failed</string>
+    <string name="invaliduser">Invalid user </string>
+    <string name="forgotpassword">Forgot password</string>
+    <string name="ResetPassword">Reset Password</string>
+    <string name="EnterEmailid">Enter Email id</string>
+    <string name="Resetpasswordfailed">Reset password failed</string>
+
+    <string name="Compact">Compact</string>
+    <string name="Small">Small</string>
+    <string name="Midsize">Mid size</string>
+    <string name="Full">Full</string>
+    <string name="VanPickup">Van/Pick-up</string>
+
+    <string-array name="cartypes">
+        <item>Compact</item>
+        <item>Small</item>
+        <item>Mid size</item>
+        <item>Full</item>
+        <item>Van/Pick-up</item>
+    </string-array>
+
+    <string name="Destination">Destination</string>
+
+    <string name="Searchdestination">Search your destination</string>
+    <string name="Search">Search</string>
+    <string name="Pleaseenteradestination">Please enter a destination place</string>
+
 
     <string name="directions_base_url">https://maps.googleapis.com</string>
 
@@ -33,15 +64,21 @@
     <string name="resetpass">A reset link has been sent your email</string>
     <string name="status">Click OK to end the Previous booking</string>
     <string name="status_txt">Please close your Previous bookings</string>
+    <string name="end_txt">Do you want to end\n booking now?</string>
     <string name="protect_txt">Do you want protect your car?</string>
     <string name="notification_txt">Do you want to request a camera view\n for three seconds</string>
     <string name="empy_txt">Username or email or password should\n not be empty</string>
     <string name="signinempy_txt">Email or Password should not be empty</string>
-    <string name="passworderror_txt">Enter valid Password</string>
+    <string name="email_txt">Email address is not valid</string>
+    <string name="passworderror_txt">Password should not be empty</string>
+    <string name="passwordch_txt">The Password must be atleast 6 characters long</string>
     <string name="usernameerror_txt">Username should not be empty</string>
     <string name="emailerror_txt">Enter valid Email</string>
-    <string name="imageerror_txt">Profile should not be empty</string>
+    <string name="imageerror_txt">Your profile image cannot be empty</string>
     <string name="enable_permission">Please Grant Permissions</string>
+    <string name="region">There is no parking space in the region you searched</string>
+
+    <string name="oops">Oops !!</string>
     <string name="ok">OK</string>
 
 
@@ -59,7 +96,37 @@
     </string>
     <string name="camera">Camera</string>
     <string name="location_and_contacts">Location and Contacts</string>
-    <string name="sms">SMS</string>
+    <!--<string name="sms">SMS</string>-->
+
+    <string name="homepage">Home</string>
+    <string name="Notification">Notification</string>
+    <string name="Profile">Profile</string>
+    <string name="bookings">Bookings</string>
+    <string name="logout">Logout</string>
+    <string name="Settings">Settings</string>
+    <string name="map">Map</string>
+    <string name="ParkingRules">Parking Rules</string>
+    <string name="ViewImage">View Image</string>
+    <string name="Navigate">Navigate</string>
+    <string name="CurrentBookings">Current Bookings</string>
+    <string name="History">History</string>
+    <string name="ViewCar">View Car</string>
+    <string name="Ratethespace">Rate the space</string>
+    <string name="Ratings">Ratings:</string>
+    <string name="okay">Okay</string>
+    <string name="cancel">Cancel</string>
+    <string name="Requestvideo">Request video </string>
+    <string name="gallery">Gallery</string>
+    <string name="Camera">Camera</string>
+
+    <string name="pyrkynavigation">Pykry Navigation</string>
+    <string name="checkmail">Please check your email</string>
+    <string name="success">Success</string>
+    <string name="successtxt">Success...!!!</string>
+    <string name="successtxt1">Parking slot booked successfully</string>
+    <string name="error">Error</string>
+    <string name="pyrkynow">Park Now</string>
+    <string name="done">Done</string>
 
 
     <string name="latitude_label">Latitude</string>
@@ -75,4 +142,46 @@
         <item>Profile</item>
         <item>Logout</item>
     </string-array>
+    <string name="booknavigate">Book &amp; Navigate </string>
+
+
+    <!--<filter>-->
+
+    <string name="Freestreet">Free street parking </string>
+    <string name="Paidstreet">Paid street parking </string>
+    <string name="Paidparking">Paid parking</string>
+
+    <string name="Security">Security ratings</string>
+    <string name="CarCategory">Car Category</string>
+    <string name="Filter">Filter</string>
+    <string name="five">5 Stars</string>
+    <string-array name="filtertypes">
+        <item>Filter</item>
+        <item>Security ratings</item>
+        <item>Car Category</item>
+
+    </string-array>
+
+
+    <string-array name="parent1">
+        <item>child1_1</item>
+        <item>child1_2</item>
+        <item>child1_3</item>
+        <item>child1_4</item>
+    </string-array>
+
+    <string-array name="parent2">
+        <item>child1_1</item>
+        <item>child1_2</item>
+        <item>child1_3</item>
+        <item>child1_4</item>
+    </string-array>
+
+    <string-array name="parent3">
+        <item>child1_1</item>
+        <item>child1_2</item>
+        <item>child1_3</item>
+        <item>child1_4</item>
+    </string-array>
+
 </resources>

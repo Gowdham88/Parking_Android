@@ -44,8 +44,6 @@
     <dimen name="text70">77.00sp</dimen>
 
     <!-- size -->
-    <dimen name="size0.25">0.28dp</dimen>
-    <dimen name="size0.5">0.55dp</dimen>
     <dimen name="size1">1.10dp</dimen>
     <dimen name="size2">2.20dp</dimen>
     <dimen name="size3">3.30dp</dimen>
@@ -130,5 +128,17 @@
     <dimen name="user_profile_avatar_size">88dp</dimen>
     <dimen name="user_profile_avatar_size2">88dp</dimen>
     <dimen name="user_profile_avatar_size1">488dp</dimen>
+
+
+    <dimen name="buttom_width_small">45dp</dimen>
+
+    <!-- Medium Dimensions -->
+    <!--<dimen name = "buttom_width_medium">70</dimen>-->
+
+    <!--&lt;!&ndash; Large Dimensions = "Medium Dimensions * 1.5" For Example: 210*1.5 = 315 &ndash;&gt;-->
+    <!--<dimen name = "buttom_width_large">85</dimen>-->
+
+    <!--&lt;!&ndash; XLarge Dimensions = "Medium Dimensions * 2" For Example: 210*1.5 = 420 &ndash;&gt;-->
+    <!--<dimen name = "buttom_width_xLarge">120</dimen>-->
 
 </resources>

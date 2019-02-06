@@ -7,6 +7,7 @@
     android:gravity="start"
     android:background="@color/border_color"
     android:layoutDirection="ltr">
+
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -15,16 +16,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/table1">
-        <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/checkbox1"
-        android:button="@drawable/customcheckbox"
-        android:scaleX="0.3"
-        android:scaleY="0.3"
-        android:focusable="true"
-        android:layout_column="1"
-            android:layout_marginStart="3dp" />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/checkbox1"
+                android:button="@drawable/customcheckbox"
+                android:scaleX="0.3"
+                android:scaleY="0.3"
+                android:focusable="true"
+                android:layout_column="1"
+                android:layout_marginStart="3dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -39,8 +41,7 @@
                     android:layout_column="2"
                     android:src="@drawable/fivestar"
                     android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                 />
+                    android:layout_gravity="center_vertical" />
 
                 <TextView
                     android:visibility="gone"
@@ -58,22 +59,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/table2">
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/checkbox2"
-        android:layout_marginStart="3dp"
-        android:button="@drawable/customcheckbox"
-        android:scaleX="0.3"
-        android:scaleY="0.3"
-        android:focusable="true"
-        android:layout_column="1"
-        />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/checkbox2"
+                android:layout_marginStart="3dp"
+                android:button="@drawable/customcheckbox"
+                android:scaleX="0.3"
+                android:scaleY="0.3"
+                android:focusable="true"
+                android:layout_column="1" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/cb21_text"
@@ -82,8 +82,7 @@
                     android:layout_column="2"
                     android:src="@drawable/fourstar"
                     android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                 />
+                    android:layout_gravity="center_vertical" />
 
                 <TextView
                     android:visibility="gone"
@@ -92,8 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_column="2"
                     android:layout_gravity="center_vertical"
-                    android:text="1 star"
-                    />
+                    android:text="1 star" />
             </RelativeLayout>
         </TableRow>
 
@@ -101,23 +99,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/table3">
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/checkbox3"
-        android:button="@drawable/customcheckbox"
-        android:scaleX="0.3"
-        android:scaleY="0.3"
-        android:focusable="true"
-        android:layout_marginStart="3dp"
-        android:layout_column="1"
-        />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/checkbox3"
+                android:button="@drawable/customcheckbox"
+                android:scaleX="0.3"
+                android:scaleY="0.3"
+                android:focusable="true"
+                android:layout_marginStart="3dp"
+                android:layout_column="1" />
 
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/cb31_text"
@@ -126,8 +123,7 @@
                     android:layout_column="2"
                     android:src="@drawable/threestar"
                     android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    />
+                    android:layout_gravity="center_vertical" />
 
                 <TextView
                     android:visibility="gone"
@@ -139,25 +135,26 @@
                     android:text="1 star" />
             </RelativeLayout>
         </TableRow>
-        <TableRow android:layout_width="match_parent"
+
+        <TableRow
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/table4">
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/checkbox4"
-        android:button="@drawable/customcheckbox"
-        android:scaleX="0.3"
-        android:layout_marginStart="3dp"
-        android:scaleY="0.3"
-        android:focusable="true"
-        android:layout_column="1"
-        />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/checkbox4"
+                android:button="@drawable/customcheckbox"
+                android:scaleX="0.3"
+                android:layout_marginStart="3dp"
+                android:scaleY="0.3"
+                android:focusable="true"
+                android:layout_column="1" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/cb41_text"
@@ -166,8 +163,7 @@
                     android:layout_column="2"
                     android:src="@drawable/twostar"
                     android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                     />
+                    android:layout_gravity="center_vertical" />
 
                 <TextView
                     android:visibility="gone"
@@ -176,30 +172,29 @@
                     android:layout_height="wrap_content"
                     android:layout_column="2"
                     android:layout_gravity="center_vertical"
-                    android:text="1 star"
-               />
+                    android:text="1 star" />
             </RelativeLayout>
-    </TableRow>
+        </TableRow>
 
-        <TableRow android:layout_width="match_parent"
+        <TableRow
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/table5">
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/checkbox5"
-        android:button="@drawable/customcheckbox"
-        android:scaleX="0.3"
-        android:scaleY="0.3"
-        android:focusable="true"
-        android:layout_column="1"
-        android:layout_marginStart="3dp"
-        />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/checkbox5"
+                android:button="@drawable/customcheckbox"
+                android:scaleX="0.3"
+                android:scaleY="0.3"
+                android:focusable="true"
+                android:layout_column="1"
+                android:layout_marginStart="3dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/cb51_text"
@@ -208,8 +203,7 @@
                     android:layout_column="2"
                     android:src="@drawable/onestar"
                     android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                   />
+                    android:layout_gravity="center_vertical" />
 
                 <TextView
                     android:visibility="gone"
@@ -220,9 +214,10 @@
                     android:layout_gravity="center_vertical"
                     android:text="1 star" />
             </RelativeLayout>
-    </TableRow>
+        </TableRow>
 
     </TableLayout>
+
     <TextView
         android:id="@+id/expandedListItem1"
         android:layout_width="fill_parent"

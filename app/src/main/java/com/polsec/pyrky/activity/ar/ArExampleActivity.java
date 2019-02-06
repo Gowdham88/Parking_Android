@@ -1,9 +1,12 @@
 package com.polsec.pyrky.activity.ar;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.AlertDialog;
 import android.arch.core.util.Function;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -18,7 +21,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -34,8 +39,10 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.math.Vector3Evaluator;
 import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
@@ -65,7 +72,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.negateExact;
 import static java.lang.Math.sin;
 
-public class ArExampleActivity extends AppCompatActivity implements GLSurfaceView.Renderer{
+public class ArExampleActivity extends AppCompatActivity{
 
     private static final int LOCATION_REQUEST = 500;
     ArrayList<LatLng> listPoints;
@@ -81,6 +88,15 @@ public class ArExampleActivity extends AppCompatActivity implements GLSurfaceVie
     ModelRenderable  lineRenderable;
     Anchor anchor;
     AnchorNode lastAnchorNode;
+    private Intent intent;
+    private String srcLatLng;
+    private String destLatLng;
+    ObjectAnimator objectAnimation;
+    Node andy,endNode;
+    Renderable andyRenderable;
+    AnchorNode startNode;
+    Anchor startAnchor,endAnchor;
+    PropertyValuesHolder movingAnimation;
 
     ArrayList<Locationlatlong> latlonglist=new ArrayList<>();
 
@@ -91,94 +107,29 @@ public class ArExampleActivity extends AppCompatActivity implements GLSurfaceVie
         arFragmentSupport = (ArFragment) getSupportFragmentManager().findFragmentById(
                 R.id.ar_fragment);
 
+        if (getIntent() != null) {
+            intent = getIntent();
+
+//            srcDestText.setText(intent.getStringExtra("SRC")+" -> "+intent.getStringExtra("DEST"));
+            srcLatLng =intent.getStringExtra("SRCLATLNG");
+            destLatLng = intent.getStringExtra("DESTLATLNG");
+
+            Log.e("SRCLATLNG", String.valueOf(srcLatLng));
+            Log.e("DESTLATLNG", String.valueOf(destLatLng));
+            //HTTP Google Directions API Call
+        }
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         getLocation();
-//        String address = "(" + origin_latitude.substring(0, 8)  + ", " + origin_longitude.substring(0, 8) + ")";
+        String address = "(" + origin_latitude.substring(0, 8)  + ", " + origin_longitude.substring(0, 8) + ")";
 
         String url = createRequestURL();
         Log.e("url",url);
         RequestDirections requestDirections = new RequestDirections();
         requestDirections.execute(url);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
-//        listPoints = new ArrayList<>();
-//        ar_button = (Button) findViewById(R.id.ar_button);
-//        ar_button.setVisibility(View.INVISIBLE);
-//        dir_button = (Button) findViewById(R.id.dir_button);
-//        dir_button.setVisibility(View.VISIBLE);
-//        m_address = (EditText) findViewById(R.id.address);
+
     }
 
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//        mMap = googleMap;
-//        mMap.getUiSettings().setZoomControlsEnabled(true);
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST);
-//            return;
-//        }
-//        mMap.setMyLocationEnabled(true);
-//
-//        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-//            @Override
-//            public void onMapLongClick(LatLng latLng) {
-//                if (listPoints.size() > 0) {
-//                    listPoints.clear();
-//                    mMap.clear();
-//                }
-//                listPoints.add(latLng);
-//                MarkerOptions markerOptions = new MarkerOptions();
-//                markerOptions.position(latLng);
-//
-//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//
-////                mMap.addMarker(markerOptions);
-//
-////                dir_button.setVisibility(View.VISIBLE);
-////                dest_latitude = String.valueOf(latLng.latitude);
-////                dest_longitude = String.valueOf(latLng.longitude);
-//
-//                String address = "(" + dest_latitude.substring(0, 8)  + ", " + dest_longitude.substring(0, 8) + ")";
-//                m_address.setText(address);
-//            }
-//        });
-//
-//        dir_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//
-////                dir_button.setVisibility(View.INVISIBLE);
-////                ar_button.setVisibility(View.VISIBLE);
-//            }
-//        });
-//
-////        ar_button.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View v) {
-////                startNewActivity();
-////            }
-////        });
-//
-//    }
-
-//    private void startNewActivity() {
-//        Intent newIntent = new Intent(this, HelloArActivity.class);
-//        startActivity(newIntent);
-//    }
 
     private void getLocation() {
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -200,8 +151,8 @@ public class ArExampleActivity extends AppCompatActivity implements GLSurfaceVie
     }
 
     private String createRequestURL() {
-        String origin = "origin=" + 12.8673542 + "," + 80.2263797;
-        String dest = "destination=" + 12.8678 + "," + 80.2257293;
+        String origin = "origin=" +srcLatLng;
+        String dest = "destination=" +destLatLng;
         String mode = "mode=walking";
 
         String key="key"+"="+"AIzaSyD7rCvtQxAnej-1SdFj7H6ZKnTmyOTs2cQ";
@@ -246,20 +197,6 @@ public class ArExampleActivity extends AppCompatActivity implements GLSurfaceVie
         return response;
     }
 
-    @Override
-    public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-
-    }
-
-    @Override
-    public void onSurfaceChanged(GL10 gl10, int i, int i1) {
-
-    }
-
-    @Override
-    public void onDrawFrame(GL10 gl10) {
-
-    }
 
     public class RequestDirections extends AsyncTask<String, Void, String> {
 
@@ -361,7 +298,33 @@ public class ArExampleActivity extends AppCompatActivity implements GLSurfaceVie
                 point2 = lastAnchorNode.getWorldPosition();
 
 //                                    for(int i=0;i<xvalue.size();i++){
-                point1 = new Vector3(valx,valy,-90);
+                point1 = new Vector3(valx,valy,coordinates);
+//                lineBetweenPoints(point1,point2);
+
+                addLineBetweenHits(point1,point2);
+
+                arFragmentSupport.setOnTapArPlaneListener(
+                        (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
+
+                        });
+
+//                if (arFragmentSupport != null) {
+//                    arFragmentSupport.setOnTapArPlaneListener(
+//                            (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
+//
+//                                onPlaneTap(hitResult, plane, motionEvent);
+//
+//                            });
+//                }
+
+//
+//                movingAnimation.setObjectValues(valx, valy);
+//                movingAnimation.setPropertyName("localPosition");
+//                movingAnimation.setEvaluator(new Vector3Evaluator());
+
+
+//                Vector3 start = new Vector3(startAnchor.getPose().tx(), startAnchor.getPose().ty(), startAnchor.getPose().tz());
+//                Vector3 end = new Vector3(endAnchor.getPose().tx(), endAnchor.getPose().ty(), endAnchor.getPose().tz());
 //
 ////                transformableNode.setWorldPosition(new Vector3(valx,valy,-90));
 ////                                    }
@@ -370,15 +333,112 @@ public class ArExampleActivity extends AppCompatActivity implements GLSurfaceVie
 //
 //                polyLineCode(lastAnchorNode,point1,point2);
 
-                lineBetweenPoints(point1,point2);
+
 
 //
             }
 //
 
-           
+
         }
     }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void addLineBetweenHits(Vector3 point1, Vector3 point2) {
+//        Anchor anchor = hitResult.createAnchor();
+        AnchorNode anchorNode = new AnchorNode(anchor);
+
+        if (lastAnchorNode != null) {
+            anchorNode.setParent(arFragmentSupport.getArSceneView().getScene());
+//            Vector3 point1, point2;
+//            point1 = lastAnchorNode.getWorldPosition();
+//            point2 = anchorNode.getWorldPosition();
+
+        /*
+            First, find the vector extending between the two points and define a look rotation
+            in terms of this Vector.
+        */
+            final Vector3 difference = Vector3.subtract(point2, point1);
+            final Vector3 directionFromTopToBottom = difference.normalized();
+//            final Quaternion rotationFromAToB =
+//                    Quaternion.lookRotation(directionFromTopToBottom, Vector3.forward());
+            MaterialFactory.makeOpaqueWithColor(getApplicationContext(), new com.google.ar.sceneform.rendering.Color(Color.BLUE))
+                    .thenAccept(
+                            material -> {
+/* Then, create a rectangular prism, using ShapeFactory.makeCube() and use the difference vector
+       to extend to the necessary length.  */
+                                ModelRenderable model = ShapeFactory.makeCube(
+                                        new Vector3(.01f, .01f, difference.length()),
+                                        Vector3.zero(), material);
+/* Last, set the world rotation of the node to the rotation calculated earlier and set the world position to
+       the midpoint between the given points . */
+                                Node node = new Node();
+                                node.setParent(anchorNode);
+                                node.setRenderable(model);
+                                node.setWorldPosition(Vector3.add(point1, point2).scaled(.5f));
+//                                node.setWorldRotation(rotationFromAToB);
+                            }
+                    );
+            lastAnchorNode = anchorNode;
+        }
+    };
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private void onPlaneTap(HitResult hitResult, Plane plane, MotionEvent motionEvent) {
+
+        if (andyRenderable == null) {
+            return;
+        }
+        // Create the Anchor.
+        Anchor anchor = hitResult.createAnchor();
+
+        // Create the starting position.
+
+        if (startNode == null) {
+            startNode = new AnchorNode(anchor);
+            startNode.setParent(arFragmentSupport.getArSceneView().getScene());
+
+            // Create the transformable andy and add it to the anchor.
+            andy = new Node();
+            andy.setParent(startNode);
+            andy.setRenderable(andyRenderable);
+        } else {
+            // Create the end position and start the animation.
+            endNode = new AnchorNode(anchor);
+            endNode.setParent(arFragmentSupport.getArSceneView().getScene());
+            startWalking();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private void startWalking() {
+         objectAnimation= new ObjectAnimator();
+        objectAnimation.setAutoCancel(true);
+
+        objectAnimation.setTarget(andy);
+
+        // All the positions should be world positions
+        // The first position is the start, and the second is the end.
+
+        objectAnimation.setObjectValues(andy.getWorldPosition(), point2);
+
+        // Use setWorldPosition to position andy.
+        objectAnimation.setPropertyName("worldPosition");
+
+        // The Vector3Evaluator is used to evaluator 2 vector3 and return the next
+        // vector3.  The default is to use lerp.
+        objectAnimation.setEvaluator(new Vector3Evaluator());
+        // This makes the animation linear (smooth and uniform).
+        objectAnimation.setInterpolator(new LinearInterpolator());
+        // Duration in ms of the animation.
+        objectAnimation.setDuration(500);
+        objectAnimation.start();
+    }
+
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void lineBetweenPoints(Vector3 point1, Vector3 point2) {
         Node lineNode = new Node();
@@ -393,32 +453,34 @@ public class ArExampleActivity extends AppCompatActivity implements GLSurfaceVie
         Log.d("MainActivity", String.valueOf(difference));
 
 
-        final Quaternion rotationFromAToB =
-                Quaternion.lookRotation(directionFromTopToBottom, Vector3.up());
-
-   /* Then, create a rectangular prism, using ShapeFactory.makeCube() and use the difference vector
-         to extend to the necessary length.  */
+//        final Quaternion rotationFromAToB =
+//                Quaternion.lookRotation(directionFromTopToBottom, Vector3.up());
 
 
-        MaterialFactory.makeOpaqueWithColor(this,new com.google.ar.sceneform.rendering.Color())
+        MaterialFactory.makeOpaqueWithColor(this,new com.google.ar.sceneform.rendering.Color(Color.BLUE))
                 .thenAccept(
                         material -> {
-//                            lineRenderable = ShapeFactory.makeCube(new Vector3(.01f, .01f, difference.length()),
-//                                    Vector3.zero(), material);
+                            lineRenderable = ShapeFactory.makeCube(new Vector3(.02f, .02f, difference.length()),
+                                    Vector3.zero(), material);
 
-                            ModelRenderable boxo = ShapeFactory.makeCube(new Vector3(1f, 1f, 1f), new Vector3(1f, 1f, 1f), material);
-                            lineNode.setRenderable(boxo);
+//                            Node background = new Node();
+                            lineNode.setLocalPosition(Vector3.forward());
+                            lineNode.setParent(anchorNode);
+                            lineNode.setRenderable(lineRenderable);
+                            lineNode.setLocalScale(new Vector3(.02f, .02f, difference.length()));
+
+//                            ModelRenderable boxo = ShapeFactory.makeCube(new Vector3(1f, 1f, 1f), new Vector3(1f, 1f, 1f), material);
+//                            lineNode.setRenderable(boxo);
                         });
 
-   /* Last, set the local rotation of the node to the rotation calculated earlier and set the local position to
-       the midpoint between the given points . */
-
-        lineNode.setParent(anchorNode);
-        lineNode.setLocalPosition(Vector3.add(point1, point2).scaled(.5f));
-        lineNode.setLocalRotation(rotationFromAToB);
+//        lineNode.setParent(anchorNode);
+////        lineNode.setLocalPosition(Vector3.add(point1, point2).scaled(.5f));
+//        lineNode.setLocalRotation(rotationFromAToB);
 
         lastAnchorNode = anchorNode;
-        addObject(Uri.parse("directionarrow.sfb"),point1,point2);
+
+
+//        addObject(Uri.parse("directionarrow.sfb"),point1,point2);
 
 
 
@@ -473,40 +535,40 @@ public class ArExampleActivity extends AppCompatActivity implements GLSurfaceVie
 //        View vw = findViewById(android.R.id.content);
 //        return new Point(vw.getWidth() / 2, vw.getHeight() / 2);
 //    }
-    private void polyLineCode(AnchorNode anchorNode, Vector3 point1, Vector3 point2){
-
-//        if (!isLineDrawn){
-
-        final Vector3 difference = Vector3.subtract(point1, point2);
-        final Vector3 directionFromTopToBottom = difference.negated();
-        final Quaternion rotationFromAToB = Quaternion.lookRotation(directionFromTopToBottom, Vector3.left());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            MaterialFactory.makeOpaqueWithColor(ArExampleActivity.this, new com.google.ar.sceneform.rendering.Color(Color.BLUE))
-                    .thenAccept(
-                            material -> {
-    /* Then, create a rectangular prism, using ShapeFactory.makeCube() and use the difference vector
-           to extend to the necessary length.  */
-                                ModelRenderable model = ShapeFactory.makeCube(
-                                        new Vector3(.05f, .05f, difference.length()),
-                                        Vector3.zero(), material);
-
-    /* Last, set the world rotation of the node to the rotation calculated earlier and set the world position to
-           the midpoint between the given points . */
-                                Node node = new Node();
-                                node.setParent(anchorNode);
-                                node.setRenderable(model);
-                                node.setWorldPosition(Vector3.add(point1, point2).scaled(.15f));
-//                                node.setWorldRotation(rotationFromAToB);
-
-//                                    isLineDrawn = true;
-
-
-                            }
-                    );
-        }
-
-        lastAnchorNode = anchorNode;
-    }
+//    private void polyLineCode(AnchorNode anchorNode, Vector3 point1, Vector3 point2){
+//
+////        if (!isLineDrawn){
+//
+//        final Vector3 difference = Vector3.subtract(point1, point2);
+//        final Vector3 directionFromTopToBottom = difference.negated();
+//        final Quaternion rotationFromAToB = Quaternion.lookRotation(directionFromTopToBottom, Vector3.left());
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            MaterialFactory.makeOpaqueWithColor(ArExampleActivity.this, new com.google.ar.sceneform.rendering.Color(Color.BLUE))
+//                    .thenAccept(
+//                            material -> {
+//    /* Then, create a rectangular prism, using ShapeFactory.makeCube() and use the difference vector
+//           to extend to the necessary length.  */
+//                                ModelRenderable model = ShapeFactory.makeCube(
+//                                        new Vector3(.05f, .05f, difference.length()),
+//                                        Vector3.zero(), material);
+//
+//    /* Last, set the world rotation of the node to the rotation calculated earlier and set the world position to
+//           the midpoint between the given points . */
+//                                Node node = new Node();
+//                                node.setParent(anchorNode);
+//                                node.setRenderable(model);
+//                                node.setWorldPosition(Vector3.add(point1, point2).scaled(.15f));
+////                                node.setWorldRotation(rotationFromAToB);
+//
+////                                    isLineDrawn = true;
+//
+//
+//                            }
+//                    );
+//        }
+//
+//        lastAnchorNode = anchorNode;
+//    }
 
     }
 
