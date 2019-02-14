@@ -310,8 +310,7 @@ public class NearestLocMapsActivity extends AppCompatActivity implements OnMapRe
                                                             locname = String.valueOf(document1.getData().get("cameraLocationName"));
                                                             cameraid1 = String.valueOf(document1.getData().get("cameraID"));
                                                             prkingtype = String.valueOf(document1.getData().get("parkingTypes"));
-                                                            imgurl = String.valueOf(document1.getData().get("cameraImageUrl"));
-
+                                                            imgurl = String.valueOf(document1.getData().get("cameraImageUrlNew"));
                                                             compactArray = (HashMap<String, Object>) document1.getData().get("parkingRules");
 
                                                             Log.e("locname", String.valueOf(locname));
@@ -434,7 +433,7 @@ public class NearestLocMapsActivity extends AppCompatActivity implements OnMapRe
                                                             locname = String.valueOf(document12.getData().get("cameraLocationName"));
                                                             cameraid1 = String.valueOf(document12.getData().get("cameraID"));
                                                             prkingtype = String.valueOf(document12.getData().get("parkingTypes"));
-                                                            imgurl = String.valueOf(document12.getData().get("cameraImageUrl"));
+                                                            imgurl = String.valueOf(document12.getData().get("cameraImageUrlNew"));
                                                             compactArray = (HashMap<String, Object>) document12.getData().get("parkingRules");
 
                                                             itemobj = new JSONObject(slotsid1);
@@ -1259,6 +1258,7 @@ public class NearestLocMapsActivity extends AppCompatActivity implements OnMapRe
 
             List<SlotsData> tempMapList = mNearestDataList1.subList(listPrevPosition, listCurrentPosition);
             mNearestDataAdapterList.addAll(mNearestDataList1.subList(listPrevPosition, listCurrentPosition));
+
             if (mNearestrecyclerAdapter == null) {
                 mNearestrecyclerAdapter = new CarouselDetailMapAdapter(this, mNearestDataAdapterList, distance);
                 mNearestPlaceRecycler.setAdapter(mNearestrecyclerAdapter);

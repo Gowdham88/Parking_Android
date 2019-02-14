@@ -435,7 +435,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         mMap.clear();
         if (currentLocation != null) {
             LatLng locatedMe = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(locatedMe)).setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car));
+            mMap.addMarker(new MarkerOptions().position(locatedMe)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location));
             float zoomLevel = 12;
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locatedMe, zoomLevel));
         }
