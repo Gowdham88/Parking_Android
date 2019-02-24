@@ -184,4 +184,6 @@
         <item>child1_4</item>
     </string-array>
 
+    <string name="title_notifications">Notifications</string>
+
 </resources>
