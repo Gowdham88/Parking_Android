@@ -65,6 +65,7 @@ import com.polsec.pyrky.pojo.NearestDestnetionData;
 import com.polsec.pyrky.pojo.SlotsData;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.Constants;
+import com.polsec.pyrky.utils.Utils;
 import com.yarolegovich.discretescrollview.DSVOrientation;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
@@ -84,6 +85,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static android.content.ContentValues.TAG;
+import static com.polsec.pyrky.utils.Constants.currentLocation;
 
 
 public class NearestLocMapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener,
@@ -617,6 +619,12 @@ public class NearestLocMapsActivity extends AppCompatActivity implements OnMapRe
             return false;
 
         });
+
+        /* adding current location marker in map */
+        if (currentLocation != null) {
+            LatLng locatedMe = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            Mmap.addMarker(new MarkerOptions().position(locatedMe)).setIcon(Utils.bitmapDescriptorFromVector(this,R.drawable.ic_location));
+        }
 
         try {
             Mmap.setMyLocationEnabled(false);
