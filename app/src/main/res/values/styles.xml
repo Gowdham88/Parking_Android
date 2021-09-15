@@ -71,6 +71,7 @@
     </style>
 
     <style name="ok_button">
+        <item name="android:fontFamily">fonts/Nunito-Light.ttf</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">15sp</item>
         <item name="android:background">@drawable/custom_alert_background</item>
@@ -100,6 +101,11 @@
     <style name="AppModalStyle"
         parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bottom_sheet_transparent</item>
+    </style>
+
+
+    <style name="dialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowNoTitle">true</item>
     </style>
 
     <!--<style name="FontAvenirLight">-->

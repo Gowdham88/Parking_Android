@@ -47,11 +47,11 @@ public class HistoryFragment extends Fragment {
     List<Booking> BookingList = new ArrayList<Booking>();
     List<Booking> mFilteredBookingList = new ArrayList<Booking>();
     List<String> BookingListId = new ArrayList<String>();
-    List<Camera>CameraList = new ArrayList<Camera>();
+    List<Camera> CameraList = new ArrayList<Camera>();
     Map<String, Object> bookingid = new HashMap<>();
     private android.support.v7.app.AlertDialog dialog;
 
-    Map<String, Object> bookingid1=new HashMap<>();
+    Map<String, Object> bookingid1 = new HashMap<>();
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
     public static final String ACTION_SHOW_DEFAULT_ITEM = "action_show_default_item";
 
@@ -78,8 +78,7 @@ public class HistoryFragment extends Fragment {
         uid = PreferencesHelper.getPreference(getContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
 
 
-
-        swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
                     retrieveContents();
@@ -106,13 +105,13 @@ public class HistoryFragment extends Fragment {
 
     private void setupFeed() {
 
-        recyclerAdapter= new HistoryRecyclerAdapter(getActivity(),mFilteredBookingList,bookingid1,CameraList,recyclerAdapter,mRecyclerView);
+        recyclerAdapter = new HistoryRecyclerAdapter(getActivity(), mFilteredBookingList, bookingid1, CameraList, recyclerAdapter, mRecyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
 
-        if (swipeRefreshLayout.isRefreshing()){
+        if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
 
@@ -127,7 +126,7 @@ public class HistoryFragment extends Fragment {
         showProgressDialog();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Query first = db.collection("Bookings").whereEqualTo("Current_User_UID",uid);
+        Query first = db.collection("Bookings").whereEqualTo("Current_User_UID", uid);
 
         first.get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -140,9 +139,25 @@ public class HistoryFragment extends Fragment {
 
                         }
 
-                        for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
+                        for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
 
-                            Booking comment = document.toObject(Booking.class);
+
+                            double latitude = 0.0, longitude = 0.0;
+
+                            if (document.get("DestLat") instanceof String)
+                                latitude = Double.parseDouble(document.getString("DestLat"));
+                            else
+                                latitude = document.getDouble("DestLat");
+
+                            if (document.get("DestLong") instanceof String)
+                                longitude = Double.parseDouble(document.getString("DestLat"));
+                            else
+                                longitude = document.getDouble("DestLong");
+
+
+                            Booking comment = new Booking(document.getString("Current_User_UID"), latitude, longitude, document.getString("DestName"), document.getDouble("DateTime"),
+                                    document.getBoolean("bookingStatus"), document.getString("cameraId"), document.getString("documentID"),
+                                    document.getDouble("parkingSpaceRating"), document.getBoolean("protectCar"));
                             BookingList.add(comment);
                             BookingListId.add(document.getId());
 
@@ -158,67 +173,61 @@ public class HistoryFragment extends Fragment {
     public void loadPostval(final String type) {
 
         DocumentReference docRef = db.collection("users").document(uid);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
 //                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        if(document.contains("Booking_ID")){
+                    if (document.contains("Booking_ID")) {
 
-                            hideProgressDialog();
-                            bookingid = document.getData();
-
-
-                            bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+                        hideProgressDialog();
+                        bookingid = document.getData();
 
 
-                            String count = String.valueOf(bookingid1.size());
-                            Log.e("count", count);
+                        bookingid1 = (Map<String, Object>) bookingid.get("Booking_ID");
+
+
+                        String count = String.valueOf(bookingid1.size());
+                        Log.e("count", count);
 
 
 //                                    followingcount = 1;
-                            for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                                System.out.println(entry.getKey() + " = " + entry.getValue());
+                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
+                            System.out.println(entry.getKey() + " = " + entry.getValue());
 
-                                Boolean val = (Boolean) entry.getValue();
-                                String values = String.valueOf(val);
+                            Boolean val = (Boolean) entry.getValue();
+                            String values = String.valueOf(val);
 
-                                Log.e("valuesh", values);
+                            Log.e("valuesh", values);
 //                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
 
-                            }
+                        }
 
-                            for (int i = 0; i < BookingList.size();i++){
-                                if(bookingid1.containsKey(BookingList.get(i).getDocumentID())){
-                                    Boolean value=(Boolean) bookingid1.get(BookingList.get(i).getDocumentID());
+                        for (int i = 0; i < BookingList.size(); i++) {
+                            if (bookingid1.containsKey(BookingList.get(i).getDocumentID())) {
+                                Boolean value = (Boolean) bookingid1.get(BookingList.get(i).getDocumentID());
 
-                                    if(!value){
-                                        mFilteredBookingList.add(BookingList.get(i));
-                                        hideProgressDialog();
-                                    }
-
+                                if (!value) {
+                                    mFilteredBookingList.add(BookingList.get(i));
+                                    hideProgressDialog();
                                 }
+
                             }
-
-
-
-
                         }
-                        else{
-                            hideProgressDialog();
-                        }
+
 
                     } else {
                         hideProgressDialog();
                     }
+
                 } else {
-
+                    hideProgressDialog();
                 }
+            } else {
 
-                setupFeed();
             }
+
+            setupFeed();
         });
 
     }
@@ -231,8 +240,8 @@ public class HistoryFragment extends Fragment {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
     }
 
-    private void hideProgressDialog(){
-        if(dialog!=null)
+    private void hideProgressDialog() {
+        if (dialog != null)
             dialog.dismiss();
     }
 }

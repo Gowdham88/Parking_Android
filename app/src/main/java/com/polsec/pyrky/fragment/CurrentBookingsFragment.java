@@ -37,65 +37,36 @@ import java.util.Map;
  */
 
 public class CurrentBookingsFragment extends Fragment {
-    String mPlace[] = {"Rio de Janeiro","Brasília","Salvador","Fortaleza","Belo Horizonte"};
-    String mTimeDate[] = {"05 Jan, 12.30am","15 Feb, 03.10pm","25 Mar, 05.50pm","17 Jun, 10.30am","01 Jan, 12.00am"};
-    RecyclerView mRecyclerView;
-    View view;
-    String uid;
-    CurrentBookingRecyclerAdapter recyclerAdapter;
-    SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView mRecyclerView;
+    private String uid;
+    private CurrentBookingRecyclerAdapter recyclerAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private android.support.v7.app.AlertDialog dialog;
-
-    List<Booking> BookingList = new ArrayList<Booking>();
-    List<Booking> mFilteredBookingList = new ArrayList<Booking>();
-    List<String> BookingListId = new ArrayList<String>();
+    private List<Booking> BookingList = new ArrayList<>();
+    private List<Booking> mFilteredBookingList = new ArrayList<>();
+    private List<String> BookingListId = new ArrayList<>();
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
-    public static final String ACTION_SHOW_DEFAULT_ITEM = "action_show_default_item";
+    private FirebaseFirestore db;
+    private Map<String, Object> bookingid = new HashMap<>();
+    private Map<String, Object> bookingid1 = new HashMap<>();
 
-    FirebaseFirestore db;
-
-    FirebaseAuth mAuth;
-    String mUid;
-    Map<String, Object> bookingid = new HashMap<>();
-
-    Map<String, Object> bookingid1 = new HashMap<>();
-    public CurrentBookingsFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-//        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-//        ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.VISIBLE);
-
-    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_current_booking, null);
+        View view = inflater.inflate(R.layout.fragment_current_booking, null);
         uid = PreferencesHelper.getPreference(getContext(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
-//        loadPost(ACTION_SHOW_LOADING_ITEM);
         db = FirebaseFirestore.getInstance();
-
-        swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
-
+        swipeRefreshLayout = view.findViewById(R.id.swiperefresh);
         mRecyclerView = view.findViewById(R.id.current_booking_recycler);
-        recyclerAdapter= new CurrentBookingRecyclerAdapter(getActivity(),BookingList,bookingid1);
+        recyclerAdapter = new CurrentBookingRecyclerAdapter(getActivity(), BookingList, bookingid1);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
         mRecyclerView.setHasFixedSize(true);
         recyclerAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        retrieveContents();
-                    }
-                }
+                () -> retrieveContents()
         );
-
 
 
         return view;
@@ -104,28 +75,23 @@ public class CurrentBookingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         retrieveContents();
-
     }
 
 
     private void retrieveContents() {
         loadPost(ACTION_SHOW_LOADING_ITEM);
-//        loadPostval(ACTION_SHOW_LOADING_ITEM);
-//        recyclerAdapter.notifyDataSetChanged();
-//        swipeRefreshLayout.setRefreshing(false);
     }
 
     private void setupFeed() {
 
-        recyclerAdapter= new CurrentBookingRecyclerAdapter(getActivity(),mFilteredBookingList,bookingid1);
+        recyclerAdapter = new CurrentBookingRecyclerAdapter(getActivity(), mFilteredBookingList, bookingid1);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
 
-        if (swipeRefreshLayout.isRefreshing()){
+        if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
     }
@@ -139,100 +105,81 @@ public class CurrentBookingsFragment extends Fragment {
         showProgressDialog();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Query first = db.collection("Bookings").whereEqualTo("Current_User_UID",uid);
+        Query first = db.collection("Bookings").whereEqualTo("Current_User_UID", uid);
 
         first.get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                .addOnSuccessListener(documentSnapshots -> {
 
-                        if (documentSnapshots.getDocuments().size() < 1) {
-
-                            return;
-
-                        }
-
-                        for(DocumentSnapshot document : documentSnapshots.getDocuments()) {
-
-                            Booking comment = document.toObject(Booking.class);
-                            BookingList.add(comment);
-                            BookingListId.add(document.getId());
-
-                        }
-                        loadPostval(ACTION_SHOW_LOADING_ITEM);
+                    if (documentSnapshots.getDocuments().size() < 1) {
+                        return;
                     }
 
+                    for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+
+                        double latitude = 0.0, longitude = 0.0;
+
+                        if (document.get("DestLat") instanceof String)
+                            latitude = Double.parseDouble(document.getString("DestLat"));
+                        else
+                            latitude = document.getDouble("DestLat");
+
+                        if (document.get("DestLong") instanceof String)
+                            longitude = Double.parseDouble(document.getString("DestLat"));
+                        else
+                            longitude = document.getDouble("DestLong");
+
+
+                        Booking comment = new Booking(document.getString("Current_User_UID"), latitude, longitude, document.getString("DestName"), document.getDouble("DateTime"),
+                                document.getBoolean("bookingStatus"), document.getString("cameraId"), document.getString("documentID"),
+                                document.getDouble("parkingSpaceRating"), document.getBoolean("protectCar"));
+                        BookingList.add(comment);
+                        BookingListId.add(document.getId());
+
+                    }
+                    loadPostval(ACTION_SHOW_LOADING_ITEM);
                 });
     }
 
     public void loadPostval(final String type) {
 
         DocumentReference docRef = db.collection("users").document(uid);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        if(document.contains("Booking_ID")){
-                            hideProgressDialog();
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    if (document.contains("Booking_ID")) {
+                        hideProgressDialog();
                         bookingid = document.getData();
 
+                        bookingid1 = (Map<String, Object>) bookingid.get("Booking_ID");
 
-                        bookingid1= (Map<String, Object>) bookingid.get("Booking_ID");
+                        for (Booking booking : BookingList) {
 
-
-//                        String count = String.valueOf(bookingid1.size());
-//                        Log.e("count", count);
-
-
-//                                    followingcount = 1;
-                        for (Map.Entry<String, Object> entry : bookingid1.entrySet()) {
-                            System.out.println(entry.getKey() + " = " + entry.getValue());
-
-                            Boolean val = (Boolean) entry.getValue();
-                            String values = String.valueOf(val);
-
-                            Log.e("valuesh", values);
-//                                Toast.makeText(getActivity(), followcount, Toast.LENGTH_SHORT).show();
-
-                        }
-
-                            for (int i = 0; i < BookingList.size();i++){
-                                if(bookingid1.containsKey(BookingList.get(i).getDocumentID())){
-                                    Boolean value=(Boolean) bookingid1.get(BookingList.get(i).getDocumentID());
-
-                                    if(value){
-                                        mFilteredBookingList.add(BookingList.get(i));
-                                        hideProgressDialog();
-                                    }
-
+                            if (bookingid1.containsKey(booking.getDocumentID())) {
+                                Boolean value = (Boolean) bookingid1.get(booking.getDocumentID());
+                                if (value) {
+                                    mFilteredBookingList.add(booking);
+                                    hideProgressDialog();
                                 }
+
                             }
-
-
                         }
-                        else{
-                            hideProgressDialog();
-                        }
-//                        recyclerAdapter.notifyDataSetChanged();
-
 
                     } else {
-//                        Log.d(TAG, "No such document");
                         hideProgressDialog();
                     }
+
                 } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
-
+                    hideProgressDialog();
                 }
-
-                setupFeed();
             }
+
+            setupFeed();
         });
 
     }
+
+
     public void showProgressDialog() {
         android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
         alertDialog.setView(R.layout.progress);
@@ -241,8 +188,8 @@ public class CurrentBookingsFragment extends Fragment {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
     }
 
-    private void hideProgressDialog(){
-        if(dialog!=null)
+    private void hideProgressDialog() {
+        if (dialog != null)
             dialog.dismiss();
     }
 }

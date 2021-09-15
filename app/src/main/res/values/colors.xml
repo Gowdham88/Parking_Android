@@ -19,4 +19,5 @@
     <color name="colorred">#F8021E</color>
     <color name="default_bg_color">#FAFAFA</color>
     <color name="transporent_clr">#33000000</color>
+    <color name="black_clr">#000000</color>
 </resources>

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
->
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/view_background"
@@ -11,8 +9,7 @@
         android:layout_height="50dp"
         android:paddingStart="27dp"
         android:paddingTop="5dp"
-        android:paddingEnd="27dp"
-   >
+        android:paddingEnd="27dp">
 
         <ImageView
             android:id="@+id/delete_icon"
@@ -24,17 +21,18 @@
             android:src="@drawable/delete_icon" />
 
         <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_marginRight="30dp"-->
-            <!--android:layout_toLeftOf="@id/delete_icon"-->
-            <!--android:text="Delete"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_marginRight="30dp"-->
+        <!--android:layout_toLeftOf="@id/delete_icon"-->
+        <!--android:text="Delete"-->
         <!--style="@style/Nunitoregular"-->
-            <!--android:textColor="@color/textColor"-->
-            <!--android:textSize="12dp" />-->
+        <!--android:textColor="@color/textColor"-->
+        <!--android:textSize="12dp" />-->
 
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/view_foreground"
         android:layout_width="match_parent"
@@ -43,44 +41,44 @@
         android:paddingTop="5dp"
         android:background="@color/white"
         android:paddingEnd="27dp">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/notification_message"
-        android:text="Hey buddy, something happened to your car"
-        android:textColor="#404B69"
-        android:textSize="12sp"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@id/request_video"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="14dp"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/notification_time"
-        android:text="5 hours ago"
-        android:textColor="#97A5CC"
-        android:textSize="12sp"
-        android:layout_below="@id/notification_message"
-        android:layout_alignParentStart="true"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/request_video"
-        android:textColor="#00B9AB"
-        android:textSize="12sp"
-        android:layout_alignParentEnd="true"
-        android:text="Request Video"
-        android:layout_below="@id/notification_message"
-        />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/notification_time"
-        android:background="#EAEAEA"
-        android:layout_marginTop="4dp"
-        />
-</RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/notification_message"
+            android:text="Hey buddy, something happened to your car"
+            android:textColor="#404B69"
+            android:textSize="12sp"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@id/request_video"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/notification_time"
+            android:text="5 hours ago"
+            android:textColor="#97A5CC"
+            android:textSize="12sp"
+            android:layout_below="@id/notification_message"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/request_video"
+            android:textColor="#00B9AB"
+            android:textSize="12sp"
+            android:layout_alignParentEnd="true"
+            android:text="@string/Requestvideo"
+            android:layout_below="@id/notification_message" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/notification_time"
+            android:background="#EAEAEA"
+            android:layout_marginTop="4dp" />
+    </RelativeLayout>
 </FrameLayout>

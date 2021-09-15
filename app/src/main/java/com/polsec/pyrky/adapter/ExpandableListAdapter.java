@@ -29,17 +29,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
     private Context context;
     private List<String> expandableListTitle;
     private HashMap<String, List<String>> expandableListDetail;
-    private boolean checked;
-    private int lastClickedPosition;
-
-    private List<Boolean> setValueForSeletedFilter;
-    private String[] keysOfHashmap;
-    private int buttonId = 0;
-    private static final int CARCATEGORY = 0;
-    private static final int SECURITY = 1;
-    private static final int FILTER = 2;
-    private static final int[] IMAGES = new int[]{R.drawable.fivestar, R.drawable.fourstar, R.drawable.threestar, R.drawable.twostar, R.drawable.onestar};
-
 
 
     public ExpandableListAdapter(Context context, List<String> expandableListTitle,
@@ -56,8 +45,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.expandableListDetail.get(this.expandableListTitle.get(groupPosition))
-                .size();
+        return 1;
     }
 
     @Override

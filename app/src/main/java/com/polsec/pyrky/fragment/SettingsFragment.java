@@ -52,9 +52,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -64,6 +69,7 @@ import com.google.firebase.storage.UploadTask;
 import com.polsec.pyrky.BuildConfig;
 import com.polsec.pyrky.R;
 import com.polsec.pyrky.activity.HomeActivity;
+import com.polsec.pyrky.activity.signup.SignupScreenActivity;
 import com.polsec.pyrky.adapter.CarouselAdapter;
 import com.polsec.pyrky.preferences.PreferencesHelper;
 import com.polsec.pyrky.utils.CircleTransformation;
@@ -95,7 +101,8 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class SettingsFragment extends Fragment  implements EasyPermissions.PermissionCallbacks{
 
-    EditText NameEdt,EmailEdt;
+    EditText EmailEdt;
+    EditText NameEdt;
     ImageView ProfileImg;
     TextView Camera,Gallery,cancel,save;
  ImageView mProfileImage;
@@ -103,9 +110,13 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     LinearLayout cancelLay;
     int mCarouselCount;
     String mEmail,mName,mProfilepic,mUid,userName;
-    String[] mCarCategory = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
+
+//    String[] mCarCategory = { getResources().getString(R.string.Compact),getResources().getString(R.string.Small)
+//            ,getResources().getString(R.string.Midsize ),getResources().getString(R.string.Full),getResources().getString(R.string.VanPickup) };
+android.content.res.Resources res;
+    String[] mCarCategory;
     String[] mCarCategoryId = {"0", "1", "2", "3", "4" };
-    String[] mCarranze = { "3.5 - 4.5m", "2.5 - 3.5m", "4 -5m", "5 - 5.5m", "5.5 - 6.5m" };
+    String[] mCarranze = { "3.5m - 4.5m", "2.5m - 3.5m", "4m -5m", "5m - 5.5m", "5.5m - 6.5m" };
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     private static final int PERMISSIONS_REQUEST_CAMERA = 1888;
     private static final int PERMISSIONS_REQUEST_GALLERY = 1889;
@@ -127,6 +138,8 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
     String Pass;
     LinearLayout LinLay;
 
+
+
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
     }
@@ -140,16 +153,20 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         mName = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME);
         mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         mUid= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID);
+        res = getResources();
+        mCarCategory =res.getStringArray(R.array.cartypes);
+//        Toast.makeText(getActivity(), mUid, Toast.LENGTH_SHORT).show();
         mCarIcon = Integer.parseInt(PreferencesHelper.getPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR));
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
         ((HomeActivity)getActivity()).findViewById(R.id.myview).setVisibility(View.GONE);
 //        ((AppCompatActivity)getActivity()).getActionBar().hide();
         BackImg=(RelativeLayout) view.findViewById(R.id.back_icon);
         TitlaTxt=(TextView)view.findViewById(R.id.extra_title);
-        TitlaTxt.setText("Settings");
+        TitlaTxt.setText(R.string.Settings);
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hideSoftKeyboard(getActivity());
                 getActivity().onBackPressed();
             }
         });
@@ -223,13 +240,13 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                     }
                 });
 
-        NameEdt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopUp();
-
-            }
-        });
+//        NameEdt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                PopUp();
+//
+//            }
+//        });
         String profileimg= PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -270,9 +287,10 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                     public void onClick(View view) {
                         String Str=EdtPfl.getText().toString();
                         if(!Str.isEmpty()||!Str.equals(null)){
-                            saveUserName(Str,alertDialog1);
+                            NameEdt.setText(Str);
+                            saveUserName(Str);
                         }else{
-                            Toast.makeText(getActivity(), "Please edit the name", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), "Please edit the name", Toast.LENGTH_SHORT).show();
                         }
 //                Intent intent = new Intent(UserProfileActivity.this,LoginScreen.class);
 //                startActivity(intent);
@@ -303,33 +321,10 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
         alertDialog1.getWindow().setAttributes(lp);
 
     }
-    public void saveUserName(final String name, final AlertDialog dialog) {
+    public void saveUserName(final String name) {
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference ref = db.collection("users").document(mUid);
 
-
-        ref.update("username", name)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-//                        NameEdt .setText(name);
-//                        Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
-                        PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME, name);
-                        dialog.dismiss();
-                    }
-
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG, "Error updating document", e);
-                Toast.makeText(getActivity(),"Update failed",Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            }
-
-        });
 
     }
     private void showBottomSheet() {
@@ -632,6 +627,7 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
 
     private void updateData(final String email, String carCategory,String userName) {
         showProgressDialog();
+
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference contact = db.collection("users").document(PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_FIREBASE_UUID));
 //        mProfilepic = PreferencesHelper.getPreference(getActivity(), PreferencesHelper.PREFERENCE_PROFILE_PIC);
@@ -642,9 +638,37 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+
+                        NameEdt.setText(userName);
+
 //                        hideProgressDialog();
                         PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_EMAIL,email);
                         PreferencesHelper.setPreference(getActivity(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(carCategory));
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        DocumentReference ref = db.collection("users").document(mUid);
+
+
+                        ref.update("username", userName)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+//                        NameEdt .setText(name);
+//                        Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
+                                        PreferencesHelper.setPreference(getActivity(), PreferencesHelper.PREFERENCE_USER_NAME, userName);
+//                                        dialog.dismiss();
+                                    }
+
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error updating document", e);
+                                Toast.makeText(getActivity(),"Update failed",Toast.LENGTH_SHORT).show();
+//                                dialog.dismiss();
+                            }
+
+                        });
 //                        Toast.makeText(getActivity(), "Updated Successfully",
 //                                Toast.LENGTH_SHORT).show();
 
@@ -653,33 +677,63 @@ public class SettingsFragment extends Fragment  implements EasyPermissions.Permi
                     }
                 });
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        // Get auth credentials from the user for re-authentication
-        AuthCredential credential = EmailAuthProvider
-                .getCredential(user.getEmail(),Pass); // Current Login Credentials \\
-        // Prompt the user to re-provide their sign-in credentials
-        user.reauthenticate(credential)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.d(TAG, "User re-authenticated.");
-                        //Now change your email address \\
-                        //----------------Code for Changing Email Address----------\\
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        user.updateEmail(email)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Log.d(TAG, "User email address updated.");
-                                            Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
-                                            hideProgressDialog();
-                                        }
-                                    }
-                                });
-                        //----------------------------------------------------------\\
-                    }
-                });
+//        mAuth.createUserWithEmailAndPassword(email, Pass)
+//                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            FirebaseUser user = mAuth.getCurrentUser();
+//                            user.getIdToken(true)
+//                                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+//                                        public void onComplete(@NonNull Task<GetTokenResult> task) {
+//                                            if (task.isSuccessful()) {
+//                                                final FirebaseUser user = mAuth.getCurrentUser();
+                                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                // Get auth credentials from the user for re-authentication
+                                                AuthCredential credential = EmailAuthProvider
+                                                        .getCredential(user.getEmail(),Pass); // Current Login Credentials \\
+                                                // Prompt the user to re-provide their sign-in credentials
+                                                user.reauthenticate(credential)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                Log.d(TAG, "User re-authenticated.");
+                                                                //Now change your email address \\
+                                                                //----------------Code for Changing Email Address----------\\
+                                                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                                user.updateEmail(email)
+                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    Log.d(TAG, "User email address updated.");
+                                                                                    Toast.makeText(getActivity(), "Update Successfully", Toast.LENGTH_SHORT).show();
+                                                                                    hideProgressDialog();
+
+
+
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                //----------------------------------------------------------\\
+                                                            }
+                                                        });
+//                                            }
+//                                        }
+//                                    });
+//
+//
+//                        } else {
+//
+//                            String str="Oops! This email id is already exists";
+//                                Toast.makeText(getActivity(),str, Toast.LENGTH_LONG).show();
+//                            hideProgressDialog();
+//                        }
+//                    }
+//
+//                });
+
+
 
 
     }

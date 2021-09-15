@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:background="@drawable/dialog_background"
@@ -17,12 +16,13 @@
         style="@style/Nunitoregular"
         android:textSize="18dp"
         android:textColor="@color/textColor"
-        android:text="Oops..!!"
+        android:text="@string/oops"
         android:layout_width="match_parent"
         android:gravity="center"
         android:layout_gravity="center"
         android:textStyle="bold"
         android:layout_height="wrap_content" />
+
     <TextView
         style="@style/Nunitoregular"
         android:textSize="14dp"
@@ -32,6 +32,7 @@
         android:gravity="center"
         android:layout_gravity="center"
         android:layout_height="40dp" />
+
     <View
         android:layout_width="match_parent"
         android:layout_gravity="center"
@@ -44,8 +45,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center"
         android:layout_marginBottom="4dp"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/ok_button"
@@ -55,44 +55,46 @@
             android:textSize="14dp"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Ok"
-            style="@style/Nunitoregular"/>
+            android:text="@string/ok"
+            style="@style/Nunitoregular" />
+
         <View
             android:layout_width="1dp"
             android:layout_gravity="center"
             android:background="@color/border_color"
             android:layout_height="match_parent" />
+
         <TextView
             style="@style/Nunitoregular"
             android:textColor="@color/colorAccent"
             android:id="@+id/cancel_button"
             android:textSize="14dp"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:gravity="center"
             android:layout_toRightOf="@+id/ok_button"
             android:layout_width="160dp"
             android:layout_height="match_parent" />
         <!--<Button-->
-            <!--android:id="@+id/ok_button"-->
-            <!--style="@style/ok_button"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="35dp"-->
-            <!--android:text="OK"-->
-            <!--android:textAllCaps="false"-->
-            <!--android:textSize="15dp"-->
+        <!--android:id="@+id/ok_button"-->
+        <!--style="@style/ok_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="35dp"-->
+        <!--android:text="OK"-->
+        <!--android:textAllCaps="false"-->
+        <!--android:textSize="15dp"-->
 
-            <!--/>-->
+        <!--/>-->
 
         <!--<Button-->
-            <!--android:id="@+id/cancel_button"-->
-            <!--style="@style/ok_button"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="35dp"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_gravity="end"-->
-            <!--android:text="Cancel"-->
-            <!--android:textSize="15dp" />-->
+        <!--android:id="@+id/cancel_button"-->
+        <!--style="@style/ok_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="35dp"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_gravity="end"-->
+        <!--android:text="Cancel"-->
+        <!--android:textSize="15dp" />-->
 
     </LinearLayout>
 

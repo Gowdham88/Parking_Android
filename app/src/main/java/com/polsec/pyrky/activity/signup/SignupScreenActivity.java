@@ -2,6 +2,7 @@ package com.polsec.pyrky.activity.signup;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -114,9 +115,15 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     boolean isPhotoValid = false;
     private String mCurrentPhotoPath;
     int mCarouselCount = 0;
-    String[] mCarCategory = { "Compact", "Small", "Mid size", "Full", "Van/Pick-up" };
-    String[] mCarCategoryId = {"0", "1", "2", "3", "4" };
-    String[] mCarranze = { "3.5 - 4.5m", "2.5 - 3.5m", "4 -5m", "5 - 5.5m", "5.5 - 6.5m" };
+
+     Context context;
+    android.content.res.Resources res;
+    String[] mCarCategory;
+
+//    String mCarCategory[] = {getResources().getString(R.string.Compact), String.valueOf(R.string.Small)
+//            ,String.valueOf(R.string.Midsize ),String.valueOf(R.string.Full),String.valueOf(R.string.VanPickup) };
+    String mCarCategoryId[] = {"0", "1", "2", "3", "4" };
+    String mCarranze[] = { "3.5m - 4.5m", "2.5m - 3.5m", "4m -5m", "5m - 5.5m", "5.5m - 6.5m" };
     int mIcons[] = {R.drawable.compactcar_icon,R.drawable.smallcar_icon,R.drawable.midsizecar_icon,R.drawable.fullcar_icon, R.drawable.vanpickupcar_icon};
     LinearLayout signupScrlin;
     Button imageUpload;
@@ -124,7 +131,8 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
+        res = getResources();
+        mCarCategory =res.getStringArray(R.array.cartypes);
         mEtEmail = findViewById(R.id.et_email);
         mEtUsername = findViewById(R.id.et_user_name);
         mEtPassword = findViewById(R.id.et_password);
@@ -404,9 +412,17 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 //            Toast.makeText(this, "Enter valid e-mail address", Toast.LENGTH_SHORT).show();
 
         }
-        else if (TextUtils.isEmpty(password) || password.length()<6) {
+        else if (TextUtils.isEmpty(password)) {
 
             alertPasswordpopup();
+
+//            Toast.makeText(this, "Password should have minimum 6 characters", Toast.LENGTH_SHORT).show();
+
+        }
+
+        else if (password.length()<6) {
+
+            alertPasswordcharpopup();
 //            Toast.makeText(this, "Password should have minimum 6 characters", Toast.LENGTH_SHORT).show();
 
         }
@@ -579,7 +595,7 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
                     hideProgressDialog();
 
-                    Toast.makeText(getApplicationContext(),"Success", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(),"Success", Toast.LENGTH_SHORT).show();
 
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_EMAIL, mEtEmail.getText().toString());
                     PreferencesHelper.setPreference(getApplicationContext(), PreferencesHelper.PREFERENCE_USER_NAME, mEtUsername.getText().toString());
@@ -589,6 +605,12 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 
                     PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_PROFILE_CAR, String.valueOf(mCarouselCount));
                     PreferencesHelper.setPreferenceBoolean(getApplicationContext(),PreferencesHelper.PREFERENCE_ISLOGGEDIN,true);
+
+                    PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_SECURITY, String.valueOf(R.string.Security));
+
+                    Toast.makeText(SignupScreenActivity.this, String.valueOf(R.string.Security), Toast.LENGTH_SHORT).show();
+//                    PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_FILTERS,S);
+//                    PreferencesHelper.setPreference(getApplicationContext(),PreferencesHelper.PREFERENCE_CARRATINGS,true);
                         Intent mainIntent = new Intent(SignupScreenActivity.this, HomeActivity.class);
                         startActivity(mainIntent);
                         finish();
@@ -764,6 +786,41 @@ public class SignupScreenActivity extends AppCompatActivity implements EasyPermi
 //        lp.windowAnimations = R.style.DialogAnimation;
         alertDialog1.getWindow().setAttributes(lp);
     }
+
+
+    private void alertPasswordcharpopup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.pass_charecter_alert, null);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setView(deleteDialogView);
+        TextView ok = (TextView)deleteDialogView.findViewById(R.id.ok_txt);
+
+        final AlertDialog alertDialog1 = alertDialog.create();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog1.dismiss();
+            }
+        });
+
+
+        alertDialog1.setCanceledOnTouchOutside(false);
+        try {
+            alertDialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alertDialog1.show();
+//        alertDialog1.getWindow().setLayout((int) Utils.convertDpToPixel(228,getActivity()),(int)Utils.convertDpToPixel(220,getActivity()));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(alertDialog1.getWindow().getAttributes());
+//        lp.height=200dp;
+//        lp.width=228;
+        lp.gravity = Gravity.CENTER;
+//        lp.windowAnimations = R.style.DialogAnimation;
+        alertDialog1.getWindow().setAttributes(lp);
+    }
+
     private void alertusernamepopup() {
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.username_alert, null);

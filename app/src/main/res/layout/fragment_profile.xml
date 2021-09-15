@@ -22,13 +22,15 @@
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
             android:layout_centerHorizontal="true">
+
             <ImageView
                 android:id="@+id/profile_img"
                 android:layout_width="120dp"
                 android:layout_height="114dp"
                 android:scaleType="centerCrop"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
         </android.support.v7.widget.CardView>
+
         <TextView
             android:textSize="12dp"
             android:background="@null"
@@ -42,11 +44,12 @@
             android:text="@string/email"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/profile_img1"
-            android:layout_marginTop="19dp"/>
+            android:layout_marginTop="19dp" />
 
         <TextView
             style="@style/NunitoBlackLight"
             android:id="@+id/tx_email"
+            android:textSize="12dp"
             android:layout_marginTop="33dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,26 +78,27 @@
             android:inputType="textEmailAddress"
             android:hint="@string/enter_your_email"
             android:imeOptions="actionNext"
-            android:focusable="auto"/>
+            android:focusable="auto" />
+
         <View
             android:layout_below="@+id/et_email"
             android:id="@+id/passlineemail"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/textColor"/>
+            android:background="@color/textColor" />
         <!--</android.support.design.widget.TextInputLayout>-->
 
-          <TextView
-              android:layout_below="@+id/passlineemail"
-        android:textColor="@color/textColor"
-        android:textSize="12dp"
-        style="@style/NunitoBlackLight"
-        android:id="@+id/tx_car_category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="15dp"
-        android:text="@string/car_category" />
+        <TextView
+            android:layout_below="@+id/passlineemail"
+            android:textColor="@color/textColor"
+            android:textSize="12dp"
+            style="@style/NunitoBlackLight"
+            android:id="@+id/tx_car_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/car_category" />
 
         <LinearLayout
             android:id="@+id/carlay"
@@ -142,12 +146,13 @@
                     android:textSize="12dp" />
             </LinearLayout>
         </LinearLayout>
+
         <View
             android:layout_below="@+id/carlay"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/textColor"/>
+            android:background="@color/textColor" />
     </RelativeLayout>
     <!--</ScrollView>-->
 </RelativeLayout>

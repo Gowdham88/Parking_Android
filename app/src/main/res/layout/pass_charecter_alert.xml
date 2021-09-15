@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="60dp"
+    android:layout_marginRight="60dp"
+    android:background="@drawable/dialog_background"
+    android:orientation="vertical">
+
+    <!--<ImageView-->
+    <!--android:layout_gravity="center_horizontal"-->
+    <!--android:layout_width="120dp"-->
+    <!--android:layout_height="80dp"-->
+    <!--android:src="@drawable/notification"-->
+    <!--android:contentDescription="@string/app_name" />-->
+
+    <TextView
+        style="@style/Nunitosemibold"
+        android:layout_width="212dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Oops!"
+        android:textColor="@color/textColor"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        style="@style/Nunitoregular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="@string/passwordch_txt"
+        android:textColor="@color/textColor"
+        android:textSize="14dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/camera_title"
+        android:layout_marginTop="20dp"
+        android:background="@color/border_color" />
+
+    <TextView
+        android:id="@+id/ok_txt"
+        style="@style/Nunitoregular"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Ok"
+        android:textColor="@color/colorAccent"
+        android:textSize="20dp" />
+
+
+</LinearLayout>

@@ -10,22 +10,12 @@ import java.util.HashMap;
 public class SlotsData {
 
     private Double LocationDistance;
-
-
     private String cameraLat;
-
-
     private String cameraLong;
     private String parkingTypes;
     private HashMap<String,Object> parkingRules;
-
-
     private String cameraID;
-
-
     private String cameraLocationName;
-
-
     private String cameraImageUrl;
 
     public SlotsData(){
